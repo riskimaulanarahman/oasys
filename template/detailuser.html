@@ -1,0 +1,10 @@
+<div  ng-controller="userDetailCtrl as usrd">
+  <div class='panel panel-default'>
+    <div class='panel-heading'> <i class="fa fa-user fa-fw"></i> Detail data {{ FirstName }} {{ LastName }}</div>
+    <div class='panel-body' id="maincontainer">
+		<div id="back-button" dx-button="backbuttonOptions"></div><div class="clearfix"></div><br>
+		<div id="form" dx-form="detailFormOptions" style="min-height:400px;max-height:430px"></div>
+     <div ng-include src="'template/panel.html'"></div>
+    </div>
+  </div>
+</div>
