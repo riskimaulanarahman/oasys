@@ -1,0 +1,6 @@
+incl/db_conf.php
+incl/define.php
+.htaccess
+dayoff/*
+images/*
+rfc/*
