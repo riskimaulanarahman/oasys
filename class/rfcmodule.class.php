@@ -1355,7 +1355,7 @@ Class RfcModule extends Application{
 								$Rfc->delete();
 								$logger = new Datalogger("Rfc","delete",json_encode($data),null);
 								$logger->SaveData();
-								echo json_encode($Rfc);
+								$data = array("status"=>"success","message"=>"Data has been deleted");
 							}catch (Exception $e){
 								$err = new Errorlog();
 								$err->errortype = "DeleteRfc";
@@ -1366,7 +1366,7 @@ Class RfcModule extends Application{
 								$err->save();
 								$data = array("status"=>"error","message"=>$e->getMessage());
 							}
-							
+							echo json_encode($data);
 							
 						} else {
 							$data = array("status"=>"error","message"=>"You can't delete submitted request");
