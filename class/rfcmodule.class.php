@@ -547,7 +547,7 @@ Class RfcModule extends Application{
 													";
 									$no=1;
 									foreach ($Rfcdetail as $data){
-										$pdfContent .= '<tr><td></td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.$no.' . '.$data['description'].'</td></tr>';
+										$pdfContent .= '<tr><td></td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.$no.' . '.wordwrap($data['description'], 60, "<br>").'</td></tr>';
 										$no++;
 									}
 									$pdfContent .= '<tr><td style="padding:0in 5.4pt 0in 5.4pt;">Rate / SK No</td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.$RfcJ->rate.'</td></tr>';
@@ -559,7 +559,7 @@ Class RfcModule extends Application{
 													";
 									$no="a";
 									foreach ($Rfcterm as $data){
-										$pdfContent .= '<tr><td></td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.$no.'. '.$data->term.'</td></tr>';
+										$pdfContent .= '<tr><td></td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.$no.'. '.wordwrap($data->term, 60, "<br>").'</td></tr>';
 										$no++;
 									}
 									$pdfContent .= "<tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;'>Contractors Recomended</td>
@@ -1330,23 +1330,44 @@ Class RfcModule extends Application{
 						$id = $this->post['id'];
 						$Rfc = Rfc::find($id);
 						if ($Rfc->requeststatus==0){
-							$approval = Rfcapproval::find("all",array('conditions' => array("rfc_id=?",$id)));
-							foreach ($approval as $delr){
-								$delr->delete();
+							try {
+								$approval = Rfcapproval::find("all",array('conditions' => array("rfc_id=?",$id)));
+								foreach ($approval as $delr){
+									$delr->delete();
+								}
+								$detail = Rfcdetail::find("all",array('conditions' => array("rfc_id=?",$id)));
+								foreach ($detail as $delr){
+									$delr->delete();
+								}
+								$term = Rfcterm::find("all",array('conditions' => array("rfc_id=?",$id)));
+								foreach ($term as $delr){
+									$delr->delete();
+								}
+								$att = Rfcattachment::find("all",array('conditions' => array("rfc_id=?",$id)));
+								foreach ($att as $delr){
+									$delr->delete();
+								}
+								$hist = Rfchistory::find("all",array('conditions' => array("rfc_id=?",$id)));
+								foreach ($hist as $delr){
+									$delr->delete();
+								}
+								$data = $Rfc->to_array();
+								$Rfc->delete();
+								$logger = new Datalogger("Rfc","delete",json_encode($data),null);
+								$logger->SaveData();
+								echo json_encode($Rfc);
+							}catch (Exception $e){
+								$err = new Errorlog();
+								$err->errortype = "DeleteRfc";
+								$err->errordate = date("Y-m-d h:i:s");
+								$err->errormessage = $e->getMessage();
+								$err->user = $this->currentUser->username;
+								$err->ip = $this->ip;
+								$err->save();
+								$data = array("status"=>"error","message"=>$e->getMessage());
 							}
-							$detail = Rfcdetail::find("all",array('conditions' => array("rfc_id=?",$id)));
-							foreach ($detail as $delr){
-								$delr->delete();
-							}
-							$hist = Rfchistory::find("all",array('conditions' => array("rfc_id=?",$id)));
-							foreach ($hist as $delr){
-								$delr->delete();
-							}
-							$data = $Rfc->to_array();
-							$Rfc->delete();
-							$logger = new Datalogger("Rfc","delete",json_encode($data),null);
-							$logger->SaveData();
-							echo json_encode($Rfc);
+							
+							
 						} else {
 							$data = array("status"=>"error","message"=>"You can't delete submitted request");
 							echo json_encode($data);
