@@ -124,19 +124,6 @@ app.controller('rfcapprovalCtrl', ['$rootScope','$scope', '$http', '$interval','
 										}
 									}).appendTo(container);
 								}
-								/*$("<div>")
-									.append($("<a href> Download</a>", {"width":"100%", "href": options.value }))
-									.appendTo(container)
-									.on("click",function(){
-										if (options.value!=""){
-											$scope.imageAddress = options.value;
-											$scope.imageDescription ="Initiated By :"+options.data.InitiatedBy;
-											$scope.imgPopupTitle = "Payment Number : "+options.data.PaymentNumber;
-											$scope.imgPopupVisible = true;
-										}
-										
-									}
-									)*/;
 							}
 						},
                 ],	
