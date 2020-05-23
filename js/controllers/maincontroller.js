@@ -54,21 +54,21 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 		
 	}
 	
-	$scope.template = "template/dashboard.html?v=2.02";
+	$scope.template = "template/dashboard.html?v=2.08";
 	$scope.dataUser= function(){
-		$scope.template = "template/user.html?v=2.02";
+		$scope.template = "template/user.html?v=2.08";
 	}
 	$scope.dashboard= function(){
-		$scope.template = "template/dashboard.html?v=2.02";
+		$scope.template = "template/dashboard.html?v=2.08";
 	}
 	$scope.dataRole= function(){
-		$scope.template = "template/role.html?v=2.02";
+		$scope.template = "template/role.html?v=2.08";
 	}
 	$scope.dataModule= function(){
-		$scope.template = "template/module.html?v=2.02";
+		$scope.template = "template/module.html?v=2.08";
 	}
 	$scope.dataAccessUser= function(){
-		$scope.template = "template/accessuser.html?v=2.02";
+		$scope.template = "template/accessuser.html?v=2.08";
 	}
 	$scope.refreshData=function(){
 		$rootScope.$broadcast("dataRefreshing", true);
@@ -83,11 +83,11 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	}
 	$scope.myDayoff= function(){
 		$scope.Filter=false;
-		$scope.template = "template/dayoff.html?v=2.02";
+		$scope.template = "template/dayoff.html?v=2.08";
 	}
 	$scope.myRFC= function(){
 		$scope.Filter=false;
-		$scope.template = "template/rfc.html?v=2.02";
+		$scope.template = "template/rfc.html?v=2.08";
 	}
 	$scope.dataLeave= function(){	
 		// loadModule($rootScope.viewDayoff,"approval",false);$rootScope.$broadcast("initDO", "");
@@ -118,7 +118,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 			   offset: '0 0' 
 		   }
 		});
-		//$scope.template = "template/leave.html?v=2.02";
+		//$scope.template = "template/leave.html?v=2.08";
 	}
 	$scope.leaveApproval= function(){ 
 		//loadModule(true,"approval",true);$rootScope.$broadcast("initLeave", "");
@@ -151,7 +151,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	function loadModule(access,template,filter){
 		if(access || $rootScope.isAdmin){
 			$scope.Filter=filter;
-			$scope.template = "template/"+template+".html?v=2.02";
+			$scope.template = "template/"+template+".html?v=2.08";
 		}else{
 			DevExpress.ui.notify({
 				message: "You are not authorized to view this page",
@@ -171,14 +171,14 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 		$scope.Userid = data.id;
 		$scope.FirstName = data.firstname;
 		$scope.LastName = data.lastname;
-		$scope.template = "template/detailuser.html?v=2.02";
+		$scope.template = "template/detailuser.html?v=2.08";
 	}
 	$scope.loadEmployee= function(data,mode){
 		$scope.mode = mode;
 		$scope.Employeeid = data.id;
 		$scope.FirstName = data.firstname;
 		$scope.LastName = data.lastname;
-		$scope.template = "template/detailemployee.html?v=2.02";
+		$scope.template = "template/detailemployee.html?v=2.08";
 	}
 	$scope.loadDayoff= function(data,mode,filter){
 		$scope.Filter=filter;
@@ -209,7 +209,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 							$scope.mode = mode;
 							$scope.Requestid = response.id;
 							$scope.Employeeid = response.employee_id;
-							$scope.template = "template/detaildayoff.html?v=2.02";
+							$scope.template = "template/detaildayoff.html?v=2.08";
 						}
 					});
 				}			
@@ -218,7 +218,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 			$scope.mode = mode;
 			$scope.Requestid = data.id;
 			$scope.Employeeid = data.employee_id;
-			$scope.template = "template/detaildayoff.html?v=2.02";
+			$scope.template = "template/detaildayoff.html?v=2.08";
 		}
 		
 	}
@@ -236,20 +236,20 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 					$scope.mode = mode;
 					$scope.Requestid = response.id;
 					$scope.Employeeid = response.employee_id;
-					$scope.template = "template/detailrfc.html?v=2.02";
+					$scope.template = "template/detailrfc.html?v=2.08";
 				}
 			});
 		}else{
 			$scope.mode = mode;
 			$scope.Requestid = data.id;
 			$scope.Employeeid = data.employee_id;
-			$scope.template = "template/detailrfc.html?v=2.02";
+			$scope.template = "template/detailrfc.html?v=2.08";
 		}
 		//}
 	}
 	// $scope.$on('detailData', function(event, id) {
 		// $scope.Userid = id;
-		// $scope.template = "template/detailuser.html?v=2.02";
+		// $scope.template = "template/detailuser.html?v=2.08";
 		// setTimeout(function(){ $rootScope.$broadcast("loaddetailData", id); }, 10);		
 	// });
 	$scope.users = [];
@@ -273,7 +273,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 			$rootScope.isLogin = false;
 			$rootScope.$broadcast("namechanged", "");
 			$rootScope.$broadcast("passchanged", "");
-			$scope.template = "template/dashboard.html?v=2.02";
+			$scope.template = "template/dashboard.html?v=2.08";
 			stopRefresh();
 		})
 		

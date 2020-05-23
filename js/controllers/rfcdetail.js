@@ -1054,9 +1054,9 @@
 		editing: {
             useIcons:true,
             mode: "cell",
-			allowUpdating: (($scope.mode=='approve') ||($scope.mode=='view'))?false:true,
-			allowAdding:(($scope.mode=='view'))?false:true,
-			allowDeleting:(($scope.mode=='approve') ||($scope.mode=='view'))?false:true,
+			allowUpdating: (($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin)?true:false):true,
+			allowAdding:(($scope.mode=='view'))?(($rootScope.isAdmin)?true:false):true,
+			allowDeleting:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin)?true:false):true,
             form:{colCount: 1,
             },
         },

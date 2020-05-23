@@ -897,9 +897,16 @@ Class DayoffModule extends Application{
 						$id = $this->post['id'];
 						$Dayoff = Dayoff::find($id, array('include' => array('employee'=>array('company','department','designation'))));
 						if ($Dayoff){
+							$joinx   = "LEFT JOIN tbl_dayoffreq as r ON (dayoff_id = r.id) ";	
+							$dMtd = Dayoffdetail::find('all', array('joins'=>$joinx,'conditions' => array("r.employee_id=? and r.RequestStatus='3' and isApproved='1' and Year(Dateworked)=year(now())  and month(Dateworked)=month(now()) ",$Dayoff->employee->id),'include'=>array("dayoff")));
+							$dYtd = Dayoffdetail::find('all', array('joins'=>$joinx,'conditions' => array("r.employee_id=? and r.RequestStatus='3' and isApproved='1' and Year(Dateworked)=year(now())",$Dayoff->employee->id),'include'=>array("dayoff")));
+							$cMtd = count($dMtd);
+							$cYtd = count($dYtd);
 							$fullname = $Dayoff->employee->fullname;
 							$department = $Dayoff->employee->department->departmentname;
 							$data=$Dayoff->to_array();
+							$data['mtd'] = $cMtd;
+							$data['ytd'] = $cYtd;
 							$data['fullname']=$fullname;
 							$data['department']=$department;
 							echo json_encode($data, JSON_NUMERIC_CHECK);

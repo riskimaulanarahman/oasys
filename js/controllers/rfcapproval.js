@@ -86,7 +86,7 @@ app.controller('rfcapprovalCtrl', ['$rootScope','$scope', '$http', '$interval','
 						container.text(options.rowIndex +1);
 					}
                 },
-				{dataField:'createddate',caption:"Creation Date",fixed: true, fixedPosition: "left",dataType:"date", format:"dd/MM/yyyy h:m:ss"},
+				{dataField:'fullname',caption:"Request By",fixed: true, fixedPosition: "left"},
 				{dataField:'requeststatus',encodeHtml: false ,fixed: true, fixedPosition: "left",
 					customizeText: function (e) {
 						var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Saved as Draft</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
@@ -99,29 +99,8 @@ app.controller('rfcapprovalCtrl', ['$rootScope','$scope', '$http', '$interval','
 						valueExpr: "id",
 						displayExpr: "activitydescr" 
 					}},
-				{dataField:'isprojectcapex',caption:'Project / Capex',dataType:"boolean"},
-				{dataField:'rfctype',caption:"RFC Type",
-					customizeText: function (e) {
-						var rDesc = ["New","Ammendment",""];
-						return rDesc[e.value];
-					}},
 				{dataField:'oldcontractno',caption:"Old Contract No"},
-				{dataField:'periodstart',caption:"Start",dataType:"date", format:"dd/MM/yyyy"},
-				{dataField:'periodend',caption:"End",dataType:"date", format:"dd/MM/yyyy"},
 				{dataField:'ratetype',caption:"Rate Type"},
-				{dataField:'rate',caption:"Rate"},
-				{dataField:'contractor_id',caption:"Contractor Recom",
-					lookup: {
-						dataSource: $scope.contractorDatasource,
-						valueExpr: "id",
-						displayExpr: "contractorname" 
-					}},
-				{dataField:'contractor_id2',caption:"Contractor Recom 2",
-					lookup: {
-						dataSource: $scope.contractorDatasource,
-						valueExpr: "id",
-						displayExpr: "contractorname" 
-					}},
 				{dataField:'paymentterm',caption:"Payment Term"},
 				{dataField:'remarks',encodeHtml: false },
 				{

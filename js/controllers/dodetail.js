@@ -172,6 +172,9 @@
 							}]
 						},
 						]
+					}, {
+						visible: (($scope.mode=='approve') || ($scope.mode=='view')) ?true:false,
+						template: "<span><font color='blue'>Approved Weekend / PH Coverage MTD : <b>" +$scope.data.mtd+"</b> day/s, YTD : <b>" +$scope.data.ytd+"</b> day/s</font></span> "
 					},
 					{
 						itemType: "group"
@@ -569,6 +572,8 @@
 			delete data.requeststatus;
 			delete data.superior;
 			delete data.depthead;
+			delete data.mtd;
+			delete data.ytd;
 			CrudService.Update('doapp',data.id,data).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.notify(response.message,"error");
@@ -603,6 +608,8 @@
 					delete data.requeststatus;
 					delete data.superior;
 					delete data.depthead;
+					delete data.mtd;
+					delete data.ytd;
 					CrudService.Update('doapp',data.id,data).then(function (response) {
 						if(response.status=="error"){
 							DevExpress.ui.notify(response.message,"error");
@@ -643,6 +650,8 @@
 	}
 	$scope.saveDraft = function(e){
 		var data = $scope.formInstance.option("formData");
+		delete data.mtd;
+		delete data.ytd;
 		CrudService.Update('dayoff',data.id,data).then(function (response) {
 			if(response.status=="error"){
 				 DevExpress.ui.notify(response.message,"error");
@@ -675,6 +684,8 @@
 						var data = $scope.formInstance.option("formData");
 						data.requeststatus = 1;
 						delete data.approvalstatus;
+						delete data.mtd;
+						delete data.ytd;
 						CrudService.Update('dayoff',data.id,data).then(function (response) {
 							if(response.status=="error"){
 								 DevExpress.ui.notify(response.message,"error");

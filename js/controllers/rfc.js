@@ -124,23 +124,9 @@ app.controller('rfcCtrl', ['$rootScope','$scope', '$http', '$interval','$locatio
 						valueExpr: "id",
 						displayExpr: "activitydescr" 
 					}},
-				{dataField:'isprojectcapex',caption:'Project / Capex',dataType:"boolean"},
-				{dataField:'rfctype',caption:"RFC Type",
-					customizeText: function (e) {
-						var rDesc = ["New","Amendment",""];
-						return rDesc[e.value];
-					}},
+				
 				{dataField:'oldcontractno',caption:"Old Contract No"},
-				{dataField:'periodstart',caption:"Start",dataType:"date", format:"dd/MM/yyyy"},
-				{dataField:'periodend',caption:"End",dataType:"date", format:"dd/MM/yyyy"},
 				{dataField:'ratetype',caption:"Rate Type"},
-				{dataField:'rate',caption:"Rate"},
-				{dataField:'contractor_id',caption:"Contractor Recom",
-					lookup: {
-						dataSource: $scope.contractorDatasource,
-						valueExpr: "id",
-						displayExpr: "contractorname" 
-					}},
 				{dataField:'paymentterm',caption:"Payment Term"},
 				{dataField:'remarks',encodeHtml: false },
 				{
