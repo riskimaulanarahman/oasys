@@ -1,0 +1,11 @@
+      <div id="form-container" ng-show="showForm"><div id="form" dx-form="formOptions"></div><button type="button" class="btn btn-default" ng-click="refreshData()"><span class="glyphicon glyphicon-refresh"> Refresh Data</span></button> </div>
+      <div class="clearfix"></div>
+      <div id="gridContainer" dx-data-grid="dataGridOptions" dx-item-alias="row" >
+	  <div data-options="dxTemplate:{ name: 'dropDownBoxEditorTemplate'}">
+                <div dx-drop-down-box="initDropDownBoxEditor(row)" dx-item-alias="item">
+                    <div data-options="dxTemplate:{ name: 'contentTemplate'}">
+                        <div dx-data-grid="initContent(row, item.component)"></div>
+                    </div>
+                </div>
+            </div></div>
+      <div dx-popup="popupOptions"></div>   
