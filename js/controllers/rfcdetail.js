@@ -781,9 +781,9 @@
 		],editing: {
             useIcons:true,
             mode: "cell",
-			allowUpdating:(($scope.mode=='view'))?false:true,
-			allowAdding:(($scope.mode=='approve') || ($scope.mode=='view'))?false:true,
-			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view'))?false:true,
+			allowUpdating:(($scope.mode=='view'))?(($rootScope.isAdmin)?true:false):true,
+			allowAdding:(($scope.mode=='approve') || ($scope.mode=='view'))?(($rootScope.isAdmin)?true:false):true,
+			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view'))?(($rootScope.isAdmin)?true:false):true,
             //allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
             //allowAdding: ($rootScope.isAdmin)?true:false, // Enables insertion
             form:{colCount: 1,
@@ -821,9 +821,9 @@
 		],editing: {
             useIcons:true,
             mode: "cell",
-			allowUpdating:(($scope.mode=='view'))?false:true,
-			allowAdding:(($scope.mode=='approve') || ($scope.mode=='view'))?false:true,
-			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view'))?false:true,
+			allowUpdating:(($scope.mode=='view'))?(($rootScope.isAdmin)?true:false):true,
+			allowAdding:(($scope.mode=='approve') || ($scope.mode=='view'))?(($rootScope.isAdmin)?true:false):true,
+			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view'))?(($rootScope.isAdmin)?true:false):true,
             //allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
             //allowAdding: ($rootScope.isAdmin)?true:false, // Enables insertion
             form:{colCount: 1,
