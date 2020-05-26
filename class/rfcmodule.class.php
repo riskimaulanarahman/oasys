@@ -98,147 +98,147 @@ Class RfcModule extends Application{
 		$standard = ($RfcJ->ratetype=="SK")?"Standard Contract":"Non Standard Contract";
 		$rfctype=array("New","Addendum","Project Capex");
 		$pdfContent = "<table border=0 cellspacing=0 cellpadding=3 ><tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;'>".$standard."</td></tr>";
-									if ($RfcJ->isprojectcapex==1){
-										$pdfContent .= "<tr><td style='padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-top:none'>Project / CAPEX Related Activities</td></tr>";
-									}
-									$red = ($RfcJ->rfctype==0)?"We request the following work to be carried out on contract :":"We request the following Amendments to be made for Contract No : ".$RfcJ->oldcontractno;
-									$pdfContent .= "</table>";
-									$pdfContent .="<p><h2 style='width:100%;text-align:center'>".$compx->companyname."</h2>";
-									$neworam = ($RfcJ->rfctype=="0")?"NEW CONTRACT":"CONTRACT AMANDMENTS";
-									$pdfContent .="<h4 style='width:100%;text-align:center'><u>REQUEST FOR ".$neworam."</u></h4>";
-									$pdfContent .="<h4 style='width:100%;text-align:center'><u>RFC NO: ".$RfcJ->rfcno."</u></h4></p>";
-									
-									
-									$pdfContent .= "<br><br><table border=0 cellspacing=0 cellpadding=3>
-													<tr><td>To </td><td>: Legal Department</td></tr>
-													<tr><td>From </td><td>: ".$RfcJ->employee->fullname."</td></tr>
-													</table><br>
-													<p>".$red."</p><br>";
-									$pdfContent .= "<table border=0 cellspacing=0 cellpadding=3>";
-									$pdfContent .= "<tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;'>Kind of Contract</td>
-														<td style='width:350px;padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;'> : ".$RfcJ->activitydescr."</td>
-													</tr>
-													<tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;'>Period</td>
-														<td style='padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;'> : ".date("d/m/Y",strtotime($RfcJ->periodstart))." - ".date("d/m/Y",strtotime($RfcJ->periodend))."</td>
-													</tr>
-													<tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;'>Payment Term</td>
-														<td style='padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;'> : ".$RfcJ->paymentterm."</td>
-													</tr>
-													<tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;'>Scope of Work</td>
-														<td style='padding:0in 5.4pt 0in 5.4pt;'> : <b><u> Description of Work</u></b></td>
-													</tr>
-													";
-									$no=1;
-									foreach ($Rfcdetail as $data){
-										$pdfContent .= '<tr><td></td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.$no.' . '.wordwrap($data['description'], 60, "<br>").'</td></tr>';
-										$no++;
-									}
-									$pdfContent .= '<tr><td style="padding:0in 5.4pt 0in 5.4pt;">Rate / SK No</td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.$RfcJ->rate.'</td></tr>';
-									
-									
-									$pdfContent .= "<tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;'>Other Term / Conditions</td>
-														<td style='padding:0in 5.4pt 0in 5.4pt;'> : </td>
-													</tr>
-													";
-									$no="a";
-									foreach ($Rfcterm as $data){
-										$pdfContent .= '<tr><td></td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.$no.'. '.wordwrap($data->term, 60, "<br>").'</td></tr>';
-										$no++;
-									}
-									$pdfContent .= "<tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;'>Contractors Recomended</td>
-														<td style='padding:0in 5.4pt 0in 5.4pt;'> : </td>
-													</tr>
-													";
-									$pdfContent .= '<tr><td></td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.$RfcJ->contractorname.'</td></tr>';
-									$pdfContent .= '<tr><td></td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.$RfcJ->contractorname2.'</td></tr>';
-									
-									$pdfContent .= "</table>";
-									$joinx   = "LEFT JOIN tbl_approver ON (tbl_rfcapproval.approver_id = tbl_approver.id) ";					
-									$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joinx,'conditions' => array("rfc_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
-									$pdfContent .= "<br><br><table border=0 cellspacing=4 cellpadding=3>";
-									$no=5;
-									foreach ($Rfcapproval as $data){
-										$col = $no % 4;
-										if($col == 1){
-											$pdfContent .= "<tr>";
-										}
-										$pdfContent .= '<td align="center" style="padding:0in 5.4pt 0in 5.4pt;">
-										<img src="images/approved.png" style="height:25pt" alt="Approved from System">
-										<br><small><i>'. date("d/m/Y",strtotime($data->approvaldate)).'</i>
-										<br><u>'.$data->approver->employee->fullname.'</u></small>
-										<br>( '.$data->approver->approvaltype->approvaltype.' )
-										</td>';
-										if($col == 0){
-											$pdfContent .= "</tr>";
-										}
-										$no++;
-									}
-									if($col !== 0){
-										for($a=1;$a<$col;$a++){
-											$pdfContent .= '<td style="padding:0in 5.4pt 0in 5.4pt;></td>';
-										}
-										$pdfContent .= "</tr>";
-									}
-									$pdfContent .= "</table>";
-									if($RfcJ->isprojectcapex==1){
-										$pdfContent .= "<br><br><b>Please Attach :</b>
-										<br><table border=0 cellspacing=0 cellpadding=3>
-										<tr><td style='width:100px;' align='right'>1</td><td>Copy of Approved Capex</td></tr>
-										<tr><td style='width:100px;' align='right'>2</td><td>BOQ of Related Project</td></tr>
-										</table>
-										<br><b>For All Purchase Requisition Items to be Created in SAP System by User before LOI is issued.</b>
-										<br><table border=0 cellspacing=0 cellpadding=3>
-										<tr><td style='width:250px;padding-left:30px;' >a. Capex / IO No </td><td style='padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;'>".$RfcJ->capexno."</td></tr>
-										<tr><td style='width:250px;padding-left:30px;' >b. Capex Ammount</td><td style='padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;'>Rp. ".number_format($RfcJ->capexammount)."</td></tr>
-										<tr><td style='width:250px;padding-left:30px;' >c. Spent to dated</td><td style='padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;'>Rp. ".number_format($RfcJ->capexspent)."</td></tr>
-										<tr><td style='width:250px;padding-left:30px;' >d. Capex Balance (b-c)</td><td style='padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;'>Rp. ".number_format($RfcJ->capexbalance)."</td></tr>
-										<tr><td style='width:250px;padding-left:30px;' >e. Estimated amount required<br> for this RFC</td><td style='padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;'>Rp. ".number_format($RfcJ->rfcammount)."</td></tr>
-										<tr><td style='width:250px;padding-left:30px;' >f. Balance after this RFC</td><td style='padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;'>Rp. ".number_format($RfcJ->balance)."</td></tr>
-										</table>";
-									}else{
-										$pdfContent .= "<br><br><b>Please Attach :</b>
-										<br><table border=0 cellspacing=0 cellpadding=3>
-										<tr><td style='width:100px;' align='right'>1</td><td>Copy of Decision Letter.</td></tr>
-										<tr><td style='width:100px;' align='right'>2</td><td>Updated company profile for the existing contractor / Company Profile for New Contractor</td></tr>
-										<tr><td style='width:100px;' align='right'>3</td><td>For Non Standard should attached with unit spesification, e.g.; manufacturing year, size, capacity</td></tr>";
-										if($RfcJ->rfctype!=="New"){
-											$pdfContent .= "<tr><td style='width:100px;' align='right'>4</td><td>To be attached with previous contract</td></tr>";
-										}
-										$pdfContent .= "</table>";
-										$pdfContent .= "<b>SAP/PIMS System :</b>
-										<br><table border=0 cellspacing=0 cellpadding=3>
-										<tr><td style='width:100px;' align='right'>1</td><td>Acacia Harvesting Related Activity - Work Order to be created in PIMS</td></tr>
-										</table>";
-									}
-									$pdfContent .= "<p><b>RFC must be submitted prior to work commencement.
-													<br>Approved RFC need to be submitted to legal to issue contract at least 15 working days prior to work commencement.</b></p>";
-									if($RfcJ->isprojectcapex==1){
-										$pdfContent .= "<p><b><font color='red'>LOI shall be issued based on approved PR to ensure that the Capex is approved prior to work commencement</font></b></p>";
-									}
-									try {
-										$html2pdf = new Html2Pdf('P', 'A4', 'fr');
-										$html2pdf->writeHTML($pdfContent);
-										ob_clean();
-										$fileName ='rfc'.DS.'pdf'.DS.''.$Rfc->rfcno.'_'.date("YmdHis").'.pdf';
-										$fileName = str_replace("/","",$fileName);
-										$filePath = SITE_PATH.DS.$fileName;
-										$html2pdf->output($filePath, 'F');
-										$this->mail->addAttachment($filePath);
-										$Rfc->approveddoc=str_replace("\\","/",$fileName);
-										$Rfc->save();
-									} catch (Html2PdfException $e) {
-										echo $pdfContent;
-										$html2pdf->clean();
-										$formatter = new ExceptionFormatter($e);
-										$err = new Errorlog();
-										$err->errortype = "RFCPDFGenerator";
-										$err->errordate = date("Y-m-d h:i:s");
-										$err->errormessage = $formatter->getHtmlMessage();
-										$err->user = "admin";
-										$err->ip = $this->ip;
-										$err->save();
-										echo $formatter->getHtmlMessage();
-									}
+		if ($RfcJ->isprojectcapex==1){
+			$pdfContent .= "<tr><td style='padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-top:none'>Project / CAPEX Related Activities</td></tr>";
+		}
+		$red = ($RfcJ->rfctype==0)?"We request the following work to be carried out on contract :":"We request the following Amendments to be made for Contract No : ".$RfcJ->oldcontractno;
+		$pdfContent .= "</table>";
+		$pdfContent .="<p><h2 style='width:100%;text-align:center'>".$compx->companyname."</h2>";
+		$neworam = ($RfcJ->rfctype=="0")?"NEW CONTRACT":"CONTRACT AMANDMENTS";
+		$pdfContent .="<h4 style='width:100%;text-align:center'><u>REQUEST FOR ".$neworam."</u></h4>";
+		$pdfContent .="<h4 style='width:100%;text-align:center'><u>RFC NO: ".$RfcJ->rfcno."</u></h4></p>";
+		
+		
+		$pdfContent .= "<br><br><table border=0 cellspacing=0 cellpadding=3>
+						<tr><td>To </td><td>: Legal Department</td></tr>
+						<tr><td>From </td><td>: ".$RfcJ->employee->fullname."</td></tr>
+						</table><br>
+						<p>".$red."</p><br>";
+		$pdfContent .= "<table border=0 cellspacing=0 cellpadding=3>";
+		$pdfContent .= "<tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;'>Kind of Contract</td>
+							<td style='width:350px;padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;'> : ".$RfcJ->activitydescr."</td>
+						</tr>
+						<tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;'>Period</td>
+							<td style='padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;'> : ".date("d/m/Y",strtotime($RfcJ->periodstart))." - ".date("d/m/Y",strtotime($RfcJ->periodend))."</td>
+						</tr>
+						<tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;'>Payment Term</td>
+							<td style='padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;'> : ".$RfcJ->paymentterm."</td>
+						</tr>
+						<tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;'>Scope of Work</td>
+							<td style='padding:0in 5.4pt 0in 5.4pt;'> : <b><u> Description of Work</u></b></td>
+						</tr>
+						";
+		$no=1;
+		foreach ($Rfcdetail as $data){
+			$pdfContent .= '<tr><td></td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.$no.' . '.wordwrap($data['description'], 60, "<br>").'</td></tr>';
+			$no++;
+		}
+		$pdfContent .= '<tr><td style="padding:0in 5.4pt 0in 5.4pt;">Rate / SK No</td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.$RfcJ->rate.'</td></tr>';
+		
+		
+		$pdfContent .= "<tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;'>Other Term / Conditions</td>
+							<td style='padding:0in 5.4pt 0in 5.4pt;'> : </td>
+						</tr>
+						";
+		$no="a";
+		foreach ($Rfcterm as $data){
+			$pdfContent .= '<tr><td></td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.$no.'. '.wordwrap($data->term, 60, "<br>").'</td></tr>';
+			$no++;
+		}
+		$pdfContent .= "<tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;'>Contractors Recomended</td>
+							<td style='padding:0in 5.4pt 0in 5.4pt;'> : </td>
+						</tr>
+						";
+		$pdfContent .= '<tr><td></td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.$RfcJ->contractorname.'</td></tr>';
+		$pdfContent .= '<tr><td></td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.$RfcJ->contractorname2.'</td></tr>';
+		
+		$pdfContent .= "</table>";
+		$joinx   = "LEFT JOIN tbl_approver ON (tbl_rfcapproval.approver_id = tbl_approver.id) ";					
+		$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joinx,'conditions' => array("rfc_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
+		$pdfContent .= "<br><br><table border=0 cellspacing=4 cellpadding=3>";
+		$no=5;
+		foreach ($Rfcapproval as $data){
+			$col = $no % 4;
+			if($col == 1){
+				$pdfContent .= "<tr>";
+			}
+			$pdfContent .= '<td align="center" style="padding:5pt 5.4pt 0in 5.4pt;">
+			<img src="images/approved.png" style="height:25pt" alt="Approved from System">
+			<br><small><i>'. date("d/m/Y",strtotime($data->approvaldate)).'</i>
+			<br><u>'.$data->approver->employee->fullname.'</u></small>
+			<br>( '.$data->approver->approvaltype->approvaltype.' )
+			</td>';
+			if($col == 0){
+				$pdfContent .= "</tr>";
+			}
+			$no++;
+		}
+		if($col !== 0){
+			for($a=1;$a<$col;$a++){
+				$pdfContent .= '<td style="padding:0in 5.4pt 0in 5.4pt;></td>';
+			}
+			$pdfContent .= "</tr>";
+		}
+		$pdfContent .= "</table>";
+		if($RfcJ->isprojectcapex==1){
+			$pdfContent .= "<br><br><b>Please Attach :</b>
+			<br><table border=0 cellspacing=0 cellpadding=3>
+			<tr><td style='width:100px;' align='right'>1</td><td>Copy of Approved Capex</td></tr>
+			<tr><td style='width:100px;' align='right'>2</td><td>BOQ of Related Project</td></tr>
+			</table>
+			<br><b>For All Purchase Requisition Items to be Created in SAP System by User before LOI is issued.</b>
+			<br><table border=0 cellspacing=0 cellpadding=3>
+			<tr><td style='width:250px;padding-left:30px;' >a. Capex / IO No </td><td style='padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;'>".$RfcJ->capexno."</td></tr>
+			<tr><td style='width:250px;padding-left:30px;' >b. Capex Ammount</td><td style='padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;'>Rp. ".number_format($RfcJ->capexammount)."</td></tr>
+			<tr><td style='width:250px;padding-left:30px;' >c. Spent to dated</td><td style='padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;'>Rp. ".number_format($RfcJ->capexspent)."</td></tr>
+			<tr><td style='width:250px;padding-left:30px;' >d. Capex Balance (b-c)</td><td style='padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;'>Rp. ".number_format($RfcJ->capexbalance)."</td></tr>
+			<tr><td style='width:250px;padding-left:30px;' >e. Estimated amount required<br> for this RFC</td><td style='padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;'>Rp. ".number_format($RfcJ->rfcammount)."</td></tr>
+			<tr><td style='width:250px;padding-left:30px;' >f. Balance after this RFC</td><td style='padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;'>Rp. ".number_format($RfcJ->balance)."</td></tr>
+			</table>";
+		}else{
+			$pdfContent .= "<br><br><b>Please Attach :</b>
+			<br><table border=0 cellspacing=0 cellpadding=3>
+			<tr><td style='width:100px;' align='right'>1</td><td>Copy of Decision Letter.</td></tr>
+			<tr><td style='width:100px;' align='right'>2</td><td>Updated company profile for the existing contractor / Company Profile for New Contractor</td></tr>
+			<tr><td style='width:100px;' align='right'>3</td><td>For Non Standard should attached with unit spesification, e.g.; manufacturing year, size, capacity</td></tr>";
+			if($RfcJ->rfctype!=="New"){
+				$pdfContent .= "<tr><td style='width:100px;' align='right'>4</td><td>To be attached with previous contract</td></tr>";
+			}
+			$pdfContent .= "</table>";
+			$pdfContent .= "<b>SAP/PIMS System :</b>
+			<br><table border=0 cellspacing=0 cellpadding=3>
+			<tr><td style='width:100px;' align='right'>1</td><td>Acacia Harvesting Related Activity - Work Order to be created in PIMS</td></tr>
+			</table>";
+		}
+		$pdfContent .= "<p><b>RFC must be submitted prior to work commencement.
+						<br>Approved RFC need to be submitted to legal to issue contract at least 15 working days prior to work commencement.</b></p>";
+		if($RfcJ->isprojectcapex==1){
+			$pdfContent .= "<p><b><font color='red'>LOI shall be issued based on approved PR to ensure that the Capex is approved prior to work commencement</font></b></p>";
+		}
+		try {
+			$html2pdf = new Html2Pdf('P', 'A4', 'fr');
+			$html2pdf->writeHTML($pdfContent);
+			ob_clean();
+			$fileName ='rfc'.DS.'pdf'.DS.''.$Rfc->rfcno.'_'.date("YmdHis").'.pdf';
+			$fileName = str_replace("/","",$fileName);
+			$filePath = SITE_PATH.DS.$fileName;
+			$html2pdf->output($filePath, 'F');
+			$this->mail->addAttachment($filePath);
+			$Rfc->approveddoc=str_replace("\\","/",$fileName);
+			$Rfc->save();
+		} catch (Html2PdfException $e) {
+			echo $pdfContent;
+			$html2pdf->clean();
+			$formatter = new ExceptionFormatter($e);
+			$err = new Errorlog();
+			$err->errortype = "RFCPDFGenerator";
+			$err->errordate = date("Y-m-d h:i:s");
+			$err->errormessage = $formatter->getHtmlMessage();
+			$err->user = "admin";
+			$err->ip = $this->ip;
+			$err->save();
+			echo $formatter->getHtmlMessage();
+		}
 	}
 	public function uploadRfcFile(){
 		$id= $this->get['id'];
@@ -754,7 +754,7 @@ Class RfcModule extends Application{
 										if($col == 1){
 											$pdfContent .= "<tr>";
 										}
-										$pdfContent .= '<td align="center" style="padding:0in 5.4pt 0in 5.4pt;">
+										$pdfContent .= '<td align="center" style="padding:5pt 5.4pt 0in 5.4pt;">
 										<img src="images/approved.png" style="height:25pt" alt="Approved from System">
 										<br><small><i>'. date("d/m/Y",strtotime($data->approvaldate)).'</i>
 										<br><u>'.$data->approver->employee->fullname.'</u></small>
