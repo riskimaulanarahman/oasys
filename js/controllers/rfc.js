@@ -124,10 +124,6 @@ app.controller('rfcCtrl', ['$rootScope','$scope', '$http', '$interval','$locatio
 						valueExpr: "id",
 						displayExpr: "activitydescr" 
 					}},
-				
-				{dataField:'oldcontractno',caption:"Old Contract No"},
-				{dataField:'ratetype',caption:"Rate Type"},
-				{dataField:'paymentterm',caption:"Payment Term"},
 				{dataField:'remarks',encodeHtml: false },
 				{
 							dataField: "approveddoc",
