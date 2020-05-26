@@ -59,6 +59,9 @@
 						CrudService.checkAccess('RFC',$rootScope.curUser.username).then(function (access) {
 							$rootScope.viewRFC = access.allowview;
 						});
+						CrudService.checkAccess('ApprovedWPHC',$rootScope.curUser.username).then(function (access) {
+							$rootScope.viewDayoffdetail = access.allowview;
+						});
 						if(!$rootScope.startRefresh) {
 							$rootScope.startRefresh = setInterval($scope.refreshUsers, 1000);
 						}

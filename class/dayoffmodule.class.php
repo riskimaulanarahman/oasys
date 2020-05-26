@@ -750,6 +750,37 @@ Class DayoffModule extends Application{
 						if(isset($query['status'])){
 							$Dayoffdetail = Dayoffdetail::find('all', array('conditions' => array("dayoff_id=?",$query['dayoff_id'])));
 							$data=array("jml"=>count($Dayoffdetail));
+						}else if (isset($query['detail'])){
+							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+							$joinx   = "LEFT JOIN tbl_dayoffreq as r ON (dayoff_id = r.id) left join tbl_employee e on r.employee_id=e.id ";	
+							if(($Employee->location->sapcode=='0200') || ($this->currentUser->isadmin)){
+								$Dayoffdetail = Dayoffdetail::find('all', array('joins'=>$joinx,'conditions' => array("isApproved='1' and r.requeststatus='3' and dateworked between ? and ?",$query['startDate'],$query['endDate']),'order'=>"dateworked"));
+							}else{
+								$Dayoffdetail = Dayoffdetail::find('all', array('joins'=>$joinx,'conditions' => array("isApproved='1' and r.requeststatus='3' and e.company_id=?  and dateworked between ? and ?",$Employee->company_id,$query['startDate'],$query['endDate']),'order'=>"dateworked"));
+							}
+							
+							foreach ($Dayoffdetail as &$result) {
+								$joine  = "LEFT JOIN tbl_employee s ON (tbl_dayoffreq.superior = s.id) left join tbl_employee d on (tbl_dayoffreq.depthead = d.id)";	
+								$sel = 'tbl_dayoffreq.*,s.fullname as Superior, d.fullname as DeptHead';
+								$Dayoff = Dayoff::find('first', array('select'=>$sel,'joins'=>$joine,'include'=>array('employee'=>array("department","location","company","designation","department")),'conditions' => array("tbl_dayoffreq.id=?",$result->dayoff_id)));
+								$join  = "LEFT JOIN tbl_approver ON (tbl_dayoffapproval.approver_id = tbl_approver.id) ";	
+								$Dayoffapproval = DayOffApproval::find('first',array('joins'=>$join,'conditions'=>array("dayoff_id=?",$result->dayoff_id),'order'=>"tbl_approver.sequence desc",'include' => array('approver'=>array('employee'))));
+								$appText = ($result->isapproved==null)?"":(($result->isapproved)?"Yes":"No");
+								$usedText = ($result->isused==null)?"":(($result->isused)?"Yes":"No");
+								$result		= $result->to_array();
+								$result['fullapproveddate']=$Dayoffapproval->approvaldate;
+								$result['sapid']=$Dayoff->employee->sapid;
+								$result['name']=$Dayoff->employee->fullname;
+								$result['location']=$Dayoff->employee->location->location;
+								$result['department']=$Dayoff->employee->department->departmentname;
+								$result['position']=$Dayoff->employee->designation->designationname;
+								$result['bu']=$Dayoff->employee->companycode;
+								$result['superior']=$Dayoff->superior;
+								$result['depthead']=$Dayoff->depthead;
+								$result['isapproved'] = $appText;
+								$result['isused'] = $usedText;
+							}
+							$data=$Dayoffdetail;
 						}else{
 							$data=array();
 						}

@@ -1,12 +1,59 @@
-app.controller('rfcapprovalCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
+app.controller('repdoCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
+	$scope.formFilterInstance = [];
+	var date = new Date();
+	var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+	var endDay = new Date(date.getFullYear(), date.getMonth()+1, 0);
+	$scope.filterData = {startDate : $filter("date")(firstDay, 'yyyy-MM-dd'), endDate : $filter("date")(endDay, 'yyyy-MM-dd') };
+	$scope.formOptions = {
+		readOnly: false,
+		showColonAfterLabel: true,
+		labelLocation: "left",
+		minColWidth: 200,
+		colCount:3,
+		showValidationSummary: true,
+		onInitialized: function(e) {
+			$scope.formFilterInstance = e.component;
+		},items: [{
+                dataField: "startDate",
+                editorType: "dxDateBox",
+				displayFormat: "yyyy-mm-dd",
+                validationRules: [{
+                    type: "required",
+                    message: "Date is required"
+                }]
+            },{
+                dataField: "endDate",
+                editorType: "dxDateBox",
+				displayFormat: "yyyy-mm-dd",
+                validationRules: [{
+                    type: "required",
+                    message: "Date is required"
+                }]
+            }],
+		bindingOptions: {
+			 'formData': 'filterData',		 
+		}
+	}
+	$scope.showForm= true;
+	function initController() {
+		$scope.dataGrid.refresh();
+		// if (typeof $scope.dataGrid !== 'undefined'){
+			// if((typeof $scope.filterData.startDate !== 'undefined') &&(typeof $scope.filterData.endDate !== 'undefined') && ($scope.filterData.startDate !== null) && ($scope.filterData.endDate !== null)){
+				// $scope.dataGrid.filter([['dateworked','>=', $scope.filterData.startDate],'and',['dateworked','=<',  $scope.filterData.endDate]]);
+			// }else{
+				// $scope.dataGrid.clearFilter();
+			// }	
+			// $scope.dataGrid.refresh();
+		// }
+	}
 	var myStore = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;
-			criteria = ($scope.Filter)?{pending:'true'}:{filter:'all'};
-            return CrudService.FindData('rfcapp',criteria).then(function (response) {
+			criteria = {detail:'true',startDate:$filter("date")($scope.filterData.startDate, 'yyyy-MM-dd'),endDate:$filter("date")($scope.filterData.endDate, 'yyyy-MM-dd')};
+            return CrudService.FindData('dodetail',criteria).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.notify(response.message,"error");
 				}else{
@@ -16,7 +63,7 @@ app.controller('rfcapprovalCtrl', ['$rootScope','$scope', '$http', '$interval','
 		},
 	 
 		byKey: function(key) {
-            CrudService.GetById('rfcapp',encodeURIComponent(key)).then(function (response) {
+            CrudService.GetById('dayoff',encodeURIComponent(key)).then(function (response) {
 				return response;
 			});
 		},
@@ -30,11 +77,21 @@ app.controller('rfcapprovalCtrl', ['$rootScope','$scope', '$http', '$interval','
 			
 		}
     });
-	$scope.$on("initRFC", function(event, name) {
-		$scope.dataGrid.refresh();
+	$scope.$on("initRepDO", function(event, name) {
+		initController();
+		//$scope.dataGrid.refresh();
+    });
+	$rootScope.$on("dataRefreshing", function(event, data) {
+		initController();
     });
 	var myData = new DevExpress.data.DataSource({
 		store: myStore
+    });
+	 $rootScope.$on("loginChanged", function(event, islogin) {
+        $rootScope.isLogin = islogin;
+        if($rootScope.isLogin){
+            initController();
+        } 
     });
 	function moveEditColumnToLeft(dataGrid) {
 		dataGrid.columnOption("command:edit", { 
@@ -42,12 +99,6 @@ app.controller('rfcapprovalCtrl', ['$rootScope','$scope', '$http', '$interval','
 			width: 80 
 		});
     }
-	CrudService.GetAll('rfcactivity').then(function (resp) {
-        $scope.activityDatasource=resp;
-    });
-	CrudService.GetAll('rfccontractor').then(function (resp) {
-        $scope.contractorDatasource=resp;
-    })
     $scope.dataGridOptions = {
         dataSource: myData,
         showColumnLines: true,
@@ -61,68 +112,21 @@ app.controller('rfcapprovalCtrl', ['$rootScope','$scope', '$http', '$interval','
         headerFilter: {
             visible: true
         },
-        columns: [{
-                    caption: "Detail",
-                    fixed: true,
-                    fixedPosition: "left",
-                    width: 120,
-                    allowFiltering: false,
-                    allowSorting: false,
-                    formItem: { visible: false},
-                    cellTemplate: function (container, options) {
-						var icon = ($scope.Filter)?'dx-icon-todo':'dx-icon-detailslayout';
-                        $('<div style="padding:2px 15px 2px 15px;"/>').addClass(icon+'  btn-pill btn-shadow btn btn-primary')
-                            .text('')
-                            .on('dxclick', function () {
-                                DevExpress.ui.notify("Loading detail data for "+options.data.requestdate,"info",600);
-								var  mode=($scope.Filter)?'approve':'view';
-								$scope.loadRFC(options.data,mode,$scope.Filter);
-                            })
-                            .appendTo(container);
-                    }
-                }
-                ,{caption: '#',fixed: true,fixedPosition: "left",formItem: { visible: false},width: 40,
+        columns: [
+                ,{caption: '#',formItem: { visible: false},width: 40,
 					cellTemplate: function(container, options) {
 						container.text(options.rowIndex +1);
 					}
                 },
-				{dataField:'fullname',caption:"Request By",fixed: true, fixedPosition: "left"},
-				{dataField:'requeststatus',encodeHtml: false ,fixed: true, fixedPosition: "left",
-					customizeText: function (e) {
-						var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Saved as Draft</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
-						return rDesc[e.value];
-					}},
-				{dataField:'rfcno',caption:"RFC No",fixed: true, fixedPosition: "left"},
-				{dataField:'activity_id',caption:"Activity",
-					lookup: {
-						dataSource: $scope.activityDatasource,
-						valueExpr: "id",
-						displayExpr: "activitydescr" 
-					}},
-				{dataField:'remarks',width: 300,encodeHtml: false },
-				{
-							dataField: "approveddoc",
-							caption:"Approval Doc",
-							width: 100,
-							allowFiltering: false,
-							allowSorting: false,
-							formItem: { visible: false},
-							cellTemplate: function (container, options) {
-								
-								if ((options.value!="") && (options.value)){
-									$("<div />").dxButton({
-										icon: 'download',
-										stylingMode: "contained",
-										type: "success",
-										target : '_blank',
-										width: 50,
-										onClick: function (e) {
-											window.open(options.value, '_blank');
-										}
-									}).appendTo(container);
-								}
-							}
-						},
+				{dataField:'dateworked',caption: "Work Date",dataType:"date", format:"dd/MM/yyyy",width: 80},
+				{dataField:'fullapproveddate',caption: "Full Approved Date",dataType:"date", format:"dd/MM/yyyy",width: 80},
+				{dataField:'sapid',caption: "SAP ID",width: 70},
+				{dataField:'name',caption: "Name"},
+				{dataField:'department',caption: "Department"},
+				{dataField:'position',caption: "Position",width: 150},
+				{dataField:'bu',caption: "Business Group",width: 50},
+				{dataField:'superior',caption: "Superior"},
+				{dataField:'depthead',caption: "Dept Head"},
                 ],	
         "export": {
             enabled: true,
@@ -133,9 +137,6 @@ app.controller('rfcapprovalCtrl', ['$rootScope','$scope', '$http', '$interval','
 			//"editing.allowUpdating": "allowEdit" ,
 			//"editing.allowAdding": "allowAdd" ,
 			//"editing.allowDeleting": "allowDel" ,
-			"columns[5].lookup.dataSource":"activityDatasource",
-			"columns[13].lookup.dataSource":"contractorDatasource",
-			"columns[14].lookup.dataSource":"contractorDatasource",
             //"columns[3].lookup.dataSource":"divDatasource"
         },
         columnChooser: {

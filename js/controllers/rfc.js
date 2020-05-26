@@ -124,7 +124,7 @@ app.controller('rfcCtrl', ['$rootScope','$scope', '$http', '$interval','$locatio
 						valueExpr: "id",
 						displayExpr: "activitydescr" 
 					}},
-				{dataField:'remarks',encodeHtml: false },
+				{dataField:'remarks',width: 300,encodeHtml: false },
 				{
 							dataField: "approveddoc",
 							caption:"Approval Doc",

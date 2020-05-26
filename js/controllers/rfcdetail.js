@@ -245,7 +245,7 @@
 							contentTemplate: function(e){
 								var $dataGrid = $("<div>").dxDataGrid({
 									dataSource: e.component.option("dataSource"),
-									columns: [{dataField:"skno",width:100},{dataField:"skdescription",width:250}],
+									columns: [{dataField:"skno",caption:"SK No",width:180},{dataField:"skdescription",caption:"Description",width:200}],
 									height: 265,
 									selection: { mode: "single" },
 									selectedRowKeys: [e.component.option("value")],
