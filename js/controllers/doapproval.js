@@ -1,11 +1,12 @@
-app.controller('approvalCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
+(function (app) {
+app.register.controller('doapprovalCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
 	var myStore = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;
-			criteria = ($scope.Filter)?{pending:'true'}:{filter:'all'};
+			criteria = {pending:'true'};
             return CrudService.FindData('doapp',criteria).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.notify(response.message,"error");
@@ -64,12 +65,12 @@ app.controller('approvalCtrl', ['$rootScope','$scope', '$http', '$interval','$lo
                     allowSorting: false,
                     formItem: { visible: false},
                     cellTemplate: function (container, options) {
-						var icon = ($scope.Filter)?'dx-icon-todo':'dx-icon-detailslayout';
+						var icon = 'dx-icon-todo';
                         $('<div style="padding:2px 15px 2px 15px;"/>').addClass(icon+'  btn-pill btn-shadow btn btn-primary')
                             .text('')
                             .on('dxclick', function () {
                                 DevExpress.ui.notify("Loading detail data for "+options.data.requestdate,"info",600);
-								var  mode=($scope.Filter)?'approve':'view';
+								var  mode='approve';
 								$scope.loadDayoff(options.data,mode,$scope.Filter);
                             })
                             .appendTo(container);
@@ -89,42 +90,6 @@ app.controller('approvalCtrl', ['$rootScope','$scope', '$http', '$interval','$lo
 						return rDesc[e.value];
 					}},
 				{dataField:'remarks',width: '60%',encodeHtml: false },
-				{
-							dataField: "approveddoc",
-							caption:"Approval Doc",
-							width: 100,
-							allowFiltering: false,
-							allowSorting: false,
-							formItem: { visible: false},
-							cellTemplate: function (container, options) {
-								
-								if ((options.value!="") && (options.value)){
-									$("<div />").dxButton({
-										icon: 'download',
-										stylingMode: "contained",
-										type: "success",
-										target : '_blank',
-										width: 50,
-										onClick: function (e) {
-											window.open(options.value, '_blank');
-										}
-									}).appendTo(container);
-								}
-								/*$("<div>")
-									.append($("<a href> Download</a>", {"width":"100%", "href": options.value }))
-									.appendTo(container)
-									.on("click",function(){
-										if (options.value!=""){
-											$scope.imageAddress = options.value;
-											$scope.imageDescription ="Initiated By :"+options.data.InitiatedBy;
-											$scope.imgPopupTitle = "Payment Number : "+options.data.PaymentNumber;
-											$scope.imgPopupVisible = true;
-										}
-										
-									}
-									)*/;
-							}
-						},
                 ],	
         "export": {
             enabled: true,
@@ -234,3 +199,4 @@ app.controller('approvalCtrl', ['$rootScope','$scope', '$http', '$interval','$lo
         },                             
     }; 
 }]);
+})(app || angular.module("kduApp"));

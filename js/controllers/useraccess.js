@@ -1,8 +1,10 @@
-app.controller('accmanagerCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService)  {
+(function (app) {
+app.register.controller('useraccessCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService)  {
     $scope.ds={};
     $scope.test=[];
 	$scope.formFilterInstance = [];
 	$scope.filterData = { };
+	console.log($rootScope);
 	$scope.formOptions = {
 		readOnly: false,
 		showColonAfterLabel: true,
@@ -410,3 +412,4 @@ app.controller('accmanagerCtrl', ['$rootScope','$scope', '$http', '$interval','$
         }
     }
 }]);
+})(app || angular.module("kduApp"));

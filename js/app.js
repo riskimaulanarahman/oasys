@@ -1,4 +1,4 @@
-var app=angular.module('kduApp', ['dx','ui.router','ngMessages', 'ngStorage','oc.lazyLoad'], function($httpProvider) {
+var app=angular.module('kduApp', ['dx','ui.router','ngMessages', 'ngStorage','oc.lazyLoad','ngRoute'], function($httpProvider) {
   $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
   var param = function(obj) {
     var query = '', name, value, fullSubName, subName, subValue, innerObj, i;
@@ -52,8 +52,54 @@ if (!String.prototype.padStart) {
         }
     };
 }
- 
-
+var RouteProvider = function () {
+	var scriptPath = "js/controllers/";
+	var templatePath = "template/";
+	var v= '2.03'
+	this.resolve = function (name) {
+		var route = {};
+		route.templateUrl = templatePath + name + ".html?v="+v;
+		route.controller = name + "Ctrl";
+		//route.controllerAs = "vm";
+		route.resolve = {
+			load: ['$q', '$rootScope', function ($q, $rootScope) { return loadController($q, $rootScope, scriptPath + name + ".js?v="+v); }]
+		};
+		return route;
+	};
+	var loadController = function ($q, $rootScope, path) {
+		var defer = $q.defer();
+		$.ajax({
+			dataType: "script",
+			cache: true,
+			url: path
+		}).done(function (e) { 
+			$rootScope.$apply();
+			defer.resolve();
+		});
+		return defer.promise;
+	};
+};
+app.config(function ($routeProvider, $controllerProvider) {
+	var route = new RouteProvider(); 
+	$routeProvider
+	.when('/', route.resolve("dashboard"))
+	.when('/user', route.resolve("user"))
+	.when('/role', route.resolve("role"))
+	.when('/module', route.resolve("module"))
+	.when('/useraccess', route.resolve("useraccess"))
+	.when('/dayoff', route.resolve("dayoff"))
+	.when('/dodetail', route.resolve("dodetail"))
+	.when('/doapproval', route.resolve("doapproval"))
+	.when('/rfc', route.resolve("rfc"))
+	.when('/detailrfc', route.resolve("detailrfc"))
+	.otherwise({
+		redirectTo: '/'
+	});
+	app.register =
+	{
+		controller: $controllerProvider.register
+	};
+});
 /*
 function sleep(milliseconds) {
   var start = new Date().getTime();

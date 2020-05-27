@@ -1,4 +1,5 @@
- app.controller('rfcDetailCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
+(function (app) {
+app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
@@ -213,7 +214,7 @@
 							onValueChanged: function(e){
 								criteria = {status:'chrate',ratetype:e.value,rfc_id:$scope.Requestid};
 								CrudService.FindData('rfc',criteria).then(function (response){
-									console.log(response);
+									//console.log(response);
 									$scope.grid3Component.refresh();
 									//$scope.formInstance.updateData('rfcno',  response.rfcno);
 								});
@@ -495,11 +496,7 @@
 							type: "danger",
 							onClick: function(){
 								//console.log($scope.Filter);
-								if($scope.Filter){
-									$scope.myRFC();
-								}else{
-									$scope.dataRFC();
-								}
+								$location.path( "/rfc" );
 							},
 							visible: ($scope.mode=='approve') ?false:true,
 							useSubmitBehavior: false
@@ -776,7 +773,7 @@
         columnMinWidth: 50,
         columnAutoWidth: true,
 		columns: [
-			{dataField:'description',width:600,caption:'Description of Work',encodeHtml: false,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}}
+			{dataField:'description',width:600,wordWrapEnabled:true,caption:'Description of Work',encodeHtml: false,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}}
 			
 		],editing: {
             useIcons:true,
@@ -1248,7 +1245,7 @@
 					   offset: '0 0' 
 				   }
 				});
-				$scope.myRFC();
+				$location.path( "/rfc" );
 			}
 			
 		});
@@ -1282,7 +1279,7 @@
 									   offset: '0 0' 
 								   }
 								});
-								$scope.myRFC();
+								$location.path( "/rfc" );
 							}
 							
 						});
@@ -1359,3 +1356,4 @@
     }
 	
 }]);
+})(app || angular.module("kduApp"));

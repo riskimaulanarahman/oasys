@@ -1,9 +1,13 @@
- app.controller('doDetailCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
+(function (app) {
+app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
 	$scope.data = [];  
     $scope.formInstance={};
+	if (typeof($scope.mode)=="undefined"){
+		$location.path( "/" );
+	}
 	console.log($scope.mode);
 	CrudService.GetById('dayoff',$scope.Requestid).then(function(response){
 		if(response.status=="autherror"){
@@ -49,7 +53,7 @@
 				onInitialized: function(e) {
 					$scope.formInstance = e.component;
 				},
-				onContentReady: function(e){
+				onContentReady:function(e){
 					$scope.formInstance = e.component;
 				},
 				readOnly : ($scope.mode=='view')?true:false,
@@ -79,6 +83,7 @@
 							dataField:"superior",
 							editorType: "dxDropDownBox",
 							visible: true,
+							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							editorOptions: { 
 								dataSource:$scope.allEmpDataSource,  
 								valueExpr: 'id',
@@ -119,6 +124,7 @@
 							dataField:"depthead",
 							editorType: "dxDropDownBox",
 							visible: true,
+							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							editorOptions: { 
 								dataSource:$scope.allEmpDataSource,  
 								valueExpr: 'id',
@@ -190,14 +196,9 @@
 								text: "Back",
 								type: "danger",
 								onClick: function(){
-									console.log($scope.Filter);
-									if($scope.Filter){
-										$scope.myDayoff();
-									}else{
-										$scope.dataDayoff();
-									}
+									$location.path( "/dayoff" );
 								},
-								visible: ($scope.mode=='approve') ?false:true,
+								visible: (($scope.mode=='approve'))  ?false:true,
 								useSubmitBehavior: false
 							}
 						},{
@@ -207,7 +208,8 @@
 								text: "Back",
 								type: "danger",
 								onClick: function(){
-									$scope.dayoffApproval();							
+									$location.path( "/doapproval" );
+									//$scope.dayoffApproval();							
 								},
 								visible: ($scope.mode=='approve') ?true:false,
 								useSubmitBehavior: false
@@ -218,7 +220,8 @@
 							buttonOptions: {
 								text: "Save Update",
 								type: "success",
-								onClick: function(){	
+								onClick: function(){
+									$scope.data = $scope.formInstance.option("formData");
 									$scope.updateDayoff();
 								},
 								visible: ($scope.mode=='approve') ?true:false,
@@ -230,8 +233,10 @@
 							buttonOptions: {
 								text: "Save as Draft",
 								type: "default",
-								onClick: function(){	
+								onClick: function(){
+									$scope.data = $scope.formInstance.option("formData");
 									$scope.saveDraft();
+									
 								},
 								visible: (($scope.mode=='approve') ||($scope.mode=='view'))?false:true,
 								useSubmitBehavior: false
@@ -242,6 +247,9 @@
 							buttonOptions: {
 								text: "Submit",
 								type: "success",
+								onClick: function(){
+									$scope.data = $scope.formInstance.option("formData");	
+								},
 								visible: (($scope.mode=='approve') ||($scope.mode=='view'))?false:true,
 								useSubmitBehavior: true
 							}
@@ -548,7 +556,7 @@
 	}
 	$scope.updateDayoff = function(e){
 		//console.log($scope.formInstance.option("formData").approvalstatus);
-		if($scope.formInstance.option("formData").approvalstatus==""){
+		if($scope.data.approvalstatus==""){
 			DevExpress.ui.notify({
 				message: "Please select approval action",
 				type: "warning",
@@ -561,8 +569,8 @@
 				   offset: '0 0' 
 			   }
 			});
-		}else if($scope.formInstance.option("formData").approvalstatus==3){
-			var data = $scope.formInstance.option("formData");
+		}else if($scope.data.approvalstatus==3){
+			var data = $scope.data;
 			var date = new Date();
 			var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
 			data.approvaldate = d;
@@ -590,7 +598,7 @@
 						   offset: '0 0' 
 					   }
 					});
-					$scope.dayoffApproval();
+					$location.path( "/doapproval" );
 				}
 				
 			});
@@ -598,7 +606,7 @@
 			criteria = {status:'approver',dayoff_id:$scope.Requestid};
 			CrudService.FindData('doapp',criteria).then(function (response){
 				if(response.jml>0){
-					var data = $scope.formInstance.option("formData");
+					var data = $scope.data;
 					var date = new Date();
 					var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
 					data.approvaldate = d;
@@ -626,7 +634,7 @@
 								   offset: '0 0' 
 							   }
 							});
-							$scope.dayoffApproval();
+							$location.path( "/doapproval" );
 						}
 						
 					});
@@ -648,8 +656,9 @@
 		}
 		
 	}
+	
 	$scope.saveDraft = function(e){
-		var data = $scope.formInstance.option("formData");
+		var data = $scope.data;
 		delete data.mtd;
 		delete data.ytd;
 		CrudService.Update('dayoff',data.id,data).then(function (response) {
@@ -668,7 +677,7 @@
 					   offset: '0 0' 
 				   }
 				});
-				$scope.myDayoff();
+				$location.path( "/dayoff" );
 			}
 			
 		});
@@ -681,7 +690,7 @@
 				criteria = {status:'approver',dayoff_id:$scope.Requestid};
 				CrudService.FindData('dodetail',criteria).then(function (response){
 					if(response.jml>0){
-						var data = $scope.formInstance.option("formData");
+						var data = $scope.data;
 						data.requeststatus = 1;
 						delete data.approvalstatus;
 						delete data.mtd;
@@ -702,7 +711,7 @@
 									   offset: '0 0' 
 								   }
 								});
-								$scope.myDayoff();
+								$location.path( "/dayoff" );
 							}
 							
 						});
@@ -779,3 +788,4 @@
     }
 	
 }]);
+})(app || angular.module("kduApp"));

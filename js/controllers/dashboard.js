@@ -1,4 +1,5 @@
-app.controller('dashboardCtrl', ['$rootScope','$scope', '$http', '$interval','$location','AuthenticationService','CrudService', function($rootScope,$scope, $http, $interval,$location,AuthenticationService,CrudService)  {
+(function (app) {
+app.register.controller('dashboardCtrl', ['$rootScope','$scope', '$http', '$interval','$location','AuthenticationService','CrudService', function($rootScope,$scope, $http, $interval,$location,AuthenticationService,CrudService)  {
     
     $rootScope.$on("loginChanged", function(event, islogin) {
         $rootScope.isLogin = islogin;
@@ -52,3 +53,4 @@ app.controller('dashboardCtrl', ['$rootScope','$scope', '$http', '$interval','$l
     };
     
 }]);
+})(app || angular.module("kduApp"));

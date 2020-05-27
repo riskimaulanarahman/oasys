@@ -557,29 +557,29 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 					<div class="app-sidebar__inner">
 						<ul class="vertical-nav-menu">
 							<li class="app-sidebar__heading">Dashboard</li>
-							<li><a href="" ng-click="dashboard()" ><i class='metismenu-icon fa fa-tachometer-alt'></i> Dashboard</a></li>
+							<li><a href="#!" ><i class='metismenu-icon fa fa-tachometer-alt'></i> Dashboard</a></li>
 							<li ng-show="isAdmin" class="app-sidebar__heading">Admin Area</li>
 							<li ng-show="isAdmin">
 								<a href="#"><i class='metismenu-icon fa fa-user'></i>Admin Area<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul>
-									<li class="nav-item"><a href="" ng-click="dataUser()" ><i class='fa fa-user'></i> Manage User</a></li>
-									<li class="nav-item"><a href="" ng-click="dataRole()"  class="nav-link" ><i class='fas fa-user-tag'></i> Manage Role</a></li>
-									<li class="nav-item"><a href="" ng-click="dataModule()"  class="nav-link" ><i class='fa fa-toolbox'></i> Manage Module</a></li>
-									<li class="nav-item"><a href="" ng-click="dataAccessUser()"  class="nav-link" ><i class='fa fa-user-lock'></i> Manage User Access</a></li>
+									<li class="nav-item"><a href="#!/user"  ><i class='fa fa-user'></i> Manage User</a></li>
+									<li class="nav-item"><a href="#!/role" class="nav-link" ><i class='fas fa-user-tag'></i> Manage Role</a></li>
+									<li class="nav-item"><a href="#!/module" class="nav-link" ><i class='fa fa-toolbox'></i> Manage Module</a></li>
+									<li class="nav-item"><a href="#!/useraccess" class="nav-link" ><i class='fa fa-user-lock'></i> Manage User Access</a></li>
 								</ul>
 							</li>
 							<li class="app-sidebar__heading active">Personal Task</li>
 							<li class="mm-active">
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>Weekend/PH Coverage<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul>
-									<li class="nav-item"><a href="" ng-click="myDayoff()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> My Request</a></li>
-									<li class="nav-item"><a href="" ng-click="dayoffApproval()"  class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
+									<li class="nav-item"><a href="#!/dayoff" class="nav-link" ><i class='fa fa-calendar-alt'></i> My Request</a></li>
+									<li class="nav-item"><a href="#!/doapproval" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
 								</ul>
 							</li>
 							<li >
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>RFC<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul>
-									<li class="nav-item"><a href="" ng-click="myRFC()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> My Request</a></li>
+									<li class="nav-item"><a href="#!/rfc" class="nav-link" ><i class='fa fa-calendar-alt'></i> My Request</a></li>
 									<li class="nav-item"><a href="" ng-click="RFCApproval()"  class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
 								</ul>
 							</li>
@@ -616,7 +616,8 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 			
 			<div class="app-main__outer">
 				<div class="app-main__inner" class="col-lg-12 col-xl-12 card mb-12 " > 
-					<div ng:include="template"  ></div>                       
+				<div ng-view></div>
+					<!--<div ng:include="template"  ></div>-->               
 				</div>
 				<div class="app-wrapper-footer" >
 					<div class="app-footer">
@@ -644,50 +645,54 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
         </div>
     </div>
 	</div>
+
 	<script language="JavaScript" src="js/lib/jquery-3.3.1.min.js" type="text/javascript"></script>
 	<script language="JavaScript" src="js/lib/polyfill.min.js" type="text/javascript"></script>
 	<script language="JavaScript" src="js/lib/modernizr.min.js" type="text/javascript"></script>
 	<script language="JavaScript" src="js/lib/jszip.min.js" type="text/javascript"></script>
 	<script language="JavaScript" src="js/lib/angular.min.js" type="text/javascript"></script>
+	<script language="JavaScript" src="js/lib/angular-route.min.js" type="text/javascript"></script>
 	<script language="JavaScript" src="js/lib/angular-ui-router.js" type="text/javascript"></script>
 	<script language="JavaScript" src="js/lib/ocLazyLoad.min.js" type="text/javascript"></script>
 	<script language="JavaScript" src="js/lib/ngStorage.min.js" type="text/javascript"></script>
 	<script language="JavaScript" src="js/lib/angular-messages.min.js" type="text/javascript"></script>
+	<script language="JavaScript" src="js/lib/quill.min.js" type="text/javascript"></script>
 	<script language="JavaScript" src="js/lib/dx.all.js" type="text/javascript"></script>
 	<script language="JavaScript" src="js/lib/FileSaver.min.js" type="text/javascript"></script>
-	<script language="JavaScript" src="js/lib/quill.min.js" type="text/javascript"></script>
-	<script language="JavaScript" src="js/app.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/directive.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/services.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/filter.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/factory.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/maincontroller.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/login.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/user.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/role.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/module.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/userdetail.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/useraccess.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/dashboard.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/company.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/department.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/division.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/designation.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/employee.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/employeedetail.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/dayoff.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/dodetail.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/repdo.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/approval.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/approver.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/holiday.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/rfc.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/skrate.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/rfcdetail.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/rfcactivity.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/rfccontractor.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/rfcapproval.js?v=2.14" type="text/javascript"></script>
-	<script language="JavaScript" src="js/script.js?v=2.14" type="text/javascript"></script>
+
+	
+	<script language="JavaScript" src="js/app.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/directive.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/services.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/filter.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/factory.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/maincontroller.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/login.js?v=2.20" type="text/javascript"></script>
+	
+	<!--
+	<script language="JavaScript" src="js/controllers/module.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/userdetail.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/useraccess.js?v=2.20" type="text/javascript"></script>
+	
+	<script language="JavaScript" src="js/controllers/company.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/department.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/division.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/designation.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/employee.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/employeedetail.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/dayoff.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/dodetail.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/repdo.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/approval.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/approver.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/holiday.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/rfc.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/skrate.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/rfcdetail.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/rfcactivity.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/rfccontractor.js?v=2.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/rfcapproval.js?v=2.20" type="text/javascript"></script>-->
+	<script language="JavaScript" src="js/script.js?v=2.20" type="text/javascript"></script>
 	<script type="text/javascript" src="assets/scripts/main.js"></script>
 </body>
 </html>

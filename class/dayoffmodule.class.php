@@ -388,7 +388,7 @@ Class DayoffModule extends Application{
 									$allcheck+=1;
 								}
 							}
-							if (($data['approvalstatus']=='1')){
+							if (($data['approvalstatus']=='1') || ($data['approvalstatus']=='3')){
 								$allcheck=0;
 							}
 							if($allcheck>0){
