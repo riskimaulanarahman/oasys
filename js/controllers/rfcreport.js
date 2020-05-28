@@ -147,9 +147,9 @@ app.register.controller('rfcreportCtrl', ['$rootScope','$scope', '$http', '$inte
 			//"editing.allowUpdating": "allowEdit" ,
 			//"editing.allowAdding": "allowAdd" ,
 			//"editing.allowDeleting": "allowDel" ,
-			"columns[6].lookup.dataSource":"activityDatasource",
-			"columns[9].lookup.dataSource":"contractorDatasource",
-			"columns[10].lookup.dataSource":"contractorDatasource",
+			"columns[8].lookup.dataSource":"activityDatasource",
+			"columns[11].lookup.dataSource":"contractorDatasource",
+			"columns[12].lookup.dataSource":"contractorDatasource",
             //"columns[3].lookup.dataSource":"divDatasource"
         },
         columnChooser: {
