@@ -463,8 +463,10 @@ Class RfcModule extends Application{
 								$result['fullname']=$fullname;
 							}
 							$data=array("jml"=>count($Rfc));
-						} else if(isset($query['filter'])){							
-							$Rfc = Rfc::find('all',array('include' => array('employee')));
+						} else if(isset($query['filter'])){
+							$join = "LEFT JOIN vwrfcreport v on tbl_rfc.id=v.id";
+							$sel = 'tbl_rfc.*, v.laststatus,v.personholding ';
+							$Rfc = Rfc::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
 							foreach ($Rfc as &$result) {
 								$fullname	= $result->employee->fullname;		
 								$result		= $result->to_array();
