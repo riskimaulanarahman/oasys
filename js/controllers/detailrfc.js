@@ -7,6 +7,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 	if (typeof($scope.mode)=="undefined"){
 		$location.path( "/" );
 	}
+	console.log($scope.mode);
 	var d = new Date();
 	CrudService.GetById('rfc',$scope.Requestid).then(function(response){
 		$scope.data = response;
