@@ -87,7 +87,6 @@ app.register.controller('rfcCtrl', ['$rootScope','$scope', '$http', '$interval',
                         $('<div style="padding:2px 15px 2px 15px;"/>').addClass('dx-icon-detailslayout btn-pill btn-shadow btn btn-primary')
                             .text('')
                             .on('dxclick', function () {
-                                DevExpress.ui.notify("Loading detail data for "+options.data.requestdate,"info",600);
 								$scope.loadRFC(options.data,"view",true);
                             })
                             .appendTo(container);

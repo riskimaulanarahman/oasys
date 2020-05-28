@@ -1,4 +1,5 @@
- app.controller('empDetailCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
+(function (app) {
+app.register.controller('detailemployeeCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
@@ -24,7 +25,6 @@
 	CrudService.GetAll('loc').then(function (resp) {
         $scope.locDatasource=new DevExpress.data.DataSource(resp);
     });
-    $scope.formInstance={};
 	$scope.gender = [{id:'M',gender:'Male'},{id:'F',gender:'Female'}];
 	CrudService.GetById('emp',$scope.Employeeid).then(function(response){
 		$scope.data = response;
@@ -372,3 +372,4 @@
 		}
     };
 }]);
+})(app || angular.module("kduApp"));

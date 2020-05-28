@@ -3,9 +3,10 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
-	$scope.data = [];  
-    $scope.formInstance={};
-	console.log($scope.mode);
+	$scope.data = [];
+	if (typeof($scope.mode)=="undefined"){
+		$location.path( "/" );
+	}
 	var d = new Date();
 	CrudService.GetById('rfc',$scope.Requestid).then(function(response){
 		$scope.data = response;
@@ -177,7 +178,6 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 								console.log(e);
 								criteria = {status:'chactivity',activity:e.value,rfc_id:$scope.Requestid};
 								CrudService.FindData('rfc',criteria).then(function (response){
-									//console.log(response);
 									$scope.formInstance.updateData('isprojectcapex',  response.iscapex);
 									$scope.grid3Component.refresh();
 								})
@@ -205,7 +205,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 							reevalute: !0,
 							message: "End date should greater or equal than start date",
 							validationCallback: function(e) {
-								return e.value >= $scope.formInstance.option("formData").periodstart
+								return e.value >= $scope.data.periodstart
 							}
 						}]
 					},
@@ -428,11 +428,11 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 								editorOptions: { 
 									format: "Rp #,##0.##",
 									onValueChanged: function(e){
-										var capexbal=e.value - $scope.formInstance.option("formData").capexspent;
-										var balance=e.value - $scope.formInstance.option("formData").capexspent - $scope.formInstance.option("formData").rfcammount;
+										var capexbal=e.value - $scope.data.capexspent;
+										var balance=e.value - $scope.data.capexspent - $scope.data.rfcammount;
 										$scope.formInstance.updateData('capexbalance',  capexbal);
 										$scope.formInstance.updateData('balance',  balance);
-										console.log($scope.formInstance.option("formData").balance);
+										console.log($scope.data.balance);
 									}
 								},
 							},
@@ -440,8 +440,8 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 								editorOptions: { 
 									format: "Rp #,##0.##",
 									onValueChanged: function(e){
-										var capexbal=$scope.formInstance.option("formData").capexammount - e.value ;
-										var balance= $scope.formInstance.option("formData").capexammount - e.value  - $scope.formInstance.option("formData").rfcammount;
+										var capexbal=$scope.data.capexammount - e.value ;
+										var balance= $scope.data.capexammount - e.value  - $scope.data.rfcammount;
 										$scope.formInstance.updateData('capexbalance',  capexbal);
 										$scope.formInstance.updateData('balance',  balance);
 									}
@@ -452,7 +452,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 								editorOptions: { 
 									format: "Rp #,##0.##",
 									onValueChanged: function(e){
-										var balance= $scope.formInstance.option("formData").capexammount   - $scope.formInstance.option("formData").capexspent - e.value;
+										var balance= $scope.data.capexammount   - $scope.data.capexspent - e.value;
 										$scope.formInstance.updateData('balance',  balance);
 									}
 								},
@@ -495,7 +495,6 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 							text: "Back",
 							type: "danger",
 							onClick: function(){
-								//console.log($scope.Filter);
 								$location.path( "/rfc" );
 							},
 							visible: ($scope.mode=='approve') ?false:true,
@@ -508,7 +507,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 							text: "Back",
 							type: "danger",
 							onClick: function(){
-								$scope.RFCApproval();							
+								$location.path( "/rfcapproval" );					
 							},
 							visible: ($scope.mode=='approve') ?true:false,
 							useSubmitBehavior: false
@@ -519,7 +518,20 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 						buttonOptions: {
 							text: "Save Update",
 							type: "success",
-							onClick: function(){	
+							onClick: function(){
+								$scope.data = $scope.formInstance.option("formData");
+								DevExpress.ui.notify({
+									message: "Please wait...!, we are processing your update",
+									type: "info",
+									displayTime: 1000,
+									height: 80,
+									position: {
+									   my: 'top center', 
+									   at: 'center center', 
+									   of: window, 
+									   offset: '0 0' 
+								   }
+								});
 								$scope.updateRFC();
 							},
 							visible: ($scope.mode=='approve') ?true:false,
@@ -531,7 +543,20 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 						buttonOptions: {
 							text: "Save as Draft",
 							type: "default",
-							onClick: function(){	
+							onClick: function(){
+								$scope.data = $scope.formInstance.option("formData");
+								DevExpress.ui.notify({
+									message: "Please wait...!, we are processing your update",
+									type: "info",
+									displayTime: 1000,
+									height: 80,
+									position: {
+									   my: 'top center', 
+									   at: 'center center', 
+									   of: window, 
+									   offset: '0 0' 
+								   }
+								});
 								$scope.saveDraft();
 							},
 							visible: (($scope.mode=='approve') ||($scope.mode=='view'))?false:true,
@@ -543,17 +568,30 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 						buttonOptions: {
 							text: "Submit",
 							type: "success",
+							onClick: function(){
+								$scope.data = $scope.formInstance.option("formData");
+								DevExpress.ui.notify({
+									message: "Please wait...!, we are processing your update",
+									type: "info",
+									displayTime: 3000,
+									height: 80,
+									position: {
+									   my: 'top center', 
+									   at: 'center center', 
+									   of: window, 
+									   offset: '0 0' 
+								   }
+								});
+							},
 							visible: (($scope.mode=='approve') ||($scope.mode=='view'))?false:true,
 							useSubmitBehavior: true
 						}
 					}]
 				},];
 		$scope.detailFormOptions = { 
-			onInitialized: function(e) {
-				$scope.formInstance = e.component;
-			},
 			onContentReady: function(e){
 				$scope.formInstance = e.component;
+				
 				if ($scope.data.rfctype!==2){
 					$scope.formInstance.itemOption('group1.capexammount', 'visible', false);
 				}
@@ -1129,7 +1167,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 	}
 	$scope.updateRFC = function(e){
 		//console.log($scope.formInstance.option("formData").approvalstatus);
-		if($scope.formInstance.option("formData").approvalstatus==""){
+		if($scope.data.approvalstatus==""){
 			DevExpress.ui.notify({
 				message: "Please select approval action",
 				type: "warning",
@@ -1142,8 +1180,8 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 				   offset: '0 0' 
 			   }
 			});
-		}else if($scope.formInstance.option("formData").approvalstatus==3){
-			var data = $scope.formInstance.option("formData");
+		}else if($scope.data.approvalstatus==3){
+			var data = $scope.data;
 			var date = new Date();
 			var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
 			data.approvaldate = d;
@@ -1169,7 +1207,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 						   offset: '0 0' 
 					   }
 					});
-					$scope.RFCApproval();
+					$location.path( "/rfcapproval" );
 				}
 				
 			});
@@ -1177,7 +1215,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 			criteria = {status:'approver',rfc_id:$scope.Requestid};
 			CrudService.FindData('rfcapp',criteria).then(function (response){
 				if(response.jml>0){
-					var data = $scope.formInstance.option("formData");
+					var data = $scope.data;
 					var date = new Date();
 					var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
 					data.approvaldate = d;
@@ -1203,7 +1241,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 								   offset: '0 0' 
 							   }
 							});
-							$scope.RFCApproval();
+							$location.path( "/rfcapproval" );
 						}
 						
 					});
@@ -1226,7 +1264,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 		
 	}
 	$scope.saveDraft = function(e){
-		var data = $scope.formInstance.option("formData");
+		var data = $scope.data;
 		data.periodstart = $filter("date")(data.periodstart, "yyyy-MM-dd HH:mm");
 		data.periodend = $filter("date")(data.periodend, "yyyy-MM-dd HH:mm");
 		CrudService.Update('rfc',data.id,data).then(function (response) {
@@ -1258,7 +1296,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 				criteria = {status:'approver',rfc_id:$scope.Requestid};
 				CrudService.FindData('rfcdetail',criteria).then(function (response){
 					if(response.jml>0){
-						var data = $scope.formInstance.option("formData");
+						var data = $scope.data;
 						data.periodstart = $filter("date")(data.periodstart, "yyyy-MM-dd HH:mm");
 						data.periodend = $filter("date")(data.periodend, "yyyy-MM-dd HH:mm");
 						data.requeststatus = 1;

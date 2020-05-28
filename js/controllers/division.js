@@ -1,4 +1,5 @@
-app.controller('divCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService)  {
+(function (app) {
+app.register.controller('diviionCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService)  {
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
@@ -84,24 +85,6 @@ app.controller('divCtrl', ['$rootScope','$scope', '$http', '$interval','$locatio
             visible: true
         },
         columns: [
-					/*{
-                    caption: "Detail",
-                    fixed: true,
-                    fixedPosition: "right",
-                    width: 60,
-                    allowFiltering: false,
-                    allowSorting: false,
-                    formItem: { visible: false},
-                    cellTemplate: function (container, options) {
-                        $('<div style="padding:2px 15px 2px 15px;"/>').addClass('dx-icon-arrowright dx-button dx-button-success')
-                            .text('')
-                            .on('dxclick', function () {
-                                DevExpress.ui.notify("Loading detail data for "+options.data.divisionname,"info",600);
-                            })
-                            .appendTo(container);
-                    }
-                    }
-					,*/
 				  {caption: '#',fixed: true,formItem: { visible: false},width: 40,
                         cellTemplate: function(container, options) {
                             container.text(options.rowIndex +1);
@@ -242,3 +225,4 @@ app.controller('divCtrl', ['$rootScope','$scope', '$http', '$interval','$locatio
     };
     
 }]);
+})(app || angular.module("kduApp"));

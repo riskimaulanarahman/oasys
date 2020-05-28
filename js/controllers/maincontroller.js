@@ -71,9 +71,11 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 		loadModule($rootScope.viewRFC,"rfcapproval",false);
 		$rootScope.$broadcast("initRFC", "");
 	}
+	$scope.myDayoff= function(){
+		$location.path( "/dayoff" );
+	}
 	$scope.myRFC= function(){
-		$scope.Filter=false;
-		$scope.template = "template/rfc.html?v=2.08";
+		$location.path( "/rfc" );
 	}
 	$scope.dataLeave= function(){	
 		// loadModule($rootScope.viewDayoff,"approval",false);$rootScope.$broadcast("initDO", "");
@@ -131,13 +133,13 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.dataRFCActivity= function(){loadModule($rootScope.viewRFCActivity,"rfcactivity");} 
 	$scope.dataContractor= function(){loadModule($rootScope.viewRFCContractor,"rfccontractor");} 
 	$scope.dataSKRate= function(){loadModule($rootScope.viewSKRate,"skrate");} 
-	$scope.dayoffApproval= function(){ loadModule(true,"approval",true);$rootScope.$broadcast("initDO", "");} 
+	$scope.dayoffApproval= function(){ loadModule(true,"doapproval",true);$rootScope.$broadcast("initDO", "");} 
 	$scope.RFCApproval= function(){ loadModule(true,"rfcapproval",true);$rootScope.$broadcast("initRFC", "");} 
 	//$scope.dataDayoff= function(){loadModule($rootScope.viewDayoff,"dayoff");} 
 	function loadModule(access,template,filter){
 		if(access || $rootScope.isAdmin){
 			$scope.Filter=filter;
-			$scope.template = "template/"+template+".html?v=2.08";
+			$location.path( "/"+template );
 		}else{
 			DevExpress.ui.notify({
 				message: "You are not authorized to view this page",
@@ -157,14 +159,14 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 		$scope.Userid = data.id;
 		$scope.FirstName = data.firstname;
 		$scope.LastName = data.lastname;
-		$scope.template = "template/detailuser.html?v=2.08";
+		$location.path( "/detailuser" );
 	}
 	$scope.loadEmployee= function(data,mode){
 		$scope.mode = mode;
 		$scope.Employeeid = data.id;
 		$scope.FirstName = data.firstname;
 		$scope.LastName = data.lastname;
-		$scope.template = "template/detailemployee.html?v=2.08";
+		$location.path( "/detailemployee" );
 	}
 	$scope.loadDayoff= function(data,mode,filter){
 		$scope.Filter=filter;
@@ -209,7 +211,6 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 		
 	}
 	$scope.loadRFC= function(data,mode,filter){
-		//if($rootScope.curUser.username=="purwanto_ihm"){
 		$scope.Filter=filter;
 		if (mode=='add'){
 			CrudService.Create('rfc',data).then(function (response) {
@@ -223,7 +224,6 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 					$scope.Requestid = response.id;
 					$scope.Employeeid = response.employee_id;
 					$location.path( "/detailrfc" );
-					//$scope.template = "template/detailrfc.html?v=2.08";
 				}
 			});
 		}else{
@@ -231,9 +231,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 			$scope.Requestid = data.id;
 			$scope.Employeeid = data.employee_id;
 			$location.path( "/detailrfc" );
-			//$scope.template = "template/detailrfc.html?v=2.08";
 		}
-		//}
 	}
 	// $scope.$on('detailData', function(event, id) {
 		// $scope.Userid = id;

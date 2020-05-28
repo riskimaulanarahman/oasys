@@ -4,8 +4,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
     $scope.test=[];
 	$scope.disabled= true;
 	$scope.data = [];  
-    $scope.formInstance={};
-	if (typeof($scope.mode)=="undefined"){
+    if (typeof($scope.mode)=="undefined"){
 		$location.path( "/" );
 	}
 	console.log($scope.mode);
@@ -221,6 +220,18 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 								text: "Save Update",
 								type: "success",
 								onClick: function(){
+									DevExpress.ui.notify({
+										message: "Please wait...!, we are processing your update",
+										type: "info",
+										displayTime: 1000,
+										height: 80,
+										position: {
+										   my: 'top center', 
+										   at: 'center center', 
+										   of: window, 
+										   offset: '0 0' 
+									   }
+									});
 									$scope.data = $scope.formInstance.option("formData");
 									$scope.updateDayoff();
 								},
@@ -234,6 +245,18 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 								text: "Save as Draft",
 								type: "default",
 								onClick: function(){
+									DevExpress.ui.notify({
+										message: "Please wait...!, we are processing your update",
+										type: "info",
+										displayTime: 1000,
+										height: 80,
+										position: {
+										   my: 'top center', 
+										   at: 'center center', 
+										   of: window, 
+										   offset: '0 0' 
+									   }
+									});
 									$scope.data = $scope.formInstance.option("formData");
 									$scope.saveDraft();
 									
@@ -248,6 +271,18 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 								text: "Submit",
 								type: "success",
 								onClick: function(){
+									DevExpress.ui.notify({
+										message: "Please wait...!, we are processing your update",
+										type: "info",
+										displayTime: 3000,
+										height: 80,
+										position: {
+										   my: 'top center', 
+										   at: 'center center', 
+										   of: window, 
+										   offset: '0 0' 
+									   }
+									});
 									$scope.data = $scope.formInstance.option("formData");	
 								},
 								visible: (($scope.mode=='approve') ||($scope.mode=='view'))?false:true,

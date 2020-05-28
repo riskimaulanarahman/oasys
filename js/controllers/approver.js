@@ -1,4 +1,5 @@
-app.controller('approverCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
+(function (app) {
+app.register.controller('approverCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
     $scope.ds={};
     $scope.test=[];
     var myStore = new DevExpress.data.CustomStore({
@@ -336,3 +337,4 @@ app.controller('approverCtrl', ['$rootScope','$scope', '$http', '$interval','$lo
         }
     }
 }]);
+})(app || angular.module("kduApp"));

@@ -1,11 +1,12 @@
-app.controller('rfcapprovalCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
+(function (app) {
+app.register.controller('rfcapprovalCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
 	var myStore = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;
-			criteria = ($scope.Filter)?{pending:'true'}:{filter:'all'};
+			criteria = {pending:'true'};
             return CrudService.FindData('rfcapp',criteria).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.notify(response.message,"error");
@@ -70,13 +71,11 @@ app.controller('rfcapprovalCtrl', ['$rootScope','$scope', '$http', '$interval','
                     allowSorting: false,
                     formItem: { visible: false},
                     cellTemplate: function (container, options) {
-						var icon = ($scope.Filter)?'dx-icon-todo':'dx-icon-detailslayout';
-                        $('<div style="padding:2px 15px 2px 15px;"/>').addClass(icon+'  btn-pill btn-shadow btn btn-primary')
+                        $('<div style="padding:2px 15px 2px 15px;"/>').addClass('dx-icon-todo  btn-pill btn-shadow btn btn-primary')
                             .text('')
                             .on('dxclick', function () {
                                 DevExpress.ui.notify("Loading detail data for "+options.data.requestdate,"info",600);
-								var  mode=($scope.Filter)?'approve':'view';
-								$scope.loadRFC(options.data,mode,$scope.Filter);
+								$scope.loadRFC(options.data,'approve',true);
                             })
                             .appendTo(container);
                     }
@@ -235,3 +234,4 @@ app.controller('rfcapprovalCtrl', ['$rootScope','$scope', '$http', '$interval','
         },                             
     }; 
 }]);
+})(app || angular.module("kduApp"));

@@ -1,4 +1,5 @@
-app.controller('rfccontractorCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
+(function (app) {
+app.register.controller('rfccontractorCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
@@ -241,3 +242,4 @@ app.controller('rfccontractorCtrl', ['$rootScope','$scope', '$http', '$interval'
     };
     
 }]);
+})(app || angular.module("kduApp"));

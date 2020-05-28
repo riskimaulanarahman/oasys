@@ -55,7 +55,7 @@ if (!String.prototype.padStart) {
 var RouteProvider = function () {
 	var scriptPath = "js/controllers/";
 	var templatePath = "template/";
-	var v= '2.03'
+	var v= '2.05'
 	this.resolve = function (name) {
 		var route = {};
 		route.templateUrl = templatePath + name + ".html?v="+v;
@@ -92,6 +92,19 @@ app.config(function ($routeProvider, $controllerProvider) {
 	.when('/doapproval', route.resolve("doapproval"))
 	.when('/rfc', route.resolve("rfc"))
 	.when('/detailrfc', route.resolve("detailrfc"))
+	.when('/rfcapproval', route.resolve("rfcapproval"))
+	.when('/company', route.resolve("company"))
+	.when('/department', route.resolve("department"))
+	.when('/division', route.resolve("division"))
+	.when('/designation', route.resolve("designation"))
+	.when('/employee', route.resolve("employee"))
+	.when('/detailemployee', route.resolve("detailemployee"))
+	.when('/approver', route.resolve("approver"))
+	.when('/holiday', route.resolve("holiday"))
+	.when('/rfcactivity', route.resolve("rfcactivity"))
+	.when('/skrate', route.resolve("skrate"))
+	.when('/rfccontractor', route.resolve("rfccontractor"))
+	.when('/repdo', route.resolve("repdo"))
 	.otherwise({
 		redirectTo: '/'
 	});

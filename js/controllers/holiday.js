@@ -1,4 +1,5 @@
-app.controller('holidayCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
+(function (app) {
+app.register.controller('holidayCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
@@ -108,24 +109,7 @@ app.controller('holidayCtrl', ['$rootScope','$scope', '$http', '$interval','$loc
         headerFilter: {
             visible: true
         },
-        columns: [{
-                    caption: "Detail",
-                    fixed: true,
-                    fixedPosition: "right",
-                    width: 60,
-                    allowFiltering: false,
-                    allowSorting: false,
-                    formItem: { visible: false},
-                    cellTemplate: function (container, options) {
-                        $('<div style="padding:2px 15px 2px 15px;"/>').addClass('dx-icon-arrowright dx-button dx-button-success')
-                            .text('')
-                            .on('dxclick', function () {							
-                                //document.location.href = "?action=viewland&id="+options.data.ID;
-                                DevExpress.ui.notify("Loading detail data for "+options.data.rolename,"info",600);
-                            })
-                            .appendTo(container);
-                    }
-                    }
+        columns: [
                   ,{caption: '#',fixed: true,formItem: { visible: false},width: 40,
                         cellTemplate: function(container, options) {
                             container.text(options.rowIndex +1); //$scope.dataGrid.pageIndex() * $scope.dataGrid.pageSize() + options.rowIndex +1
@@ -259,3 +243,4 @@ app.controller('holidayCtrl', ['$rootScope','$scope', '$http', '$interval','$loc
     };
     
 }]);
+})(app || angular.module("kduApp"));

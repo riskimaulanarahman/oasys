@@ -1,4 +1,5 @@
-app.controller('deptCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService)  {
+(function (app) {
+app.register.controller('departmentCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService)  {
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
@@ -231,3 +232,4 @@ app.controller('deptCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
     };
     
 }]);
+})(app || angular.module("kduApp"));

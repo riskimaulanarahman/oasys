@@ -1,4 +1,5 @@
-app.controller('repdoCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
+(function (app) {
+app.register.controller('repdoCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
@@ -236,3 +237,4 @@ app.controller('repdoCtrl', ['$rootScope','$scope', '$http', '$interval','$locat
         },                             
     }; 
 }]);
+})(app || angular.module("kduApp"));

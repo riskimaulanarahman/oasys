@@ -1,4 +1,5 @@
-app.controller('companyCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService)  {
+(function (app) {
+app.register.controller('companyCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService)  {
     $scope.ds={};
 	var myStore = new DevExpress.data.CustomStore({
 		load: function() {			
@@ -85,25 +86,6 @@ app.controller('companyCtrl', ['$rootScope','$scope', '$http', '$interval','$loc
             visible: true
         },
         columns: [
-				/*{
-                    caption: "Detail",
-                    fixed: true,
-                    fixedPosition: "right",
-                    width: 60,
-                    allowFiltering: false,
-                    allowSorting: false,
-                    formItem: { visible: false},
-                    cellTemplate: function (container, options) {
-                        $('<div style="padding:2px 15px 2px 15px;"/>').addClass('dx-icon-arrowright dx-button dx-button-success')
-                            .text('')
-                            .on('dxclick', function () {
-                                DevExpress.ui.notify("Loading detail data for "+options.data.id,"info",600);
-								//$scope.loadUser(options.data);
-                            })
-                            .appendTo(container);
-                    }
-                    }
-                  ,*/
 				  {caption: '#',fixed: true,formItem: { visible: false},width: 40,
                         cellTemplate: function(container, options) {
                             container.text(options.rowIndex +1); //$scope.dataGrid.pageIndex() * $scope.dataGrid.pageSize() + options.rowIndex +1
@@ -339,3 +321,4 @@ app.controller('companyCtrl', ['$rootScope','$scope', '$http', '$interval','$loc
     };
 	
 }]);
+})(app || angular.module("kduApp"));
