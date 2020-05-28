@@ -463,8 +463,8 @@ Class RfcModule extends Application{
 								$result['fullname']=$fullname;
 							}
 							$data=array("jml"=>count($Rfc));
-						} else if(isset($query['filter'])){
-							$Rfc = Rfc::find('all',array('conditions' => array('RequestStatus>0'),'include' => array('employee')));
+						} else if(isset($query['filter'])){							
+							$Rfc = Rfc::find('all',array('include' => array('employee')));
 							foreach ($Rfc as &$result) {
 								$fullname	= $result->employee->fullname;		
 								$result		= $result->to_array();
