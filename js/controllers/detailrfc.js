@@ -125,7 +125,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 						var rDesc = ["Saved as Draft","Waiting Approval","Require Rework","Approved","Rejected","Not Saved"];
 						$('<span>').appendTo(itemElement).addClass(rClass[val]).text(rDesc[val]);
 					}},
-					{dataField:'companycode',label:{text:"Company Code"},disabled: (($scope.mode=='approve')|| ($scope.mode=='view'))?true:false,
+					{dataField:'companycode',label:{text:"Company Code"},disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
 						editorType: "dxSelectBox",
 						editorOptions: {
 							
@@ -146,8 +146,8 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 							}]
 						
 					},
-					{dataField:'rfcno',label:{text:"RFC No"},disabled: (($scope.mode=='approve')|| ($scope.mode=='view'))?true:false,validationRules: [{type: "required", message: "RFC No is required" }]},
-					{dataField:'activity_id',label:{text:"Activity"},disabled: (($scope.mode=='approve')|| ($scope.mode=='view'))?true:false,editorType: "dxDropDownBox",validationRules: [{type: "required", message: "Please select Activity" }],editorOptions: { 
+					{dataField:'rfcno',label:{text:"RFC No"},disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,validationRules: [{type: "required", message: "RFC No is required" }]},
+					{dataField:'activity_id',label:{text:"Activity"},disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,editorType: "dxDropDownBox",validationRules: [{type: "required", message: "Please select Activity" }],editorOptions: { 
 							dataSource:$scope.activityDatasource,  
 							valueExpr: 'id',
 							displayExpr: 'activitydescr',
@@ -187,12 +187,12 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 						dataField:'paymentterm',
 						editorType: "dxSelectBox",
 						label:{text:"Payment Term"},	
-						disabled: (($scope.mode=='approve')|| ($scope.mode=='view'))?true:false,
+						disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
 						editorOptions: { items: ['7 days','14 days','30 days']},
 						validationRules: [{type: "required", message: "Please Select Payment Term" }]
 					},
-					{dataField:'periodstart',editorType: "dxDateBox",disabled: (($scope.mode=='approve')|| ($scope.mode=='view'))?true:false,validationRules: [{type: "required", message: "Please enter Start Date" }],label: {text: "Period Start"},editorOptions: {displayFormat:"yyyy-MM-dd"}},
-					{dataField:'periodend',editorType: "dxDateBox",disabled: (($scope.mode=='approve')|| ($scope.mode=='view'))?true:false,label: {text: "Period End"},
+					{dataField:'periodstart',editorType: "dxDateBox",disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,validationRules: [{type: "required", message: "Please enter Start Date" }],label: {text: "Period Start"},editorOptions: {displayFormat:"yyyy-MM-dd"}},
+					{dataField:'periodend',editorType: "dxDateBox",disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,label: {text: "Period End"},
 						editorOptions: {
 							displayFormat:"yyyy-MM-dd",
 							width: "100%",
@@ -209,7 +209,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 							}
 						}]
 					},
-					{dataField:'ratetype',label:{text:"Rate Type"},editorType: "dxSelectBox",disabled: (($scope.mode=='approve')|| ($scope.mode=='view'))?true:false,validationRules: [{type: "required", message: "Please Select Rate Type" }],
+					{dataField:'ratetype',label:{text:"Rate Type"},editorType: "dxSelectBox",disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,validationRules: [{type: "required", message: "Please Select Rate Type" }],
 						editorOptions: { items: ['SK','Non SK'],
 							onValueChanged: function(e){
 								criteria = {status:'chrate',ratetype:e.value,rfc_id:$scope.Requestid};
@@ -233,7 +233,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 								
 							}
 						}},
-					{dataField:'skno',disabled: (($scope.mode=='approve')|| ($scope.mode=='view'))?true:false,label:{text:"SK Rate No"},visible:($scope.data.ratetype=='SK')?true:false,editorType: "dxDropDownBox",
+					{dataField:'skno',disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,label:{text:"SK Rate No"},visible:($scope.data.ratetype=='SK')?true:false,editorType: "dxDropDownBox",
 							validationRules: [{
 									type: "required",
 									message: "please input SK No"
@@ -267,8 +267,8 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 								return $dataGrid;
 							}
 						}},
-					{dataField:'rate',disabled: (($scope.mode=='approve')|| ($scope.mode=='view'))?true:false,label:{text:"Rate"},visible:($scope.data.ratetype=='SK')?false:true,validationRules: [{ type: "required", message: "please input Rate" }],},
-					{dataField:'contractor_id',label:{text:"Contractor Recommend 1"},disabled: (($scope.mode=='approve')|| ($scope.mode=='view'))?true:false,editorType: "dxDropDownBox",editorOptions: { 
+					{dataField:'rate',disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,label:{text:"Rate"},visible:($scope.data.ratetype=='SK')?false:true,validationRules: [{ type: "required", message: "please input Rate" }],},
+					{dataField:'contractor_id',label:{text:"Contractor Recommend 1"},disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,editorType: "dxDropDownBox",editorOptions: { 
 							dataSource:$scope.contractorDatasource,  
 							valueExpr: 'id',
 							displayExpr: 'contractorname',
@@ -297,7 +297,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 								return $dataGrid;
 							}
 						}},
-					{dataField:'contractor_id2',label:{text:"Contractor Recommend 2"},disabled: (($scope.mode=='approve')|| ($scope.mode=='view'))?true:false,editorType: "dxDropDownBox",editorOptions: { 
+					{dataField:'contractor_id2',label:{text:"Contractor Recommend 2"},disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,editorType: "dxDropDownBox",editorOptions: { 
 							dataSource:$scope.contractorDatasource,  
 							valueExpr: 'id',
 							displayExpr: 'contractorname',
@@ -333,7 +333,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 						},
 						dataField:"depthead",
 						editorType: "dxDropDownBox",
-						disabled: (($scope.mode=='approve')|| ($scope.mode=='view'))?true:false,
+						disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
 						editorOptions: { 
 							dataSource:$scope.allEmpDataSource,  
 							valueExpr: 'id',
@@ -394,7 +394,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 							}
 						}
 					},
-					{dataField:'rfctype',editorType: "dxSelectBox",label:{text:"RFC Type"},disabled: (($scope.mode=='approve')|| ($scope.mode=='view'))?true:false,validationRules: [{type: "required", message: "Please select RFC Type" }],
+					{dataField:'rfctype',editorType: "dxSelectBox",label:{text:"RFC Type"},disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,validationRules: [{type: "required", message: "Please select RFC Type" }],
 						editorOptions: { 
 							dataSource:$scope.rfcType,  
 							valueExpr: 'id',
@@ -416,15 +416,15 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 						colSpan:2,
 						colCount : 1,
 						items: [
-							{dataField:'oldcontractno',name:'oldcontractno',disabled: (($scope.mode=='approve')|| ($scope.mode=='view'))?true:false,label:{text:"Old Contract No"},visible:($scope.data.rfctype==1)?true:false,validationRules: [{
+							{dataField:'oldcontractno',name:'oldcontractno',disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,label:{text:"Old Contract No"},visible:($scope.data.rfctype==1)?true:false,validationRules: [{
 								type: "required",
 								message: "please input Old Contract No"
 							}]},
-							{dataField:'capexno',name:'capexno',disabled: (($scope.mode=='approve')|| ($scope.mode=='view'))?true:false,label:{text:"Capex No"},visible:($scope.data.isprojectcapex==1)?true:false,validationRules: [{
+							{dataField:'capexno',name:'capexno',disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,label:{text:"Capex No"},visible:($scope.data.isprojectcapex==1)?true:false,validationRules: [{
 									type: "required",
 									message: "please input Capex No"
 								}],tabIndex:0},
-							{dataField:'capexammount',name:'capexammount',disabled: (($scope.mode=='approve')|| ($scope.mode=='view'))?true:false,label:{text:"Capex Ammount"},visible:($scope.data.isprojectcapex==1)?true:false,editorType: "dxNumberBox",
+							{dataField:'capexammount',name:'capexammount',disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,label:{text:"Capex Ammount"},visible:($scope.data.isprojectcapex==1)?true:false,editorType: "dxNumberBox",
 								editorOptions: { 
 									format: "Rp #,##0.##",
 									onValueChanged: function(e){
@@ -436,7 +436,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 									}
 								},
 							},
-							{dataField:'capexspent',name:'capexspent',disabled: (($scope.mode=='approve')|| ($scope.mode=='view'))?true:false,label:{text:"Capex Spent"},visible:($scope.data.isprojectcapex==1)?true:false,dataType:'number',editorType: "dxNumberBox",
+							{dataField:'capexspent',name:'capexspent',disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,label:{text:"Capex Spent"},visible:($scope.data.isprojectcapex==1)?true:false,dataType:'number',editorType: "dxNumberBox",
 								editorOptions: { 
 									format: "Rp #,##0.##",
 									onValueChanged: function(e){
@@ -447,8 +447,8 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 									}
 								},
 							},
-							{dataField:'capexbalance',name:'capexbalance',disabled: (($scope.mode=='approve')|| ($scope.mode=='view'))?true:false,label:{text:"Capex Balance"},visible:($scope.data.isprojectcapex==1)?true:false,dataType:'number',editorType: "dxNumberBox",editorOptions: { disabled:true,format: "Rp #,##0.##",}},
-							{dataField:'rfcammount',name:'rfcammount',disabled: (($scope.mode=='approve')|| ($scope.mode=='view'))?true:false,label:{text:"RFC Ammount"},visible:($scope.data.isprojectcapex==1)?true:false,dataType:'number',editorType: "dxNumberBox",
+							{dataField:'capexbalance',name:'capexbalance',disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,label:{text:"Capex Balance"},visible:($scope.data.isprojectcapex==1)?true:false,dataType:'number',editorType: "dxNumberBox",editorOptions: { disabled:true,format: "Rp #,##0.##",}},
+							{dataField:'rfcammount',name:'rfcammount',disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,label:{text:"RFC Ammount"},visible:($scope.data.isprojectcapex==1)?true:false,dataType:'number',editorType: "dxNumberBox",
 								editorOptions: { 
 									format: "Rp #,##0.##",
 									onValueChanged: function(e){
@@ -457,7 +457,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 									}
 								},
 							},
-							{dataField:'balance',name:'balance',disabled: (($scope.mode=='approve')|| ($scope.mode=='view'))?true:false,label:{text:"Balance after this RFC"},visible:($scope.data.isprojectcapex==1)?true:false,dataType:'number',editorType: "dxNumberBox",editorOptions: { disabled:true,format: "Rp #,##0.##",}},
+							{dataField:'balance',name:'balance',disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,label:{text:"Balance after this RFC"},visible:($scope.data.isprojectcapex==1)?true:false,dataType:'number',editorType: "dxNumberBox",editorOptions: { disabled:true,format: "Rp #,##0.##",}},
 						]
 					},
 							{dataField:'remarks',colSpan:2,editorType:"dxHtmlEditor",visibleIndex:22,editorOptions: {height: 90,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}},
@@ -495,7 +495,8 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 							text: "Back",
 							type: "danger",
 							onClick: function(){
-								$location.path( "/rfc" );
+								var path = ($scope.mode=='report')?"rfcreport":"rfc";
+								$location.path( "/"+path );
 							},
 							visible: ($scope.mode=='approve') ?false:true,
 							useSubmitBehavior: false
@@ -559,7 +560,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 								});
 								$scope.saveDraft();
 							},
-							visible: (($scope.mode=='approve') ||($scope.mode=='view'))?false:true,
+							visible: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?false:true,
 							useSubmitBehavior: false
 						}
 					},{
@@ -583,7 +584,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 								   }
 								});
 							},
-							visible: (($scope.mode=='approve') ||($scope.mode=='view'))?false:true,
+							visible: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?false:true,
 							useSubmitBehavior: true
 						}
 					}]
@@ -597,7 +598,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 				}
 				
 			},
-			readOnly : ($scope.mode=='view')?true:false,
+			readOnly : (($scope.mode=='view')||($scope.mode=='report'))?true:false,
 			labelLocation : "top",
 			minColWidth  :800,
 			colCount : 2,	
@@ -816,9 +817,9 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 		],editing: {
             useIcons:true,
             mode: "cell",
-			allowUpdating:(($scope.mode=='view'))?(($rootScope.isAdmin)?true:false):true,
-			allowAdding:(($scope.mode=='approve') || ($scope.mode=='view'))?(($rootScope.isAdmin)?true:false):true,
-			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view'))?(($rootScope.isAdmin)?true:false):true,
+			allowUpdating:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
             //allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
             //allowAdding: ($rootScope.isAdmin)?true:false, // Enables insertion
             form:{colCount: 1,
@@ -851,14 +852,14 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
         columnMinWidth: 50,
         columnAutoWidth: true,
 		columns: [
-			{dataField:'term',caption:'Other Term & Conditon',width:600,encodeHtml: false,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}}
+			{dataField:'term',caption:'Other Term & Conditon',width:600,encodeHtml: false,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}}
 			
 		],editing: {
             useIcons:true,
             mode: "cell",
-			allowUpdating:(($scope.mode=='view'))?(($rootScope.isAdmin)?true:false):true,
-			allowAdding:(($scope.mode=='approve') || ($scope.mode=='view'))?(($rootScope.isAdmin)?true:false):true,
-			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view'))?(($rootScope.isAdmin)?true:false):true,
+			allowUpdating:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
             //allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
             //allowAdding: ($rootScope.isAdmin)?true:false, // Enables insertion
             form:{colCount: 1,
@@ -908,7 +909,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
         columnMinWidth: 50,
         columnAutoWidth: true,
 		columns: [
-					{dataField:'file_descr',width:250,caption:"File Description",encodeHtml: false,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
+					{dataField:'file_descr',width:250,caption:"File Description",encodeHtml: false,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
 					
 					{
 							dataField: "file_loc",
@@ -939,9 +940,9 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 		],editing: {
             useIcons:true,
             mode: "popup",
-			allowUpdating:(($scope.mode=='view'))?false:true,
-			allowAdding:(($scope.mode=='approve') || ($scope.mode=='view'))?false:true,
-			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view'))?false:true,
+			allowUpdating:(($scope.mode=='view')||($scope.mode=='report'))?false:true,
+			allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?false:true,
+			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?false:true,
             //allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
             //allowAdding: ($rootScope.isAdmin)?true:false, // Enables insertion
             form:{colCount: 2,
@@ -1069,14 +1070,14 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 							valueExpr: "id",
 							displayExpr: "fullname" },
 						editCellTemplate: "dropDownBoxEditorTemplatex" },
-			{dataField:'approvaldate',width:150,format: 'dd/MM/yyyy H:m:s',allowEditing:false, visible: (($scope.mode=='approve') ||($scope.mode=='view'))?true:false},
+			{dataField:'approvaldate',width:150,format: 'dd/MM/yyyy H:m:s',allowEditing:false, visible: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false},
 			{dataField:'approvaltype' ,width:100,allowEditing:false,
 				lookup: {  
 					dataSource:$scope.apptypeDatasource,  
 					valueExpr: 'id',
 					displayExpr: 'approvaltype'
 				}},
-			{dataField:'approvalstatus',width:150,allowEditing:false, visible: (($scope.mode=='approve') ||($scope.mode=='view'))?true:false,encodeHtml: false,
+			{dataField:'approvalstatus',width:150,allowEditing:false, visible: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false,encodeHtml: false,
 			customizeText: function (e) {
 					var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
 					return rDesc[e.value];
@@ -1089,9 +1090,9 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 		editing: {
             useIcons:true,
             mode: "cell",
-			allowUpdating: (($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin)?true:false):true,
-			allowAdding:(($scope.mode=='view'))?(($rootScope.isAdmin)?true:false):true,
-			allowDeleting:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin)?true:false):true,
+			allowUpdating: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowAdding:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowDeleting:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
             form:{colCount: 1,
             },
         },
