@@ -42,7 +42,7 @@ Class ApproverModule extends Application{
 					case 'find':
 						$query=$this->post['query'];
 						if(isset($query['module'])){
-							if(($query['mode']=='view') || ($query['mode']=='approve')){
+							if(($query['mode']=='report') || ($query['mode']=='view') || ($query['mode']=='approve')){
 								$Approver = Approver::find('all', array('conditions' => array("module=? ",$query['module']),'include' => array('employee','approvaltype')));
 							}else{
 								$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
