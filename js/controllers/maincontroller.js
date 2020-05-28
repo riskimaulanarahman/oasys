@@ -60,7 +60,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 		$rootScope.$broadcast("dataRefreshing", true);
 	}
 	$scope.dataDayoff= function(){	
-		loadModule($rootScope.viewDayoff,"approval",false);
+		loadModule($rootScope.viewDayoff,"doreport",false);
 		$rootScope.$broadcast("initDO", "");
 	}
 	$scope.detailDayoff= function(){	
@@ -68,7 +68,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 		$rootScope.$broadcast("initRepDO", "");
 	}
 	$scope.dataRFC= function(){	
-		loadModule($rootScope.viewRFC,"rfcapproval",false);
+		loadModule($rootScope.viewRFC,"rfcreport",false);
 		$rootScope.$broadcast("initRFC", "");
 	}
 	$scope.myDayoff= function(){
@@ -135,7 +135,6 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.dataSKRate= function(){loadModule($rootScope.viewSKRate,"skrate");} 
 	$scope.dayoffApproval= function(){ loadModule(true,"doapproval",true);$rootScope.$broadcast("initDO", "");} 
 	$scope.RFCApproval= function(){ loadModule(true,"rfcapproval",true);$rootScope.$broadcast("initRFC", "");} 
-	//$scope.dataDayoff= function(){loadModule($rootScope.viewDayoff,"dayoff");} 
 	function loadModule(access,template,filter){
 		if(access || $rootScope.isAdmin){
 			$scope.Filter=filter;

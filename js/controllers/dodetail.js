@@ -195,7 +195,8 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 								text: "Back",
 								type: "danger",
 								onClick: function(){
-									$location.path( "/dayoff" );
+									var path = ($scope.mode=='view') ? "dayoff" :"doreport";
+									$location.path( "/"+path );
 								},
 								visible: (($scope.mode=='approve'))  ?false:true,
 								useSubmitBehavior: false
@@ -207,8 +208,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 								text: "Back",
 								type: "danger",
 								onClick: function(){
-									$location.path( "/doapproval" );
-									//$scope.dayoffApproval();							
+									$scope.dayoffApproval();							
 								},
 								visible: ($scope.mode=='approve') ?true:false,
 								useSubmitBehavior: false
@@ -261,7 +261,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 									$scope.saveDraft();
 									
 								},
-								visible: (($scope.mode=='approve') ||($scope.mode=='view'))?false:true,
+								visible: (($scope.mode=='approve') ||($scope.mode=='view') ||($scope.mode=='report'))?false:true,
 								useSubmitBehavior: false
 							}
 						},{
@@ -285,7 +285,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 									});
 									$scope.data = $scope.formInstance.option("formData");	
 								},
-								visible: (($scope.mode=='approve') ||($scope.mode=='view'))?false:true,
+								visible: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?false:true,
 								useSubmitBehavior: true
 							}
 						}]
@@ -423,9 +423,9 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 		],editing: {
             useIcons:true,
             mode: "cell",
-			allowUpdating:(($scope.mode=='view'))?(($rootScope.isAdmin)?true:false):true,
-			allowAdding:(($scope.mode=='approve') || ($scope.mode=='view'))?(($rootScope.isAdmin)?true:false):true,
-			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view'))?(($rootScope.isAdmin)?true:false):true,
+			allowUpdating:(($scope.mode=='view') ||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
             //allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
             //allowAdding: ($rootScope.isAdmin)?true:false, // Enables insertion
             form:{colCount: 1,
@@ -492,14 +492,14 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 							valueExpr: "id",
 							displayExpr: "fullname" },
 						editCellTemplate: "dropDownBoxEditorTemplatex" },
-			{dataField:'approvaldate',width:150,dataType:"date", format:"dd/MM/yyyy",allowEditing:false, visible: (($scope.mode=='approve') ||($scope.mode=='view'))?true:false},
+			{dataField:'approvaldate',width:150,dataType:"date", format:"dd/MM/yyyy",allowEditing:false, visible: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false},
 			{dataField:'approvaltype' ,width:200,allowEditing:false,
 				lookup: {  
 					dataSource:$scope.apptypeDatasource,  
 					valueExpr: 'id',
 					displayExpr: 'approvaltype'
 				}},
-			{dataField:'approvalstatus',width:150,allowEditing:false, visible: (($scope.mode=='approve') ||($scope.mode=='view'))?true:false,encodeHtml: false,
+			{dataField:'approvalstatus',width:150,allowEditing:false, visible: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false,encodeHtml: false,
 			customizeText: function (e) {
 					var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
 					return rDesc[e.value];
@@ -512,8 +512,8 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 		editing: {
             useIcons:true,
             mode: "cell",
-			allowUpdating: (($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin)?true:false):true,
-			allowAdding:(($scope.mode=='view'))?(($rootScope.isAdmin)?true:false):true,
+			allowUpdating: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowAdding:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 			allowDeleting:($rootScope.isAdmin)?true:false,
             form:{colCount: 1,
             },

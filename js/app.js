@@ -55,7 +55,7 @@ if (!String.prototype.padStart) {
 var RouteProvider = function () {
 	var scriptPath = "js/controllers/";
 	var templatePath = "template/";
-	var v= '2.05'
+	var v= '2.06'
 	this.resolve = function (name) {
 		var route = {};
 		route.templateUrl = templatePath + name + ".html?v="+v;
@@ -104,7 +104,9 @@ app.config(function ($routeProvider, $controllerProvider) {
 	.when('/rfcactivity', route.resolve("rfcactivity"))
 	.when('/skrate', route.resolve("skrate"))
 	.when('/rfccontractor', route.resolve("rfccontractor"))
+	.when('/doreport', route.resolve("doreport"))
 	.when('/repdo', route.resolve("repdo"))
+	.when('/rfcreport', route.resolve("rfcreport"))
 	.otherwise({
 		redirectTo: '/'
 	});

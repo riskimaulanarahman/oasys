@@ -1,13 +1,13 @@
 (function (app) {
-app.register.controller('doreportCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
+app.register.controller('rfcreportCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
 	var myStore = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;
-			criteria = {filter:'true'};
-            return CrudService.FindData('doapp',criteria).then(function (response) {
+			criteria = {filter:'all'};
+            return CrudService.FindData('rfcapp',criteria).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.notify(response.message,"error");
 				}else{
@@ -17,7 +17,7 @@ app.register.controller('doreportCtrl', ['$rootScope','$scope', '$http', '$inter
 		},
 	 
 		byKey: function(key) {
-            CrudService.GetById('dayoff',encodeURIComponent(key)).then(function (response) {
+            CrudService.GetById('rfcapp',encodeURIComponent(key)).then(function (response) {
 				return response;
 			});
 		},
@@ -31,7 +31,7 @@ app.register.controller('doreportCtrl', ['$rootScope','$scope', '$http', '$inter
 			
 		}
     });
-	$scope.$on("initDO", function(event, name) {
+	$scope.$on("initRFC", function(event, name) {
 		$scope.dataGrid.refresh();
     });
 	var myData = new DevExpress.data.DataSource({
@@ -43,6 +43,12 @@ app.register.controller('doreportCtrl', ['$rootScope','$scope', '$http', '$inter
 			width: 80 
 		});
     }
+	CrudService.GetAll('rfcactivity').then(function (resp) {
+        $scope.activityDatasource=resp;
+    });
+	CrudService.GetAll('rfccontractor').then(function (resp) {
+        $scope.contractorDatasource=resp;
+    })
     $scope.dataGridOptions = {
         dataSource: myData,
         showColumnLines: true,
@@ -59,7 +65,7 @@ app.register.controller('doreportCtrl', ['$rootScope','$scope', '$http', '$inter
         columns: [{
                     caption: "Detail",
                     fixed: true,
-                    fixedPosition: "right",
+                    fixedPosition: "left",
                     width: 120,
                     allowFiltering: false,
                     allowSorting: false,
@@ -68,25 +74,44 @@ app.register.controller('doreportCtrl', ['$rootScope','$scope', '$http', '$inter
                         $('<div style="padding:2px 15px 2px 15px;"/>').addClass('dx-icon-detailslayout  btn-pill btn-shadow btn btn-primary')
                             .text('')
                             .on('dxclick', function () {
-								$scope.loadDayoff(options.data,"report",false);
+								$scope.loadRFC(options.data,'report',false);
                             })
                             .appendTo(container);
                     }
                 }
-                ,{caption: '#',formItem: { visible: false},width: 40,
+                ,{caption: '#',fixed: true,fixedPosition: "left",formItem: { visible: false},width: 40,
 					cellTemplate: function(container, options) {
 						container.text(options.rowIndex +1);
 					}
                 },
-				{dataField:'requestdate',caption: "Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 150},
-				{dataField:'fullname',caption: "Request by",width: 150},
-				{dataField:'department',caption: "Department",width: 150},
-				{dataField:'requeststatus',encodeHtml: false ,width: 200,
+				{dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 90},
+				{dataField:'fullname',caption:"Request By",fixed: true, fixedPosition: "left"},
+				{dataField:'requeststatus',encodeHtml: false ,fixed: true, fixedPosition: "left",
 					customizeText: function (e) {
 						var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Saved as Draft</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
 						return rDesc[e.value];
 					}},
-				{dataField:'remarks',width: '60%',encodeHtml: false },
+				{dataField:'rfcno',caption:"RFC No",fixed: true, fixedPosition: "left"},
+				{dataField:'activity_id',caption:"Activity",
+					lookup: {
+						dataSource: $scope.activityDatasource,
+						valueExpr: "id",
+						displayExpr: "activitydescr" 
+					}},
+				{dataField:'periodstart',caption:"Period Start",dataType:"date", format:"dd/MM/yyyy",width: 90},
+				{dataField:'periodend',caption:"Period End",dataType:"date", format:"dd/MM/yyyy",width: 90},
+				{dataField:'contractor_id',caption:"Contractor 1",
+					lookup: {
+						dataSource: $scope.contractorDatasource,
+						valueExpr: "id",
+						displayExpr: "contractorname" 
+					}},
+				{dataField:'contractor_id2',caption:"Contractor 2",
+					lookup: {
+						dataSource: $scope.contractorDatasource,
+						valueExpr: "id",
+						displayExpr: "contractorname" 
+					}},
 				{
 							dataField: "approveddoc",
 							caption:"Approval Doc",
@@ -108,19 +133,6 @@ app.register.controller('doreportCtrl', ['$rootScope','$scope', '$http', '$inter
 										}
 									}).appendTo(container);
 								}
-								/*$("<div>")
-									.append($("<a href> Download</a>", {"width":"100%", "href": options.value }))
-									.appendTo(container)
-									.on("click",function(){
-										if (options.value!=""){
-											$scope.imageAddress = options.value;
-											$scope.imageDescription ="Initiated By :"+options.data.InitiatedBy;
-											$scope.imgPopupTitle = "Payment Number : "+options.data.PaymentNumber;
-											$scope.imgPopupVisible = true;
-										}
-										
-									}
-									)*/;
 							}
 						},
                 ],	
@@ -133,6 +145,9 @@ app.register.controller('doreportCtrl', ['$rootScope','$scope', '$http', '$inter
 			//"editing.allowUpdating": "allowEdit" ,
 			//"editing.allowAdding": "allowAdd" ,
 			//"editing.allowDeleting": "allowDel" ,
+			"columns[6].lookup.dataSource":"activityDatasource",
+			"columns[9].lookup.dataSource":"contractorDatasource",
+			"columns[10].lookup.dataSource":"contractorDatasource",
             //"columns[3].lookup.dataSource":"divDatasource"
         },
         columnChooser: {
