@@ -55,7 +55,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 				onContentReady:function(e){
 					$scope.formInstance = e.component;
 				},
-				readOnly : ($scope.mode=='view')?true:false,
+				readOnly : (($scope.mode=='view')||($scope.mode=='report'))?true:false,
 				labelLocation : "top",
 				minColWidth  :800,
 				colCount : 2,
@@ -178,7 +178,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 						},
 						]
 					}, {
-						visible: (($scope.mode=='approve') || ($scope.mode=='view')) ?true:false,
+						visible: (($scope.mode=='approve') || ($scope.mode=='view')|| ($scope.mode=='report')) ?true:false,
 						template: "<span><font color='blue'>Approved Weekend / PH Coverage MTD : <b>" +$scope.data.mtd+"</b> day/s, YTD : <b>" +$scope.data.ytd+"</b> day/s</font></span> "
 					},
 					{
@@ -413,12 +413,12 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
         columnMinWidth: 50,
         columnAutoWidth: true,
 		columns: [
-			{dataField:'dateworked',width:100,caption: "Work Date",dataType:"date", format: 'dd/MM/yyyy',editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now(),disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
-			{dataField:'reason',width:250,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
+			{dataField:'dateworked',width:100,caption: "Work Date",dataType:"date", format: 'dd/MM/yyyy',editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now(),disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			{dataField:'reason',width:250,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
 			//{dataField:'achievement',dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
-			{dataField:'remarks',width:250,encodeHtml: false,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
-			{dataField:'isapproved',width:150,caption: "Approved",dataType: "boolean", showEditorAlways: true ,visible: (($scope.mode=='approve') ||($scope.mode=='view'))?true:false },
-			{dataField:'isused',width:150,caption: "Used",dataType: "boolean", showEditorAlways: true ,visible: ($scope.mode=='view')?true:false},
+			{dataField:'remarks',width:250,encodeHtml: false,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			{dataField:'isapproved',width:150,caption: "Approved",dataType: "boolean", showEditorAlways: true ,visible: (($scope.mode=='approve') ||($scope.mode=='view') ||($scope.mode=='report'))?true:false },
+			{dataField:'isused',width:150,caption: "Used",dataType: "boolean", showEditorAlways: true ,visible: (($scope.mode=='view')||($scope.mode=='report'))?true:false},
 			
 		],editing: {
             useIcons:true,
