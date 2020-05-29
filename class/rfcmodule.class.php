@@ -1047,6 +1047,7 @@ Class RfcModule extends Application{
 						if(isset($query['status'])){
 							switch ($query['status']){
 								case 'last':
+									$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 									$company = $query['companycode'];
 									$id=$query['rfc_id'];
 									$Rfc=Rfc::find($id);
@@ -1054,7 +1055,12 @@ Class RfcModule extends Application{
 									$joins   = "LEFT JOIN tbl_approver ON (tbl_rfcapproval.approver_id = tbl_approver.id) LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id)";
 									$joinx   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";	
 									$companyBU=( ($company=='KPA') )?"KPSI":$company;
-									$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='11' and tbl_employee.companycode=? ",$id,$companyBU)));	
+									echo $Employee->company_id;
+									if (($Employee->company_id=='6') || ($Employee->company_id=='7')){
+										$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='11' and tbl_employee.company_id=? ",$id,$Employee->company_id)));	
+									}else{
+										$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='11' and tbl_employee.companycode=? ",$id,$companyBU)));	
+									}
 									foreach ($Rfcapproval as &$result) {
 										$result		= $result->to_array();
 										$result['no']=1;
@@ -1066,7 +1072,11 @@ Class RfcModule extends Application{
 											$result->delete();
 											$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete BU Head Approval because of change Company Code");
 										}
-										$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='11' and tbl_employee.companycode=?",$companyBU)));
+										if (($Employee->company_id=='6') || ($Employee->company_id=='7')){
+											$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions' => array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='11' and tbl_employee.company_id=? ",$Employee->company_id)));
+										}else {
+											$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='11' and tbl_employee.companycode=?",$companyBU)));
+										}
 										if(count($ApproverBU)>0){
 											$Rfcapproval = new Rfcapproval();
 											$Rfcapproval->rfc_id = $id;
@@ -1433,7 +1443,11 @@ Class RfcModule extends Application{
 									// $Rfcapproval->approver_id = $Approver->id;
 									// $Rfcapproval->save();
 								// }
-								$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='11' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$Employee->companycode,$Employee->id)));
+								if (($Employee->company->sapcode=='RND') || ($Employee->company->sapcode=='NKF')){
+									$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='11' and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+								}else{
+									$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='11' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$Employee->companycode,$Employee->id)));
+								}
 								if(count($ApproverBU)>0){
 									$Rfcapproval = new Rfcapproval();
 									$Rfcapproval->rfc_id = $Rfc->id;
