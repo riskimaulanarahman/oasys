@@ -591,7 +591,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 	}
 	$scope.updateDayoff = function(e){
 		//console.log($scope.formInstance.option("formData").approvalstatus);
-		if($scope.data.approvalstatus==""){
+		if($scope.formInstance.option("formData").approvalstatus==""){
 			DevExpress.ui.notify({
 				message: "Please select approval action",
 				type: "warning",
@@ -604,8 +604,8 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 				   offset: '0 0' 
 			   }
 			});
-		}else if($scope.data.approvalstatus==3){
-			var data = $scope.data;
+		}else if($scope.formInstance.option("formData").approvalstatus==3){
+			var data = $scope.formInstance.option("formData");
 			var date = new Date();
 			var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
 			data.approvaldate = d;
@@ -641,7 +641,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 			criteria = {status:'approver',dayoff_id:$scope.Requestid};
 			CrudService.FindData('doapp',criteria).then(function (response){
 				if(response.jml>0){
-					var data = $scope.data;
+					var data = $scope.formInstance.option("formData");
 					var date = new Date();
 					var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
 					data.approvaldate = d;
@@ -693,7 +693,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 	}
 	
 	$scope.saveDraft = function(e){
-		var data = $scope.data;
+		var data = $scope.formInstance.option("formData");
 		delete data.mtd;
 		delete data.ytd;
 		CrudService.Update('dayoff',data.id,data).then(function (response) {
@@ -725,7 +725,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 				criteria = {status:'approver',dayoff_id:$scope.Requestid};
 				CrudService.FindData('dodetail',criteria).then(function (response){
 					if(response.jml>0){
-						var data = $scope.data;
+						var data = $scope.formInstance.option("formData");;
 						data.requeststatus = 1;
 						delete data.approvalstatus;
 						delete data.mtd;

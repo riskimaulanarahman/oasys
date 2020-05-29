@@ -1169,7 +1169,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 	}
 	$scope.updateRFC = function(e){
 		//console.log($scope.formInstance.option("formData").approvalstatus);
-		if($scope.data.approvalstatus==""){
+		if($scope.formInstance.option("formData").approvalstatus==""){
 			DevExpress.ui.notify({
 				message: "Please select approval action",
 				type: "warning",
@@ -1182,8 +1182,8 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 				   offset: '0 0' 
 			   }
 			});
-		}else if($scope.data.approvalstatus==3){
-			var data = $scope.data;
+		}else if($scope.formInstance.option("formData").approvalstatus==3){
+			var data = $scope.formInstance.option("formData");
 			var date = new Date();
 			var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
 			data.approvaldate = d;
@@ -1217,7 +1217,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 			criteria = {status:'approver',rfc_id:$scope.Requestid};
 			CrudService.FindData('rfcapp',criteria).then(function (response){
 				if(response.jml>0){
-					var data = $scope.data;
+					var data = $scope.formInstance.option("formData");
 					var date = new Date();
 					var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
 					data.approvaldate = d;
@@ -1266,7 +1266,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 		
 	}
 	$scope.saveDraft = function(e){
-		var data = $scope.data;
+		var data = $scope.formInstance.option("formData");
 		data.periodstart = $filter("date")(data.periodstart, "yyyy-MM-dd HH:mm");
 		data.periodend = $filter("date")(data.periodend, "yyyy-MM-dd HH:mm");
 		CrudService.Update('rfc',data.id,data).then(function (response) {
@@ -1298,7 +1298,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 				criteria = {status:'approver',rfc_id:$scope.Requestid};
 				CrudService.FindData('rfcdetail',criteria).then(function (response){
 					if(response.jml>0){
-						var data = $scope.data;
+						var data = $scope.formInstance.option("formData");
 						data.periodstart = $filter("date")(data.periodstart, "yyyy-MM-dd HH:mm");
 						data.periodend = $filter("date")(data.periodend, "yyyy-MM-dd HH:mm");
 						data.requeststatus = 1;
