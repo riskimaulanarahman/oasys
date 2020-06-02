@@ -819,7 +819,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
             useIcons:true,
             mode: "cell",
 			allowUpdating:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
-			allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowAdding:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
             //allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
             //allowAdding: ($rootScope.isAdmin)?true:false, // Enables insertion
@@ -859,7 +859,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
             useIcons:true,
             mode: "cell",
 			allowUpdating:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
-			allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowAdding:( ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
             //allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
             //allowAdding: ($rootScope.isAdmin)?true:false, // Enables insertion
@@ -941,9 +941,9 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 		],editing: {
             useIcons:true,
             mode: "popup",
-			allowUpdating:(($scope.mode=='view')||($scope.mode=='report'))?false:true,
-			allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?false:true,
-			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?false:true,
+			allowUpdating:( ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowAdding:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
             //allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
             //allowAdding: ($rootScope.isAdmin)?true:false, // Enables insertion
             form:{colCount: 2,
@@ -1032,10 +1032,10 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 				}    				
 			},
 			onEditorPrepared: function (e) {
-				if (e.dataField == "Remarks") {
+				if (e.dataField == "file_descr") {
 					var index = e.row.rowIndex;
 					var rm = (typeof(e.value)=="undefined")?"":e.value;
-					$scope.gridInstance.cellValue(index, "Remarks", rm.trim()+" ");
+					$scope.gridInstance.cellValue(index, "file_descr", rm.trim()+" ");
 				}                 
              },
 			onToolbarPreparing: function(e) {
@@ -1091,7 +1091,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 		editing: {
             useIcons:true,
             mode: "cell",
-			allowUpdating: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowUpdating: (($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 			allowAdding:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 			allowDeleting:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
             form:{colCount: 1,
