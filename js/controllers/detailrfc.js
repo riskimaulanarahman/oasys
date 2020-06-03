@@ -1035,7 +1035,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 				if (e.dataField == "file_descr") {
 					var index = e.row.rowIndex;
 					var rm = (typeof(e.value)=="undefined")?"":e.value;
-					$scope.gridInstance.cellValue(index, "file_descr", rm.trim()+" ");
+					$scope.grid2Component.cellValue(index, "file_descr", rm.trim()+" ");
 				}                 
              },
 			onToolbarPreparing: function(e) {
