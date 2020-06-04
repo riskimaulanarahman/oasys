@@ -116,7 +116,7 @@ app.register.controller('repdoCtrl', ['$rootScope','$scope', '$http', '$interval
         columns: [
                 ,{caption: '#',formItem: { visible: false},width: 40,
 					cellTemplate: function(container, options) {
-						container.text(options.rowIndex +1);
+						container.text($scope.gridInstance.pageIndex() * $scope.gridInstance.pageSize()+ options.rowIndex +1);
 					}
                 },
 				{dataField:'dateworked',caption: "Work Date",dataType:"date", format:"dd/MM/yyyy",width: 80},
@@ -156,6 +156,7 @@ app.register.controller('repdoCtrl', ['$rootScope','$scope', '$http', '$interval
             showPageSizeSelector: false,
             allowedPageSizes: [ 20,50],
             showInfo: true,
+			showNavigationButtons:true,
 			visible:true
         },
         /*selection: {
