@@ -999,60 +999,59 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 				e.data.upload_date = $filter("date")(d, 'yyyy-MM-dd HH:mm:ss');
 			},
 		onEditorPreparing: function (e) {
-			console.log(e.dataField);
-				$scope.path = "";
-				if (e.dataField == "upload_date" ) {
-					e.editorName = "dxDateBox";
-					e.editorOptions.displayFormat= "dd/MM/yyyy  HH:mm:ss";
-				} 				
-				if (e.dataField == "FileLoc") {
-					e.editorName = "dxFileUploader";
-					e.editorOptions.uploadMode = "useButtons";
-					e.editorOptions.name = "myFile";
-					e.editorOptions.accept = "image/*,application/pdf,application/msword,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-					e.editorOptions.uploadUrl= "api.php?action=uploadrfcfile&id="+$scope.Requestid;
-					e.editorOptions.onUploaded= function (e) {						
-						$scope.path = e.request.response;
-						console.log(e);
-						$scope.adaFile =false;
+			$scope.path = "";
+			if (e.dataField == "upload_date" ) {
+				e.editorName = "dxDateBox";
+				e.editorOptions.displayFormat= "dd/MM/yyyy  HH:mm:ss";
+			} 				
+			if (e.dataField == "FileLoc") {
+				e.editorName = "dxFileUploader";
+				e.editorOptions.uploadMode = "useButtons";
+				e.editorOptions.name = "myFile";
+				e.editorOptions.accept = "image/*,application/pdf,application/msword,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+				e.editorOptions.uploadUrl= "api.php?action=uploadrfcfile&id="+$scope.Requestid;
+				e.editorOptions.onUploaded= function (e) {						
+					$scope.path = e.request.response;
+					console.log(e);
+					$scope.adaFile =false;
+				}
+				e.editorOptions.onUploadError= function(e) {
+					$scope.path ="";
+					DevExpress.ui.notify(e.request.response,"error");
+				}
+				e.editorOptions.onValueChanged= function(e){					
+					$scope.adaFile = (e.value.length==0)?false:true;
+				}
+			}  
+			if (e.dataField == "file_descr") {
+				e.editorName = "dxHtmlEditor";
+				e.editorOptions.height = 250;
+				e.colSpan = 2;
+				e.editorOptions.toolbar = {	items: ["bold", "italic", "underline"]	};
+			}    				
+		},
+		onEditorPrepared: function (e) {
+			if (e.dataField == "file_descr") {
+				var index = e.row.rowIndex;
+				var rm = (typeof(e.value)=="undefined")?"":e.value;
+				$scope.grid2Component.cellValue(index, "file_descr", rm.trim()+" ");
+			}                 
+		 },
+		onToolbarPreparing: function(e) {
+			$scope.dataGrid = e.component;		
+			e.toolbarOptions.items.unshift(
+			{						
+				location: "after",
+				widget: "dxButton",
+				options: {
+					hint: "Refresh Data",
+					icon: "refresh",
+					onClick: function() {
+						$scope.grid2Component.refresh();
 					}
-					e.editorOptions.onUploadError= function(e) {
-						$scope.path ="";
-						DevExpress.ui.notify(e.request.response,"error");
-					}
-					e.editorOptions.onValueChanged= function(e){					
-						$scope.adaFile = (e.value.length==0)?false:true;
-					}
-				}  
-				if (e.dataField == "file_descr") {
-					e.editorName = "dxHtmlEditor";
-					e.editorOptions.height = 250;
-					e.colSpan = 2;
-					e.editorOptions.toolbar = {	items: ["bold", "italic", "underline"]	};
-				}    				
-			},
-			onEditorPrepared: function (e) {
-				if (e.dataField == "file_descr") {
-					var index = e.row.rowIndex;
-					var rm = (typeof(e.value)=="undefined")?"":e.value;
-					$scope.grid2Component.cellValue(index, "file_descr", rm.trim()+" ");
-				}                 
-             },
-			onToolbarPreparing: function(e) {
-				$scope.dataGrid = e.component;		
-				e.toolbarOptions.items.unshift(
-				{						
-					location: "after",
-					widget: "dxButton",
-					options: {
-						hint: "Refresh Data",
-						icon: "refresh",
-						onClick: function() {
-							$scope.grid2Component.refresh();
-						}
-					}
-				});
-			},
+				}
+			});
+		},
     };
 	$scope.grid3Options = {
 		dataSource: myData3,
