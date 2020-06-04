@@ -660,7 +660,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 	<script language="JavaScript" src="js/lib/dx.all.js" type="text/javascript"></script>
 	<script language="JavaScript" src="js/lib/FileSaver.min.js" type="text/javascript"></script>
 
-	<script language="JavaScript" src="js/app.js?v=2.34" type="text/javascript"></script>
+	<script language="JavaScript" src="js/app.js?v=2.35" type="text/javascript"></script>
 	<script language="JavaScript" src="js/directive.js?v=2.33" type="text/javascript"></script>
 	<script language="JavaScript" src="js/services.js?v=2.33" type="text/javascript"></script>
 	<script language="JavaScript" src="js/filter.js?v=2.33" type="text/javascript"></script>
