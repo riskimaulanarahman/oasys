@@ -57,9 +57,9 @@ app.register.controller('doapprovalCtrl', ['$rootScope','$scope', '$http', '$int
             visible: true
         },
         columns: [{
-                    caption: "Detail",
+                    caption: "Action",
                     fixed: true,
-                    fixedPosition: "right",
+                    fixedPosition: "left",
                     width: 120,
                     allowFiltering: false,
                     allowSorting: false,

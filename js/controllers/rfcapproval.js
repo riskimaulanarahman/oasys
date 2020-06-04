@@ -63,7 +63,7 @@ app.register.controller('rfcapprovalCtrl', ['$rootScope','$scope', '$http', '$in
             visible: true
         },
         columns: [{
-                    caption: "Detail",
+                    caption: "Action",
                     fixed: true,
                     fixedPosition: "left",
                     width: 120,

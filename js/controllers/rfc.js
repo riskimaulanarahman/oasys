@@ -76,7 +76,7 @@ app.register.controller('rfcCtrl', ['$rootScope','$scope', '$http', '$interval',
             visible: true
         },
         columns: [{
-                    caption: "Detail",
+                    caption: "Action",
                     fixed: true,
                     fixedPosition: "left",
                     width: 120,
