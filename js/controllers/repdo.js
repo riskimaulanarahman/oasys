@@ -150,12 +150,13 @@ app.register.controller('repdoCtrl', ['$rootScope','$scope', '$http', '$interval
             enabled: true
         },
         paging: {
-            pageSize: 10
+            pageSize: 20
         },
         pager: {
             showPageSizeSelector: false,
-            allowedPageSizes: [5, 10, 20],
-            showInfo: false
+            allowedPageSizes: [ 20,50],
+            showInfo: true,
+			visible:true
         },
         /*selection: {
             mode: "multiple"
@@ -180,11 +181,21 @@ app.register.controller('repdoCtrl', ['$rootScope','$scope', '$http', '$interval
             width: 240,
             placeholder: "Search..."
         },
-        scrolling: {
+        /*scrolling: {
             mode: "infinite"
-        },
+        },*/
         onContentReady: function(e){
             moveEditColumnToLeft(e.component);
+			// var visibleRowsCount = e.component.totalCount();  
+			// var pageSize = e.component.pageSize(); 
+			// var totalCount = e.component.option('dataSource').length;
+			// console.log(e.component.option('dataSource'));
+			// if (visibleRowsCount>0){
+				// e.component.option('pager.infoText', 'Displaying ' + visibleRowsCount + ' of '+totalCount+' records'); 
+			// }else{
+				// e.component.option('pager.infoText', 'Displaying 0 records');
+			// }
+			
         },
         onEditingStart: function(e) {
             e.component.columnOption("id", "allowEditing", false);
