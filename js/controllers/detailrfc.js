@@ -910,7 +910,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
         columnMinWidth: 50,
         columnAutoWidth: true,
 		columns: [
-					{dataField:'file_descr',width:250,caption:"File Description",encodeHtml: false,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+					{dataField:'file_descr',width:250,caption:"File Description",encodeHtml: false,dataType: "string",editorOptions: {disabled:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?false:true):false}},
 					
 					{
 							dataField: "file_loc",
