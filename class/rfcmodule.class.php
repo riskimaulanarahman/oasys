@@ -133,7 +133,7 @@ Class RfcModule extends Application{
 			$pdfContent .= '<tr><td></td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.$no.' . '.wordwrap($data['description'], 60, "<br>").'</td></tr>';
 			$no++;
 		}
-		$pdfContent .= '<tr><td style="padding:0in 5.4pt 0in 5.4pt;">Rate / SK No</td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.wordwrap($RfcJ->rate, 60, "<br>").'</td></tr>';
+		$pdfContent .= '<tr><td style="padding:0in 5.4pt 0in 5.4pt;">Rate / SK No</td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.wordwrap($RfcJ->rate, 60, "<br>").$RfcJ->skno'</td></tr>';
 		
 		
 		$pdfContent .= "<tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;'>Other Term / Conditions</td>
@@ -727,7 +727,7 @@ Class RfcModule extends Application{
 										$pdfContent .= '<tr><td></td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.$no.' . '.wordwrap($data['description'], 60, "<br>").'</td></tr>';
 										$no++;
 									}
-									$pdfContent .= '<tr><td style="padding:0in 5.4pt 0in 5.4pt;">Rate / SK No</td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.wordwrap($RfcJ->rate, 60, "<br>").'</td></tr>';
+									$pdfContent .= '<tr><td style="padding:0in 5.4pt 0in 5.4pt;">Rate / SK No</td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.wordwrap($RfcJ->rate, 60, "<br>").$RfcJ->skno.'</td></tr>';
 									
 									
 									$pdfContent .= "<tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;'>Other Term / Conditions</td>
