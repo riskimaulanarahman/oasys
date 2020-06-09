@@ -667,15 +667,6 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 	<script language="JavaScript" src="js/lib/dx.all.js" type="text/javascript"></script>
 	<script language="JavaScript" src="js/lib/FileSaver.min.js" type="text/javascript"></script>
 
-<<<<<<< HEAD
-	<script language="JavaScript" src="js/app.js?v=2.37" type="text/javascript"></script>
-	<script language="JavaScript" src="js/directive.js?v=2.33" type="text/javascript"></script>
-	<script language="JavaScript" src="js/services.js?v=2.33" type="text/javascript"></script>
-	<script language="JavaScript" src="js/filter.js?v=2.33" type="text/javascript"></script>
-	<script language="JavaScript" src="js/factory.js?v=2.33" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/maincontroller.js?v=2.33" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/login.js?v=2.33" type="text/javascript"></script>
-=======
 	<script language="JavaScript" src="js/app.js?v=2.39" type="text/javascript"></script>
 	<script language="JavaScript" src="js/directive.js?v=2.39" type="text/javascript"></script>
 	<script language="JavaScript" src="js/services.js?v=2.39" type="text/javascript"></script>
@@ -683,7 +674,6 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 	<script language="JavaScript" src="js/factory.js?v=2.39" type="text/javascript"></script>
 	<script language="JavaScript" src="js/controllers/maincontroller.js?v=2.39" type="text/javascript"></script>
 	<script language="JavaScript" src="js/controllers/login.js?v=2.39" type="text/javascript"></script>
->>>>>>> 7fb4649... Add Module SPKL
 
 	<script language="JavaScript" src="js/script.js?v=2.39" type="text/javascript"></script>
 	<script type="text/javascript" src="assets/scripts/main.js"></script>
