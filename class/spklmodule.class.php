@@ -842,7 +842,7 @@ Class SpklModule extends Application{
 						}
 						break;
 					case 'find':
-						$query=$this->post['query'];					
+						$query=$this->post['query'];
 						if(isset($query['status'])){
 							switch ($query['status']){
 								default:
