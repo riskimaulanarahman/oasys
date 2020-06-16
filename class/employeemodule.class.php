@@ -39,6 +39,46 @@ Class EmployeeModule extends Application{
 						}					
 						echo json_encode($Employee, JSON_NUMERIC_CHECK);
 						break;
+					case 'find':
+						$query=$this->post['query'];
+						if(isset($query['filter'])){
+							switch ($query['filter']){
+								case 'bydept':
+									$dept = $query['dept'];
+									$join = "LEFT join tbl_department on tbl_employee.department_id=tbl_department.id";
+									$Employee = Employee::all(array('joins'=>$join,'conditions' => array("tbl_department.departmentname =? and level_id>1 and (loginname is null or loginname='' or loginname=?)",$dept,$this->currentUser->username),'include' => array('department','company', 'designation'),"order"=>"fullname"));
+									foreach ($Employee as &$result) {
+										$dept=$result->department->departmentname;
+										$comp=$result->company->companycode;
+										$des=$result->designation->designationname;				
+										$result = $result->to_array();
+										$result['department']=$dept;
+										$result['designation']=$des;
+										$result['company']=$comp;
+									}					
+									$data =  json_encode($Employee, JSON_NUMERIC_CHECK);
+									break;
+								case 'bydept2':
+									$dept = $query['dept'];
+									$join = "LEFT join tbl_department on tbl_employee.department_id=tbl_department.id";
+									$Employee = Employee::all(array('joins'=>$join,'conditions' => array("tbl_department.departmentname =?",$dept),'include' => array('department','company', 'designation'),"order"=>"fullname"));
+									foreach ($Employee as &$result) {
+										$dept=$result->department->departmentname;
+										$comp=$result->company->companycode;
+										$des=$result->designation->designationname;				
+										$result = $result->to_array();
+										$result['department']=$dept;
+										$result['designation']=$des;
+										$result['company']=$comp;
+									}					
+									$data =  json_encode($Employee, JSON_NUMERIC_CHECK);
+									break;
+								default:
+									break;
+							}
+						}
+						echo $data;
+						break;
 					case 'create':			
 						$data = $this->post['data'];
 						unset($data['__KEY__']);

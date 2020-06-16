@@ -170,37 +170,50 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.loadDayoff= function(data,mode,filter){
 		$scope.Filter=filter;
 		if (mode=='add'){
-			criteria = {status:'pending',username:data.username};
-			CrudService.FindData('dayoff',criteria).then(function (response){
-				if(response.jml>0){
-					DevExpress.ui.notify({
-						message: "Cannot add more request, You still have unsubmitted draft or pending request",
-						type: "warning",
-						displayTime: 5000,
-						height: 80,
-						position: {
-						   my: 'top center', 
-						   at: 'center center', 
-						   of: window, 
-						   offset: '0 0' 
-					   }
-					});
+			CrudService.Create('dayoff',data).then(function (response) {
+				if(response.status=="error"){
+					 DevExpress.ui.notify(response.message,"error");
+				}else if(response.status=="autherror"){
+					DevExpress.ui.notify(response.message,"error");
+					$scope.logout();
 				}else{
-					CrudService.Create('dayoff',data).then(function (response) {
-						if(response.status=="error"){
-							 DevExpress.ui.notify(response.message,"error");
-						}else if(response.status=="autherror"){
-							DevExpress.ui.notify(response.message,"error");
-							$scope.logout();
-						}else{
-							$scope.mode = mode;
-							$scope.Requestid = response.id;
-							$scope.Employeeid = response.employee_id;
-							$location.path( "/dodetail" );
-						}
-					});
-				}			
-			})
+					$scope.mode = mode;
+					$scope.Requestid = response.id;
+					$scope.Employeeid = response.employee_id;
+					$location.path( "/dodetail" );
+				}
+			});
+			// criteria = {status:'pending',username:data.username};
+			// CrudService.FindData('dayoff',criteria).then(function (response){
+				// if(response.jml>0){
+					// DevExpress.ui.notify({
+						// message: "Cannot add more request, You still have unsubmitted draft or pending request",
+						// type: "warning",
+						// displayTime: 5000,
+						// height: 80,
+						// position: {
+						   // my: 'top center', 
+						   // at: 'center center', 
+						   // of: window, 
+						   // offset: '0 0' 
+					   // }
+					// });
+				// }else{
+					// CrudService.Create('dayoff',data).then(function (response) {
+						// if(response.status=="error"){
+							 // DevExpress.ui.notify(response.message,"error");
+						// }else if(response.status=="autherror"){
+							// DevExpress.ui.notify(response.message,"error");
+							// $scope.logout();
+						// }else{
+							// $scope.mode = mode;
+							// $scope.Requestid = response.id;
+							// $scope.Employeeid = response.employee_id;
+							// $location.path( "/dodetail" );
+						// }
+					// });
+				// }			
+			// })
 		}else{
 			$scope.mode = mode;
 			$scope.Requestid = data.id;

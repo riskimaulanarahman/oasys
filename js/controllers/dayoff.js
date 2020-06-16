@@ -107,7 +107,9 @@ app.register.controller('dayoffCtrl', ['$rootScope','$scope', '$http', '$interva
 						container.text(options.rowIndex +1);
 					}
                 },
+				
 				{dataField:'requestdate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200},
+				{dataField:'fullname',caption:"Request for Employee",width: 200},
 				{dataField:'requeststatus',encodeHtml: false ,width: 300,
 					customizeText: function (e) {
 						var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Saved as Draft</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];

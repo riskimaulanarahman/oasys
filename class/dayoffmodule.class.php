@@ -398,6 +398,7 @@ Class DayoffModule extends Application{
 								$mode= $data['mode'];
 								unset($data['id']);
 								unset($data['superior']);
+								unset($data['createdby']);
 								unset($data['depthead']);
 								unset($data['fullname']);
 								unset($data['department']);
@@ -427,7 +428,9 @@ Class DayoffModule extends Application{
 									$username = $nDayoffapproval->approver->employee->loginname;
 									$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
 									$Dayoffdetail=Dayoffdetail::find('all',array('conditions'=>array("dayoff_id=?",$doid),'include'=>array('dayoff'=>array('employee'=>array('company','department','designation','grade','location')))));
-									
+									$creator = Employee::find('first', array('conditions' => array("id=?",$result->dayoff->createdby)));
+									$usr = Addressbook::find('first',array('conditions'=>array("username=?",$creator->loginname)));
+									$email=$usr->email;
 									foreach ($Dayoffdetail as &$result) {
 										$dayoff=$result->dayoff->to_array();
 										$emp=$result->dayoff->employee->to_array();
@@ -437,8 +440,7 @@ Class DayoffModule extends Application{
 										$grade=$result->dayoff->employee->grade->grade;
 										$location=$result->dayoff->employee->location->location;
 										$comp=$result->dayoff->employee->company->to_array();
-										$usr = Addressbook::find('first',array('conditions'=>array("username=?",$result->dayoff->employee->loginname)));
-										$email=$usr->email;
+										
 										$dept=$result->dayoff->employee->department->to_array();
 										$result = $result->to_array();
 										$result['Dayoff']=$dayoff;
@@ -457,7 +459,7 @@ Class DayoffModule extends Application{
 									switch ($data['approvalstatus']){
 										case '1':
 											$Dayoff->requeststatus = 2;
-											$emto=$email;$emname=$emp['fullname'];
+											$emto=$email;$emname=$usr->fullname;
 											$this->mail->Subject = "Online Approval System -> Need Rework";
 											$red = 'Your Weekend/PH Cov. request require some rework :';
 											$Dayoffhistory->actiontype = 3;
@@ -489,7 +491,7 @@ Class DayoffModule extends Application{
 											// }else{
 												if ($Dayoffapproval->approver->isfinal == 1){
 													$Dayoff->requeststatus = 3;
-													$emto=$email;$emname=$emp['fullname'];
+													$emto=$email;$emname=$usr->fullname;
 													$this->mail->Subject = "Online Approval System -> Approval Completed";
 													$red = '<p>Your Weekend/PH Cov. request has been approved</p>
 													<p><b><span lang=EN-US style=\'color:#002060\'>Note : Please <u>forward</u> this electronic approval to your respective Human Resource Department.</span></b></p>';
@@ -514,7 +516,7 @@ Class DayoffModule extends Application{
 											break;
 										case '3':
 											$Dayoff->requeststatus = 4;
-											$emto=$email;$emname=$emp['fullname'];
+											$emto=$email;$emname=$usr->fullname;
 											$Dayoffhistory->actiontype = 5;
 											$this->mail->Subject = "Online Approval System -> Request Rejected";
 											$red = 'Your Dayoff request has been rejected';
@@ -975,6 +977,7 @@ Class DayoffModule extends Application{
 						unset($data['__KEY__']);
 						unset($data['username']);
 						$data['employee_id']=$Employee->id;
+						$data['createdby']=$Employee->id;
 						$data['RequestStatus']=0;
 						try{
 							$Dayoff = Dayoff::create($data);
@@ -1313,7 +1316,7 @@ Class DayoffModule extends Application{
 						$id = $this->post['id'];
 						$Employee = Employee::find($id);
 						if ($Employee){
-							$Dayoff = Dayoff::find('all', array('conditions' => array("employee_id=?",$Employee->id),'include' => array('employee')));
+							$Dayoff = Dayoff::find('all', array('conditions' => array("createdby=?",$Employee->id),'include' => array('employee')));
 							foreach ($Dayoff as &$result) {
 								$fullname	= $result->employee->fullname;		
 								$result		= $result->to_array();
@@ -1328,9 +1331,18 @@ Class DayoffModule extends Application{
 						$query=$this->post['query'];					
 						if(isset($query['status'])){
 							switch ($query['status']){
+								case 'pending':
+									$Dayoff = Dayoff::find('all', array('conditions' => array("employee_id=? and RequestStatus<3 and id<>?",$query['username'],$query['id']),'include' => array('employee')));
+									foreach ($Dayoff as &$result) {
+										$fullname	= $result->employee->fullname;		
+										$result		= $result->to_array();
+										$result['fullname']=$fullname;
+									}
+									$data=array("jml"=>count($Dayoff));
+									break;
 								default:
-									$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-									$Dayoff = Dayoff::find('all', array('conditions' => array("employee_id=? and RequestStatus<3",$Employee->id),'include' => array('employee')));
+									//$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->post['username'])));
+									$Dayoff = Dayoff::find('all', array('conditions' => array("employee_id=? and RequestStatus>0 and RequestStatus<3 and id<>?",$query['username'],$query['id']),'include' => array('employee')));
 									foreach ($Dayoff as &$result) {
 										$fullname	= $result->employee->fullname;		
 										$result		= $result->to_array();
@@ -1347,7 +1359,7 @@ Class DayoffModule extends Application{
 					default:
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 						if ($Employee){
-							$Dayoff = Dayoff::find('all', array('conditions' => array("employee_id=?",$Employee->id),'include' => array('employee')));
+							$Dayoff = Dayoff::find('all', array('conditions' => array("createdby=?",$Employee->id),'include' => array('employee')));
 							foreach ($Dayoff as &$result) {
 								$fullname=$result->employee->fullname;
 								$result = $result->to_array();
