@@ -77,6 +77,9 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.myRFC= function(){
 		$location.path( "/rfc" );
 	}
+	$scope.mySPKL= function(){
+		$location.path( "/spkl" );
+	}
 	$scope.dataLeave= function(){	
 		// loadModule($rootScope.viewDayoff,"approval",false);$rootScope.$broadcast("initDO", "");
 		DevExpress.ui.notify({
@@ -135,6 +138,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.dataSKRate= function(){loadModule($rootScope.viewSKRate,"skrate");} 
 	$scope.dayoffApproval= function(){ loadModule(true,"doapproval",true);$rootScope.$broadcast("initDO", "");} 
 	$scope.RFCApproval= function(){ loadModule(true,"rfcapproval",true);$rootScope.$broadcast("initRFC", "");} 
+	$scope.SPKLApproval= function(){ loadModule(true,"spklapproval",true);$rootScope.$broadcast("initSPKL", "");} 
 	function loadModule(access,template,filter){
 		if(access || $rootScope.isAdmin){
 			$scope.Filter=filter;
@@ -221,6 +225,29 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 			$location.path( "/dodetail" );
 		}
 		
+	}
+	$scope.loadSPKL= function(data,mode,filter){
+		$scope.Filter=filter;
+		if (mode=='add'){
+			CrudService.Create('spkl',data).then(function (response) {
+				if(response.status=="error"){
+					 DevExpress.ui.notify(response.message,"error");
+				}else if(response.status=="autherror"){
+					DevExpress.ui.notify(response.message,"error");
+					$scope.logout();
+				}else{
+					$scope.mode = mode;
+					$scope.Requestid = response.id;
+					$scope.Employeeid = response.employee_id;
+					$location.path( "/detailspkl" );
+				}
+			});
+		}else{
+			$scope.mode = mode;
+			$scope.Requestid = data.id;
+			$scope.Employeeid = data.employee_id;
+			$location.path( "/detailspkl" );
+		}
 	}
 	$scope.loadRFC= function(data,mode,filter){
 		$scope.Filter=filter;

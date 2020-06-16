@@ -1,5 +1,5 @@
 (function (app) {
-app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
+app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
@@ -7,8 +7,13 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
     if (typeof($scope.mode)=="undefined"){
 		$location.path( "/" );
 	}
-	console.log($scope.mode);
-	CrudService.GetById('dayoff',$scope.Requestid).then(function(response){
+	function moveEditColumnToLeft(dataGrid) {
+		dataGrid.columnOption("command:edit", { 
+			visibleIndex: -1,
+			width: 80 
+		});
+    }
+	CrudService.GetById('spkl',$scope.Requestid).then(function(response){
 		if(response.status=="autherror"){
 			$scope.logout();
 		}else{
@@ -17,7 +22,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 				$scope.data.remarks="";
 			}
 			//if($scope.mode!=="add"){
-				CrudService.GetById('dodetail',$scope.Requestid).then(function (resp) {
+				CrudService.GetById('spkldetail',$scope.Requestid).then(function (resp) {
 					$scope.dataGrid1=resp;
 				}).finally(function() {
 					$scope.grid1Loaded = true;
@@ -36,40 +41,6 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 							}
 						});
 					},
-				}),
-				sort: "id"
-			}
-			$scope.deptEmpDataSource = {
-				store: new DevExpress.data.CustomStore({
-					key: "id",
-					loadMode: "raw",
-					load: function() {
-						criteria = {filter:'bydept',dept:$scope.data.department};
-						return CrudService.FindData('emp',criteria).then(function (response) {
-							if(response.status=="error"){
-								DevExpress.ui.notify(response.message,"error");
-							}else{
-								return response;
-							}
-						});
-					}
-				}),
-				sort: "id"
-			}
-			$scope.allDeptEmpDataSource = {
-				store: new DevExpress.data.CustomStore({
-					key: "id",
-					loadMode: "raw",
-					load: function() {
-						criteria = {filter:'bydept2',dept:$scope.data.department};
-						return CrudService.FindData('emp',criteria).then(function (response) {
-							if(response.status=="error"){
-								DevExpress.ui.notify(response.message,"error");
-							}else{
-								return response;
-							}
-						});
-					}
 				}),
 				sort: "id"
 			}
@@ -95,117 +66,11 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 						colCount : 2,
 						colSpan :2,
 						items: [
-						
-						{dataField:'requestdate',editorType: "dxDateBox",label: {text: "Creation Date"},editorOptions: {displayFormat:"dd/MM/yyyy",disabled: true}},
-						{label: {
-								text: "Created By"
-							},
-							dataField:"createdby",
-							editorType: "dxDropDownBox",
-							visible: true,
-							disabled: true,
-							editorOptions: { 
-								dataSource:(($scope.mode=='add')||($scope.mode=='edit'))?$scope.deptEmpDataSource:$scope.allDeptEmpDataSource,  
-								valueExpr: 'id',
-								displayExpr: 'fullname',
-								searchEnabled: true,
-								contentTemplate: function(e){
-									var $dataGrid = $("<div>").dxDataGrid({
-										dataSource: e.component.option("dataSource"),
-										columns: [{dataField:"fullname",width:100},{dataField:"company",width:50}, {dataField:"department",width:200}],
-										height: 265,
-										selection: { mode: "single" },
-										selectedRowKeys: [e.component.option("value")],
-										focusedRowEnabled: true,
-										focusedRowKey: e.component.option("value"),
-										searchPanel: {
-											visible: true,
-											width: 265,
-											placeholder: "Search..."
-										},
-										onSelectionChanged: function(selectedItems){
-											var keys = selectedItems.selectedRowKeys,
-												hasSelection = keys.length;
-											e.component.option("value", hasSelection ? keys[0] : null); 
-											e.component.close();
-										}
-									});
-									return $dataGrid;
-								}
-							},
-							validationRules: [{
-								type: "required",
-								message: "Please select your direct superior"
-							}]
-						},
-						{label: {
-								text: "Create for Employee"
-							},
-							dataField:"employee_id",
-							editorType: "dxDropDownBox",
-							visible: true,
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-							editorOptions: { 
-								dataSource:(($scope.mode=='add')||($scope.mode=='edit'))?$scope.deptEmpDataSource:$scope.allDeptEmpDataSource,    
-								valueExpr: 'id',
-								displayExpr: 'fullname',
-								searchEnabled: true,
-								contentTemplate: function(e){
-									var $dataGrid = $("<div>").dxDataGrid({
-										dataSource: e.component.option("dataSource"),
-										columns: [{dataField:"fullname",width:100},{dataField:"company",width:50}, {dataField:"department",width:200}],
-										height: 265,
-										selection: { mode: "single" },
-										selectedRowKeys: [e.component.option("value")],
-										focusedRowEnabled: true,
-										focusedRowKey: e.component.option("value"),
-										searchPanel: {
-											visible: true,
-											width: 265,
-											placeholder: "Search..."
-										},
-										onSelectionChanged: function(selectedItems){
-											var keys = selectedItems.selectedRowKeys,
-												hasSelection = keys.length;
-											if(hasSelection){
-												criteria = {status:'pending',username:keys[0],id:$scope.Requestid};
-												CrudService.FindData('dayoffbyemp',criteria).then(function (response){
-													if(response.jml>0){
-														DevExpress.ui.notify({
-															message: "Cannot add more request, Selected employee still have unsubmitted draft or pending request",
-															type: "warning",
-															displayTime: 5000,
-															height: 80,
-															position: {
-															   my: 'top center', 
-															   at: 'center center', 
-															   of: window, 
-															   offset: '0 0' 
-														   }
-														});
-													}else{
-														
-														e.component.option("value", keys[0]); 
-														e.component.close();
-													}
-												})
-											}
-										}
-									});
-									return $dataGrid;
-								},onValueChanged: function(e){
-									console.log(e);
-									criteria = {status:'chemp',employee_id:e.value,dayoff_id:$scope.Requestid};
-									CrudService.FindData('dayoff',criteria).then(function (response){
-										$scope.grid2Component.refresh();
-									})
-								}
-							},
-							validationRules: [{
-								type: "required",
-								message: "Please select your direct superior"
-							}]
-						},
+						{dataField:'createddate',editorType: "dxDateBox",label: {text: "Creation Date"},editorOptions: {displayFormat:"dd/MM/yyyy",disabled: true}},
+						{dataField:'datework',editorType: "dxDateBox",label: {text: "Date Work"},editorOptions: {displayFormat:"dd/MM/yyyy"},validationRules: [{
+							type: "required",
+							message: "Please select Work Date"
+						}]},
 						{dataField:'requeststatus',label: {text: "Request Status"},template: function(data, itemElement) {  
 							var val = data.editorOptions.value;
 							$scope.reqStatus = data.editorOptions.value;
@@ -214,50 +79,6 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 							var rDesc = ["Saved as Draft","Waiting Approval","Require Rework","Approved","Rejected","Not Saved"];
 							$('<span>').appendTo(itemElement).addClass(rClass[val]).text(rDesc[val]);
 						}},
-						{dataField:'remarks',colSpan:2,editorType:"dxHtmlEditor",editorOptions: {height: 190,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}},
-						{label: {
-								text: "Direct Superior"
-							},
-							dataField:"superior",
-							editorType: "dxDropDownBox",
-							visible: true,
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-							editorOptions: { 
-								dataSource:$scope.allEmpDataSource,  
-								valueExpr: 'id',
-								displayExpr: 'fullname',
-								searchEnabled: true,
-								contentTemplate: function(e){
-									var $dataGrid = $("<div>").dxDataGrid({
-										dataSource: e.component.option("dataSource"),
-										columns: [{dataField:"fullname",width:100},{dataField:"company",width:50}, {dataField:"department",width:200}],
-										height: 265,
-										selection: { mode: "single" },
-										selectedRowKeys: [e.component.option("value")],
-										focusedRowEnabled: true,
-										focusedRowKey: e.component.option("value"),
-										searchPanel: {
-											visible: true,
-											width: 265,
-											placeholder: "Search..."
-										},
-										onSelectionChanged: function(selectedItems){
-											var keys = selectedItems.selectedRowKeys,
-												hasSelection = keys.length;
-											if(hasSelection){
-												e.component.option("value", keys[0]); 
-												e.component.close();
-											}
-										}
-									});
-									return $dataGrid;
-								}
-							},
-							validationRules: [{
-								type: "required",
-								message: "Please select your direct superior"
-							}]
-						},
 						{label: {
 								text: "Department Head"
 							},
@@ -287,10 +108,8 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 										onSelectionChanged: function(selectedItems){
 											var keys = selectedItems.selectedRowKeys,
 												hasSelection = keys.length;
-											if(hasSelection){
-												e.component.option("value", keys[0]); 
-												e.component.close();
-											}
+											e.component.option("value", hasSelection ? keys[0] : null); 
+											e.component.close();
 										}
 									});
 									return $dataGrid;
@@ -301,6 +120,8 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 								message: "Please select your department head"
 							}]
 						},
+						{dataField:'remarks',colSpan:2,editorType:"dxHtmlEditor",editorOptions: {height: 190,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}},
+						
 						{label: {
 								text: "Approval Action"
 							},
@@ -320,8 +141,6 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 							}]
 						},
 						]
-					}, {
-						template: "<span><font color='blue'>Approved Weekend / PH Coverage MTD : <b>" +$scope.data.mtd+"</b> day/s, YTD : <b>" +$scope.data.ytd+"</b> day/s</font></span> "
 					},
 					{
 						itemType: "group"
@@ -337,7 +156,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 								text: "Back",
 								type: "danger",
 								onClick: function(){
-									var path = ($scope.mode=='report') ? "doreport" :"dayoff";
+									var path = ($scope.mode=='report') ? "reportspkl" :"spkl";
 									$location.path( "/"+path );
 								},
 								visible: (($scope.mode=='approve'))  ?false:true,
@@ -350,7 +169,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 								text: "Back",
 								type: "danger",
 								onClick: function(){
-									$scope.dayoffApproval();							
+									$scope.spklApproval();							
 								},
 								visible: ($scope.mode=='approve') ?true:false,
 								useSubmitBehavior: false
@@ -375,7 +194,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 									   }
 									});
 									$scope.data = $scope.formInstance.option("formData");
-									$scope.updateDayoff();
+									$scope.updateSpkl();
 								},
 								visible: ($scope.mode=='approve') ?true:false,
 								useSubmitBehavior: false
@@ -400,7 +219,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 									   }
 									});
 									$scope.data = $scope.formInstance.option("formData");
-									$scope.saveDraft();
+									$scope.saveSpklDraft();
 									
 								},
 								visible: (($scope.mode=='approve') ||($scope.mode=='view') ||($scope.mode=='report'))?false:true,
@@ -413,34 +232,18 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 								text: "Submit",
 								type: "success",
 								onClick: function(){
-									var result = $scope.formInstance.validate();  
-									if (result.isValid) {  
-										DevExpress.ui.notify({
-											message: "Please wait...!, we are processing your update",
-											type: "info",
-											displayTime: 3000,
-											height: 80,
-											position: {
-											   my: 'top center', 
-											   at: 'center center', 
-											   of: window, 
-											   offset: '0 0' 
-										   }
-										});
-									} else {
-										DevExpress.ui.notify({
-											message: "Your form is not complete or has invalid value, please recheck before submit",
-											type: "warning",
-											displayTime: 3000,
-											height: 80,
-											position: {
-											   my: 'top center', 
-											   at: 'center center', 
-											   of: window, 
-											   offset: '0 0' 
-										   }
-										});
-									}
+									DevExpress.ui.notify({
+										message: "Please wait...!, we are processing your update",
+										type: "info",
+										displayTime: 3000,
+										height: 80,
+										position: {
+										   my: 'top center', 
+										   at: 'center center', 
+										   of: window, 
+										   offset: '0 0' 
+									   }
+									});
 									$scope.data = $scope.formInstance.option("formData");	
 								},
 								visible: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?false:true,
@@ -455,17 +258,16 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 	var myStore = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;
-			return CrudService.GetById('dodetail',$scope.Requestid);         		
+			return CrudService.GetById('spkldetail',$scope.Requestid);         		
 		},
 		byKey: function(key) {
-            CrudService.GetById('dodetail',encodeURIComponent(key)).then(function (response) {
+            CrudService.GetById('spkldetail',encodeURIComponent(key)).then(function (response) {
 				return response;
 			});
 		},
 		insert: function(values) {
-			values.dateworked = $filter("date")(values.dateworked, "yyyy-MM-dd HH:mm")
-			values.dayoff_id=$scope.Requestid;
-            CrudService.Create('dodetail',values).then(function (response) {
+			values.spkl_id=$scope.Requestid;
+            CrudService.Create('spkldetail',values).then(function (response) {
 				if(response.status=="error"){
 					 DevExpress.ui.notify(response.message,"error");
 				}
@@ -473,8 +275,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 			});
 		},
 		update: function(key, values) {
-			values.dateworked = $filter("date")(values.dateworked, "yyyy-MM-dd HH:mm")
-            CrudService.Update('dodetail',key.id,values).then(function (response) {
+            CrudService.Update('spkldetail',key.id,values).then(function (response) {
 				if(response.status=="error"){
 					 DevExpress.ui.notify(response.message,"error");
 				}
@@ -482,7 +283,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 			});
 		},
 		remove: function(key) {
-			CrudService.Delete('dodetail',key.id).then(function (response) {
+			CrudService.Delete('spkldetail',key.id).then(function (response) {
 				if(response.status=="error"){
 					 DevExpress.ui.notify(response.message,"error");
 				}
@@ -496,17 +297,17 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 	var myStore2 = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;
-			return CrudService.GetById('doapp',$scope.Requestid);         		
+			return CrudService.GetById('spklapp',$scope.Requestid);         		
 		},
 		byKey: function(key) {
-            CrudService.GetById('doapp',encodeURIComponent(key)).then(function (response) {
+            CrudService.GetById('spklapp',encodeURIComponent(key)).then(function (response) {
 				return response;
 			});
 		},
 		insert: function(values) {
 			values.approvaldate = $filter("date")(values.approvaldate, "yyyy-MM-dd HH:mm")
-			values.dayoff_id=$scope.Requestid;
-            CrudService.Create('doapp',values).then(function (response) {
+			values.spkl_id=$scope.Requestid;
+            CrudService.Create('spklapp',values).then(function (response) {
 				if(response.status=="error"){
 					 DevExpress.ui.notify(response.message,"error");
 				}
@@ -515,7 +316,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 		},
 		update: function(key, values) {
 			values.approvaldate = $filter("date")(values.approvaldate, "yyyy-MM-dd HH:mm")
-            CrudService.Update('doapp',key.id,values).then(function (response) {
+            CrudService.Update('spklapp',key.id,values).then(function (response) {
 				if(response.status=="error"){
 					 DevExpress.ui.notify(response.message,"error");
 				}
@@ -523,7 +324,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 			});
 		},
 		remove: function(key) {
-			CrudService.Delete('doapp',key.id).then(function (response) {
+			CrudService.Delete('spklapp',key.id).then(function (response) {
 				if(response.status=="error"){
 					 DevExpress.ui.notify(response.message,"error");
 				}
@@ -534,7 +335,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 	var myStore3 = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;
-			return CrudService.GetById('dohist',$scope.Requestid);         		
+			return CrudService.GetById('spklhist',$scope.Requestid);         		
 		},
 		byKey: function(key) {
             //
@@ -556,7 +357,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 		store: myStore3
     });
 	$scope.tabs = [
-		{ id:1, TabName : "Dayoff Detail", title: 'Detail Dayoff Request', template: "tab1"   },
+		{ id:1, TabName : "Detail SPKL", title: 'Detail SPKL / Employee List', template: "tab1"   },
 		{ id:2, TabName : "Approver List", title: 'Approver List', template: "tab2"   },
 		{ id:3, TabName : "History Tracking", title: 'History Tracking', template: "tab3"   },
 	];
@@ -570,17 +371,30 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 		columnResizingMode : "widget",
         columnMinWidth: 50,
         columnAutoWidth: true,
-		columns: [
-			{dataField:'dateworked',width:100,caption: "Work Date",dataType:"date", format: 'dd/MM/yyyy',editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now(),disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
-			{dataField:'reason',width:250,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
-			//{dataField:'achievement',dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
+		columns: [{
+					dataField: "employee_id",
+					caption: "Employee",
+					width: 200,
+					allowSorting: false,
+					visible:false,
+					lookup: {
+						dataSource: $scope.allEmpDataSource,
+						valueExpr: "id",
+						displayExpr: "fullname" 
+					},
+					editCellTemplate: "dropDownBoxEditorTemplate" 
+			},
+			{dataField:'fullname',width:250,dataType: "string",editorOptions: {disabled:true},formItem: { visible: false},},	
+			{dataField:'sapid',width:250,dataType: "string",editorOptions: {disabled:true},formItem: { visible: false}},	
+			{dataField:'position',caption: "Position",width:250,dataType: "string",editorOptions: {disabled:true},formItem: { visible: false}},
+			{dataField:'estimatenormalhours',caption: "Normal Hours Estimate (hrs)",width:100,dataType: "number",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			{dataField:'estimateovertimehours',caption: "Overtime Hours Estimate (hrs)",width:100,dataType: "number",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			{dataField:'target',caption: "Target Work",encodeHtml: false,width:250,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
 			{dataField:'remarks',width:250,encodeHtml: false,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
-			{dataField:'isapproved',width:150,caption: "Approved",dataType: "boolean", showEditorAlways: true ,visible: (($scope.mode=='approve') ||($scope.mode=='view') ||($scope.mode=='report'))?true:false },
-			{dataField:'isused',width:150,caption: "Used",dataType: "boolean", showEditorAlways: true ,visible: (($scope.mode=='view')||($scope.mode=='report'))?true:false},
-			
+			{dataField:'isapproved',width:150,caption: "Approved",dataType: "boolean", showEditorAlways: true,formItem: { visible: (($scope.mode=='approve') ||($scope.mode=='view') ||($scope.mode=='report'))?true:false} ,visible: (($scope.mode=='approve') ||($scope.mode=='view') ||($scope.mode=='report'))?true:false },	
 		],editing: {
             useIcons:true,
-            mode: "cell",
+            mode: "popup",
 			allowUpdating:(($scope.mode=='view') ||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 			allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
@@ -592,9 +406,9 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 		onInitialized:function (e){
 			$scope.grid1Component = e.component;
 		},
-		onEditorPreparing: function (e) {  
-			$scope.grid1Component = e.component;
-		},
+		onContentReady: function(e){
+            moveEditColumnToLeft(e.component);
+        },
 		onEditorPreparing: function (e) {  
 			$scope.grid1Component = e.component;
 			if ((e.dataField == "isapproved") || (e.dataField == "isused")){
@@ -602,7 +416,12 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
                 e.editorOptions.layout = "horizontal";
 				e.editorOptions.items = $scope.appText;
                 //e.editorOptions.switchedOffText = "No";
-            }  
+            }
+			if((e.dataField == "target") || (e.dataField == "remarks")){
+				e.editorName = "dxHtmlEditor";
+				e.editorOptions.height = 250;
+				e.editorOptions.toolbar = {	items: ["bold", "italic", "underline"]	};
+			} 
 		},
 		onToolbarPreparing: function(e) {   
             e.toolbarOptions.items.unshift({						
@@ -625,7 +444,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
             key: "id",
             loadMode: "raw",
             load: function() {
-				criteria = {module:'Dayoff',mode:$scope.mode};
+				criteria = {module:'SPKL',mode:$scope.mode};
                 return CrudService.FindData('appr',criteria);
             },
             // byKey:function(key){
@@ -682,9 +501,9 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 		onInitialized:function (e){
 			$scope.grid2Component = e.component;
 		},
-		onEditorPreparing: function (e) {  
-			$scope.grid2Component = e.component;
-		},
+		onContentReady: function(e){
+            moveEditColumnToLeft(e.component);
+        },
 		onToolbarPreparing: function(e) {
             $scope.dataGrid2 = e.component;
     
@@ -730,9 +549,9 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 		onInitialized:function (e){
 			$scope.grid3Component = e.component;
 		},
-		onEditorPreparing: function (e) {  
-			$scope.grid3Component = e.component;
-		},
+		onContentReady: function(e){
+            moveEditColumnToLeft(e.component);
+        },
 		onToolbarPreparing: function(e) {   
             e.toolbarOptions.items.unshift({						
                 location: "after",
@@ -756,7 +575,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 			selectedIndex: 'selectedTab'
 		},
 	}
-	$scope.updateDayoff = function(e){
+	$scope.updateSpkl = function(e){
 		//console.log($scope.formInstance.option("formData").approvalstatus);
 		if($scope.formInstance.option("formData").approvalstatus==""){
 			DevExpress.ui.notify({
@@ -778,13 +597,10 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 			data.approvaldate = d;
 			data.mode="approve";
 			delete data.createddate;
-			delete data.datework;
 			delete data.employee_id;
 			delete data.requeststatus;
 			delete data.depthead;
-			delete data.fullname;
-			delete data.department;
-			CrudService.Update('doapp',data.id,data).then(function (response) {
+			CrudService.Update('spklapp',data.id,data).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.notify(response.message,"error");
 				}else{
@@ -800,13 +616,13 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 						   offset: '0 0' 
 					   }
 					});
-					$location.path( "/doapproval" );
+					$location.path( "/spklapproval" );
 				}
 				
 			});
 		}else{
-			criteria = {status:'approver',dayoff_id:$scope.Requestid};
-			CrudService.FindData('doapp',criteria).then(function (response){
+			criteria = {status:'approver',spkl_id:$scope.Requestid};
+			CrudService.FindData('spklapp',criteria).then(function (response){
 				if(response.jml>0){
 					var data = $scope.formInstance.option("formData");
 					var date = new Date();
@@ -814,13 +630,10 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 					data.approvaldate = d;
 					data.mode="approve";
 					delete data.createddate;
-					delete data.datework;
 					delete data.employee_id;
 					delete data.requeststatus;
 					delete data.depthead;
-					delete data.fullname;
-					delete data.department;
-					CrudService.Update('doapp',data.id,data).then(function (response) {
+					CrudService.Update('spklapp',data.id,data).then(function (response) {
 						if(response.status=="error"){
 							DevExpress.ui.notify(response.message,"error");
 						}else{
@@ -836,7 +649,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 								   offset: '0 0' 
 							   }
 							});
-							$location.path( "/doapproval" );
+							$location.path( "/spklapproval" );
 						}
 						
 					});
@@ -859,11 +672,14 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 		
 	}
 	
-	$scope.saveDraft = function(e){
+	$scope.saveSpklDraft = function(e){
 		var data = $scope.formInstance.option("formData");
 		delete data.fullname;
 		delete data.department;
-		CrudService.Update('dayoff',data.id,data).then(function (response) {
+		delete data.approvalstatus;
+		data.datework = $filter("date")(data.datework, "yyyy-MM-dd HH:mm")
+		//console.log(data);
+		CrudService.Update('spkl',data.id,data).then(function (response) {
 			if(response.status=="error"){
 				 DevExpress.ui.notify(response.message,"error");
 			}else{
@@ -879,66 +695,32 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 					   offset: '0 0' 
 				   }
 				});
-				$location.path( "/dayoff" );
+				$location.path( "/spkl" );
 			}
 			
 		});
 	}
 	$scope.onFormSubmit = function(e) {
 		e.preventDefault();
-		criteria = {status:'waiting',username:$scope.formInstance.option("formData").employee_id,id:$scope.Requestid};
-		CrudService.FindData('dayoffbyemp',criteria).then(function (response){
+		criteria = {status:'approver',spkl_id:$scope.Requestid};
+		CrudService.FindData('spklapp',criteria).then(function (response){
 			if(response.jml>0){
-				DevExpress.ui.notify({
-					message: "Cannot add more request, Selected employee still have waiting approval request",
-					type: "warning",
-					displayTime: 5000,
-					height: 80,
-					position: {
-					   my: 'top center', 
-					   at: 'center center', 
-					   of: window, 
-					   offset: '0 0' 
-				   }
-				});
-			}else{
-				criteria = {status:'approver',dayoff_id:$scope.Requestid};
-				CrudService.FindData('doapp',criteria).then(function (response){
+				criteria = {status:'approver',spkl_id:$scope.Requestid};
+				CrudService.FindData('spkldetail',criteria).then(function (response){
 					if(response.jml>0){
-						criteria = {status:'approver',dayoff_id:$scope.Requestid};
-						CrudService.FindData('dodetail',criteria).then(function (response){
-							if(response.jml>0){
-								var data = $scope.formInstance.option("formData");
-								data.requeststatus = 1;
-								delete data.approvalstatus;
-								delete data.mtd;
-								delete data.ytd;
-								CrudService.Update('dayoff',data.id,data).then(function (response) {
-									if(response.status=="error"){
-										 DevExpress.ui.notify(response.message,"error");
-									}else{
-										DevExpress.ui.notify({
-											message: "Data has been Updated",
-											type: "success",
-											displayTime: 2000,
-											height: 80,
-											position: {
-											   my: 'top center', 
-											   at: 'center center', 
-											   of: window, 
-											   offset: '0 0' 
-										   }
-										});
-										$location.path( "/dayoff" );
-									}
-									
-								});
-
+						var data = $scope.formInstance.option("formData");;
+						data.requeststatus = 1;
+						delete data.approvalstatus;
+						delete data.mtd;
+						delete data.ytd;
+						CrudService.Update('spkl',data.id,data).then(function (response) {
+							if(response.status=="error"){
+								 DevExpress.ui.notify(response.message,"error");
 							}else{
 								DevExpress.ui.notify({
-									message: "Please add detail of the request",
-									type: "warning",
-									displayTime: 5000,
+									message: "Data has been Updated",
+									type: "success",
+									displayTime: 2000,
 									height: 80,
 									position: {
 									   my: 'top center', 
@@ -947,11 +729,13 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 									   offset: '0 0' 
 								   }
 								});
+								$location.path( "/spkl" );
 							}
-						})
+							
+						});
 					}else{
 						DevExpress.ui.notify({
-							message: "Please add person to do approval/verification in Approver List tab",
+							message: "Please add detail of the request",
 							type: "warning",
 							displayTime: 5000,
 							height: 80,
@@ -962,12 +746,35 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 							   offset: '0 0' 
 						   }
 						});
-					}			
+					}
 				})
-			}
-		})
-			 	   
+			}else{
+				DevExpress.ui.notify({
+					message: "Please add person to do approval/verification in Approver List tab",
+					type: "warning",
+					displayTime: 5000,
+					height: 80,
+					position: {
+					   my: 'top center', 
+					   at: 'center center', 
+					   of: window, 
+					   offset: '0 0' 
+				   }
+				});
+			}			
+		})	 	   
     };
+	$scope.initDropDownBoxEditor = function(data) {
+		console.log(data);
+        return {
+            dropDownOptions: { width: 500 },
+            dataSource: $scope.allEmpDataSource,
+            value: data.value,
+            valueExpr: "id",
+            displayExpr: "fullname",
+            contentTemplate: "contentTemplate"
+        }
+    }
 	$scope.initDropDownBoxEditorx = function(data) {
         return {
             dropDownOptions: { width: 500 },
@@ -975,13 +782,39 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
             value: data.value,
             valueExpr: "id",
             displayExpr: "fullname",
-            contentTemplate: "contentTemplate"
+            contentTemplate: "contentTemplatex"
         }
     }
 	
 	CrudService.GetAll('approvaltype').then(function (resp) {
         $scope.apptypeDatasource=resp;
     });
+	$scope.initContent = function(data, component) {
+        return {
+            dataSource: $scope.allEmpDataSource,
+            remoteOperations: true,
+            columns: ["fullname","sapid", "department","company"],
+            hoverStateEnabled: true,
+            scrolling: { mode: "virtual" },
+            height: 250,
+            selection: { mode: "single" },
+            selectedRowKeys: [data.value],
+            focusedRowEnabled: true,
+            focusedRowKey: data.value,
+			searchPanel: {
+				visible: true,
+				width: 240,
+				placeholder: "Search..."
+			},
+				onSelectionChanged: function(selectionChangedArgs) {
+                component.option("value", selectionChangedArgs.selectedRowKeys[0]);
+                data.setValue(selectionChangedArgs.selectedRowKeys[0]);
+                if(selectionChangedArgs.selectedRowKeys.length > 0) {
+                    component.close();
+                }
+            }
+        }
+    }
     $scope.initContentx = function(data, component) {
         return {
             dataSource: $scope.empDataSource,

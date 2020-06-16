@@ -14,6 +14,7 @@ class Employee extends ActiveRecord\Model
 		array('accessuser'),
 		array('leave'),
 		array('dayoff'),
-		array('dayoffapproval')
+		array('dayoffapproval'),
+		array('spkldetail')
 	);
 }
