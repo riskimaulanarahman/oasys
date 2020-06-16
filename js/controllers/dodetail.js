@@ -933,6 +933,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 									}
 									
 								});
+
 							}else{
 								DevExpress.ui.notify({
 									message: "Please add detail of the request",
