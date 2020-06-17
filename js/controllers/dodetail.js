@@ -36,11 +36,6 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 							}
 						});
 					},
-					// byKey:function(key){
-						// CrudService.GetById('employee',encodeURIComponent(key)).then(function (emp) {
-							// return emp;
-						// });
-					// }
 				}),
 				sort: "id"
 			}
