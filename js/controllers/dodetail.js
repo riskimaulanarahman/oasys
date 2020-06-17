@@ -189,6 +189,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 														   }
 														});
 													}else{
+														
 														e.component.option("value", keys[0]); 
 														e.component.close();
 													}
@@ -197,7 +198,13 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 										}
 									});
 									return $dataGrid;
-								},
+								},onValueChanged: function(e){
+									console.log(e);
+									criteria = {status:'chemp',employee_id:e.value,dayoff_id:$scope.Requestid};
+									CrudService.FindData('dayoff',criteria).then(function (response){
+										$scope.grid2Component.refresh();
+									})
+								}
 							},
 							validationRules: [{
 								type: "required",
@@ -592,6 +599,9 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 		},
 		onEditorPreparing: function (e) {  
 			$scope.grid1Component = e.component;
+		},
+		onEditorPreparing: function (e) {  
+			$scope.grid1Component = e.component;
 			if ((e.dataField == "isapproved") || (e.dataField == "isused")){
                 e.editorName = "dxRadioGroup";
                 e.editorOptions.layout = "horizontal";
@@ -677,6 +687,9 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 		onInitialized:function (e){
 			$scope.grid2Component = e.component;
 		},
+		onEditorPreparing: function (e) {  
+			$scope.grid2Component = e.component;
+		},
 		onToolbarPreparing: function(e) {
             $scope.dataGrid2 = e.component;
     
@@ -720,6 +733,9 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
             },
         },
 		onInitialized:function (e){
+			$scope.grid3Component = e.component;
+		},
+		onEditorPreparing: function (e) {  
 			$scope.grid3Component = e.component;
 		},
 		onToolbarPreparing: function(e) {   
