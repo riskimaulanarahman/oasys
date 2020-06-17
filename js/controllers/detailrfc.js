@@ -335,8 +335,6 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 								return $dataGrid;
 							}
 						}},
-					//{dataField:'paymentterm',label:{text:"Payment Term"},dataType:'number',editorType: "dxNumberBox",},
-					
 					{label: {
 							text: "Department Head"
 						},
