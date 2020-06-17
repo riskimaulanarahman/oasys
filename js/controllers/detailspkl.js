@@ -108,8 +108,11 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 										onSelectionChanged: function(selectedItems){
 											var keys = selectedItems.selectedRowKeys,
 												hasSelection = keys.length;
-											e.component.option("value", hasSelection ? keys[0] : null); 
-											e.component.close();
+											if (hasSelection){
+												e.component.option("value", hasSelection ? keys[0] : null); 
+												e.component.close();
+											}
+											
 										}
 									});
 									return $dataGrid;
