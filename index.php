@@ -576,6 +576,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 									<li class="nav-item"><a href="" ng-click="dayoffApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
 								</ul>
 							</li>
+							<!--
 							<li >
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>SPKL<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul>
@@ -583,6 +584,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 									<li class="nav-item"><a href="" ng-click="SPKLApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
 								</ul>
 							</li>
+							-->
 							<li >
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>RFC<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul>
