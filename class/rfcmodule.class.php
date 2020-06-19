@@ -1054,8 +1054,7 @@ Class RfcModule extends Application{
 									$Rfcactivity=Rfcactivity::find($Rfc->activity_id);
 									$joins   = "LEFT JOIN tbl_approver ON (tbl_rfcapproval.approver_id = tbl_approver.id) LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id)";
 									$joinx   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";	
-									$companyBU=( ($company=='KPA') )?"KPSI":$company;
-									echo $Employee->company_id;
+									$companyBU=( ($company=='KPA') ||($company=='KPS') )?"KPSI":$company;
 									if (($Employee->company_id=='6') || ($Employee->company_id=='7')){
 										$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='11' and tbl_employee.company_id=? ",$id,$Employee->company_id)));	
 									}else{
@@ -1084,7 +1083,7 @@ Class RfcModule extends Application{
 											$Rfcapproval->save();
 										}
 									}
-									$companyFC=(($company=="BCL") ||  ($company=='KPA') )?"KPSI":$company;
+									$companyFC=(($company=="BCL") ||  ($company=='KPA') ||($company=='KPS') )?"KPSI":$company;
 									$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='10' and tbl_employee.companycode=? ",$id,$companyFC)));	
 									foreach ($Rfcapproval as &$result) {
 										$result		= $result->to_array();
