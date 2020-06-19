@@ -345,10 +345,6 @@ Class RfcModule extends Application{
 						break;
 				}
 			}
-			// else{
-				// $result= array("status"=>"error","message"=>"Authentication error or expired, please refresh and re login application");
-				// echo json_encode($result);
-			// }
 		}
 		
 	}
@@ -374,10 +370,6 @@ Class RfcModule extends Application{
 						break;
 				}
 			}
-			// else{
-				// $result= array("status"=>"error","message"=>"Authentication error or expired, please refresh and re login application");
-				// echo json_encode($result);
-			// }
 		}
 	}
 
@@ -859,10 +851,6 @@ Class RfcModule extends Application{
 						break;
 				}
 			}
-			// else{
-				// $result= array("status"=>"error","message"=>"Authentication error or expired, please refresh and re login application");
-				// echo json_encode($result);
-			// }
 		}
 	}
 	function rfcDetail(){
@@ -937,10 +925,6 @@ Class RfcModule extends Application{
 						break;
 				}
 			}
-			// else{
-				// $result= array("status"=>"error","message"=>"Authentication error or expired, please refresh and re login application");
-				// echo json_encode($result);
-			// }
 		}
 	}
 	function rfcTerm(){
@@ -1015,10 +999,6 @@ Class RfcModule extends Application{
 						break;
 				}
 			}
-			// else{
-				// $result= array("status"=>"error","message"=>"Authentication error or expired, please refresh and re login application");
-				// echo json_encode($result);
-			// }
 		}
 	}
 	function Rfc(){
@@ -1732,10 +1712,6 @@ Class RfcModule extends Application{
 						break;
 				}
 			}
-			// else{
-				// $result= array("status"=>"error","message"=>"Authentication error or expired, please refresh and re login application");
-				// echo json_encode($result);
-			// }
 		}
 	}
 	function rfcByEmp(){	
