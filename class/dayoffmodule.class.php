@@ -403,7 +403,10 @@ Class DayoffModule extends Application{
 								unset($data['fullname']);
 								unset($data['department']);
 								unset($data['approveddoc']);
-								//unset($data['employee']);
+								unset($data['requestdate']);
+								unset($data['employee']);
+								unset($data['mtd']);
+								unset($data['ytd']);
 								$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 								$join   = "LEFT JOIN tbl_approver ON (tbl_dayoffapproval.approver_id = tbl_approver.id) ";
 								if (isset($data['mode'])){
