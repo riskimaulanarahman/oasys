@@ -1332,7 +1332,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 						});
 					}else{
 						DevExpress.ui.notify({
-							message: "Please add detail of the request",
+							message: "Please add description / scope of work",
 							type: "warning",
 							displayTime: 5000,
 							height: 80,

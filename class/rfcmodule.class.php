@@ -1050,6 +1050,7 @@ Class RfcModule extends Application{
 											//delete BU Head Approval because of change Company Code
 											$result->delete();
 											$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete BU Head Approval because of change Company Code");
+											$logger->SaveData();
 										}
 										if (($Employee->company_id=='6') || ($Employee->company_id=='7')){
 											$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions' => array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='11' and tbl_employee.company_id=? ",$Employee->company_id)));
@@ -1061,6 +1062,8 @@ Class RfcModule extends Application{
 											$Rfcapproval->rfc_id = $id;
 											$Rfcapproval->approver_id = $ApproverBU->id;
 											$Rfcapproval->save();
+											$logger = new Datalogger("Rfcapproval","add","Add BU Head Approval because of change Company Code",json_encode($Rfcapproval->to_array()));
+											$logger->SaveData();
 										}
 									}
 									$companyFC=(($company=="BCL") ||  ($company=='KPA') ||($company=='KPS') )?"KPSI":$company;
@@ -1075,6 +1078,7 @@ Class RfcModule extends Application{
 											//delete BU FC Approval because of change Company Code
 											$result->delete();
 											$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete BU FC Approval because of change Company Code");
+											$logger->SaveData();
 										}
 										$ApproverBUFC = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='10' and tbl_employee.companycode=? ",$companyFC)));
 										if(count($ApproverBUFC)>0){
@@ -1082,6 +1086,8 @@ Class RfcModule extends Application{
 											$Rfcapproval->rfc_id = $id;
 											$Rfcapproval->approver_id = $ApproverBUFC->id;
 											$Rfcapproval->save();
+											$logger = new Datalogger("Rfcapproval","add","Add BU FC Approval because of change Company Code",json_encode($Rfcapproval->to_array()));
+											$logger->SaveData();
 										}
 									}
 									if($Rfcactivity->ishrrelated=="1"){					
@@ -1096,6 +1102,7 @@ Class RfcModule extends Application{
 												//delete HR KF Approval because of change Company Code
 												$result->delete();
 												$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete HR KF Approval because of change Company Code");
+												$logger->SaveData();
 											}
 											$ApproverHRKF = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='15'")));
 											if(count($ApproverHRKF)>0){
@@ -1103,6 +1110,8 @@ Class RfcModule extends Application{
 												$Rfcapproval->rfc_id = $id;
 												$Rfcapproval->approver_id = $ApproverHRKF->id;
 												$Rfcapproval->save();
+												$logger = new Datalogger("Rfcapproval","add","Add HR KF Approval because of change Company Code",json_encode($Rfcapproval->to_array()));
+												$logger->SaveData();
 											}
 										}
 										if (($company=='IHM') || ($company=='AHL')  || ($company=='KPS')|| ($company=='KPA')) {
@@ -1117,6 +1126,7 @@ Class RfcModule extends Application{
 													//delete HR BU Approval because of change Company Code
 													$result->delete();
 													$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete HR BU Approval because of change Company Code");
+													$logger->SaveData();
 												}
 												$ApproverHRFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='9' and tbl_employee.companycode=?",$company)));
 												if(count($ApproverHRFU)>0){
@@ -1124,6 +1134,8 @@ Class RfcModule extends Application{
 													$Rfcapproval->rfc_id = $id;
 													$Rfcapproval->approver_id = $ApproverHRFU->id;
 													$Rfcapproval->save();
+													$logger = new Datalogger("Rfcapproval","add","Add HR BU Approval because of change Company Code",json_encode($Rfcapproval->to_array()));
+													$logger->SaveData();
 												}
 											}
 										}else{
@@ -1132,6 +1144,7 @@ Class RfcModule extends Application{
 												//delete HR BU Approval because of change Company Code
 												$result->delete();
 												$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete HR BU Approval because of change Company Code");
+												$logger->SaveData();
 											}
 										}
 										//$data= array("activity"=>"HR Related");
@@ -1141,13 +1154,15 @@ Class RfcModule extends Application{
 										foreach ($dx as $result) {
 											//delete HR KF
 											$result->delete();
-											$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete HR of KF Approval for non HR Related Actovity");
+											$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete HR of KF Approval for non HR Related Activity");
+											$logger->SaveData();
 										}
 										$dx = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id=9",$id)));	
 										foreach ($dx as $result) {
 											//delete HR BU
 											$result->delete();
-											$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete HR BU Approval for non HR Related Actovity");
+											$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete HR BU Approval for non HR Related Activity");
+											$logger->SaveData();
 										}
 										//$data= array("activity"=>"Operation Related");
 									}
@@ -1164,6 +1179,7 @@ Class RfcModule extends Application{
 											//delete CAD KF Approval because of change Company Code
 											$result->delete();
 											$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete CAD KF Approval because of change Company Code");
+											$logger->SaveData();
 										}
 										$ApproverCADKF = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='8'")));
 										if(count($ApproverCADKF)>0){
@@ -1171,6 +1187,8 @@ Class RfcModule extends Application{
 											$Rfcapproval->rfc_id = $id;
 											$Rfcapproval->approver_id = $ApproverCADKF->id;
 											$Rfcapproval->save();
+											$logger = new Datalogger("Rfcapproval","add","Add CAD KF Approval because of change Company Code",json_encode($Rfcapproval->to_array()));
+											$logger->SaveData();
 										}
 									}
 									
@@ -1185,6 +1203,7 @@ Class RfcModule extends Application{
 											//delete CAD BU Approval because of change Company Code
 											$result->delete();
 											$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete CAD BU Approval because of change Company Code");
+											$logger->SaveData();
 										}
 										$ApproverCADFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='7' and tbl_employee.companycode=?",$company)));
 										if(count($ApproverCADFU)>0){
@@ -1192,6 +1211,8 @@ Class RfcModule extends Application{
 											$Rfcapproval->rfc_id = $id;
 											$Rfcapproval->approver_id = $ApproverCADFU->id;
 											$Rfcapproval->save();
+											$logger = new Datalogger("Rfcapproval","add","Add CAD BU Approval because of change Company Code",json_encode($Rfcapproval->to_array()));
+											$logger->SaveData();
 										}
 									}
 									$Rfcnew = Rfc::find('first',array('select' => "CONCAT('RFC/KF','".$company."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(rfcno,-4,4)) is null then 1 else max(substring(rfcno,-4,4))+1 end,4,'0')) as RfcNo","conditions"=>array("substring(rfcno,7,".strlen($company).")=? and not(id = ?) and substring(rfcno,".(strlen($company)+8).",4)=YEAR(CURDATE()) ",$company,$query['rfc_id'])));
@@ -1212,18 +1233,21 @@ Class RfcModule extends Application{
 											//delete MD of KF for non SK
 											$result->delete();
 											$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete MD Approval for non SK RFC");
+											$logger->SaveData();
 										}
 										$dx = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id=13",$id)));	
 										foreach ($dx as $result) {
 											//delete KFFC for non SK
 											$result->delete();
 											$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete KFFC Approval for non SK RFC");
+											$logger->SaveData();
 										}
 										$dx = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id=12",$id)));	
 										foreach ($dx as $result) {
 											//delete CPU for non SK
 											$result->delete();
 											$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete CPU Approval for non SK RFC");
+											$logger->SaveData();
 										}
 										if(($Rfc->companycode=='IHM') || ($Rfc->companycode=='AHL') || ($Rfc->companycode=='KPS')){
 											$dx = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id=8",$id)));	
@@ -1231,6 +1255,7 @@ Class RfcModule extends Application{
 												//delete CAD KF for non SK
 												$result->delete();
 												$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete CADKF Approval for non SK RFC");
+												$logger->SaveData();
 											}
 										}
 										
@@ -1253,6 +1278,8 @@ Class RfcModule extends Application{
 												$Rfcapproval->approver_id = $ApproverMD->id;
 												$Rfcapproval->save();
 												$data= array("appr"=>$Rfcapproval);
+												$logger = new Datalogger("Rfcapproval","add","Add MD Approval because of change SK Rate",json_encode($Rfcapproval->to_array()));
+												$logger->SaveData();
 											}
 										}
 										$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='13'",$id)));	
@@ -1267,6 +1294,8 @@ Class RfcModule extends Application{
 												$Rfcapproval->rfc_id = $id;
 												$Rfcapproval->approver_id = $ApproverKDUFC->id;
 												$Rfcapproval->save();
+												$logger = new Datalogger("Rfcapproval","add","Add KF FC Approval because of change SK Rate",json_encode($Rfcapproval->to_array()));
+												$logger->SaveData();
 											}
 										}
 										$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='12'",$id)));	
@@ -1281,6 +1310,8 @@ Class RfcModule extends Application{
 												$Rfcapproval->rfc_id = $id;
 												$Rfcapproval->approver_id = $ApproverCPU->id;
 												$Rfcapproval->save();
+												$logger = new Datalogger("Rfcapproval","add","Add CPU Approval because of change SK Rate",json_encode($Rfcapproval->to_array()));
+												$logger->SaveData();
 											}
 										}
 										$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='8'",$id)));	
@@ -1295,6 +1326,8 @@ Class RfcModule extends Application{
 												$Rfcapproval->rfc_id = $id;
 												$Rfcapproval->approver_id = $ApproverCADKF->id;
 												$Rfcapproval->save();
+												$logger = new Datalogger("Rfcapproval","add","Add CAD KF Approval because of change SK Rate",json_encode($Rfcapproval->to_array()));
+												$logger->SaveData();
 											}
 										}
 										//$data= array("trigger"=>"Non SK");
@@ -1322,6 +1355,7 @@ Class RfcModule extends Application{
 												//delete HR KF Approval because of change Company Code
 												$result->delete();
 												$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete HR KF Approval because of change Company Code");
+												$logger->SaveData();
 											}
 											$ApproverHRKF = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='15'")));
 											if(count($ApproverHRKF)>0){
@@ -1329,6 +1363,8 @@ Class RfcModule extends Application{
 												$Rfcapproval->rfc_id = $id;
 												$Rfcapproval->approver_id = $ApproverHRKF->id;
 												$Rfcapproval->save();
+												$logger = new Datalogger("Rfcapproval","add","Add HR KF Approval because of change Activity",json_encode($Rfcapproval->to_array()));
+												$logger->SaveData();
 											}
 										}
 										if (($Rfc->companycode=='IHM') || ($Rfc->companycode=='AHL')  || ($Rfc->companycode=='KPS') || ($Rfc->companycode=='KPA')) {
@@ -1343,6 +1379,7 @@ Class RfcModule extends Application{
 													//delete HR BU Approval because of change Company Code
 													$result->delete();
 													$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete HR BU Approval because of change Company Code");
+													$logger->SaveData();
 												}
 												$ApproverHRFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='9' and tbl_employee.companycode=?",$Rfc->companycode)));
 												if(count($ApproverHRFU)>0){
@@ -1350,6 +1387,8 @@ Class RfcModule extends Application{
 													$Rfcapproval->rfc_id = $id;
 													$Rfcapproval->approver_id = $ApproverHRFU->id;
 													$Rfcapproval->save();
+													$logger = new Datalogger("Rfcapproval","add","Add HR BU Approval because of change Activity",json_encode($Rfcapproval->to_array()));
+													$logger->SaveData();
 												}
 											}
 										}
@@ -1360,13 +1399,15 @@ Class RfcModule extends Application{
 										foreach ($dx as $result) {
 											//delete HR KF
 											$result->delete();
-											$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete HR of KF Approval for non HR Related Actovity");
+											$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete HR of KF Approval for non HR Related Activity");
+											$logger->SaveData();
 										}
 										$dx = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id=9",$id)));	
 										foreach ($dx as $result) {
 											//delete HR BU
 											$result->delete();
-											$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete HR BU Approval for non HR Related Actovity");
+											$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete HR BU Approval for non HR Related Activity");
+											$logger->SaveData();
 										}
 										$data= array("activity"=>"Operation Related");
 									}
@@ -1432,6 +1473,8 @@ Class RfcModule extends Application{
 									$Rfcapproval->rfc_id = $Rfc->id;
 									$Rfcapproval->approver_id = $ApproverBU->id;
 									$Rfcapproval->save();
+									$logger = new Datalogger("Rfcapproval","add","Add initial BU Head Approval ",json_encode($Rfcapproval->to_array()));
+									$logger->SaveData();
 								}
 								$companyFC=(($data['companycode']=='BCL') || ($data['companycode']=='KPA'))?"KPSI":$Employee->companycode;
 								$ApproverBUFC = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='10' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$companyFC,$Employee->id)));
@@ -1440,6 +1483,8 @@ Class RfcModule extends Application{
 									$Rfcapproval->rfc_id = $Rfc->id;
 									$Rfcapproval->approver_id = $ApproverBUFC->id;
 									$Rfcapproval->save();
+									$logger = new Datalogger("Rfcapproval","add","Add initial BU FC Approval",json_encode($Rfcapproval->to_array()));
+									$logger->SaveData();
 								}
 								if(($data['companycode']=="IHM") || ($data['companycode']=='AHL') || ($data['companycode']=='KPS')|| ($data['companycode']=='KPA')){
 									$ApproverHRDFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='9' and tbl_employee.companycode=?  and not(tbl_employee.id=?)",$Employee->companycode,$Employee->id)));
@@ -1448,6 +1493,8 @@ Class RfcModule extends Application{
 										$Rfcapproval->rfc_id = $Rfc->id;
 										$Rfcapproval->approver_id = $ApproverHRDFU->id;
 										$Rfcapproval->save();
+										$logger = new Datalogger("Rfcapproval","add","Add initial HR BU Approval ",json_encode($Rfcapproval->to_array()));
+										$logger->SaveData();
 									}
 								}
 								$ApproverHRKF = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='15' ")));
@@ -1456,6 +1503,8 @@ Class RfcModule extends Application{
 									$Rfcapproval->rfc_id = $Rfc->id;
 									$Rfcapproval->approver_id = $ApproverHRKF->id;
 									$Rfcapproval->save();
+									$logger = new Datalogger("Rfcapproval","add","Add initial HR KF Approval",json_encode($Rfcapproval->to_array()));
+									$logger->SaveData();
 								}
 								$ApproverCADKF = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='8' ")));
 								if(count($ApproverCADKF)>0){
@@ -1463,6 +1512,8 @@ Class RfcModule extends Application{
 									$Rfcapproval->rfc_id = $Rfc->id;
 									$Rfcapproval->approver_id = $ApproverCADKF->id;
 									$Rfcapproval->save();
+									$logger = new Datalogger("Rfcapproval","add","Add initial CAD KF Approval",json_encode($Rfcapproval->to_array()));
+									$logger->SaveData();
 								}
 							// }
 								$ApproverCADFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='7' and tbl_employee.companycode=?  and not(tbl_employee.id=?)",$Employee->companycode,$Employee->id)));
@@ -1471,6 +1522,8 @@ Class RfcModule extends Application{
 									$Rfcapproval->rfc_id = $Rfc->id;
 									$Rfcapproval->approver_id = $ApproverCADFU->id;
 									$Rfcapproval->save();
+									$logger = new Datalogger("Rfcapproval","add","Add initial CAD BU Approval",json_encode($Rfcapproval->to_array()));
+									$logger->SaveData();
 								}
 							// }
 								
@@ -1575,6 +1628,7 @@ Class RfcModule extends Application{
 										//delete same type approver
 										$result->delete();
 										$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
+										$logger->SaveData();
 									}
 									$joins   = "LEFT JOIN tbl_approver ON (tbl_rfcapproval.approver_id = tbl_approver.id) ";					
 									$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.employee_id=?",$id,$depthead)));	
@@ -1589,6 +1643,8 @@ Class RfcModule extends Application{
 											$Rfcapproval->rfc_id = $Rfc->id;
 											$Rfcapproval->approver_id = $Approver->id;
 											$Rfcapproval->save();
+											$logger = new Datalogger("Rfcapproval","add","Add dept Head Approval",json_encode($Rfcapproval->to_array()),"delete approver to prevent duplicate same type approver");
+											$logger->SaveData();
 										}else{
 											$approver = new Approver();
 											$approver->module = "RFC";
@@ -1601,6 +1657,8 @@ Class RfcModule extends Application{
 											$Rfcapproval->rfc_id = $Rfc->id;
 											$Rfcapproval->approver_id = $approver->id;
 											$Rfcapproval->save();
+											$logger = new Datalogger("Rfcapproval","add","Add dept Head Approval",json_encode($Rfcapproval->to_array()),"delete approver to prevent duplicate same type approver");
+											$logger->SaveData();
 										}
 									}
 								// }
