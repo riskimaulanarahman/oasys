@@ -1180,6 +1180,8 @@ Class DayoffModule extends Application{
 							unset($data['fullname']);
 							unset($data['department']);
 							unset($data['approvalstatus']);
+							unset($data['mtd']);
+							unset($data['ytd']);
 							//unset($data['employee']);
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							if($superior==$Employee->id){
