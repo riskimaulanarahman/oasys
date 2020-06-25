@@ -416,7 +416,7 @@ Class SpklModule extends Application{
 									$html2pdf = new Html2Pdf('P', 'A4', 'fr');
 									$html2pdf->writeHTML($pdfContent);
 									ob_clean();
-									$fileName ='spkl'.DS.'pdf'.DS.''.$Spkl->employee->sapid.'_'.date("YmdHis").'.pdf';
+									$fileName ='doc'.DS.'spkl'.DS.'pdf'.DS.''.$Spkl->employee->sapid.'_'.date("YmdHis").'.pdf';
 									$fileName = str_replace("/","",$fileName);
 									$filePath = SITE_PATH.DS.$fileName;
 									$html2pdf->output($filePath, 'F');

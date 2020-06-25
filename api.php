@@ -40,7 +40,8 @@ $page = array("login",
 	"rfccontractormodule",
 	"rfcmodule",
 	"skratemodule",
-	"spklmodule"
+	"spklmodule",
+	"trmodule"
 );
 
 foreach ($page as $class){

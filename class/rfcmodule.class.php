@@ -219,7 +219,7 @@ Class RfcModule extends Application{
 			$html2pdf = new Html2Pdf('P', 'A4', 'fr');
 			$html2pdf->writeHTML($pdfContent);
 			ob_clean();
-			$fileName ='rfc'.DS.'pdf'.DS.''.$Rfc->rfcno.'_'.date("YmdHis").'.pdf';
+			$fileName ='doc'.DS.'rfc'.DS.'pdf'.DS.''.$Rfc->rfcno.'_'.date("YmdHis").'.pdf';
 			$fileName = str_replace("/","",$fileName);
 			$filePath = SITE_PATH.DS.$fileName;
 			$html2pdf->output($filePath, 'F');
@@ -805,7 +805,7 @@ Class RfcModule extends Application{
 										$html2pdf = new Html2Pdf('P', 'A4', 'fr');
 										$html2pdf->writeHTML($pdfContent);
 										ob_clean();
-										$fileName ='rfc'.DS.'pdf'.DS.''.$Rfc->rfcno.'_'.date("YmdHis").'.pdf';
+										$fileName ='doc'.DS.'rfc'.DS.'pdf'.DS.''.$Rfc->rfcno.'_'.date("YmdHis").'.pdf';
 										$fileName = str_replace("/","",$fileName);
 										$filePath = SITE_PATH.DS.$fileName;
 										$html2pdf->output($filePath, 'F');

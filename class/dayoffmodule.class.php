@@ -185,7 +185,7 @@ Class DayoffModule extends Application{
 			$html2pdf = new Html2Pdf('L', 'A4', 'fr');
 			$html2pdf->writeHTML($pdfContent);
 			ob_clean();
-			$fileName ='dayoff'.DS.'pdf'.DS.'regenerated'.DS.'WPHCF_'.$emp['sapid'].'_'.date("YmdHis").'.pdf';
+			$fileName ='doc'.DS.'dayoff'.DS.'pdf'.DS.'regenerated'.DS.'WPHCF_'.$emp['sapid'].'_'.date("YmdHis").'.pdf';
 			$filePath = SITE_PATH.DS.$fileName;
 			$html2pdf->output($filePath, 'F');
 			$this->mail->addAttachment($filePath);
@@ -665,7 +665,7 @@ Class DayoffModule extends Application{
 											$html2pdf = new Html2Pdf('L', 'A4', 'fr');
 											$html2pdf->writeHTML($pdfContent);
 											ob_clean();
-											$fileName ='dayoff'.DS.'pdf'.DS.'WPHCF_'.$emp['sapid'].'_'.date("YmdHis").'.pdf';
+											$fileName ='doc'.DS.'dayoff'.DS.'pdf'.DS.'WPHCF_'.$emp['sapid'].'_'.date("YmdHis").'.pdf';
 											$filePath = SITE_PATH.DS.$fileName;
 											$html2pdf->output($filePath, 'F');
 											$this->mail->addAttachment($filePath);
