@@ -622,6 +622,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 									<li class="nav-item"><a href="" ng-click="dataLeave()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Employee Leave</a></li>
 									<li class="nav-item"><a href="" ng-click="dataDayoff()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Employee Weekend Cov.</a></li>
 									<li class="nav-item"><a href="" ng-click="detailDayoff()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Detail Approved WPHC</a></li>
+									<li class="nav-item"><a href="" ng-click="dataTR()"  class="nav-link" ><i class='fa fa-calendar-alt'></i>TR Report</a></li>
 									<li class="nav-item"><a href="" ng-click="dataRFC()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> RFC Record</a></li>
 								</ul>
 							</li>
@@ -676,15 +677,15 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 	<script language="JavaScript" src="js/lib/dx.all.js" type="text/javascript"></script>
 	<script language="JavaScript" src="js/lib/FileSaver.min.js" type="text/javascript"></script>
 
-	<script language="JavaScript" src="js/app.js?v=2.43" type="text/javascript"></script>
-	<script language="JavaScript" src="js/directive.js?v=2.43" type="text/javascript"></script>
-	<script language="JavaScript" src="js/services.js?v=2.43" type="text/javascript"></script>
-	<script language="JavaScript" src="js/filter.js?v=2.43" type="text/javascript"></script>
-	<script language="JavaScript" src="js/factory.js?v=2.43" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/maincontroller.js?v=2.43" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/login.js?v=2.43" type="text/javascript"></script>
+	<script language="JavaScript" src="js/app.js?v=2.45" type="text/javascript"></script>
+	<script language="JavaScript" src="js/directive.js?v=2.45" type="text/javascript"></script>
+	<script language="JavaScript" src="js/services.js?v=2.45" type="text/javascript"></script>
+	<script language="JavaScript" src="js/filter.js?v=2.45" type="text/javascript"></script>
+	<script language="JavaScript" src="js/factory.js?v=2.45" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/maincontroller.js?v=2.45" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/login.js?v=2.45" type="text/javascript"></script>
 
-	<script language="JavaScript" src="js/script.js?v=2.43" type="text/javascript"></script>
+	<script language="JavaScript" src="js/script.js?v=2.45" type="text/javascript"></script>
 	<script type="text/javascript" src="assets/scripts/main.js"></script>
 </body>
 </html>

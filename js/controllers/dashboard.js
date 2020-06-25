@@ -16,7 +16,8 @@ app.register.controller('dashboardCtrl', ['$rootScope','$scope', '$http', '$inte
 	$scope.pendingLeaveReq=0;
 	$scope.pendingRFC=0;
 	$scope.pendingRFCReq=0;
-	
+	$scope.pendingTR=0;
+	$scope.pendingTRReq=0;
     function initController() {
 		setTimeout(function(){ 
 			criteria = {status:'pending'};
@@ -34,6 +35,14 @@ app.register.controller('dashboardCtrl', ['$rootScope','$scope', '$http', '$inte
 			criteria = {mypending:'true'};
 			CrudService.FindData('rfcapp',criteria).then(function (response){
 				$scope.pendingRFC=response.jml;
+			});
+			criteria = {status:'pending'};
+			CrudService.FindData('trbyemp',criteria).then(function (response){
+				$scope.pendingTRReq=response.jml;
+			});
+			criteria = {mypending:'true'};
+			CrudService.FindData('trapp',criteria).then(function (response){
+				$scope.pendingTR=response.jml;
 			});
 			
 		}, 1000);

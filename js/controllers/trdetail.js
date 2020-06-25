@@ -254,10 +254,10 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 								onValueChanged: function(e){
 									var vis2 =(e.value==1)?true:false;
 									$scope.formInstance.itemOption('group1.group3.iscommercialairline', 'visible', vis2);
-									$scope.formInstance.itemOption('group1.group3.iscommercialairline', 'visibleIndex', 2);
+									$scope.formInstance.itemOption('group1.group3.iscommercialairline', 'visibleIndex', 0);
 									$scope.formInstance.updateData('iscommercialairline',  "");
 									$scope.formInstance.itemOption('group1.group3.iscompanyaircraft', 'visible', vis2);
-									$scope.formInstance.itemOption('group1.group3.iscompanyaircraft', 'visibleIndex', 3);
+									$scope.formInstance.itemOption('group1.group3.iscompanyaircraft', 'visibleIndex', 1);
 									$scope.formInstance.updateData('iscompanyaircraft',  "");
 									
 								}}
@@ -426,7 +426,7 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 								text: "Back",
 								type: "danger",
 								onClick: function(){
-									var path = ($scope.mode=='report') ? "doreport" :"tr";
+									var path = ($scope.mode=='report') ? "trreport" :"tr";
 									$location.path( "/"+path );
 								},
 								visible: (($scope.mode=='approve'))  ?false:true,

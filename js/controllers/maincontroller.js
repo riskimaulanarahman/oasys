@@ -50,6 +50,9 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 				CrudService.checkAccess('ApprovedWPHC',$rootScope.curUser.username).then(function (access) {
 					$rootScope.viewDayoffdetail = access.allowview;
 				});
+				CrudService.checkAccess('TR',$rootScope.curUser.username).then(function (access) {
+					$rootScope.viewTR = access.allowview;
+				});
 				if(!$rootScope.startRefresh) {
 					$rootScope.startRefresh = setInterval($scope.refreshUsers, 1000);
 				}
@@ -70,6 +73,10 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.dataRFC= function(){	
 		loadModule($rootScope.viewRFC,"rfcreport",false);
 		$rootScope.$broadcast("initRFC", "");
+	}
+	$scope.dataTR= function(){	
+		loadModule($rootScope.viewTR,"trreport",false);
+		$rootScope.$broadcast("initTR", "");
 	}
 	$scope.myDayoff= function(){
 		$location.path( "/dayoff" );
