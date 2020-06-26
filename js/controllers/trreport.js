@@ -77,6 +77,18 @@ app.register.controller('trreportCtrl', ['$rootScope','$scope', '$http', '$inter
 								$scope.loadTR(options.data,'report',false);
                             })
                             .appendTo(container);
+						if((options.data.requeststatus=='3')){
+							$('<div style="padding:2px 15px 2px 15px;" title="Reschedule"/>').addClass('dx-icon-repeat btn-pill btn-shadow btn btn-success')
+                            .text('')
+                            .on('dxclick', function () {
+								// if (!$scope.allowEdit){
+									// DevExpress.ui.notify("You don't have authority to edit data","error");
+								// } else{
+									$scope.loadTR(options.data,"reschedule",true);
+								// }
+                            })
+                            .appendTo(container);
+						}
                     }
                 }
                 ,{caption: '#',fixed: true,fixedPosition: "left",formItem: { visible: false},width: 40,

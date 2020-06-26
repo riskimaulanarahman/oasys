@@ -391,11 +391,11 @@ Class SpklModule extends Application{
 												<tr><td align='center'>Askep</td><td width='50'></td><td align='center'>Dept. Head / Sector Manager</td><td width='50'></td><td align='center'>Askep SDM/CS</td></tr>
 												";
 								foreach ($Spklapproval as $data){
-									if(($data->approver->approvaltype->id==16) || ($data->approver->employee_id==$Spkl->depthead)){
+									if(($data->approver->approvaltype->id==21) || ($data->approver->employee_id==$Spkl->depthead)){
 										$deptheadname = $data->approver->employee->fullname;
 										$datedepthead = date("d/m/Y",strtotime($data->approvaldate));
 									}
-									if($data->approver->approvaltype->id==17) {
+									if($data->approver->approvaltype->id==22) {
 										$hrname = $data->approver->employee->fullname;
 										$hrdate = date("d/m/Y",strtotime($data->approvaldate));
 									}
@@ -684,7 +684,7 @@ Class SpklModule extends Application{
 								// if(($Employee->level_id==4) || ($Employee->level_id==6) ){
 								// }else{
 									$joins   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";					
-									$dx = Spklapproval::find('all',array('joins'=>$joins,'conditions' => array("spkl_id=? and tbl_approver.approvaltype_id=6 and not(tbl_approver.employee_id=?)",$id,$depthead)));	
+									$dx = Spklapproval::find('all',array('joins'=>$joins,'conditions' => array("spkl_id=? and tbl_approver.approvaltype_id=21 and not(tbl_approver.employee_id=?)",$id,$depthead)));	
 									foreach ($dx as $result) {
 										//delete same type approver
 										$result->delete();
@@ -697,7 +697,7 @@ Class SpklModule extends Application{
 										$result['no']=1;
 									}			
 									if(count($Spklapproval)==0){ 
-										$Approver = Approver::find('first',array('conditions'=>array("module='SPKL' and employee_id=? and approvaltype_id=16",$depthead)));
+										$Approver = Approver::find('first',array('conditions'=>array("module='SPKL' and employee_id=? and approvaltype_id=21",$depthead)));
 										if(count($Approver)>0){
 											$Spklapproval = new Spklapproval();
 											$Spklapproval->spkl_id = $Spkl->id;
@@ -708,7 +708,7 @@ Class SpklModule extends Application{
 											$approver->module = "SPKL";
 											$approver->employee_id=$depthead;
 											$approver->sequence=1;
-											$approver->approvaltype_id = 16;
+											$approver->approvaltype_id = 21;
 											$approver->isfinal = false;
 											$approver->save();
 											$Spklapproval = new Spklapproval();

@@ -79,15 +79,15 @@ app.register.controller('trCtrl', ['$rootScope','$scope', '$http', '$interval','
                     allowSorting: false,
                     formItem: { visible: false},
                     cellTemplate: function (container, options) {
-                        $('<div style="padding:2px 15px 2px 15px;"/>').addClass('dx-icon-detailslayout btn-pill btn-shadow btn btn-primary')
+                        $('<div style="padding:2px 15px 2px 15px;" title="View Detail" />').addClass('dx-icon-detailslayout btn-pill btn-shadow btn btn-primary')
                             .text('')
                             .on('dxclick', function () {
                                 DevExpress.ui.notify("Loading detail data for "+options.data.requestdate,"info",600);
 								$scope.loadTR(options.data,"view",true);
                             })
                             .appendTo(container);
-						if((options.data.requeststatus=='0') || (options.data.requeststatus=='2')){	
-							$('<div style="padding:2px 15px 2px 15px;"/>').addClass('dx-icon-edit btn-pill btn-shadow btn btn-success')
+						if((options.data.requeststatus=='0') || (options.data.requeststatus=='2')){
+							$('<div style="padding:2px 15px 2px 15px;" title="Edit" />').addClass('dx-icon-edit btn-pill btn-shadow btn btn-success')
                             .text('')
                             .on('dxclick', function () {
 								// if (!$scope.allowEdit){

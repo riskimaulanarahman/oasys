@@ -426,7 +426,7 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 								text: "Back",
 								type: "danger",
 								onClick: function(){
-									var path = ($scope.mode=='report') ? "trreport" :"tr";
+									var path = (($scope.mode=='report') || ($scope.mode=='reschedule')) ? "trreport" :"tr";
 									$location.path( "/"+path );
 								},
 								visible: (($scope.mode=='approve'))  ?false:true,
@@ -466,7 +466,7 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 									$scope.data = $scope.formInstance.option("formData");
 									$scope.updateDayoff();
 								},
-								visible: ($scope.mode=='approve') ?true:false,
+								visible: (($scope.mode=='approve') ||($scope.mode=='reschedule')) ?true:false,
 								useSubmitBehavior: false
 							}
 						},{
@@ -492,7 +492,7 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 									$scope.saveDraft();
 									
 								},
-								visible: (($scope.mode=='approve') ||($scope.mode=='view') ||($scope.mode=='report'))?false:true,
+								visible: (($scope.mode=='approve') ||($scope.mode=='view') ||($scope.mode=='report') ||($scope.mode=='reschedule'))?false:true,
 								useSubmitBehavior: false
 							}
 						},{
@@ -532,7 +532,7 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 									}
 									$scope.data = $scope.formInstance.option("formData");	
 								},
-								visible: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?false:true,
+								visible: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule'))?false:true,
 								useSubmitBehavior: true
 							}
 						}]
@@ -765,16 +765,16 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
         columnMinWidth: 50,
         columnAutoWidth: true,
 		columns: [
-			{dataField:'ticketfor',caption: "Ticket For",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
+			{dataField:'ticketfor',caption: "Ticket For",lookup: {dataSource: [{key:"Employee",val:"Employee"},{key:"Family",val:"Family"},{key:"Guest",val:"Guest"}],valueExpr: "key", displayExpr: "val" },dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
 			{dataField:'ticketname',caption: "Name",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
 			{dataField:'dateofbirth',width:100,caption: "Date of Birth",dataType:"date", format: 'dd/MM/yyyy',editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",max:Date.now(),disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
 			{dataField:'hrremarks',caption: "Remarks / Confirmation from HR (Konfirmasi dari HR)",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') )?false:true}},
 		],editing: {
             useIcons:true,
             mode: "cell",
-			allowUpdating:(($scope.mode=='view') ||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
-			allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
-			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowUpdating:(($scope.mode=='view') ||($scope.mode=='report')||($scope.mode=='reschedule'))?(($rootScope.isAdmin)?true:false):true,
+			allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule'))?(($rootScope.isAdmin)?true:false):true,
+			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule'))?(($rootScope.isAdmin)?true:false):true,
             form:{colCount: 1,
             },
         },
@@ -856,8 +856,8 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 		editing: {
             useIcons:true,
             mode: "cell",
-			allowUpdating: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
-			allowAdding:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowUpdating: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule'))?(($rootScope.isAdmin)?true:false):true,
+			allowAdding:(($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule'))?(($rootScope.isAdmin)?true:false):true,
 			allowDeleting:($rootScope.isAdmin)?true:false,
             form:{colCount: 1,
             },
@@ -940,65 +940,14 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 		},
 	}
 	$scope.updateDayoff = function(e){
-		//console.log($scope.formInstance.option("formData").approvalstatus);
-		if($scope.formInstance.option("formData").approvalstatus==""){
-			DevExpress.ui.notify({
-				message: "Please select approval action",
-				type: "warning",
-				displayTime: 5000,
-				height: 80,
-				position: {
-				   my: 'top center', 
-				   at: 'center center', 
-				   of: window, 
-				   offset: '0 0' 
-			   }
-			});
-		}else if($scope.formInstance.option("formData").approvalstatus==3){
+		if($scope.mode=="reschedule"){
 			var data = $scope.formInstance.option("formData");
-			var date = new Date();
-			var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
-			data.approvaldate = d;
-			data.mode="approve";
-			delete data.createddate;
-			delete data.employee_id;
-			delete data.requeststatus;
-			delete data.depthead;
-			delete data.fullname;
-			delete data.department;
-			delete data.createdby;
-			delete data.islandtransport;
-			delete data.isairtransport;
-			delete data.ispersonalvehicle;
-			delete data.ispoolcar;
-			delete data.isdropoffonly;
-			delete data.isuntiljobfinish;
-			delete data.jobfinishdate;
-			delete data.isbytrain;
-			delete data.isother;
-			delete data.otherlandtransportdesc;
-			delete data.iscommercialairline;
-			delete data.iscompanyaircraft;
-			delete data.createdby;
-			delete data.travelcashadvancepurpose;
-			delete data.sppddays;
-			delete data.sppdammount;
-			delete data.taxidays;
-			delete data.taxiammount;
-			delete data.accommodationdays;
-			delete data.accommodationammount;
-			delete data.telephonedays;
-			delete data.telephoneammount;
-			delete data.otheridrdays;
-			delete data.otheridrammount;
-			delete data.perdiemammount;
-			delete data.otherusdammount;
-			delete data.totaladvanceidr;
-			delete data.totaladvanceusd;
-			delete data.approveddoc;
-			CrudService.Update('trapp',data.id,data).then(function (response) {
+			var id = data.id;
+			delete data;
+			criteria = {status:'reschedule',tr_id:$scope.Requestid};
+			CrudService.FindData('tr',criteria).then(function (response){
 				if(response.status=="error"){
-					DevExpress.ui.notify(response.message,"error");
+					 DevExpress.ui.notify(response.message,"error");
 				}else{
 					DevExpress.ui.notify({
 						message: "Data has been Updated",
@@ -1012,92 +961,168 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 						   offset: '0 0' 
 					   }
 					});
-					$location.path( "/trapproval" );
-				}
-				
+					$location.path( "/trreport" );
+				}	
 			});
 		}else{
-			criteria = {status:'approver',tr_id:$scope.Requestid};
-			CrudService.FindData('trapp',criteria).then(function (response){
-				if(response.jml>0){
-					var data = $scope.formInstance.option("formData");
-					var date = new Date();
-					var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
-					data.approvaldate = d;
-					data.mode="approve";
-					delete data.createddate;
-					delete data.employee_id;
-					delete data.requeststatus;
-					delete data.depthead;
-					delete data.fullname;
-					delete data.department;
-					delete data.createdby;
-					delete data.islandtransport;
-					delete data.isairtransport;
-					delete data.ispersonalvehicle;
-					delete data.ispoolcar;
-					delete data.isdropoffonly;
-					delete data.isuntiljobfinish;
-					delete data.jobfinishdate;
-					delete data.isbytrain;
-					delete data.isother;
-					delete data.otherlandtransportdesc;
-					delete data.iscommercialairline;
-					delete data.iscompanyaircraft;
-					delete data.createdby;
-					delete data.travelcashadvancepurpose;
-					delete data.sppddays;
-					delete data.sppdammount;
-					delete data.taxidays;
-					delete data.taxiammount;
-					delete data.accommodationdays;
-					delete data.accommodationammount;
-					delete data.telephonedays;
-					delete data.telephoneammount;
-					delete data.otheridrdays;
-					delete data.otheridrammount;
-					delete data.perdiemammount;
-					delete data.otherusdammount;
-					delete data.totaladvanceidr;
-					delete data.totaladvanceusd;
-					delete data.approveddoc;
-					CrudService.Update('trapp',data.id,data).then(function (response) {
-						if(response.status=="error"){
-							DevExpress.ui.notify(response.message,"error");
-						}else{
-							DevExpress.ui.notify({
-								message: "Data has been Updated",
-								type: "success",
-								displayTime: 2000,
-								height: 80,
-								position: {
-								   my: 'top center', 
-								   at: 'center center', 
-								   of: window, 
-								   offset: '0 0' 
-							   }
-							});
-							$location.path( "/trapproval" );
-						}
-						
-					});
-				}else{
-					DevExpress.ui.notify({
-						message: "Please add person to do next approval/verification in Approver List tab",
-						type: "warning",
-						displayTime: 5000,
-						height: 80,
-						position: {
-						   my: 'top center', 
-						   at: 'center center', 
-						   of: window, 
-						   offset: '0 0' 
-					   }
-					});
-				}
-			});
+			//console.log($scope.formInstance.option("formData").approvalstatus);
+			if($scope.formInstance.option("formData").approvalstatus==""){
+				DevExpress.ui.notify({
+					message: "Please select approval action",
+					type: "warning",
+					displayTime: 5000,
+					height: 80,
+					position: {
+					   my: 'top center', 
+					   at: 'center center', 
+					   of: window, 
+					   offset: '0 0' 
+				   }
+				});
+			}else if($scope.formInstance.option("formData").approvalstatus==3){
+				var data = $scope.formInstance.option("formData");
+				var date = new Date();
+				var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
+				data.approvaldate = d;
+				data.mode="approve";
+				delete data.createddate;
+				delete data.employee_id;
+				delete data.requeststatus;
+				delete data.depthead;
+				delete data.fullname;
+				delete data.department;
+				delete data.createdby;
+				delete data.islandtransport;
+				delete data.isairtransport;
+				delete data.ispersonalvehicle;
+				delete data.ispoolcar;
+				delete data.isdropoffonly;
+				delete data.isuntiljobfinish;
+				delete data.jobfinishdate;
+				delete data.isbytrain;
+				delete data.isother;
+				delete data.otherlandtransportdesc;
+				delete data.iscommercialairline;
+				delete data.iscompanyaircraft;
+				delete data.createdby;
+				delete data.travelcashadvancepurpose;
+				delete data.sppddays;
+				delete data.sppdammount;
+				delete data.taxidays;
+				delete data.taxiammount;
+				delete data.accommodationdays;
+				delete data.accommodationammount;
+				delete data.telephonedays;
+				delete data.telephoneammount;
+				delete data.otheridrdays;
+				delete data.otheridrammount;
+				delete data.perdiemammount;
+				delete data.otherusdammount;
+				delete data.totaladvanceidr;
+				delete data.totaladvanceusd;
+				delete data.approveddoc;
+				CrudService.Update('trapp',data.id,data).then(function (response) {
+					if(response.status=="error"){
+						DevExpress.ui.notify(response.message,"error");
+					}else{
+						DevExpress.ui.notify({
+							message: "Data has been Updated",
+							type: "success",
+							displayTime: 2000,
+							height: 80,
+							position: {
+							   my: 'top center', 
+							   at: 'center center', 
+							   of: window, 
+							   offset: '0 0' 
+						   }
+						});
+						$location.path( "/trapproval" );
+					}
+					
+				});
+			}else{
+				criteria = {status:'approver',tr_id:$scope.Requestid};
+				CrudService.FindData('trapp',criteria).then(function (response){
+					if(response.jml>0){
+						var data = $scope.formInstance.option("formData");
+						var date = new Date();
+						var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
+						data.approvaldate = d;
+						data.mode="approve";
+						delete data.createddate;
+						delete data.employee_id;
+						delete data.requeststatus;
+						delete data.depthead;
+						delete data.fullname;
+						delete data.department;
+						delete data.createdby;
+						delete data.islandtransport;
+						delete data.isairtransport;
+						delete data.ispersonalvehicle;
+						delete data.ispoolcar;
+						delete data.isdropoffonly;
+						delete data.isuntiljobfinish;
+						delete data.jobfinishdate;
+						delete data.isbytrain;
+						delete data.isother;
+						delete data.otherlandtransportdesc;
+						delete data.iscommercialairline;
+						delete data.iscompanyaircraft;
+						delete data.createdby;
+						delete data.travelcashadvancepurpose;
+						delete data.sppddays;
+						delete data.sppdammount;
+						delete data.taxidays;
+						delete data.taxiammount;
+						delete data.accommodationdays;
+						delete data.accommodationammount;
+						delete data.telephonedays;
+						delete data.telephoneammount;
+						delete data.otheridrdays;
+						delete data.otheridrammount;
+						delete data.perdiemammount;
+						delete data.otherusdammount;
+						delete data.totaladvanceidr;
+						delete data.totaladvanceusd;
+						delete data.approveddoc;
+						CrudService.Update('trapp',data.id,data).then(function (response) {
+							if(response.status=="error"){
+								DevExpress.ui.notify(response.message,"error");
+							}else{
+								DevExpress.ui.notify({
+									message: "Data has been Updated",
+									type: "success",
+									displayTime: 2000,
+									height: 80,
+									position: {
+									   my: 'top center', 
+									   at: 'center center', 
+									   of: window, 
+									   offset: '0 0' 
+								   }
+								});
+								$location.path( "/trapproval" );
+							}
+							
+						});
+					}else{
+						DevExpress.ui.notify({
+							message: "Please add person to do next approval/verification in Approver List tab",
+							type: "warning",
+							displayTime: 5000,
+							height: 80,
+							position: {
+							   my: 'top center', 
+							   at: 'center center', 
+							   of: window, 
+							   offset: '0 0' 
+						   }
+						});
+					}
+				});
+			}
 		}
-		
 	}
 	
 	$scope.saveDraft = function(e){

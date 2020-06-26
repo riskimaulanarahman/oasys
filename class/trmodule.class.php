@@ -43,8 +43,9 @@ Class TrModule extends Application{
 				case 'apitrapp':
 					$this->trApproval();
 					break;
-				case 'apitrpdf':				
-					 $this->generatePDF();
+				case 'apitrpdf':
+					$id = $this->get['id'];
+					$this->generatePDF($id);
 					break;
 				case 'apitrschedule':
 					$this->trSchedule();
@@ -159,7 +160,101 @@ Class TrModule extends Application{
 						$query=$this->post['query'];					
 						if(isset($query['status'])){
 							switch ($query['status']){
-
+								case 'chemp':
+									break;
+								case "reschedule":
+									$id = $query['tr_id'];
+									$Tr = Tr::find($id,array('include'=>array('employee'=>array('company','department','designation','grade'))));
+									$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Tr->employee->loginname)));
+									$email=$usr->email;
+									$Trschedule=Trschedule::find('all',array('conditions'=>array("tr_id=?",$id),'include'=>array('tr'=>array('employee'=>array('company','department','designation','grade')))));
+									$Trticket=Trticket::find('all',array('conditions'=>array("tr_id=?",$id),'include'=>array('tr'=>array('employee'=>array('company','department','designation','grade')))));
+									$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$usr->fullname.',</span></p>
+										<p class=MsoNormal><span style="color:#1F497D">Your Travel Request has been rescheduled by HR to match with your actual travel schedule:</span></p>
+										<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
+										<table border=1 cellspacing=0 cellpadding=3 width=683>
+										<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->fullname.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>SAP ID</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->sapid.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>Position</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->designation->designationname.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>Business Group / Business Unit</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->company->companyname.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>Location</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->location->location.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>Email</p></td><td>:</td><td><p class=MsoNormal><b>'.$email.'</b></p></td></tr>
+										</table>
+										<p class=MsoNormal><b>Travel Schedule ( Jadwal Perjalanan)</b></p>
+										<table border=1 cellspacing=0 cellpadding=3 width=683>
+										<tr><th  rowspan="2"><p class=MsoNormal>No</p></th>
+											<th colspan="2"><p class=MsoNormal>Departing <br>( Keberangkatan )</p></th>
+											<th><p class=MsoNormal>From ( Dari )</p></th>
+											<th colspan="2"><p class=MsoNormal>Arriving ( Ketibaan )</p></th>
+											<th><p class=MsoNormal>To ( Ke )</p></th>
+											<th><p class=MsoNormal>Region</p></th>
+											<th rowspan="2"><p class=MsoNormal>Reason (Alasan)<br><small>(e.g. Meeting,<br>Seminar etc. )</small></p></th>
+										</tr>
+										<tr><th><p class=MsoNormal>Date (tgl) <br> <small>(dd/mm/yyyy)</small></p></th>
+											<th><p class=MsoNormal>Time (Waktu)</p></th>
+											<th><p class=MsoNormal>City/Country<br>(Kota/Negara)</p></th>
+											<th><p class=MsoNormal>Date (tgl) <br> <small>(dd/mm/yyyy)</small></p></th>
+											<th><p class=MsoNormal>Time (Waktu)</p></th>
+											<th><p class=MsoNormal>City/Country<br>(Kota/Negara)</p></th>
+											<th><p class=MsoNormal>R1/R2</p></th>
+										</tr>';
+									$no=1;					
+									foreach ($Trschedule as $data){
+										$this->mailbody .='<tr style="height:22.5pt">
+											<td><p class=MsoNormal> '.$no.'</p></td>
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->departdate)).'</p></td>
+											<td><p class=MsoNormal> '.$data->departtime.'</p></td>
+											<td><p class=MsoNormal> '.$data->departfrom.'</p></td>
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->arrivingdate)).'</p></td>
+											<td><p class=MsoNormal> '.$data->arrivingtime.'</p></td>
+											<td><p class=MsoNormal> '.$data->arrivingto.'</p></td>
+											<td><p class=MsoNormal> '.$data->region.'</p></td>
+											<td><p class=MsoNormal> '.$data->reason.'</p></td>
+										</tr>';
+										$no++;
+									}
+									$this->mailbody .='</table>
+										<table border=1 cellspacing=0 cellpadding=3 width=683>
+										<tr><th><p class=MsoNormal>No</p></th>
+											<th><p class=MsoNormal>Ticket For (Untuk)</p></th>
+											<th><p class=MsoNormal>Name ( Nama )</p></th>
+											<th><p class=MsoNormal>Date of Birth <br>( Tgl. Lahir) <br> <small>(dd/mm/yyyy)</small></p></th>
+											<th><p class=MsoNormal>Remarks /Confirmation from HR <br> ( Konfirmasi dari HR )</p></th>
+										</tr>
+										';
+									$no=1;
+									foreach ($Trticket as $data){
+										$this->mailbody .='<tr style="height:22.5pt">
+											<td><p class=MsoNormal> '.$no.'</p></td>
+											<td><p class=MsoNormal> '.$data->ticketfor.'</p></td>
+											<td><p class=MsoNormal> '.$data->ticketname.'</p></td>
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->dateofbirth)).'</p></td>
+											<td><p class=MsoNormal> '.$data->hrremarks.'</p></td>
+											</tr>';
+										$no++;
+									}
+									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+									$this->mail->addAddress($usr->email, $usr->fullname);
+									$this->mail->Subject = "Online Approval System -> Travel Request Reschedule";
+									$fileName = $this->generatePDF($id);
+									$filePath = SITE_PATH.DS.$fileName;
+									$this->mail->addAttachment($filePath);
+									$this->mail->msgHTML($this->mailbody);
+									if (!$this->mail->send()) {
+										$err = new Errorlog();
+										$err->errortype = "Mail";
+										$err->errordate = date("Y-m-d h:i:s");
+										$err->errormessage = $this->mail->ErrorInfo;
+										$err->user = $this->currentUser->username;
+										$err->ip = $this->ip;
+										$err->save();
+										echo "Mailer Error: " . $this->mail->ErrorInfo;
+									} else {
+										echo "Message sent!";
+									}
+									
+									
+									break;
 								default:
 									$Employee = Employee::find('first', array('conditions' => array("loginName=?",$query['username'])));
 									$Tr = Tr::find('all', array('conditions' => array("employee_id=? and RequestStatus<3",$Employee->id),'include' => array('employee')));
@@ -1143,8 +1238,8 @@ Class TrModule extends Application{
 			}
 		}
 	}
-	function generatePDF(){
-		$doid = $this->get['id'];
+	function generatePDF($doid){
+		
 		$Tr = Tr::find($doid);
 		$Trschedule=Trschedule::find('all',array('conditions'=>array("tr_id=?",$doid),'include'=>array('tr'=>array('employee'=>array('company','department','designation','grade','location')))));
 		$Trticket=Trticket::find('all',array('conditions'=>array("tr_id=?",$doid),'include'=>array('tr'=>array('employee'=>array('company','department','designation','grade','location')))));					
@@ -1510,6 +1605,7 @@ Class TrModule extends Application{
 			$html2pdf->output($filePath, 'F');
 			$Tr->approveddoc=str_replace("\\","/",$fileName);
 			$Tr->save();
+			return $fileName;
 		} catch (Html2PdfException $e) {
 			$html2pdf->clean();
 			$formatter = new ExceptionFormatter($e);
