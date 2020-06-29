@@ -187,7 +187,8 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 		if (mode=='add'){
 			CrudService.Create('dayoff',data).then(function (response) {
 				if(response.status=="error"){
-					 DevExpress.ui.notify(response.message,"error");
+					DevExpress.ui.dialog.alert(response.message,"Error");
+					//DevExpress.ui.notify(response.message,"error");
 				}else if(response.status=="autherror"){
 					DevExpress.ui.notify(response.message,"error");
 					$scope.logout();
@@ -242,7 +243,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 		if (mode=='add'){
 			CrudService.Create('tr',data).then(function (response) {
 				if(response.status=="error"){
-					 DevExpress.ui.notify(response.message,"error");
+					DevExpress.ui.dialog.alert(response.message,"Error");
 				}else if(response.status=="autherror"){
 					DevExpress.ui.notify(response.message,"error");
 					$scope.logout();
@@ -265,7 +266,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 		if (mode=='add'){
 			CrudService.Create('spkl',data).then(function (response) {
 				if(response.status=="error"){
-					 DevExpress.ui.notify(response.message,"error");
+					DevExpress.ui.dialog.alert(response.message,"Error");
 				}else if(response.status=="autherror"){
 					DevExpress.ui.notify(response.message,"error");
 					$scope.logout();
@@ -288,7 +289,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 		if (mode=='add'){
 			CrudService.Create('rfc',data).then(function (response) {
 				if(response.status=="error"){
-					 DevExpress.ui.notify(response.message,"error");
+					DevExpress.ui.dialog.alert(response.message,"Error");
 				}else if(response.status=="autherror"){
 					DevExpress.ui.notify(response.message,"error");
 					$scope.logout();

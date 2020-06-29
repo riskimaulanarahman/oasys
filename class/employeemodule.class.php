@@ -73,6 +73,21 @@ Class EmployeeModule extends Application{
 									}					
 									$data =  json_encode($Employee, JSON_NUMERIC_CHECK);
 									break;
+								case 'bydept3':
+									$dept = $query['dept'];
+									$join = "LEFT join tbl_department on tbl_employee.department_id=tbl_department.id";
+									$Employee = Employee::all(array('joins'=>$join,'conditions' => array("tbl_department.departmentname =? and level_id<2 ",$dept),'include' => array('department','company', 'designation'),"order"=>"fullname"));
+									foreach ($Employee as &$result) {
+										$dept=$result->department->departmentname;
+										$comp=$result->company->companycode;
+										$des=$result->designation->designationname;				
+										$result = $result->to_array();
+										$result['department']=$dept;
+										$result['designation']=$des;
+										$result['company']=$comp;
+									}					
+									$data =  json_encode($Employee, JSON_NUMERIC_CHECK);
+									break;
 								default:
 									break;
 							}

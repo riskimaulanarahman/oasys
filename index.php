@@ -583,7 +583,6 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 									<li class="nav-item"><a href="" ng-click="TRApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
 								</ul>
 							</li>
-							<!--
 							<li >
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>SPKL<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul>
@@ -592,7 +591,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 									<li class="nav-item"><a href="" ng-click="myTimesheet()" class="nav-link" ><i class='fa fa-calendar-alt'></i> OT Timesheet Request</a></li>
 									<li class="nav-item"><a href="" ng-click="TimesheetApproval()" class="nav-link" ><i class='fas fa-marker'></i> OT Timesheet Approval</a></li>
 								</ul>
-							</li>-->
+							</li>
 							<li >
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>RFC<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul>
@@ -678,15 +677,15 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 	<script language="JavaScript" src="js/lib/dx.all.js" type="text/javascript"></script>
 	<script language="JavaScript" src="js/lib/FileSaver.min.js" type="text/javascript"></script>
 
-	<script language="JavaScript" src="js/app.js?v=2.47" type="text/javascript"></script>
-	<script language="JavaScript" src="js/directive.js?v=2.47" type="text/javascript"></script>
-	<script language="JavaScript" src="js/services.js?v=2.47" type="text/javascript"></script>
-	<script language="JavaScript" src="js/filter.js?v=2.47" type="text/javascript"></script>
-	<script language="JavaScript" src="js/factory.js?v=2.47" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/maincontroller.js?v=2.47" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/login.js?v=2.47" type="text/javascript"></script>
+	<script language="JavaScript" src="js/app.js?v=2.52" type="text/javascript"></script>
+	<script language="JavaScript" src="js/directive.js?v=2.52" type="text/javascript"></script>
+	<script language="JavaScript" src="js/services.js?v=2.52" type="text/javascript"></script>
+	<script language="JavaScript" src="js/filter.js?v=2.52" type="text/javascript"></script>
+	<script language="JavaScript" src="js/factory.js?v=2.52" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/maincontroller.js?v=2.52" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/login.js?v=2.52" type="text/javascript"></script>
 
-	<script language="JavaScript" src="js/script.js?v=2.47" type="text/javascript"></script>
+	<script language="JavaScript" src="js/script.js?v=2.52" type="text/javascript"></script>
 	<script type="text/javascript" src="assets/scripts/main.js"></script>
 </body>
 </html>

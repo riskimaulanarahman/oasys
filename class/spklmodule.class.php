@@ -596,33 +596,37 @@ Class SpklModule extends Application{
 					case 'create':		
 						$data = $this->post['data'];
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$data['username']),"include"=>array("location","company","department")));
-						unset($data['__KEY__']);
-						unset($data['username']);
-						$data['employee_id']=$Employee->id;
-						$data['RequestStatus']=0;
-						try{
-							$Spkl = Spkl::create($data);
-							$data=$Spkl->to_array();
-							$Spklhistory = new Spklhistory();
-							$Spklhistory->date = date("Y-m-d h:i:s");
-							$Spklhistory->fullname = $Employee->fullname;
-							$Spklhistory->approvaltype = "Originator";
-							$Spklhistory->spkl_id = $Spkl->id;
-							$Spklhistory->actiontype = 0;
-							$Spklhistory->save();
-							
-						}catch (Exception $e){
-							$err = new Errorlog();
-							$err->errortype = "CreateSpkl";
-							$err->errordate = date("Y-m-d h:i:s");
-							$err->errormessage = $e->getMessage();
-							$err->user = $this->currentUser->username;
-							$err->ip = $this->ip;
-							$err->save();
-							$data = array("status"=>"error","message"=>$e->getMessage());
+						if($Employee->level_id>2){
+							unset($data['__KEY__']);
+							unset($data['username']);
+							$data['employee_id']=$Employee->id;
+							$data['RequestStatus']=0;
+							try{
+								$Spkl = Spkl::create($data);
+								$data=$Spkl->to_array();
+								$Spklhistory = new Spklhistory();
+								$Spklhistory->date = date("Y-m-d h:i:s");
+								$Spklhistory->fullname = $Employee->fullname;
+								$Spklhistory->approvaltype = "Originator";
+								$Spklhistory->spkl_id = $Spkl->id;
+								$Spklhistory->actiontype = 0;
+								$Spklhistory->save();
+								
+							}catch (Exception $e){
+								$err = new Errorlog();
+								$err->errortype = "CreateSpkl";
+								$err->errordate = date("Y-m-d h:i:s");
+								$err->errormessage = $e->getMessage();
+								$err->user = $this->currentUser->username;
+								$err->ip = $this->ip;
+								$err->save();
+								$data = array("status"=>"error","message"=>$e->getMessage());
+							}
+							$logger = new Datalogger("Spkl","create",null,json_encode($data));
+							$logger->SaveData();
+						} else {
+							$data = array("status"=>"error","message"=>"You don't have authority to create OT Instruction / SPKL, \r\n Only Superintendent / Askep level can create SPKL");
 						}
-						$logger = new Datalogger("Spkl","create",null,json_encode($data));
-						$logger->SaveData();
 						echo json_encode($data);									
 						break;
 					case 'delete':				
