@@ -116,7 +116,7 @@ app.register.controller('trreportCtrl', ['$rootScope','$scope', '$http', '$inter
 								
 								if ((options.value!="") && (options.value)){
 									$("<div />").dxButton({
-										icon: 'download',
+										icon: 'exportpdf',
 										stylingMode: "contained",
 										type: "success",
 										target : '_blank',
