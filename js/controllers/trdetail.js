@@ -768,6 +768,8 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 			{dataField:'ticketfor',caption: "Ticket For",lookup: {dataSource: [{key:"Employee",val:"Employee"},{key:"Family",val:"Family"},{key:"Guest",val:"Guest"}],valueExpr: "key", displayExpr: "val" },dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
 			{dataField:'ticketname',caption: "Name",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
 			{dataField:'dateofbirth',width:100,caption: "Date of Birth",dataType:"date", format: 'dd/MM/yyyy',editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",max:Date.now(),disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			{dataField:'phonenumber',caption: "Phone Number",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
+			{dataField:'gender',caption: "Gender",lookup: {dataSource: [{key:"Male",val:"Male"},{key:"Female",val:"Female"}],valueExpr: "key", displayExpr: "val" },dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
 			{dataField:'hrremarks',caption: "Remarks / Confirmation from HR (Konfirmasi dari HR)",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') )?false:true}},
 		],editing: {
             useIcons:true,

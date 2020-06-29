@@ -217,8 +217,10 @@ Class TrModule extends Application{
 										<table border=1 cellspacing=0 cellpadding=3 width=683>
 										<tr><th><p class=MsoNormal>No</p></th>
 											<th><p class=MsoNormal>Ticket For (Untuk)</p></th>
-											<th><p class=MsoNormal>Name ( Nama )</p></th>
+											<th><p class=MsoNormal>Name <br>( Nama )</p></th>
 											<th><p class=MsoNormal>Date of Birth <br>( Tgl. Lahir) <br> <small>(dd/mm/yyyy)</small></p></th>
+											<th><p class=MsoNormal>Phone Number</p></th>
+											<th><p class=MsoNormal>Gender</p></th>
 											<th><p class=MsoNormal>Remarks /Confirmation from HR <br> ( Konfirmasi dari HR )</p></th>
 										</tr>
 										';
@@ -229,6 +231,8 @@ Class TrModule extends Application{
 											<td><p class=MsoNormal> '.$data->ticketfor.'</p></td>
 											<td><p class=MsoNormal> '.$data->ticketname.'</p></td>
 											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->dateofbirth)).'</p></td>
+											<td><p class=MsoNormal> '.$data->phonenumber.'</p></td>
+											<td><p class=MsoNormal> '.$data->gender.'</p></td>
 											<td><p class=MsoNormal> '.$data->hrremarks.'</p></td>
 											</tr>';
 										$no++;
@@ -492,8 +496,10 @@ Class TrModule extends Application{
 										<table border=1 cellspacing=0 cellpadding=3 width=683>
 										<tr><th><p class=MsoNormal>No</p></th>
 											<th><p class=MsoNormal>Ticket For (Untuk)</p></th>
-											<th><p class=MsoNormal>Name ( Nama )</p></th>
+											<th><p class=MsoNormal>Name <br>( Nama )</p></th>
 											<th><p class=MsoNormal>Date of Birth <br>( Tgl. Lahir) <br> <small>(dd/mm/yyyy)</small></p></th>
+											<th><p class=MsoNormal>Phone Number</p></th>
+											<th><p class=MsoNormal>Gender</p></th>
 											<th><p class=MsoNormal>Remarks /Confirmation from HR <br> ( Konfirmasi dari HR )</p></th>
 										</tr>
 										';
@@ -504,6 +510,8 @@ Class TrModule extends Application{
 											<td><p class=MsoNormal> '.$data->ticketfor.'</p></td>
 											<td><p class=MsoNormal> '.$data->ticketname.'</p></td>
 											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->dateofbirth)).'</p></td>
+											<td><p class=MsoNormal> '.$data->phonenumber.'</p></td>
+											<td><p class=MsoNormal> '.$data->gender.'</p></td>
 											<td><p class=MsoNormal> '.$data->hrremarks.'</p></td>
 											</tr>';
 										$no++;
@@ -822,8 +830,10 @@ Class TrModule extends Application{
 								<table border=1 cellspacing=0 cellpadding=3 width=683>
 								<tr><th><p class=MsoNormal>No</p></th>
 									<th><p class=MsoNormal>Ticket For (Untuk)</p></th>
-									<th><p class=MsoNormal>Name ( Nama )</p></th>
+									<th><p class=MsoNormal>Name <br>( Nama )</p></th>
 									<th><p class=MsoNormal>Date of Birth <br>( Tgl. Lahir) <br> <small>(dd/mm/yyyy)</small></p></th>
+									<th><p class=MsoNormal>Phone Number</p></th>
+									<th><p class=MsoNormal>Gender</p></th>
 									<th><p class=MsoNormal>Remarks /Confirmation from HR <br> ( Konfirmasi dari HR )</p></th>
 								</tr>
 								';
@@ -834,6 +844,8 @@ Class TrModule extends Application{
 									<td><p class=MsoNormal> '.$data->ticketfor.'</p></td>
 									<td><p class=MsoNormal> '.$data->ticketname.'</p></td>
 									<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->dateofbirth)).'</p></td>
+									<td><p class=MsoNormal> '.$data->phonenumber.'</p></td>
+									<td><p class=MsoNormal> '.$data->gender.'</p></td>
 									<td><p class=MsoNormal> '.$data->hrremarks.'</p></td>
 									</tr>';
 								$no++;
@@ -1043,8 +1055,10 @@ Class TrModule extends Application{
 												</tr><tr>
 													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=middle><b>No.</b></td>
 													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000;" colspan=2 align="center" valign=middle ><b>Tickets For (Untuk)</b></td>
-													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000;" colspan=2 align="center" valign=middle ><b>Name (Nama)</b></td>
-													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000;" colspan=2 align="center" valign=middle ><b>Date of Birth (Tgl. Lahir)<br>(dd/mm/yyyy)</b></td>
+													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=middle ><b>Name (Nama)</b></td>
+													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=middle ><b>Date of Birth <br>(Tgl. Lahir)<br><small>(dd/mm/yyyy)</small></b></td>
+													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=middle ><b>Gender</b></td>
+													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=middle ><b>Phone Number</b></td>
 													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=2 align="center" valign=middle ><b>Remarks / Confirmation from HR (Konfirmasi dari HR)</b></td>
 													</tr>
 												<tr>
@@ -1054,8 +1068,10 @@ Class TrModule extends Application{
 													$pdfContent .='<tr>
 														<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; " height="20" align="center" valign=middle  >'.$no.'</td>
 														<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; " colspan=2 align="center" valign=middle >'.$data->ticketfor.'</td>
-														<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; " colspan=2 align="center" valign=middle >'.$data->ticketname.'</td>
-														<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; " colspan=2 align="center" valign=bottom >'.date("d/m/Y",strtotime($data->dateofbirth)).'</td>
+														<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=middle >'.$data->ticketname.'</td>
+														<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=middle >'.date("d/m/Y",strtotime($data->dateofbirth)).'</td>
+														<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=middle >'.$data->gender.'</td>
+														<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=middle >'.$data->phonenumber.'</td>
 														<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=2 align="left" valign=middle >'.wordwrap($data->hrremarks, 40, "<br>").'</td>
 														</tr>';
 														$no++;
@@ -1450,8 +1466,10 @@ Class TrModule extends Application{
 												</tr><tr>
 													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=middle><b>No.</b></td>
 													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000;" colspan=2 align="center" valign=middle ><b>Tickets For (Untuk)</b></td>
-													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000;" colspan=2 align="center" valign=middle ><b>Name (Nama)</b></td>
-													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000;" colspan=2 align="center" valign=middle ><b>Date of Birth (Tgl. Lahir)<br>(dd/mm/yyyy)</b></td>
+													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=middle ><b>Name (Nama)</b></td>
+													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=middle ><b>Date of Birth <br>(Tgl. Lahir)<br><small>(dd/mm/yyyy)</small></b></td>
+													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=middle ><b>Gender</b></td>
+													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=middle ><b>Phone Number</b></td>
 													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=2 align="center" valign=middle ><b>Remarks / Confirmation from HR (Konfirmasi dari HR)</b></td>
 													</tr>
 												<tr>
@@ -1461,8 +1479,10 @@ Class TrModule extends Application{
 													$pdfContent .='<tr>
 														<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; " height="20" align="center" valign=middle  >'.$no.'</td>
 														<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; " colspan=2 align="center" valign=middle >'.$data->ticketfor.'</td>
-														<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; " colspan=2 align="center" valign=middle >'.$data->ticketname.'</td>
-														<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; " colspan=2 align="center" valign=bottom >'.date("d/m/Y",strtotime($data->dateofbirth)).'</td>
+														<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=middle >'.$data->ticketname.'</td>
+														<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=middle >'.date("d/m/Y",strtotime($data->dateofbirth)).'</td>
+														<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=middle >'.$data->gender.'</td>
+														<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=middle >'.$data->phonenumber.'</td>
 														<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=2 align="left" valign=middle >'.wordwrap($data->hrremarks, 40, "<br>").'</td>
 														</tr>';
 														$no++;
