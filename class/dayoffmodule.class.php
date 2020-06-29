@@ -119,7 +119,7 @@ Class DayoffModule extends Application{
 		$pdfContent .= "<small><ol><li>This form is used based on superior's instruction only.</li>";
 		$pdfContent .= "<li>Employee should complete this form and submit to BG HR</li>";
 		$pdfContent .= "<li>Asteriks (*) indicates a mandatory field</li>";
-		$pdfContent .= "<li>Approving Superior/BU Head/MD of KF is required to initial on every coverage date</li></ol></small>";
+		$pdfContent .= "<li>Approving Superior/BU Head/Deputy MD is required to initial on every coverage date</li></ol></small>";
 		$pdfContent .= "<table border=0 cellspacing=3 cellpadding=3>";
 		$pdfContent .= '<tr><td>*Personnel Number (SAP ID)</td><td>:</td><td style="border:solid windowtext 1.0pt;padding:2.5pt 5.4pt 2.5pt 5.4pt;">'.$emp['sapid'].'</td><td style="width=10px;"></td><td>*Superior Name</td><td>:</td><td style="border:solid windowtext 1.0pt;padding:2.5pt 5.4pt 2.5pt 5.4pt;">'.$supname.'</td></tr>
 						<tr><td>*Name</td><td>:</td><td style="border:solid windowtext 1.0pt;padding:2.5pt 5.4pt 2.5pt 5.4pt;">'.$emp['fullname'].'</td><td style="width=10px;"></td><td>*Superior Email</td><td>:</td><td style="border:solid windowtext 1.0pt;padding:2.5pt 5.4pt 2.5pt 5.4pt;">'.$supemail.'</td></tr>
@@ -144,7 +144,7 @@ Class DayoffModule extends Application{
 					<tr><td rowspan=2 style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;"></td>
 					<td colspan=2 style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;text-align:center;background:#C2C2F2;">D2 & above & IS</td></tr>
 					<tr><td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;text-align:center;background:#C2C2F2;">BU Head</td>
-					<td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;text-align:center;background:#C2C2F2;">MD of KF</td></tr>';
+					<td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;text-align:center;background:#C2C2F2;">Deputy MD</td></tr>';
 		foreach ($Dayoffdetail as $data){
 			$reason = wordwrap($data['reason'], 60, "<br>");
 			$pdfContent .= '<tr><td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;none;border-top:none;">'.date('d/m/Y', strtotime($data['dateworked'])).'</td>
@@ -157,7 +157,7 @@ Class DayoffModule extends Application{
 		}
 		$pdfContent .= "</table><small>Note :<br>";
 		$pdfContent .= "- The coverage days listed will be forfeited if it is not claimed within the validity period as per SOP.<br>";
-		$pdfContent .= "- Level Approval :<div >- C1-D1 National Staff must be approved by Dept. Head & BU Head.<br>- D2 and above National Staff and all level International Staff must be approved by BU Head & MD of KF.</div></small>";
+		$pdfContent .= "- Level Approval :<div >- C1-D1 National Staff must be approved by Dept. Head & BU Head.<br>- D2 and above National Staff and all level International Staff must be approved by BU Head & Deputy MD.</div></small>";
 		
 		$pdfContent .= '<br><table border=0 cellspacing=0 cellpadding=0 style="width:511.95pt;margin-left:1.85pt;border-collapse:collapse">
 						<tr style="height:12.75pt"><th style="padding:0in 5.4pt 0in 5.4pt;height:12.75pt" colspan=2>Applied by:</th><th></th><th colspan=2>Assigned by:</th><th></th><th colspan=2>Acknowledged by:</th></tr>
@@ -600,7 +600,7 @@ Class DayoffModule extends Application{
 										$pdfContent .= "<small><ol><li>This form is used based on superior's instruction only.</li>";
 										$pdfContent .= "<li>Employee should complete this form and submit to BG HR</li>";
 										$pdfContent .= "<li>Asteriks (*) indicates a mandatory field</li>";
-										$pdfContent .= "<li>Approving Superior/BU Head/MD of KF is required to initial on every coverage date</li></ol></small>";
+										$pdfContent .= "<li>Approving Superior/BU Head/Deputy MD is required to initial on every coverage date</li></ol></small>";
 										$pdfContent .= "<table border=0 cellspacing=3 cellpadding=3>";
 										$pdfContent .= '<tr><td>*Personnel Number (SAP ID)</td><td>:</td><td style="border:solid windowtext 1.0pt;padding:2.5pt 5.4pt 2.5pt 5.4pt;">'.$emp['sapid'].'</td><td style="width=10px;"></td><td>*Superior Name</td><td>:</td><td style="border:solid windowtext 1.0pt;padding:2.5pt 5.4pt 2.5pt 5.4pt;">'.$supname.'</td></tr>
 														<tr><td>*Name</td><td>:</td><td style="border:solid windowtext 1.0pt;padding:2.5pt 5.4pt 2.5pt 5.4pt;">'.$emp['fullname'].'</td><td style="width=10px;"></td><td>*Superior Email</td><td>:</td><td style="border:solid windowtext 1.0pt;padding:2.5pt 5.4pt 2.5pt 5.4pt;">'.$supemail.'</td></tr>
@@ -625,7 +625,7 @@ Class DayoffModule extends Application{
 													<tr><td rowspan=2 style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;"></td>
 													<td colspan=2 style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;text-align:center;background:#C2C2F2;">D2 & above & IS</td></tr>
 													<tr><td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;text-align:center;background:#C2C2F2;">BU Head</td>
-													<td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;text-align:center;background:#C2C2F2;">MD of KF</td></tr>';
+													<td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;text-align:center;background:#C2C2F2;">Deputy MD</td></tr>';
 										foreach ($Dayoffdetail as $data){
 											$pdfContent .= '<tr><td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;none;border-top:none;">'.date('d/m/Y', strtotime($data['dateworked'])).'</td>
 															<td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;min-width:100px;max-width:300px;">'.wordwrap($data['reason'], 60, "<br>").'</td>
@@ -637,7 +637,7 @@ Class DayoffModule extends Application{
 										}
 										$pdfContent .= "</table><small>Note :<br>";
 										$pdfContent .= "- The coverage days listed will be forfeited if it is not claimed within the validity period as per SOP.<br>";
-										$pdfContent .= "- Level Approval :<div >- C1-D1 National Staff must be approved by Dept. Head & BU Head.<br>- D2 and above National Staff and all level International Staff must be approved by BU Head & MD of KF.</div></small>";
+										$pdfContent .= "- Level Approval :<div >- C1-D1 National Staff must be approved by Dept. Head & BU Head.<br>- D2 and above National Staff and all level International Staff must be approved by BU Head & Deputy MD.</div></small>";
 										
 										$pdfContent .= '<br><table border=0 cellspacing=0 cellpadding=0 style="width:511.95pt;margin-left:1.85pt;border-collapse:collapse">
 														<tr style="height:12.75pt"><th style="padding:0in 5.4pt 0in 5.4pt;height:12.75pt" colspan=2>Applied by:</th><th></th><th colspan=2>Assigned by:</th><th></th><th colspan=2>Acknowledged by:</th></tr>
@@ -970,7 +970,7 @@ Class DayoffModule extends Application{
 										$result->delete();
 										$logger = new Datalogger("Dayoffapproval","delete",json_encode($result->to_array()),"delete Approval because employee changed");
 									}
-									if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="022") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
+									if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="022") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") ){
 										
 										$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=4 and tbl_employee.location_id='1'")));
 										if(count($Approver2)>0){
@@ -980,7 +980,7 @@ Class DayoffModule extends Application{
 											$Dayoffapproval->save();
 										}
 										
-										if(($Employee->department->sapcode!="13000090") && ($Employee->department->sapcode!="13000121") && ($Employee->company->sapcode!="NKF") && ($Employee->company->sapcode!="RND")  && ($Employee->company->sapcode!="BCL")  && ($Employee->company->sapcode!="LDU")){
+										if(($Employee->department->sapcode!="13000090") && ($Employee->department->sapcode!="13000121")  && ($Employee->company->sapcode!="BCL")  && ($Employee->company->sapcode!="LDU")){
 											$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.companycode='KPSI' and not(tbl_employee.id=?)",$Employee->id)));
 											if(count($Approver)>0){
 												$Dayoffapproval = new Dayoffapproval();
@@ -989,7 +989,7 @@ Class DayoffModule extends Application{
 												$Dayoffapproval->save();
 											}
 										}else{
-											$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+											$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.companycode=? and not(tbl_employee.id=?)",$Employee->companycode,$Employee->id)));
 											if(count($Approver)>0){
 												$Dayoffapproval = new Dayoffapproval();
 												$Dayoffapproval->dayoff_id = $Dayoff->id;
@@ -999,7 +999,7 @@ Class DayoffModule extends Application{
 										}
 										
 									}else{
-										$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+										$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.companycode=?  and not(tbl_employee.id=?)",$Employee->companycode,$Employee->id)));
 										if(count($Approver)>0){
 											$Dayoffapproval = new Dayoffapproval();
 											$Dayoffapproval->dayoff_id = $Dayoff->id;
@@ -1059,7 +1059,7 @@ Class DayoffModule extends Application{
 								// $Dayoffapproval->approver_id = $Approverx->id;
 								// $Dayoffapproval->save();
 							// }
-							if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="022") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
+							if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="022") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121")){
 								$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=4 and tbl_employee.location_id='1'")));
 								if(count($Approver2)>0){
 									$Dayoffapproval = new Dayoffapproval();
@@ -1067,7 +1067,7 @@ Class DayoffModule extends Application{
 									$Dayoffapproval->approver_id = $Approver2->id;
 									$Dayoffapproval->save();
 								}
-								if(($Employee->department->sapcode!="13000090") && ($Employee->department->sapcode!="13000121") && ($Employee->company->sapcode!="NKF") && ($Employee->company->sapcode!="RND")  && ($Employee->company->sapcode!="BCL")  && ($Employee->company->sapcode!="LDU")){
+								if(($Employee->department->sapcode!="13000090") && ($Employee->department->sapcode!="13000121") && ($Employee->company->sapcode!="BCL")  && ($Employee->company->sapcode!="LDU")){
 									$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.companycode='KPSI' and not(tbl_employee.id=?)",$Employee->id)));
 									if(count($Approver)>0){
 										$Dayoffapproval = new Dayoffapproval();
@@ -1076,17 +1076,16 @@ Class DayoffModule extends Application{
 										$Dayoffapproval->save();
 									}
 								}else{
-									$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+									$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.companycode=? and not(tbl_employee.id=?)",$Employee->companycode,$Employee->id)));
 									if(count($Approver)>0){
 										$Dayoffapproval = new Dayoffapproval();
 										$Dayoffapproval->dayoff_id = $Dayoff->id;
 										$Dayoffapproval->approver_id = $Approver->id;
 										$Dayoffapproval->save();
 									}
-								}
-								
+								}	
 							}else{
-								$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.company_id=? and not(tbl_employee.companycode='KPSI') and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+								$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.companycode=? and not(tbl_employee.id=?)",$Employee->companycode,$Employee->id)));
 								if(count($Approver)>0){
 									$Dayoffapproval = new Dayoffapproval();
 									$Dayoffapproval->dayoff_id = $Dayoff->id;
