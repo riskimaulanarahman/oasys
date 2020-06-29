@@ -582,7 +582,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 									<li class="nav-item"><a href="" ng-click="myTR()" class="nav-link" ><i class='fa fa-calendar-alt'></i> My Request</a></li>
 									<li class="nav-item"><a href="" ng-click="TRApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
 								</ul>
-							</li>
+							</li><!--
 							<li >
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>SPKL<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul>
@@ -591,7 +591,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 									<li class="nav-item"><a href="" ng-click="myTimesheet()" class="nav-link" ><i class='fa fa-calendar-alt'></i> OT Timesheet Request</a></li>
 									<li class="nav-item"><a href="" ng-click="TimesheetApproval()" class="nav-link" ><i class='fas fa-marker'></i> OT Timesheet Approval</a></li>
 								</ul>
-							</li>
+							</li>-->
 							<li >
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>RFC<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul>
