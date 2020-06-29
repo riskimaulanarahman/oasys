@@ -189,7 +189,7 @@ app.register.controller('spklCtrl', ['$rootScope','$scope', '$http', '$interval'
         },
 		onCellPrepared: function(e) {
 			if (e.columnIndex == 0 && e.rowType == "data") {
-				if(e.data.requeststatus!==0){
+				if((e.data.requeststatus!==0) && (e.data.requeststatus!==2) ){
 					e.cellElement.find(".dx-link-delete").remove();
 				}
 			}
