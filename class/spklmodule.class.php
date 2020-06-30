@@ -53,6 +53,9 @@ Class SpklModule extends Application{
 				case 'apispklpdf':				
 					 $this->generatePDF();
 					break;
+				case 'apispkltms':
+					$this->SPKLTms();
+					break;
 				default:
 					break;
 			}
@@ -883,5 +886,48 @@ Class SpklModule extends Application{
 			}
 		}
 	}
+	function SPKLTms(){
+		if (count($this->post)==0){
+			http_response_code(405);
+    		echo json_encode(array("message" => "Method not Allowed"));
+		}else{
+			$auth = $this->jwt->checkAuth();
+			if($auth){
+				switch ($this->post['criteria']){
+					case 'byid':
+						$id = $this->post['id'];
+						$Employee = Employee::find($id);
+						if ($Employee){
+							$join = "LEFT join tbl_employee on tbl_spkl.employee_id = tbl_employee.id left join tbl_department on tbl_employee.department_id=tbl_department.id";
+							$Spkl = Spkl::find('all', array('joins'=>$join,'conditions' => array("tbl_department.id=? and RequestStatus='3'",$Employee->department_id),'include' => array('employee')));
+							foreach ($Spkl as &$result) {
+								$fullname	= $result->employee->fullname;		
+								$result		= $result->to_array();
+								$result['fullname']=$fullname;
+							}
+							echo json_encode($Spkl, JSON_NUMERIC_CHECK);
+						}else{
+							echo json_encode(array());
+						}
+						break;
+					case 'find':
+						$query=$this->post['query'];
+						if(isset($query['status'])){
+							switch ($query['status']){
+								default:
+									
+									break;
+							}
+						} else{
+							$data=array();
+						}
+						echo json_encode($data);
+						break;
+					default:
 
+						break;
+				}
+			}
+		}
+	}
 }

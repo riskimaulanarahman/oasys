@@ -55,7 +55,7 @@ if (!String.prototype.padStart) {
 var RouteProvider = function () {
 	var scriptPath = "js/controllers/";
 	var templatePath = "template/";
-	var v= '2.52'
+	var v= '3.00'
 	this.resolve = function (name) {
 		var route = {};
 		route.templateUrl = templatePath + name + ".html?v="+v;
@@ -115,6 +115,10 @@ app.config(function ($routeProvider, $controllerProvider) {
 	.when('/detailspkl', route.resolve("detailspkl"))
 	.when('/spklapproval', route.resolve("spklapproval"))
 	.when('/spklreport', route.resolve("spklreport"))
+	.when('/spkltms', route.resolve("spkltms"))
+	.when('/detailspkltms', route.resolve("detailspkltms"))
+	.when('/spkltmsapproval', route.resolve("spkltmsapproval"))
+	.when('/spkltmsreport', route.resolve("spkltmsreport"))
 	.otherwise({
 		redirectTo: '/'
 	});

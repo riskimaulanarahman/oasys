@@ -90,6 +90,9 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.mySPKL= function(){
 		$location.path( "/spkl" );
 	}
+	$scope.myTimesheet= function(){
+		$location.path( "/spkltms" );
+	}
 	$scope.dataLeave= function(){	
 		// loadModule($rootScope.viewDayoff,"approval",false);$rootScope.$broadcast("initDO", "");
 		DevExpress.ui.notify({
@@ -150,6 +153,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.RFCApproval= function(){ loadModule(true,"rfcapproval",true);$rootScope.$broadcast("initRFC", "");} 
 	$scope.TRApproval= function(){ loadModule(true,"trapproval",true);$rootScope.$broadcast("initTR", "");} 
 	$scope.SPKLApproval= function(){ loadModule(true,"spklapproval",true);$rootScope.$broadcast("initSPKL", "");} 
+	$scope.TimesheetApproval= function(){ loadModule(true,"spkltmsapproval",true);$rootScope.$broadcast("initSPKLTMS", "");} 
 	function loadModule(access,template,filter){
 		if(access || $rootScope.isAdmin){
 			$scope.Filter=filter;
