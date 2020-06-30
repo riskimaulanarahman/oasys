@@ -137,6 +137,7 @@ app.register.controller('designationCtrl', ['$rootScope','$scope', '$http', '$in
 							displayExpr: "divisionname" 
 						}		
 					},
+				  {dataField:'sapcode',caption:'SAP Code'},
                   {dataField:'designationname',caption:'Designation'}
                   ],
         "export": {
