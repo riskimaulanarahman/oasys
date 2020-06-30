@@ -747,7 +747,8 @@ Class TrModule extends Application{
 										$Tr->requeststatus = 3;
 										$emto=$email;$emname=$Tr->employee->fullname;
 										$this->mail->Subject = "Online Approval System -> Approval Completed";
-										$red = 'Your Travel request has been approved';
+										$red = '<p>Your Weekend/PH Cov. request has been approved</p>
+													<p><b><span lang=EN-US style=\'color:#002060\'>Note : Please <u>forward</u> this electronic approval to your respective Human Resource Department.</span></b></p>';
 										//delete unnecessary approver
 										$Trapproval = Trapproval::find('all', array('joins'=>$join,'conditions' => array("tr_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
 										foreach ($Trapproval as $data) {
