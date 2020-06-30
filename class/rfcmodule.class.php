@@ -1552,7 +1552,7 @@ Class RfcModule extends Application{
 					case 'delete':				
 						$id = $this->post['id'];
 						$Rfc = Rfc::find($id);
-						if ($Rfc->requeststatus==0){
+						if (($Rfc->requeststatus==0) || ($Rfc->requeststatus==2) ){
 							try {
 								$approval = Rfcapproval::find("all",array('conditions' => array("rfc_id=?",$id)));
 								foreach ($approval as $delr){
