@@ -1,0 +1,129 @@
+<div ng-controller="dashboardCtrl as dsb">
+	<div class="tabs-animation">
+		<div class="mb-3 card">
+			<div class="card-header-tab card-header">
+				<div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+					<i class="header-icon fa fa-tachometer-alt "></i>
+					Dashboard
+				</div>
+				<div class="btn-actions-pane-right text-capitalize">
+					<button class="btn-wide btn-outline-2x mr-md-2 btn btn-outline-focus btn-sm"> X </button>
+				</div>
+			</div>
+			<div class="row widget-chart widget-chart2 border-primary">				
+				<div class="col-lg-6 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-success border-success">
+					<div class="card no-shadow rm-border bg-happy-green widget-chart text-center card-btm-border card-shadow-success border-success">
+						<div class="icon-wrapper rounded-circle">
+							<div class="icon-wrapper-bg opacity-9 bg-alternate"></div>
+							<i class="icon icon-anim-pulse fas fa-marker text-white"></i></div>
+						<div class="widget-chart-content">
+							<div class="widget-subheading">Pending Weekend Cov Approval</div>
+							<div class="widget-numbers text-alternate"><span ng-bind="pendingDayoff"></span></div>
+							<button ng-click="dayoffApproval()"  class="btn-pill btn-shadow btn-wide fsize-1 btn btn-alternate btn-lg">
+								<span class="mr-2 opacity-7">
+									<i class="icon icon-anim-pulse fa fa-marker"></i>
+								</span>
+								<span class="mr-1" >Details</span>
+							</button>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-6 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-primary border-primary">
+					<div class="card no-shadow rm-border bg-arielle-smile widget-chart text-center card-btm-border card-shadow-primary border-primary">
+						<div class="icon-wrapper rounded-circle">
+							<div class="icon-wrapper-bg opacity-9 bg-primary"></div>
+							<i class="icon icon-anim-pulse fas fa-calendar-alt text-white"></i></div>
+						<div class="widget-chart-content">
+							<div class="widget-subheading text-primary">Pending Weekend Cov Submission</div>
+							<div class="widget-numbers text-primary"><span ng-bind="pendingDayoffReq"></span></div>
+							<button ng-click="myDayoff()"  class="btn-pill btn-shadow btn-wide fsize-1 btn btn-primary btn-lg">
+								<span class="mr-2 opacity-7">
+									<i class="icon icon-anim-pulse fa fa-calendar-alt "></i>
+								</span>
+								<span class="mr-1" >Details</span>
+							</button>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-6 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-success border-success">
+					<div class="card no-shadow rm-border bg-plum-plate widget-chart text-center card-btm-border card-shadow-success border-success">
+						<div class="icon-wrapper rounded-circle">
+							<div class="icon-wrapper-bg opacity-9 bg-warning"></div>
+							<i class="icon icon-anim-pulse fas fa-marker"></i></div>
+						<div class="widget-chart-content">
+							<div class="widget-subheading text-white">Pending TR Approval</div>
+							<div class="widget-numbers text-warning"><span ng-bind="pendingTR"></span></div>
+							<button ng-click="TRApproval()"  class="btn-pill btn-shadow btn-wide fsize-1 btn btn-warning btn-lg">
+								<span class="mr-2 opacity-7">
+									<i class="icon icon-anim-pulse fa fa-marker"></i>
+								</span>
+								<span class="mr-1" >Details</span> 
+							</button>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-6 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-primary border-primary">
+					<div class="card no-shadow rm-border bg-sunny-morning widget-chart text-center card-btm-border card-shadow-primary border-primary">
+						<div class="icon-wrapper rounded-circle">
+							<div class="icon-wrapper-bg opacity-9 bg-danger"></div>
+							<i class="icon icon-anim-pulse fas fa-calendar-alt text-white"></i></div>
+						<div class="widget-chart-content">
+							<div class="widget-subheading">Pending TR Submission</div>
+							<div class="widget-numbers text-danger"><span ng-bind="pendingTRReq"></span></div>
+							<button ng-click="myTR()"  class="btn-pill btn-shadow btn-wide fsize-1 btn btn-danger btn-lg">
+								<span class="mr-2 opacity-7">
+									<i class="icon icon-anim-pulse fa fa-calendar-alt "></i>
+								</span>
+								<span class="mr-1" >Details</span>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row widget-chart widget-chart2 border-primary">
+				<div class="col-lg-6 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-success border-success">
+					<div class="card no-shadow rm-border bg-warm-flame widget-chart text-center card-btm-border card-shadow-success border-success">
+						<div class="icon-wrapper rounded-circle">
+							<div class="icon-wrapper-bg opacity-9 bg-alternate"></div>
+							<i class="icon icon-anim-pulse fas fa-marker text-white"></i></div>
+						<div class="widget-chart-content">
+							<div class="widget-subheading">Pending RFC Approval</div>
+							<div class="widget-numbers text-alternate"><span ng-bind="pendingRFC"></span></div>
+							<button ng-click="RFCApproval()"  class="btn-pill btn-shadow btn-wide fsize-1 btn btn-alternate btn-lg">
+								<span class="mr-2 opacity-7">
+									<i class="icon icon-anim-pulse fa fa-marker"></i>
+								</span>
+								<span class="mr-1" >Details</span>
+							</button>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-6 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-primary border-primary">
+					<div class="card no-shadow rm-border bg-primary widget-chart text-center card-btm-border card-shadow-primary border-primary">
+						<div class="icon-wrapper rounded-circle">
+							<div class="icon-wrapper-bg opacity-9 bg-warning"></div>
+							<i class="icon icon-anim-pulse fas fa-calendar-alt text-primary"></i></div>
+						<div class="widget-chart-content">
+							<div class="widget-subheading text-white">Pending RFC Submission</div>
+							<div class="widget-numbers text-warning"><span ng-bind="pendingRFCReq"></span></div>
+							<button ng-click="myRFC()"  class="btn-pill btn-shadow btn-wide fsize-1 btn btn-warning btn-lg">
+								<span class="mr-2 opacity-7">
+									<i class="icon icon-anim-pulse fa fa-calendar-alt "></i>
+								</span>
+								<span class="mr-1" >Details</span>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="text-center d-block p-3 card-footer">
+				<!--<button class="btn-pill btn-shadow btn-wide fsize-1 btn btn-primary btn-lg">
+					<span class="mr-2 opacity-7">
+						<i class="icon icon-anim-pulse fa fa-dashboard"></i>
+					</span>
+					<span class="mr-1"></span>
+				</button>-->
+			</div>
+		</div>
+    </div>
+</div>

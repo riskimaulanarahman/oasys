@@ -1,0 +1,11 @@
+incl/db_conf.php
+incl/define.php
+.htaccess
+dayoff/*
+images/*
+rfc/*
+vendor/*
+upload/*
+spkl/*
+tr/*
+doc/*
