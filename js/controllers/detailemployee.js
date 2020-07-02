@@ -4,6 +4,9 @@ app.register.controller('detailemployeeCtrl', ['$rootScope','$scope', '$http', '
     $scope.test=[];
 	$scope.disabled= true;
 	$scope.data = [];  
+	if (typeof($scope.mode)=="undefined"){
+		$location.path( "/" );
+	}
 	CrudService.GetAll('div').then(function (resp) {
         $scope.divDatasource=new DevExpress.data.DataSource(resp);
     });

@@ -4,6 +4,9 @@ app.register.controller('repdoCtrl', ['$rootScope','$scope', '$http', '$interval
     $scope.test=[];
 	$scope.disabled= true;
 	$scope.formFilterInstance = [];
+	if (!$rootScope.viewDayoff){
+		$location.path( "/" );
+	}
 	var date = new Date();
 	var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
 	var endDay = new Date(date.getFullYear(), date.getMonth()+1, 0);

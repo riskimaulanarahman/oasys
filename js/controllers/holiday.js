@@ -3,6 +3,9 @@ app.register.controller('holidayCtrl', ['$rootScope','$scope', '$http', '$interv
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
+	if (!$rootScope.viewHoliday){
+		$location.path( "/" );
+	}
     var myStore = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;

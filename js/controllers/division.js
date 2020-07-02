@@ -3,6 +3,9 @@ app.register.controller('divisionCtrl', ['$rootScope','$scope', '$http', '$inter
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
+	if (!$rootScope.viewDivision){
+		$location.path( "/" );
+	}
     var myStore = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;

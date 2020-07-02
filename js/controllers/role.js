@@ -3,6 +3,9 @@ app.register.controller('roleCtrl', ['$rootScope','$scope', '$http', '$interval'
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
+	if (!$rootScope.isAdmin){
+		$location.path( "/" );
+	}
     var myStore = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;

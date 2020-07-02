@@ -3,6 +3,9 @@ app.register.controller('departmentCtrl', ['$rootScope','$scope', '$http', '$int
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
+	if (!$rootScope.viewDepartment){
+		$location.path( "/" );
+	}
     var myStore = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;

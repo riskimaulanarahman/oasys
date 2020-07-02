@@ -3,6 +3,9 @@ app.register.controller('employeeCtrl', ['$rootScope','$scope', '$http', '$inter
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
+	if (!$rootScope.viewEmployee){
+		$location.path( "/" );
+	}
     var myStore = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;

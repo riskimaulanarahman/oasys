@@ -2,7 +2,9 @@
 app.register.controller('userCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService)  {
     $scope.ds={};
     $scope.test=[];
-	
+	if (!$rootScope.isAdmin){
+		$location.path( "/" );
+	}
     var myStore = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;
