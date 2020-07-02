@@ -1,6 +1,9 @@
 (function (app) {
 app.register.controller('companyCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService)  {
     $scope.ds={};
+	if (!$rootScope.viewCompany){
+		$location.path( "/" );
+	}
 	var myStore = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;

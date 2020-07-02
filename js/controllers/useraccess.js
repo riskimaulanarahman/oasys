@@ -4,6 +4,9 @@ app.register.controller('useraccessCtrl', ['$rootScope','$scope', '$http', '$int
     $scope.test=[];
 	$scope.formFilterInstance = [];
 	$scope.filterData = { };
+	if (!$rootScope.isAdmin){
+		$location.path( "/" );
+	}
 	console.log($rootScope);
 	$scope.formOptions = {
 		readOnly: false,

@@ -3,6 +3,9 @@ app.register.controller('designationCtrl', ['$rootScope','$scope', '$http', '$in
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
+	if (!$rootScope.viewDesignation){
+		$location.path( "/" );
+	}
     var myStore = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;

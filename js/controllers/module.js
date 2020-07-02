@@ -3,6 +3,9 @@ app.register.controller('moduleCtrl', ['$rootScope','$scope', '$http', '$interva
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
+	if (!$rootScope.viewModule){
+		$location.path( "/" );
+	}
     var myStore = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;
