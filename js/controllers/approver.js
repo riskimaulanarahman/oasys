@@ -2,7 +2,7 @@
 app.register.controller('approverCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
     $scope.ds={};
     $scope.test=[];
-	if (!$rootScope.viewApprover){
+	if ((!$rootScope.isAdmin) && (!$rootScope.viewApprover)){
 		$location.path( "/" );
 	}
     var myStore = new DevExpress.data.CustomStore({

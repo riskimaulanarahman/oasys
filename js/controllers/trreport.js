@@ -3,7 +3,7 @@ app.register.controller('trreportCtrl', ['$rootScope','$scope', '$http', '$inter
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
-	if (!$rootScope.viewTR){
+	if ((!$rootScope.isAdmin) &&  (!$rootScope.viewTR)){
 		$location.path( "/" );
 	}
 	var myStore = new DevExpress.data.CustomStore({

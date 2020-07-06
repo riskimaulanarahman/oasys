@@ -3,7 +3,7 @@ app.register.controller('employeeCtrl', ['$rootScope','$scope', '$http', '$inter
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
-	if (!$rootScope.viewEmployee){
+	if ((!$rootScope.isAdmin) &&  (!$rootScope.viewEmployee)){
 		$location.path( "/" );
 	}
     var myStore = new DevExpress.data.CustomStore({
