@@ -3,7 +3,7 @@ app.register.controller('rfcreportCtrl', ['$rootScope','$scope', '$http', '$inte
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
-	if (!$rootScope.viewRFC){
+	if ((!$rootScope.isAdmin) &&  (!$rootScope.viewRFC)){
 		$location.path( "/" );
 	}
 	var myStore = new DevExpress.data.CustomStore({

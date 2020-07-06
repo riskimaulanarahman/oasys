@@ -3,7 +3,7 @@ app.register.controller('designationCtrl', ['$rootScope','$scope', '$http', '$in
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
-	if (!$rootScope.viewDesignation){
+	if ((!$rootScope.isAdmin) &&  (!$rootScope.viewDesignation)){
 		$location.path( "/" );
 	}
     var myStore = new DevExpress.data.CustomStore({

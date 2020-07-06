@@ -3,7 +3,7 @@ app.register.controller('moduleCtrl', ['$rootScope','$scope', '$http', '$interva
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
-	if (!$rootScope.viewModule){
+	if ((!$rootScope.isAdmin) &&  (!$rootScope.viewModule)){
 		$location.path( "/" );
 	}
     var myStore = new DevExpress.data.CustomStore({

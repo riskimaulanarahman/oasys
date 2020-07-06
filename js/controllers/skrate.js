@@ -3,7 +3,7 @@ app.register.controller('skrateCtrl', ['$rootScope','$scope', '$http', '$interva
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
-	if (!$rootScope.viewSKRate){
+	if ((!$rootScope.isAdmin) &&  (!$rootScope.viewSKRate)){
 		$location.path( "/" );
 	}
     var myStore = new DevExpress.data.CustomStore({
