@@ -3,7 +3,7 @@ app.register.controller('doreportCtrl', ['$rootScope','$scope', '$http', '$inter
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
-	if (!$rootScope.viewDayoff){
+	if ((!$rootScope.isAdmin) &&  (!$rootScope.viewDayoff)){
 		$location.path( "/" );
 	}
 	var myStore = new DevExpress.data.CustomStore({

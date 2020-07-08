@@ -1,7 +1,7 @@
 (function (app) {
 app.register.controller('companyCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService)  {
     $scope.ds={};
-	if (!$rootScope.viewCompany){
+	if ((!$rootScope.isAdmin) &&  (!$rootScope.viewCompany)){
 		$location.path( "/" );
 	}
 	var myStore = new DevExpress.data.CustomStore({

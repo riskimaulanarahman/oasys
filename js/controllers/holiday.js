@@ -3,7 +3,7 @@ app.register.controller('holidayCtrl', ['$rootScope','$scope', '$http', '$interv
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
-	if (!$rootScope.viewHoliday){
+	if ((!$rootScope.isAdmin) &&  (!$rootScope.viewHoliday)){
 		$location.path( "/" );
 	}
     var myStore = new DevExpress.data.CustomStore({

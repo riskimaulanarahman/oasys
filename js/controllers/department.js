@@ -3,7 +3,7 @@ app.register.controller('departmentCtrl', ['$rootScope','$scope', '$http', '$int
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
-	if (!$rootScope.viewDepartment){
+	if ((!$rootScope.isAdmin) &&  (!$rootScope.viewDepartment)){
 		$location.path( "/" );
 	}
     var myStore = new DevExpress.data.CustomStore({

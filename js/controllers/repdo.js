@@ -4,7 +4,7 @@ app.register.controller('repdoCtrl', ['$rootScope','$scope', '$http', '$interval
     $scope.test=[];
 	$scope.disabled= true;
 	$scope.formFilterInstance = [];
-	if (!$rootScope.viewDayoff){
+	if ((!$rootScope.isAdmin) &&  (!$rootScope.viewDayoff)){
 		$location.path( "/" );
 	}
 	var date = new Date();
