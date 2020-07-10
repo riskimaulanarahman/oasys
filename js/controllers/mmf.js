@@ -83,7 +83,7 @@
                                 .text('')
                                 .on('dxclick', function () {
                                     DevExpress.ui.notify("Loading detail data for "+options.data.requestdate,"info",600);
-                                    $scope.loadTR(options.data,"view",true);
+                                    $scope.loadMMF(options.data,"view",true);
                                 })
                                 .appendTo(container);
                             if((options.data.requeststatus=='0') || (options.data.requeststatus=='2')){
@@ -93,7 +93,7 @@
                                     // if (!$scope.allowEdit){
                                         // DevExpress.ui.notify("You don't have authority to edit data","error");
                                     // } else{
-                                        $scope.loadTR(options.data,"edit",true);
+                                        $scope.loadMMF(options.data,"edit",true);
                                     // }
                                 })
                                 .appendTo(container);
