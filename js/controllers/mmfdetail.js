@@ -178,20 +178,20 @@
                                 dataType:"string",
                                 disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
                             },
-                            {
-                                dataField:'requeststatus',
-                                label: {
-                                    text: "Request Status"
-                                },
-                                template: function(data, itemElement) {  
-                                    var val = data.editorOptions.value;
-                                    $scope.reqStatus = data.editorOptions.value;
-                                    val=(val>=0)?val:5;
-                                    var rClass = ["mb-2 mr-2 badge badge-pill badge-secondary","mb-2 mr-2 badge badge-pill badge-primary","mb-2 mr-2 badge badge-pill badge-warning","mb-2 mr-2 badge badge-pill badge-success","mb-2 mr-2 badge badge-pill badge-danger","mb-2 mr-2 badge badge-pill badge-alt"];
-                                    var rDesc = ["Saved as Draft","Waiting Approval","Require Rework","Approved","Rejected","Not Saved"];
-                                    $('<span>').appendTo(itemElement).addClass(rClass[val]).text(rDesc[val]);
-                                }
-                            },
+                            // {
+                            //     dataField:'requeststatus',
+                            //     label: {
+                            //         text: "Request Status"
+                            //     },
+                            //     template: function(data, itemElement) {  
+                            //         var val = data.editorOptions.value;
+                            //         $scope.reqStatus = data.editorOptions.value;
+                            //         val=(val>=0)?val:5;
+                            //         var rClass = ["mb-2 mr-2 badge badge-pill badge-secondary","mb-2 mr-2 badge badge-pill badge-primary","mb-2 mr-2 badge badge-pill badge-warning","mb-2 mr-2 badge badge-pill badge-success","mb-2 mr-2 badge badge-pill badge-danger","mb-2 mr-2 badge badge-pill badge-alt"];
+                            //         var rDesc = ["Saved as Draft","Waiting Approval","Require Rework","Approved","Rejected","Not Saved"];
+                            //         $('<span>').appendTo(itemElement).addClass(rClass[val]).text(rDesc[val]);
+                            //     }
+                            // },
                             {
                                 dataField:'wonumber',
                                 label: {
@@ -246,22 +246,23 @@
                                 name:'symptomps',
                                 disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
                             },
+                            {
+                                dataField:'requeststatus',
+                                label: {
+                                    text: "Request Status"
+                                },
+                                template: function(data, itemElement) {  
+                                    var val = data.editorOptions.value;
+                                    $scope.reqStatus = data.editorOptions.value;
+                                    val=(val>=0)?val:5;
+                                    var rClass = ["mb-2 mr-2 badge badge-pill badge-secondary","mb-2 mr-2 badge badge-pill badge-primary","mb-2 mr-2 badge badge-pill badge-warning","mb-2 mr-2 badge badge-pill badge-success","mb-2 mr-2 badge badge-pill badge-danger","mb-2 mr-2 badge badge-pill badge-alt"];
+                                    var rDesc = ["Saved as Draft","Waiting Approval","Require Rework","Approved","Rejected","Not Saved"];
+                                    $('<span>').appendTo(itemElement).addClass(rClass[val]).text(rDesc[val]);
+                                }
+                            },
+
                         ]
                     },
-                    // {
-                    //     itemType: "group",
-					// 	caption: "",
-					// 	colCount:6,
-					// 	items: [{
-                    //         {
-                    //             dataField:'islandtransport',
-                    //             disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                    //             label:{text:"",visible:false},
-                    //             dataType:"boolean",
-                    //             editorType: "dxCheckBox",
-                    //         },
-                    //     }]
-                    // },
                     {
 						itemType: "group",
                         caption: "",
@@ -311,70 +312,242 @@
 
                         ]
                     },
-                    // {	
-					// 	itemType: "group",
-					// 	caption: "",
-					// 	name:"group3",
-					// 	colSpan:4,
-					// 	colCount : 1,
-					// 	items: [
-					// 		{
-                    //             dataField:'requiredother',
-                    //             name:'requiredother',
-                    //             disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
-                    //             label:{
-                    //                 text:"Pls Specify"
-                    //             },
-                    //             visible:($scope.data.RequiredType==4)?false:true,
-                    //             // validationRules: [{
-                    //             //     type: "required",
-                    //             //     message: "please input Specify"
-                    //             // }]
-                    //         },
-					// 	]
-					// },
-                    // {
-					// 	itemType: "group",
-                    //     caption: "Chemical Content",
-                    //     name:" group3",
-					// 	colCount:5,
-					// 	items: [{
-                    //         dataField:'islandtransport',
-                    //         disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                    //         label:{text:"Hazardous Chemical"},
-                    //         dataType:"boolean",
-                    //         editorType: "dxCheckBox",
-                    //     },{
-                    //         dataField:'islandtransport',
-                    //         disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                    //         label:{text:"Decominated"},
-                    //         dataType:"boolean",
-                    //         editorType: "dxCheckBox",
-                    //     },{
-                    //         dataField:'islandtransport',
-                    //         disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                    //         label:{text:"Not Contaminated"},
-                    //         dataType:"boolean",
-                    //         editorType: "dxCheckBox",
-                    //     },{
-                    //         dataField:'islandtransport',
-                    //         disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                    //         label:{text:"Non-hazardous"},
-                    //         dataType:"boolean",
-                    //         editorType: "dxCheckBox",
-                    //     },{
-                    //         dataField:'islandtransport',
-                    //         disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                    //         label:{text:"No Chemical Involved"},
-                    //         dataType:"boolean",
-                    //         editorType: "dxCheckBox",
-                    //     },
-                        
-                    //     ]
-                    // },
+                    {	
+						itemType: "group",
+						caption: "Chemical Content",
+						name:"group3",
+						colSpan:1,
+						colCount : 1,
+						items: [
+							{
+                                dataField:'ishazardouschemical',
+                                label:{text:"",visible:false},
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                dataType:"boolean",
+                                editorType: "dxCheckBox",
+                                editorOptions: { 
+                                    text:"Hazardous Chemical",
+                                    dataSource:$scope.ishazardouschemical,  
+                                    valueExpr: 'id',
+                                    displayExpr: 'ishazardouschemical',
+                                    onValueChanged: function(e){
+                                        var vis =(e.value==1)?true:false;
+                                        $scope.formInstance.itemOption('group3.group4.hazchemicalname', 'visible', vis);
+                                        $scope.formInstance.itemOption('group3.group4.hazchemicalname', 'visibleIndex', 0);
+                                        $scope.formInstance.updateData('hazchemicalname',  "");
+                                        $scope.formInstance.itemOption('group3.group4.isdecontaminated', 'visible', vis);
+                                        $scope.formInstance.itemOption('group3.group4.isdecontaminated', 'visibleIndex', 0);
+                                        $scope.formInstance.updateData('isdecontaminated',  "");
+                                        $scope.formInstance.itemOption('group3.group4.isnotcontaminated', 'visible', vis);
+                                        $scope.formInstance.itemOption('group3.group4.isnotcontaminated', 'visibleIndex', 0);
+                                        $scope.formInstance.updateData('isnotcontaminated',  "");
+                                        $scope.formInstance.itemOption('group3.group4.isnonhazardous', 'visible', vis);
+                                        $scope.formInstance.itemOption('group3.group4.isnonhazardous', 'visibleIndex', 0);
+                                        $scope.formInstance.updateData('isnonhazardous',  "");
+                                        $scope.formInstance.itemOption('group3.group4.isnonchemical', 'visible', vis);
+                                        $scope.formInstance.itemOption('group3.group4.isnonchemical', 'visibleIndex', 0);
+                                        $scope.formInstance.updateData('isnonchemical',  "");
+                                        if (e.value==0){
+                                            $scope.formInstance.itemOption('group3.group4.group5.notcontaminatedreason', 'visible', vis);
+                                            $scope.formInstance.itemOption('group3.group4.group5.notcontaminatedreason', 'visibleIndex', 0);
+                                            $scope.formInstance.updateData('notcontaminatedreason',  "");
+                                            $scope.formInstance.itemOption('group3.group4.group5.nonhazchemicalname', 'visible', vis);
+                                            $scope.formInstance.itemOption('group3.group4.group5.nonhazchemicalname', 'visibleIndex', 0);
+                                            $scope.formInstance.updateData('nonhazchemicalname',  "");
+                                        }
+                                        
+                                        
+                                    }
+                                }
+                            },{	
+								itemType: "group",
+								caption: "",
+								name:"group4",
+								colSpan:1,
+								colCount : 1,
+								items: [
+                                    {
+                                        dataField:'hazchemicalname',
+                                        label: {
+                                            text:"Chemcial Name",
+                                        },
+                                        visible:($scope.data.ishazardouschemical==1)?true:false,
+                                        name:'hazchemicalname',
+                                        disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                        validationRules: [{
+                                            type: "required",
+                                            message: "Please select your department head"
+                                        }]                            
+                                    }
+
+                                ]
+                                
+							},{	
+								itemType: "group",
+								caption: "",
+								name:"group4",
+								colSpan:1,
+								colCount : 1,
+								items: [
+                                    {
+                                        dataField:'isdecontaminated',
+                                        label:{text:"",visible:false},
+                                        disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                        visible:($scope.data.ishazardouschemical==1)?true:false,
+                                        dataType:"boolean",
+                                        editorType: "dxCheckBox",
+                                        editorOptions: { 
+                                            text:"Decontaminated",
+                                        }
+                                    },{
+                                        dataField:'isnotcontaminated',
+                                        label:{text:"",visible:false},
+                                        disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                        visible:($scope.data.ishazardouschemical==1)?true:false,
+                                        dataType:"boolean",
+                                        editorType: "dxCheckBox",
+                                        editorOptions: { 
+                                            text:"Not Contaminated",
+                                            onValueChanged: function(e){
+												var vis_notcontaminated =(e.value==1)?true:false;
+												$scope.formInstance.itemOption('group3.group4.group5.notcontaminatedreason', 'visible', vis_notcontaminated);
+												$scope.formInstance.itemOption('group3.group4.group5.notcontaminatedreason', 'visibleIndex', 5);
+                                                $scope.formInstance.updateData('notcontaminatedreason',  "");
+											}
+                                        }
+                                    },{
+                                        dataField:'isnonhazardous',
+                                        label:{text:"",visible:false},
+                                        disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                        visible:($scope.data.ishazardouschemical==1)?true:false,
+                                        dataType:"boolean",
+                                        editorType: "dxCheckBox",
+                                        editorOptions: { 
+                                            text:"Non-hazardous Chemical",
+                                            onValueChanged: function(e){
+												var vis_isnonhazardous =(e.value==1)?true:false;
+												$scope.formInstance.itemOption('group3.group4.group5.nonhazchemicalname', 'visible', vis_isnonhazardous);
+												$scope.formInstance.itemOption('group3.group4.group5.nonhazchemicalname', 'visibleIndex', 5);
+												$scope.formInstance.updateData('nonhazchemicalname',  "");
+											}
+                                        }
+                                    },{
+                                        dataField:'isnonchemical',
+                                        label:{text:"",visible:false},
+                                        disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                        visible:($scope.data.ishazardouschemical==1)?true:false,
+                                        dataType:"boolean",
+                                        editorType: "dxCheckBox",
+                                        editorOptions: { 
+                                            text:"No Chemical Involved",
+                                        }
+                                    },{	
+                                        itemType: "group",
+                                        caption: "",
+                                        name:"group5",
+                                        colSpan:1,
+                                        colCount : 1,
+                                        items: [
+                                            {
+                                                dataField:'notcontaminatedreason',
+                                                label: {
+                                                    text:"Reason (Not Contaminated)",
+                                                },
+                                                visible:($scope.data.isnotcontaminated==1)?true:false,
+                                                name:'notcontaminatedreason',
+                                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                                validationRules: [{
+                                                    type: "required",
+                                                    message: "Please select your department head"
+                                                }]                         
+                                            },{
+                                                dataField:'nonhazchemicalname',
+                                                label: {
+                                                    text:"Chemical Name (Non-hazardous Chemical)",
+                                                },
+                                                visible:($scope.data.isnonhazardous==1)?true:false,
+                                                name:'nonhazchemicalname',
+                                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                                validationRules: [{
+                                                    type: "required",
+                                                    message: "Please select your department head"
+                                                }]                         
+                                            }
+        
+                                        ]
+                                        
+                                    },
+
+                                ]
+                                
+							},
+                        ]
+                    },
+                    {	
+						itemType: "group",
+						caption: "To be completed by Procurement",
+						name:"group6",
+						colSpan:1,
+						colCount : 1,
+						items: [
+                            {
+                                dataField:'materialdispatchno',
+                                label: {
+                                    text:"Material Dispatch No",
+                                },
+                                name:'materialdispatchno',
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+                            },{
+                                dataField:'isrepair',
+                                label:{text:"",visible:false},
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                dataType:"boolean",
+                                editorType: "dxCheckBox",
+                                editorOptions: { 
+                                    text:"Repair",
+                                }
+                            },{
+                                dataField:'isscrap',
+                                label:{text:"",visible:false},
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                dataType:"boolean",
+                                editorType: "dxCheckBox",
+                                editorOptions: { 
+                                    text:"Scrapped",
+                                }
+                            },{
+                                dataField:'estimatecost',
+                                label: {
+                                    text:"Estimation Cost",
+                                },
+                                name:'estimatecost',
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+                            },{
+                                dataField:'pono',
+                                label: {
+                                    text:"PO No",
+                                },
+                                name:'pono',
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+                            },{
+                                dataField:'materialreturneddate',
+                                editorType: "dxDateBox",
+                                label: {text: "Material Returned Date"},
+                                editorOptions: {displayFormat:"dd/MM/yyyy",disabled: false}
+                            },{
+                                dataField:'supplierdodnno',
+                                label: {
+                                    text:"Supplier DO/DN No",
+                                },
+                                name:'supplierdodnno',
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+                            }
+
+						]
+                    },
                     {
 						itemType: "group",
-						caption: "",
+						caption: "Action",
 						colCount:6,
 						items: [{
 							itemType: "button",
@@ -508,6 +681,7 @@
 		delete data.department;
 		delete data.approvalstatus;
 		data.requireddate = $filter("date")(data.requireddate, "yyyy-MM-dd HH:mm");
+		data.materialreturneddate = $filter("date")(data.materialreturneddate, "yyyy-MM-dd HH:mm");
 		console.log(data);
 		CrudService.Update('mmf',data.id,data).then(function (response) {
 			if(response.status=="error"){
