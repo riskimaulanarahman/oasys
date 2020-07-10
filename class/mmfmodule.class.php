@@ -281,31 +281,31 @@ Class Mmfmodule extends Application{
 							$Tr = Mmf::create($data);
 							$data=$Tr->to_array();
 							$joinx   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
-							if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="022") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
+							// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="022") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
 								
-							}else{
-								$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='MMF' and tbl_approver.isactive='1' and approvaltype_id=17 and tbl_employee.company_id=?",$Employee->company_id)));
-								if(count($Approver)>0){
-									$Trapproval = new Mmfapproval();
-									$Trapproval->mmf28_id = $Tr->id;
-									$Trapproval->approver_id = $Approver->id;
-									$Trapproval->save();
-								}
-							}
-							$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='MMF' and tbl_approver.isactive='1' and approvaltype_id=18")));
-							if(count($Approver)>0){
-								$Trapproval = new Mmfapproval();
-								$Trapproval->mmf28_id = $Tr->id;
-								$Trapproval->approver_id = $Approver->id;
-								$Trapproval->save();
-							}
-							$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='MMF' and tbl_approver.isactive='1' and approvaltype_id=19")));
-							if(count($Approver2)>0){
-								$Trapproval = new Mmfapproval();
-								$Trapproval->mmf28_id = $Tr->id;
-								$Trapproval->approver_id = $Approver2->id;
-								$Trapproval->save();
-							}
+							// }else{
+							// 	$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='MMF' and tbl_approver.isactive='1' and approvaltype_id=17 and tbl_employee.company_id=?",$Employee->company_id)));
+							// 	if(count($Approver)>0){
+							// 		$Trapproval = new Mmfapproval();
+							// 		$Trapproval->mmf28_id = $Tr->id;
+							// 		$Trapproval->approver_id = $Approver->id;
+							// 		$Trapproval->save();
+							// 	}
+							// }
+							// $Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='MMF' and tbl_approver.isactive='1' and approvaltype_id=18")));
+							// if(count($Approver)>0){
+							// 	$Trapproval = new Mmfapproval();
+							// 	$Trapproval->mmf28_id = $Tr->id;
+							// 	$Trapproval->approver_id = $Approver->id;
+							// 	$Trapproval->save();
+							// }
+							// $Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='MMF' and tbl_approver.isactive='1' and approvaltype_id=19")));
+							// if(count($Approver2)>0){
+							// 	$Trapproval = new Mmfapproval();
+							// 	$Trapproval->mmf28_id = $Tr->id;
+							// 	$Trapproval->approver_id = $Approver2->id;
+							// 	$Trapproval->save();
+							// }
 							$Trhistory = new Mmfhistory();
 							$Trhistory->date = date("Y-m-d h:i:s");
 							$Trhistory->fullname = $Employee->fullname;
@@ -333,25 +333,25 @@ Class Mmfmodule extends Application{
 							$id = $this->post['id'];
 							$Tr = Mmf::find($id);
 							if ($Tr->requeststatus==0){
-								$approval = Trapproval::find("all",array('conditions' => array("tr_id=?",$id)));
+								$approval = Mmfapproval::find("all",array('conditions' => array("mmf28_id=?",$id)));
 								foreach ($approval as $delr){
 									$delr->delete();
 								}
-								$detail = Trschedule::find("all",array('conditions' => array("tr_id=?",$id)));
-								foreach ($detail as $delr){
-									$delr->delete();
-								}
-								$detail = Trticket::find("all",array('conditions' => array("tr_id=?",$id)));
-								foreach ($detail as $delr){
-									$delr->delete();
-								}
-								$hist = Trhistory::find("all",array('conditions' => array("tr_id=?",$id)));
+								// $detail = Trschedule::find("all",array('conditions' => array("tr_id=?",$id)));
+								// foreach ($detail as $delr){
+								// 	$delr->delete();
+								// }
+								// $detail = Trticket::find("all",array('conditions' => array("tr_id=?",$id)));
+								// foreach ($detail as $delr){
+								// 	$delr->delete();
+								// }
+								$hist = Mmfhistory::find("all",array('conditions' => array("mmf28_id=?",$id)));
 								foreach ($hist as $delr){
 									$delr->delete();
 								}
 								$data = $Tr->to_array();
 								$Tr->delete();
-								$logger = new Datalogger("TR","delete",json_encode($data),null);
+								$logger = new Datalogger("MMF","delete",json_encode($data),null);
 								$logger->SaveData();
 								echo json_encode($Tr);
 							} else {
@@ -360,7 +360,7 @@ Class Mmfmodule extends Application{
 							}
 						}catch (Exception $e){
 							$err = new Errorlog();
-							$err->errortype = "DeleteTR";
+							$err->errortype = "DeleteMMF";
 							$err->errordate = date("Y-m-d h:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
@@ -390,164 +390,164 @@ Class Mmfmodule extends Application{
 								}
 								$Tr->save();
 								
-								if (isset($data['depthead'])){
-									$joins   = "LEFT JOIN tbl_approver ON (tbl_trapproval.approver_id = tbl_approver.id) ";					
-									$dx = Trapproval::find('all',array('joins'=>$joins,'conditions' => array("tr_id=? and tbl_approver.approvaltype_id=16 and not(tbl_approver.employee_id=?)",$id,$depthead)));	
-									foreach ($dx as $result) {
-										//delete same type dept head approver
-										$result->delete();
-										$logger = new Datalogger("Trapproval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
-									}
-									$joins   = "LEFT JOIN tbl_approver ON (tbl_trapproval.approver_id = tbl_approver.id) ";					
-									$Trapproval = Trapproval::find('all',array('joins'=>$joins,'conditions' => array("tr_id=? and tbl_approver.employee_id=?",$id,$depthead)));	
-									foreach ($Trapproval as &$result) {
-										$result		= $result->to_array();
-										$result['no']=1;
-									}			
-									if(count($Trapproval)==0){ 
-										$Approver = Approver::find('first',array('conditions'=>array("module='TR' and employee_id=? and approvaltype_id=16",$depthead)));
-										if(count($Approver)>0){
-											$Trapproval = new Mmfapproval();
-											$Trapproval->tr_id = $Tr->id;
-											$Trapproval->approver_id = $Approver->id;
-											$Trapproval->save();
-										}else{
-											$approver = new Approver();
-											$approver->module = "TR";
-											$approver->employee_id=$depthead;
-											$approver->sequence=1;
-											$approver->approvaltype_id = 16;
-											$approver->isfinal = false;
-											$approver->save();
-											$Trapproval = new Mmfapproval();
-											$Trapproval->tr_id = $Tr->id;
-											$Trapproval->approver_id = $approver->id;
-											$Trapproval->save();
-										}
-									}
+								// if (isset($data['depthead'])){
+								// 	$joins   = "LEFT JOIN tbl_approver ON (tbl_trapproval.approver_id = tbl_approver.id) ";					
+								// 	$dx = Trapproval::find('all',array('joins'=>$joins,'conditions' => array("tr_id=? and tbl_approver.approvaltype_id=16 and not(tbl_approver.employee_id=?)",$id,$depthead)));	
+								// 	foreach ($dx as $result) {
+								// 		//delete same type dept head approver
+								// 		$result->delete();
+								// 		$logger = new Datalogger("Trapproval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
+								// 	}
+								// 	$joins   = "LEFT JOIN tbl_approver ON (tbl_trapproval.approver_id = tbl_approver.id) ";					
+								// 	$Trapproval = Trapproval::find('all',array('joins'=>$joins,'conditions' => array("tr_id=? and tbl_approver.employee_id=?",$id,$depthead)));	
+								// 	foreach ($Trapproval as &$result) {
+								// 		$result		= $result->to_array();
+								// 		$result['no']=1;
+								// 	}			
+								// 	if(count($Trapproval)==0){ 
+								// 		$Approver = Approver::find('first',array('conditions'=>array("module='TR' and employee_id=? and approvaltype_id=16",$depthead)));
+								// 		if(count($Approver)>0){
+								// 			$Trapproval = new Mmfapproval();
+								// 			$Trapproval->tr_id = $Tr->id;
+								// 			$Trapproval->approver_id = $Approver->id;
+								// 			$Trapproval->save();
+								// 		}else{
+								// 			$approver = new Approver();
+								// 			$approver->module = "TR";
+								// 			$approver->employee_id=$depthead;
+								// 			$approver->sequence=1;
+								// 			$approver->approvaltype_id = 16;
+								// 			$approver->isfinal = false;
+								// 			$approver->save();
+								// 			$Trapproval = new Mmfapproval();
+								// 			$Trapproval->tr_id = $Tr->id;
+								// 			$Trapproval->approver_id = $approver->id;
+								// 			$Trapproval->save();
+								// 		}
+								// 	}
 									
-								}
+								// }
 								
-								if($data['requeststatus']==1){
-									$Trapproval = Trapproval::find('all', array('conditions' => array("tr_id=?",$id)));					
-									foreach($Trapproval as $data){
-										$data->approvalstatus=0;
-										$data->save();
-									}
-									$joinx   = "LEFT JOIN tbl_approver ON (tbl_trapproval.approver_id = tbl_approver.id) ";					
-									$Trapproval = Trapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and tr_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
-									$username = $Trapproval->approver->employee->loginname;
-									$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
-									$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Tr->employee->loginname)));
-									$email=$usr->email;
-									$Trschedule=Trschedule::find('all',array('conditions'=>array("tr_id=?",$id),'include'=>array('tr'=>array('employee'=>array('company','department','designation','grade')))));
-									$Trticket=Trticket::find('all',array('conditions'=>array("tr_id=?",$id),'include'=>array('tr'=>array('employee'=>array('company','department','designation','grade')))));
-									$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$adb->fullname.',</span></p>
-										<p class=MsoNormal><span style="color:#1F497D">new Mmfavel Request is awaiting for your approval:</span></p>
-										<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
-										<table border=1 cellspacing=0 cellpadding=3 width=683>
-										<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->fullname.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>SAP ID</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->sapid.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>Position</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->designation->designationname.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>Business Group / Business Unit</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->company->companyname.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>Location</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->location->location.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>Email</p></td><td>:</td><td><p class=MsoNormal><b>'.$email.'</b></p></td></tr>
-										</table>
-										<p class=MsoNormal><b>Travel Schedule ( Jadwal Perjalanan)</b></p>
-										<table border=1 cellspacing=0 cellpadding=3 width=683>
-										<tr><th  rowspan="2"><p class=MsoNormal>No</p></th>
-											<th colspan="2"><p class=MsoNormal>Departing <br>( Keberangkatan )</p></th>
-											<th><p class=MsoNormal>From ( Dari )</p></th>
-											<th colspan="2"><p class=MsoNormal>Arriving ( Ketibaan )</p></th>
-											<th><p class=MsoNormal>To ( Ke )</p></th>
-											<th><p class=MsoNormal>Region</p></th>
-											<th rowspan="2"><p class=MsoNormal>Reason (Alasan)<br><small>(e.g. Meeting,<br>Seminar etc. )</small></p></th>
-										</tr>
-										<tr><th><p class=MsoNormal>Date (tgl) <br> <small>(dd/mm/yyyy)</small></p></th>
-											<th><p class=MsoNormal>Time (Waktu)</p></th>
-											<th><p class=MsoNormal>City/Country<br>(Kota/Negara)</p></th>
-											<th><p class=MsoNormal>Date (tgl) <br> <small>(dd/mm/yyyy)</small></p></th>
-											<th><p class=MsoNormal>Time (Waktu)</p></th>
-											<th><p class=MsoNormal>City/Country<br>(Kota/Negara)</p></th>
-											<th><p class=MsoNormal>R1/R2</p></th>
-										</tr>';
-									$no=1;					
-									foreach ($Trschedule as $data){
-										$this->mailbody .='<tr style="height:22.5pt">
-											<td><p class=MsoNormal> '.$no.'</p></td>
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->departdate)).'</p></td>
-											<td><p class=MsoNormal> '.$data->departtime.'</p></td>
-											<td><p class=MsoNormal> '.$data->departfrom.'</p></td>
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->arrivingdate)).'</p></td>
-											<td><p class=MsoNormal> '.$data->arrivingtime.'</p></td>
-											<td><p class=MsoNormal> '.$data->arrivingto.'</p></td>
-											<td><p class=MsoNormal> '.$data->region.'</p></td>
-											<td><p class=MsoNormal> '.$data->reason.'</p></td>
-										</tr>';
-										$no++;
-									}
-									$this->mailbody .='</table>
-										<table border=1 cellspacing=0 cellpadding=3 width=683>
-										<tr><th><p class=MsoNormal>No</p></th>
-											<th><p class=MsoNormal>Ticket For (Untuk)</p></th>
-											<th><p class=MsoNormal>Name <br>( Nama )</p></th>
-											<th><p class=MsoNormal>Date of Birth <br>( Tgl. Lahir) <br> <small>(dd/mm/yyyy)</small></p></th>
-											<th><p class=MsoNormal>Phone Number</p></th>
-											<th><p class=MsoNormal>Gender</p></th>
-											<th><p class=MsoNormal>Remarks /Confirmation from HR <br> ( Konfirmasi dari HR )</p></th>
-										</tr>
-										';
-									$no=1;
-									foreach ($Trticket as $data){
-										$this->mailbody .='<tr style="height:22.5pt">
-											<td><p class=MsoNormal> '.$no.'</p></td>
-											<td><p class=MsoNormal> '.$data->ticketfor.'</p></td>
-											<td><p class=MsoNormal> '.$data->ticketname.'</p></td>
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->dateofbirth)).'</p></td>
-											<td><p class=MsoNormal> '.$data->phonenumber.'</p></td>
-											<td><p class=MsoNormal> '.$data->gender.'</p></td>
-											<td><p class=MsoNormal> '.$data->hrremarks.'</p></td>
-											</tr>';
-										$no++;
-									}
-									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
-									$this->mail->addAddress($adb->email, $adb->fullname);
-									$this->mail->Subject = "Online Approval System -> new Mmfavel Request Submission";
-									$this->mail->msgHTML($this->mailbody);
-									if (!$this->mail->send()) {
-										$err = new Errorlog();
-										$err->errortype = "Mail";
-										$err->errordate = date("Y-m-d h:i:s");
-										$err->errormessage = $this->mail->ErrorInfo;
-										$err->user = $this->currentUser->username;
-										$err->ip = $this->ip;
-										$err->save();
-										echo "Mailer Error: " . $this->mail->ErrorInfo;
-									} else {
-										echo "Message sent!";
-									}
+								// if($data['requeststatus']==1){
+								// 	$Trapproval = Trapproval::find('all', array('conditions' => array("tr_id=?",$id)));					
+								// 	foreach($Trapproval as $data){
+								// 		$data->approvalstatus=0;
+								// 		$data->save();
+								// 	}
+								// 	$joinx   = "LEFT JOIN tbl_approver ON (tbl_trapproval.approver_id = tbl_approver.id) ";					
+								// 	$Trapproval = Trapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and tr_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+								// 	$username = $Trapproval->approver->employee->loginname;
+								// 	$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
+								// 	$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Tr->employee->loginname)));
+								// 	$email=$usr->email;
+								// 	$Trschedule=Trschedule::find('all',array('conditions'=>array("tr_id=?",$id),'include'=>array('tr'=>array('employee'=>array('company','department','designation','grade')))));
+								// 	$Trticket=Trticket::find('all',array('conditions'=>array("tr_id=?",$id),'include'=>array('tr'=>array('employee'=>array('company','department','designation','grade')))));
+								// 	$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$adb->fullname.',</span></p>
+								// 		<p class=MsoNormal><span style="color:#1F497D">new Mmfavel Request is awaiting for your approval:</span></p>
+								// 		<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
+								// 		<table border=1 cellspacing=0 cellpadding=3 width=683>
+								// 		<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->fullname.'</b></p></td></tr>
+								// 		<tr><td><p class=MsoNormal>SAP ID</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->sapid.'</b></p></td></tr>
+								// 		<tr><td><p class=MsoNormal>Position</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->designation->designationname.'</b></p></td></tr>
+								// 		<tr><td><p class=MsoNormal>Business Group / Business Unit</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->company->companyname.'</b></p></td></tr>
+								// 		<tr><td><p class=MsoNormal>Location</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->location->location.'</b></p></td></tr>
+								// 		<tr><td><p class=MsoNormal>Email</p></td><td>:</td><td><p class=MsoNormal><b>'.$email.'</b></p></td></tr>
+								// 		</table>
+								// 		<p class=MsoNormal><b>Travel Schedule ( Jadwal Perjalanan)</b></p>
+								// 		<table border=1 cellspacing=0 cellpadding=3 width=683>
+								// 		<tr><th  rowspan="2"><p class=MsoNormal>No</p></th>
+								// 			<th colspan="2"><p class=MsoNormal>Departing <br>( Keberangkatan )</p></th>
+								// 			<th><p class=MsoNormal>From ( Dari )</p></th>
+								// 			<th colspan="2"><p class=MsoNormal>Arriving ( Ketibaan )</p></th>
+								// 			<th><p class=MsoNormal>To ( Ke )</p></th>
+								// 			<th><p class=MsoNormal>Region</p></th>
+								// 			<th rowspan="2"><p class=MsoNormal>Reason (Alasan)<br><small>(e.g. Meeting,<br>Seminar etc. )</small></p></th>
+								// 		</tr>
+								// 		<tr><th><p class=MsoNormal>Date (tgl) <br> <small>(dd/mm/yyyy)</small></p></th>
+								// 			<th><p class=MsoNormal>Time (Waktu)</p></th>
+								// 			<th><p class=MsoNormal>City/Country<br>(Kota/Negara)</p></th>
+								// 			<th><p class=MsoNormal>Date (tgl) <br> <small>(dd/mm/yyyy)</small></p></th>
+								// 			<th><p class=MsoNormal>Time (Waktu)</p></th>
+								// 			<th><p class=MsoNormal>City/Country<br>(Kota/Negara)</p></th>
+								// 			<th><p class=MsoNormal>R1/R2</p></th>
+								// 		</tr>';
+								// 	$no=1;					
+								// 	foreach ($Trschedule as $data){
+								// 		$this->mailbody .='<tr style="height:22.5pt">
+								// 			<td><p class=MsoNormal> '.$no.'</p></td>
+								// 			<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->departdate)).'</p></td>
+								// 			<td><p class=MsoNormal> '.$data->departtime.'</p></td>
+								// 			<td><p class=MsoNormal> '.$data->departfrom.'</p></td>
+								// 			<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->arrivingdate)).'</p></td>
+								// 			<td><p class=MsoNormal> '.$data->arrivingtime.'</p></td>
+								// 			<td><p class=MsoNormal> '.$data->arrivingto.'</p></td>
+								// 			<td><p class=MsoNormal> '.$data->region.'</p></td>
+								// 			<td><p class=MsoNormal> '.$data->reason.'</p></td>
+								// 		</tr>';
+								// 		$no++;
+								// 	}
+								// 	$this->mailbody .='</table>
+								// 		<table border=1 cellspacing=0 cellpadding=3 width=683>
+								// 		<tr><th><p class=MsoNormal>No</p></th>
+								// 			<th><p class=MsoNormal>Ticket For (Untuk)</p></th>
+								// 			<th><p class=MsoNormal>Name <br>( Nama )</p></th>
+								// 			<th><p class=MsoNormal>Date of Birth <br>( Tgl. Lahir) <br> <small>(dd/mm/yyyy)</small></p></th>
+								// 			<th><p class=MsoNormal>Phone Number</p></th>
+								// 			<th><p class=MsoNormal>Gender</p></th>
+								// 			<th><p class=MsoNormal>Remarks /Confirmation from HR <br> ( Konfirmasi dari HR )</p></th>
+								// 		</tr>
+								// 		';
+								// 	$no=1;
+								// 	foreach ($Trticket as $data){
+								// 		$this->mailbody .='<tr style="height:22.5pt">
+								// 			<td><p class=MsoNormal> '.$no.'</p></td>
+								// 			<td><p class=MsoNormal> '.$data->ticketfor.'</p></td>
+								// 			<td><p class=MsoNormal> '.$data->ticketname.'</p></td>
+								// 			<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->dateofbirth)).'</p></td>
+								// 			<td><p class=MsoNormal> '.$data->phonenumber.'</p></td>
+								// 			<td><p class=MsoNormal> '.$data->gender.'</p></td>
+								// 			<td><p class=MsoNormal> '.$data->hrremarks.'</p></td>
+								// 			</tr>';
+								// 		$no++;
+								// 	}
+								// 	$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+								// 	$this->mail->addAddress($adb->email, $adb->fullname);
+								// 	$this->mail->Subject = "Online Approval System -> new Mmfavel Request Submission";
+								// 	$this->mail->msgHTML($this->mailbody);
+								// 	if (!$this->mail->send()) {
+								// 		$err = new Errorlog();
+								// 		$err->errortype = "Mail";
+								// 		$err->errordate = date("Y-m-d h:i:s");
+								// 		$err->errormessage = $this->mail->ErrorInfo;
+								// 		$err->user = $this->currentUser->username;
+								// 		$err->ip = $this->ip;
+								// 		$err->save();
+								// 		echo "Mailer Error: " . $this->mail->ErrorInfo;
+								// 	} else {
+								// 		echo "Message sent!";
+								// 	}
+								// 	$Trhistory = new Mmfhistory();
+								// 	$Trhistory->date = date("Y-m-d h:i:s");
+								// 	$Trhistory->fullname = $Employee->fullname;
+								// 	$Trhistory->tr_id = $id;
+								// 	$Trhistory->approvaltype = "Originator";
+								// 	$Trhistory->actiontype = 2;
+								// 	$Trhistory->save();
+								// }else{
 									$Trhistory = new Mmfhistory();
 									$Trhistory->date = date("Y-m-d h:i:s");
 									$Trhistory->fullname = $Employee->fullname;
-									$Trhistory->tr_id = $id;
-									$Trhistory->approvaltype = "Originator";
-									$Trhistory->actiontype = 2;
-									$Trhistory->save();
-								}else{
-									$Trhistory = new Mmfhistory();
-									$Trhistory->date = date("Y-m-d h:i:s");
-									$Trhistory->fullname = $Employee->fullname;
-									$Trhistory->tr_id = $id;
+									$Trhistory->mmf28_id = $id;
 									$Trhistory->approvaltype = "Originator";
 									$Trhistory->actiontype = 1;
 									$Trhistory->save();
-								}
-								$logger = new Datalogger("TR","update",json_encode($olddata),json_encode($data));
+								// }
+								$logger = new Datalogger("MMF","update",json_encode($olddata),json_encode($data));
 								$logger->SaveData();
 							}
 						}catch (Exception $e){
 							$err = new Errorlog();
-							$err->errortype = "UpdateTR";
+							$err->errortype = "UpdateMMF";
 							$err->errordate = date("Y-m-d h:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
