@@ -589,7 +589,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 									<li class="nav-item"><a href="" ng-click="mySPKL()" class="nav-link" ><i class='fa fa-calendar-alt'></i> OT Instruction Request</a></li>
 									<li class="nav-item"><a href="" ng-click="SPKLApproval()" class="nav-link" ><i class='fas fa-marker'></i> OT Instruction Approval</a></li>
 									<li class="nav-item"><a href="" ng-click="myTimesheet()" class="nav-link" ><i class='fa fa-calendar-alt'></i> OT Timesheet Request</a></li>
-									<li class="nav-item"><a href="" ng-click="TimesheetApproval()" class="nav-link" ><i class='fas fa-marker'></i> OT Timesheet Approval</a></li>
+									<li class="nav-item"><a href="" ng-click="SPKLTMSApproval()" class="nav-link" ><i class='fas fa-marker'></i> OT Timesheet Approval</a></li>
 								</ul>
 							</li>-->
 							<li ng-class="{'mm-active': (isActive('/rfc') || isActive('/rfcapproval'))}" >

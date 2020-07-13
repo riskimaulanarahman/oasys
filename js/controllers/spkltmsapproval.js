@@ -1,5 +1,5 @@
 (function (app) {
-app.register.controller('spklapprovalCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
+app.register.controller('spkltmsapprovalCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
@@ -7,7 +7,7 @@ app.register.controller('spklapprovalCtrl', ['$rootScope','$scope', '$http', '$i
 		load: function() {			
             $scope.isLoaded =true;
 			criteria = {pending:'true'};
-            return CrudService.FindData('spklapp',criteria).then(function (response) {
+            return CrudService.FindData('spkltmsapp',criteria).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.notify(response.message,"error");
 				}else{
@@ -17,7 +17,7 @@ app.register.controller('spklapprovalCtrl', ['$rootScope','$scope', '$http', '$i
 		},
 	 
 		byKey: function(key) {
-            CrudService.GetById('spklapp',encodeURIComponent(key)).then(function (response) {
+            CrudService.GetById('spkltmsapp',encodeURIComponent(key)).then(function (response) {
 				return response;
 			});
 		},
@@ -31,7 +31,7 @@ app.register.controller('spklapprovalCtrl', ['$rootScope','$scope', '$http', '$i
 			
 		}
     });
-	$scope.$on("initSPKL", function(event, name) {
+	$scope.$on("initSPKLTMS", function(event, name) {
 		$scope.dataGrid.refresh();
     });
 	var myData = new DevExpress.data.DataSource({
@@ -69,7 +69,7 @@ app.register.controller('spklapprovalCtrl', ['$rootScope','$scope', '$http', '$i
                             .text('')
                             .on('dxclick', function () {
                                 DevExpress.ui.notify("Loading detail data for "+options.data.requestdate,"info",600);
-								$scope.loadSPKL(options.data,'approve',true);
+								$scope.loadSPKLTMS(options.data,'approve',true);
                             })
                             .appendTo(container);
                     }
@@ -81,9 +81,9 @@ app.register.controller('spklapprovalCtrl', ['$rootScope','$scope', '$http', '$i
                 },
 				{dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200},
 				{dataField:'datework',caption:"Date Work",dataType:"date", format:"dd/MM/yyyy",width: 200},
-				{dataField:'requeststatus',encodeHtml: false ,width: 300,
+				{dataField:'tmsreqstatus',encodeHtml: false ,width: 300,
 					customizeText: function (e) {
-						var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Saved as Draft</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
+						var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Not yet Submitted</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
 						return rDesc[e.value];
 					}},
 				{dataField:'remarks',encodeHtml: false },

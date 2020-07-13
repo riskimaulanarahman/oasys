@@ -153,7 +153,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.RFCApproval= function(){ loadModule(true,"rfcapproval",true);$rootScope.$broadcast("initRFC", "");} 
 	$scope.TRApproval= function(){ loadModule(true,"trapproval",true);$rootScope.$broadcast("initTR", "");} 
 	$scope.SPKLApproval= function(){ loadModule(true,"spklapproval",true);$rootScope.$broadcast("initSPKL", "");} 
-	$scope.TimesheetApproval= function(){ loadModule(true,"spkltmsapproval",true);$rootScope.$broadcast("initSPKLTMS", "");} 
+	$scope.SPKLTMSApproval = function(){ loadModule(true,"spkltmsapproval",true);$rootScope.$broadcast("initSPKLTMS", "");} 
 	function loadModule(access,template,filter){
 		if(access || $rootScope.isAdmin){
 			$scope.Filter=filter;
@@ -287,6 +287,13 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 			$scope.Employeeid = data.employee_id;
 			$location.path( "/detailspkl" );
 		}
+	}
+	$scope.loadSPKLTMS= function(data,mode,filter){
+		$scope.Filter=filter;
+		$scope.mode = mode;
+		$scope.Requestid = data.id;
+		$scope.Employeeid = data.employee_id;
+		$location.path( "/detailspkltms" );
 	}
 	$scope.loadRFC= function(data,mode,filter){
 		$scope.Filter=filter;

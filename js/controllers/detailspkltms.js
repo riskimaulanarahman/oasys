@@ -1,5 +1,5 @@
 (function (app) {
-app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
+app.register.controller('detailspkltmsCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
@@ -84,25 +84,25 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 						colSpan :2,
 						items: [
 						{dataField:'createddate',editorType: "dxDateBox",label: {text: "Creation Date"},editorOptions: {displayFormat:"dd/MM/yyyy",disabled: true}},
-						{dataField:'datework',editorType: "dxDateBox",label: {text: "Date Work"},editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now()},validationRules: [{
+						{dataField:'datework',editorType: "dxDateBox",label: {text: "Date Work"},editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now(),disabled: true},validationRules: [{
 							type: "required",
 							message: "Please select Work Date"
 						}]},
-						{dataField:'requeststatus',label: {text: "Request Status"},template: function(data, itemElement) {  
+						{dataField:'tmsreqstatus',label: {text: "Timesheet Approval Status"},template: function(data, itemElement) {  
 							var val = data.editorOptions.value;
 							$scope.reqStatus = data.editorOptions.value;
 							val=(val>=0)?val:5;
 							var rClass = ["mb-2 mr-2 badge badge-pill badge-secondary","mb-2 mr-2 badge badge-pill badge-primary","mb-2 mr-2 badge badge-pill badge-warning","mb-2 mr-2 badge badge-pill badge-success","mb-2 mr-2 badge badge-pill badge-danger","mb-2 mr-2 badge badge-pill badge-alt"];
-							var rDesc = ["Saved as Draft","Waiting Approval","Require Rework","Approved","Rejected","Not Saved"];
+							var rDesc = ["Not yet Submitted","Waiting Approval","Require Rework","Approved","Rejected","Not Saved"];
 							$('<span>').appendTo(itemElement).addClass(rClass[val]).text(rDesc[val]);
 						}},
 						{label: {
-								text: "Department Head"
+								text: "Direct Superior"
 							},
-							dataField:"depthead",
+							dataField:"superior",
 							editorType: "dxDropDownBox",
 							visible: true,
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							disabled: (($scope.mode=='approve') || ($scope.mode=='view') || ($scope.mode=='report'))?true:false,
 							editorOptions: { 
 								dataSource:$scope.allEmpDataSource,  
 								valueExpr: 'id',
@@ -140,6 +140,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 								message: "Please select your department head"
 							}]
 						},
+						
 						{dataField:'remarks',colSpan:2,editorType:"dxHtmlEditor",editorOptions: {height: 190,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}},
 						
 						{label: {
@@ -176,7 +177,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 								text: "Back",
 								type: "danger",
 								onClick: function(){
-									var path = ($scope.mode=='report') ? "reportspkl" :"spkl";
+									var path = ($scope.mode=='report') ? "reportspkl" :"spkltms";
 									$location.path( "/"+path );
 								},
 								visible: (($scope.mode=='approve'))  ?false:true,
@@ -189,7 +190,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 								text: "Back",
 								type: "danger",
 								onClick: function(){
-									$scope.spklApproval();							
+									$scope.SPKLTMSApproval();							
 								},
 								visible: ($scope.mode=='approve') ?true:false,
 								useSubmitBehavior: false
@@ -214,7 +215,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 									   }
 									});
 									$scope.data = $scope.formInstance.option("formData");
-									$scope.updateSpkl();
+									$scope.updateSpklTMS();
 								},
 								visible: ($scope.mode=='approve') ?true:false,
 								useSubmitBehavior: false
@@ -239,7 +240,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 									   }
 									});
 									$scope.data = $scope.formInstance.option("formData");
-									$scope.saveSpklDraft();
+									$scope.saveSpklTMSDraft();
 									
 								},
 								visible: (($scope.mode=='approve') ||($scope.mode=='view') ||($scope.mode=='report'))?false:true,
@@ -286,6 +287,8 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 			});
 		},
 		insert: function(values) {
+			values.actualstartwork = $filter("date")(values.actualstartwork, "yyyy-MM-dd HH:mm");
+			values.actualendwork = $filter("date")(values.actualendwork, "yyyy-MM-dd HH:mm");
 			values.spkl_id=$scope.Requestid;
             CrudService.Create('spkldetail',values).then(function (response) {
 				if(response.status=="error"){
@@ -295,6 +298,8 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 			});
 		},
 		update: function(key, values) {
+			values.actualstartwork = $filter("date")(values.actualstartwork, "yyyy-MM-dd HH:mm");
+			values.actualendwork = $filter("date")(values.actualendwork, "yyyy-MM-dd HH:mm");
             CrudService.Update('spkldetail',key.id,values).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.dialog.alert(response.message,"Error");
@@ -317,17 +322,17 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 	var myStore2 = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;
-			return CrudService.GetById('spklapp',$scope.Requestid);         		
+			return CrudService.GetById('spkltmsapp',$scope.Requestid);         		
 		},
 		byKey: function(key) {
-            CrudService.GetById('spklapp',encodeURIComponent(key)).then(function (response) {
+            CrudService.GetById('spkltmsapp',encodeURIComponent(key)).then(function (response) {
 				return response;
 			});
 		},
 		insert: function(values) {
 			values.approvaldate = $filter("date")(values.approvaldate, "yyyy-MM-dd HH:mm")
 			values.spkl_id=$scope.Requestid;
-            CrudService.Create('spklapp',values).then(function (response) {
+            CrudService.Create('spkltmsapp',values).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.dialog.alert(response.message,"Error");
 				}
@@ -336,7 +341,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 		},
 		update: function(key, values) {
 			values.approvaldate = $filter("date")(values.approvaldate, "yyyy-MM-dd HH:mm")
-            CrudService.Update('spklapp',key.id,values).then(function (response) {
+            CrudService.Update('spkltmsapp',key.id,values).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.dialog.alert(response.message,"Error");
 				}
@@ -344,7 +349,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 			});
 		},
 		remove: function(key) {
-			CrudService.Delete('spklapp',key.id).then(function (response) {
+			CrudService.Delete('spkltmsapp',key.id).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.dialog.alert(response.message,"Error");
 				}
@@ -355,7 +360,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 	var myStore3 = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;
-			return CrudService.GetById('spklhist',$scope.Requestid);         		
+			return CrudService.GetById('spkltmshist',$scope.Requestid);         		
 		},
 		byKey: function(key) {
             //
@@ -390,8 +395,10 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 		wordWrapEnabled: true,
 		columnResizingMode : "widget",
         columnMinWidth: 50,
-        columnAutoWidth: true,
-		columns: [{
+        columnAutoWidth: false,
+		columns: [
+		{dataField:'isotapproved',width:110,caption: "Approved",dataType: "boolean", showEditorAlways: true,formItem: { visible: (($scope.mode=='approve') ||($scope.mode=='view') ||($scope.mode=='report'))?true:false} ,visible: (($scope.mode=='approve') ||($scope.mode=='view') ||($scope.mode=='report'))?true:false },	
+		{
 					dataField: "employee_id",
 					caption: "Employee",
 					width: 200,
@@ -404,19 +411,26 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 					},
 					editCellTemplate: "dropDownBoxEditorTemplate" 
 			},
-			{dataField:'fullname',width:200,dataType: "string",editorOptions: {disabled:true},formItem: { visible: false},},	
-			{dataField:'sapid',width:90,dataType: "string",editorOptions: {disabled:true},formItem: { visible: false}},	
-			{dataField:'position',caption: "Position",width:150,dataType: "string",editorOptions: {disabled:true},formItem: { visible: false}},
-			{dataField:'estimatenormalhours',caption: "Normal Hours Estimate (hrs)",width:80,dataType: "number",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
-			{dataField:'estimateovertimehours',caption: "Overtime Hours Estimate (hrs)",width:80,dataType: "number",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
-			{dataField:'target',caption: "Target Work",encodeHtml: false,width:250,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
-			{dataField:'isapproved',width:80,caption: "Approved",dataType: "boolean", showEditorAlways: true,formItem: { visible: (($scope.mode=='approve') ||($scope.mode=='view') ||($scope.mode=='report'))?true:false} ,visible: (($scope.mode=='approve') ||($scope.mode=='view') ||($scope.mode=='report'))?true:false },	
-		],editing: {
+			{dataField:'fullname',width:100,dataType: "string",editorOptions: {disabled:true},formItem: { visible: false},},	
+			{dataField:'sapid',width:70,dataType: "string",editorOptions: {disabled:true},formItem: { visible: false}},	
+			{dataField:'position',caption: "Position",width:100,dataType: "string",editorOptions: {disabled:true},formItem: { visible: false}},
+			{dataField:'estimatenormalhours',caption: "Plan Normal Hrs",dataType: "string",width:60,editorOptions: {disabled:true}},
+			{dataField:'estimateovertimehours',caption: "Plan Overtime Hrs",dataType: "string",width:60,editorOptions: {disabled:true}},
+			{dataField:'actualstartwork',width:100,caption: "Start Work",format: 'dd/MM/yyyy HH:mm',editorType: "dxDateBox",dataType:"date",editorOptions: {displayFormat : "dd/MM/yyyy HH:mm",type:"datetime", disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			{dataField:'actualendwork',width:100,caption: "End Work",format: 'dd/MM/yyyy HH:mm',editorType: "dxDateBox",dataType:"date",editorOptions: {displayFormat : "dd/MM/yyyy HH:mm",type:"datetime", disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			{dataField:'actualtotalhours',calculateCellValue: function (e) {
+				return Math.round((Math.abs(new Date(e.actualendwork) -  new Date(e.actualstartwork)) / 36e5)*10)/10;  
+			} ,caption: "Act Total Hrs",dataType: "string",width:60,editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			{dataField:'actualnormalhours',caption: "Act Notmal Hrs",dataType: "string",width:60,editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			{dataField:'actualovertimehours',caption: "Act Overtime Hrs",dataType: "string",width:60,editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			{dataField:'target',caption: "Target Work",encodeHtml: false,width:150,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			{dataField:'descriptionofwork',caption: "Achievement",width:250,encodeHtml: false,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			],editing: {
             useIcons:true,
-            mode: "popup",
+            mode: "cell",
 			allowUpdating:(($scope.mode=='view') ||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
-			allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
-			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowAdding:false,
+			allowDeleting:false,
             //allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
             //allowAdding: ($rootScope.isAdmin)?true:false, // Enables insertion
             form:{colCount: 1,
@@ -425,18 +439,49 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 		onInitialized:function (e){
 			$scope.grid1Component = e.component;
 		},
+		onRowValidating: function (e) {
+			if (!e.oldData) {  
+				
+			} else {
+				//var dataGrid = e.component;  
+				//var rowIndex = dataGrid.getRowIndexByKey(e.key);  
+				if (typeof(e.newData.actualendwork)!=='undefined'){
+					var newEndDateUTC      = new Date(e.newData.actualendwork);
+					var startDate = new Date(e.oldData.actualstartwork);
+					var hr = startDate.getHours();
+					if (hr>0){
+						if (newEndDateUTC < startDate) {
+							DevExpress.ui.notify('End Work is less than Start Work',"Error");
+							e.isValid = false;
+						} 
+					}
+					
+				}else if (typeof(e.newData.actualstartwork)!=='undefined'){
+					var newStartDateUTC      = new Date(e.newData.actualstartwork); 
+					var endDate = new Date(e.oldData.actualendwork);
+					var hr = endDate.getHours();
+					if (hr>0){
+						if (newStartDateUTC > endDate) {  
+							DevExpress.ui.notify('Start Work is more than End Work',"Error");
+							e.isValid = false;  
+						} 
+					}
+				}
+			}  
+
+		},
 		onContentReady: function(e){
             moveEditColumnToLeft(e.component);
         },
 		onEditorPreparing: function (e) {  
 			$scope.grid1Component = e.component;
-			if ((e.dataField == "isapproved") || (e.dataField == "isused")){
+			if ((e.dataField == "isapproved") || (e.dataField == "isotapproved") || (e.dataField == "isused")){
                 e.editorName = "dxRadioGroup";
                 e.editorOptions.layout = "horizontal";
 				e.editorOptions.items = $scope.appText;
                 //e.editorOptions.switchedOffText = "No";
             }
-			if((e.dataField == "target") || (e.dataField == "remarks")){
+			if((e.dataField == "descriptionofwork") || (e.dataField == "remarks")){
 				e.editorName = "dxHtmlEditor";
 				e.editorOptions.height = 250;
 				e.editorOptions.toolbar = {	items: ["bold", "italic", "underline"]	};
@@ -594,7 +639,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 			selectedIndex: 'selectedTab'
 		},
 	}
-	$scope.updateSpkl = function(e){
+	$scope.updateSpklTMS = function(e){
 		//console.log($scope.formInstance.option("formData").approvalstatus);
 		if($scope.formInstance.option("formData").approvalstatus==""){
 			DevExpress.ui.notify({
@@ -619,7 +664,15 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 			delete data.employee_id;
 			delete data.requeststatus;
 			delete data.depthead;
-			CrudService.Update('spklapp',data.id,data).then(function (response) {
+			delete data.spklno;
+			delete data.fullname;
+			delete data.approveddoc;
+			delete data.tmsreqstatus;
+			delete data.superior;
+			delete data.datework;
+			delete data.approvedtmsdoc;
+			delete data.department;
+			CrudService.Update('spkltmsapp',data.id,data).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.dialog.alert(response.message,"Error");
 				}else{
@@ -635,13 +688,13 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 						   offset: '0 0' 
 					   }
 					});
-					$location.path( "/spklapproval" );
+					$location.path( "/spkltmsapproval" );
 				}
 				
 			});
 		}else{
 			criteria = {status:'approver',spkl_id:$scope.Requestid};
-			CrudService.FindData('spklapp',criteria).then(function (response){
+			CrudService.FindData('spkltmsapp',criteria).then(function (response){
 				if(response.jml>0){
 					var data = $scope.formInstance.option("formData");
 					var date = new Date();
@@ -652,7 +705,15 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 					delete data.employee_id;
 					delete data.requeststatus;
 					delete data.depthead;
-					CrudService.Update('spklapp',data.id,data).then(function (response) {
+					delete data.spklno;
+					delete data.fullname;
+					delete data.approveddoc;
+					delete data.datework;
+					delete data.approvedtmsdoc;
+					delete data.tmsreqstatus;
+					delete data.superior;
+					delete data.department;
+					CrudService.Update('spkltmsapp',data.id,data).then(function (response) {
 						if(response.status=="error"){
 							DevExpress.ui.dialog.alert(response.message,"Error");
 						}else{
@@ -668,7 +729,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 								   offset: '0 0' 
 							   }
 							});
-							$location.path( "/spklapproval" );
+							$location.path( "/spkltmsapproval" );
 						}
 						
 					});
@@ -691,14 +752,14 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 		
 	}
 	
-	$scope.saveSpklDraft = function(e){
+	$scope.saveSpklTMSDraft = function(e){
 		var data = $scope.formInstance.option("formData");
 		delete data.fullname;
 		delete data.department;
 		delete data.approvalstatus;
 		data.datework = $filter("date")(data.datework, "yyyy-MM-dd HH:mm")
 		//console.log(data);
-		CrudService.Update('spkl',data.id,data).then(function (response) {
+		CrudService.Update('spkltms',data.id,data).then(function (response) {
 			if(response.status=="error"){
 				DevExpress.ui.dialog.alert(response.message,"Error");
 			}else{
@@ -714,7 +775,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 					   offset: '0 0' 
 				   }
 				});
-				$location.path( "/spkl" );
+				$location.path( "/spkltms" );
 			}
 			
 		});
@@ -722,17 +783,15 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 	$scope.onFormSubmit = function(e) {
 		e.preventDefault();
 		criteria = {status:'approver',spkl_id:$scope.Requestid};
-		CrudService.FindData('spklapp',criteria).then(function (response){
+		CrudService.FindData('spkltmsapp',criteria).then(function (response){
 			if(response.jml>0){
 				criteria = {status:'approver',spkl_id:$scope.Requestid};
 				CrudService.FindData('spkldetail',criteria).then(function (response){
 					if(response.jml>0){
 						var data = $scope.formInstance.option("formData");;
-						data.requeststatus = 1;
+						data.tmsreqstatus = 1;
 						delete data.approvalstatus;
-						delete data.mtd;
-						delete data.ytd;
-						CrudService.Update('spkl',data.id,data).then(function (response) {
+						CrudService.Update('spkltms',data.id,data).then(function (response) {
 							if(response.status=="error"){
 								 DevExpress.ui.notify(response.message,"error");
 							}else{
@@ -748,7 +807,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 									   offset: '0 0' 
 								   }
 								});
-								$location.path( "/spkl" );
+								$location.path( "/spkltms" );
 							}
 							
 						});
