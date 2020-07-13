@@ -582,8 +582,11 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 									<li class="nav-item"><a href="" ng-click="myTR()" class="nav-link" ><i class='fa fa-calendar-alt'></i> My Request</a></li>
 									<li class="nav-item"><a href="" ng-click="TRApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
 								</ul>
+<<<<<<< HEAD
 							</li><!--
 							<li ng-class="{'mm-active': (isActive('/spkl') || isActive('/spklapproval') || isActive('/spktms') || isActive('/spkltmsapproval'))}">
+=======
+>>>>>>> bb1317f213b2f2086bdabbe0b3b10876b533709f
 							</li>
                             <li >
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>MMF Approval<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
@@ -708,8 +711,11 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> d9a1973... mmf28 current instruction
+=======
+>>>>>>> bb1317f213b2f2086bdabbe0b3b10876b533709f
 	<script language="JavaScript" src="js/app.js?v=3.03" type="text/javascript"></script>
 	<script language="JavaScript" src="js/directive.js?v=3.03" type="text/javascript"></script>
 	<script language="JavaScript" src="js/services.js?v=3.03" type="text/javascript"></script>
@@ -717,6 +723,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 	<script language="JavaScript" src="js/factory.js?v=3.03" type="text/javascript"></script>
 	<script language="JavaScript" src="js/controllers/maincontroller.js?v=3.03" type="text/javascript"></script>
 	<script language="JavaScript" src="js/controllers/login.js?v=3.03" type="text/javascript"></script>
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 	<script language="JavaScript" src="js/script.js?v=3.03" type="text/javascript"></script>
@@ -735,6 +742,10 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 
 	<script language="JavaScript" src="js/script.js?v=3.03" type="text/javascript"></script>
 >>>>>>> d9a1973... mmf28 current instruction
+=======
+
+	<script language="JavaScript" src="js/script.js?v=3.03" type="text/javascript"></script>
+>>>>>>> bb1317f213b2f2086bdabbe0b3b10876b533709f
 	<script type="text/javascript" src="assets/scripts/main.js"></script>
 </body>
 </html>
