@@ -602,8 +602,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                                 <a href="#">
                                                     <i class="metismenu-icon"></i>MMF 30
                                                 </a>
-                                            </li>
-                                            
+                                            </li>                                            
                                         </ul>
                                     </li>
 									<li class="nav-item"><a href="" ng-click="MMFApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
