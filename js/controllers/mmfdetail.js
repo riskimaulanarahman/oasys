@@ -1,7 +1,5 @@
 (function (app) {
     app.register.controller('mmfdetailCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
-        
-<<<<<<< HEAD
         $scope.ds={};
         $scope.test=[];
         $scope.disabled= true;
@@ -705,8 +703,5 @@
 			
 		});
 	}
-=======
->>>>>>> 665b31e... mmf detail
-        
     }]);
 })(app || angular.module("kduApp"));
