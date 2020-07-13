@@ -170,7 +170,7 @@ Class TrModule extends Application{
 									$Trschedule=Trschedule::find('all',array('conditions'=>array("tr_id=?",$id),'include'=>array('tr'=>array('employee'=>array('company','department','designation','grade')))));
 									$Trticket=Trticket::find('all',array('conditions'=>array("tr_id=?",$id),'include'=>array('tr'=>array('employee'=>array('company','department','designation','grade')))));
 									$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$usr->fullname.',</span></p>
-										<p class=MsoNormal><span style="color:#1F497D">Your Travel Request has been rescheduled by HR to match with your actual travel schedule:</span></p>
+										<p class=MsoNormal><span style="color:#1F497D">Your Travel Request has been updated or rescheduled by HR to match with your actual travel schedule:</span></p>
 										<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
 										<table border=1 cellspacing=0 cellpadding=3 width=683>
 										<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->fullname.'</b></p></td></tr>
