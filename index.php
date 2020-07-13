@@ -582,8 +582,13 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 									<li class="nav-item"><a href="" ng-click="myTR()" class="nav-link" ><i class='fa fa-calendar-alt'></i> My Request</a></li>
 									<li class="nav-item"><a href="" ng-click="TRApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
 								</ul>
+<<<<<<< HEAD
 							</li><!--
 							<li ng-class="{'mm-active': (isActive('/spkl') || isActive('/spklapproval') || isActive('/spktms') || isActive('/spkltmsapproval'))}">
+=======
+							</li>
+							<li >
+>>>>>>> 1457f4c... Add Overtime Timesheet Approval
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>SPKL<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul  ng-class="{'mm-show': (isActive('/spkl') || isActive('/spklapproval') || isActive('/spktms') || isActive('/spkltmsapproval'))}">
 									<li class="nav-item"><a href="" ng-click="mySPKL()" class="nav-link" ><i class='fa fa-calendar-alt'></i> OT Instruction Request</a></li>
@@ -591,10 +596,17 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 									<li class="nav-item"><a href="" ng-click="myTimesheet()" class="nav-link" ><i class='fa fa-calendar-alt'></i> OT Timesheet Request</a></li>
 									<li class="nav-item"><a href="" ng-click="SPKLTMSApproval()" class="nav-link" ><i class='fas fa-marker'></i> OT Timesheet Approval</a></li>
 								</ul>
+<<<<<<< HEAD
 							</li>-->
 							<li ng-class="{'mm-active': (isActive('/rfc') || isActive('/rfcapproval'))}" >
 								<a href="#"  ><i class='metismenu-icon fas fa-marker'></i>RFC<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul ng-class="{'mm-show': (isActive('/rfc') || isActive('/rfcapproval'))}">
+=======
+							</li>
+							<li >
+								<a href="#"><i class='metismenu-icon fas fa-marker'></i>RFC<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
+								<ul>
+>>>>>>> 1457f4c... Add Overtime Timesheet Approval
 									<li class="nav-item"><a href="" ng-click="myRFC()" class="nav-link" ><i class='fa fa-calendar-alt'></i> My Request</a></li>
 									<li class="nav-item"><a href="" ng-click="RFCApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
 								</ul>
