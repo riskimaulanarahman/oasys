@@ -582,8 +582,6 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 									<li class="nav-item"><a href="" ng-click="myTR()" class="nav-link" ><i class='fa fa-calendar-alt'></i> My Request</a></li>
 									<li class="nav-item"><a href="" ng-click="TRApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
 								</ul>
-							</li><!--
-							<li ng-class="{'mm-active': (isActive('/spkl') || isActive('/spklapproval') || isActive('/spktms') || isActive('/spkltmsapproval'))}">
 							</li>
                             <li >
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>MMF Approval<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
@@ -612,7 +610,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 								</ul>
 							</li>
                             <!--
-							<li >
+							<li ng-class="{'mm-active': (isActive('/spkl') || isActive('/spklapproval') || isActive('/spktms') || isActive('/spkltmsapproval'))}">
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>SPKL<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul  ng-class="{'mm-show': (isActive('/spkl') || isActive('/spklapproval') || isActive('/spktms') || isActive('/spkltmsapproval'))}">
 									<li class="nav-item"><a href="" ng-click="mySPKL()" class="nav-link" ><i class='fa fa-calendar-alt'></i> OT Instruction Request</a></li>
