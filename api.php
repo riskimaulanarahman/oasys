@@ -41,7 +41,8 @@ $page = array("login",
 	"rfcmodule",
 	"skratemodule",
 	"spklmodule",
-	"trmodule"
+	"trmodule",
+	"mmfmodule"
 );
 
 foreach ($page as $class){
