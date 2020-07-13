@@ -421,4 +421,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	// window.onbeforeunload = function () {
 		// $scope.logout();
 	// };
+	$scope.isActive = function (viewLocation) { 
+		return viewLocation === $location.path(); 
+	};
 }]);

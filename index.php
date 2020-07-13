@@ -557,7 +557,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 					<div class="app-sidebar__inner">
 						<ul class="vertical-nav-menu">
 							<li class="app-sidebar__heading">Dashboard</li>
-							<li><a href="#!" ><i class='metismenu-icon fa fa-tachometer-alt'></i> Dashboard</a></li>
+							<li ><a href="#!" ><i class='metismenu-icon fa fa-tachometer-alt'></i> Dashboard</a></li>
 							<li ng-show="isAdmin" class="app-sidebar__heading">Admin Area</li>
 							<li ng-show="isAdmin">
 								<a href="#"><i class='metismenu-icon fa fa-user'></i>Admin Area<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
@@ -569,38 +569,38 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 								</ul>
 							</li>
 							<li class="app-sidebar__heading active">Personal Task</li>
-							<li class="mm-active">
-								<a href="#"><i class='metismenu-icon fas fa-marker'></i>Weekend/PH Coverage<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
-								<ul>
+							<li ng-class="{'mm-active': (isActive('/dayoff') || isActive('/doapproval'))}">
+								<a href="#" ><i class='metismenu-icon fas fa-marker'></i>Weekend/PH Coverage<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
+								<ul ng-class="{'mm-show': (isActive('/dayoff') || isActive('/doapproval'))}">
 									<li class="nav-item"><a href="" ng-click="myDayoff()" class="nav-link" ><i class='fa fa-calendar-alt'></i> My Request</a></li>
 									<li class="nav-item"><a href="" ng-click="dayoffApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
 								</ul>
 							</li>
-							<li >
-								<a href="#"><i class='metismenu-icon fas fa-marker'></i>Travel Request<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
-								<ul>
+							<li ng-class="{'mm-active': (isActive('/tr') || isActive('/trapproval'))}">
+								<a href="#" ><i class='metismenu-icon fas fa-marker'></i>Travel Request<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
+								<ul ng-class="{'mm-show': (isActive('/tr') || isActive('/trapproval'))}">
 									<li class="nav-item"><a href="" ng-click="myTR()" class="nav-link" ><i class='fa fa-calendar-alt'></i> My Request</a></li>
 									<li class="nav-item"><a href="" ng-click="TRApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
 								</ul>
 							</li><!--
-							<li >
+							<li ng-class="{'mm-active': (isActive('/spkl') || isActive('/spklapproval') || isActive('/spktms') || isActive('/spkltmsapproval'))}">
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>SPKL<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
-								<ul>
+								<ul  ng-class="{'mm-show': (isActive('/spkl') || isActive('/spklapproval') || isActive('/spktms') || isActive('/spkltmsapproval'))}">
 									<li class="nav-item"><a href="" ng-click="mySPKL()" class="nav-link" ><i class='fa fa-calendar-alt'></i> OT Instruction Request</a></li>
 									<li class="nav-item"><a href="" ng-click="SPKLApproval()" class="nav-link" ><i class='fas fa-marker'></i> OT Instruction Approval</a></li>
 									<li class="nav-item"><a href="" ng-click="myTimesheet()" class="nav-link" ><i class='fa fa-calendar-alt'></i> OT Timesheet Request</a></li>
 									<li class="nav-item"><a href="" ng-click="TimesheetApproval()" class="nav-link" ><i class='fas fa-marker'></i> OT Timesheet Approval</a></li>
 								</ul>
 							</li>-->
-							<li >
-								<a href="#"><i class='metismenu-icon fas fa-marker'></i>RFC<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
-								<ul>
+							<li ng-class="{'mm-active': (isActive('/rfc') || isActive('/rfcapproval'))}" >
+								<a href="#"  ><i class='metismenu-icon fas fa-marker'></i>RFC<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
+								<ul ng-class="{'mm-show': (isActive('/rfc') || isActive('/rfcapproval'))}">
 									<li class="nav-item"><a href="" ng-click="myRFC()" class="nav-link" ><i class='fa fa-calendar-alt'></i> My Request</a></li>
 									<li class="nav-item"><a href="" ng-click="RFCApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
 								</ul>
 							</li>
 							<li class="app-sidebar__heading">Data Master</li>
-							<li>
+							<li ng-class="{'mm-active': $route.current.activeTab == 'company'}">
 								<a href="#"><i class='metismenu-icon fa fa-th-large'></i>Data Master<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul>
 									<li class="nav-item"><a href="" ng-click="dataCompany()"  class="nav-link" ><i class='fa fa-building'></i> Data Company</a></li>
