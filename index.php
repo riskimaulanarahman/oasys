@@ -706,6 +706,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 	<script language="JavaScript" src="js/lib/dx.all.js" type="text/javascript"></script>
 	<script language="JavaScript" src="js/lib/FileSaver.min.js" type="text/javascript"></script>
 
+<<<<<<< HEAD
 	<script language="JavaScript" src="js/app.js?v=3.03" type="text/javascript"></script>
 	<script language="JavaScript" src="js/directive.js?v=3.03" type="text/javascript"></script>
 	<script language="JavaScript" src="js/services.js?v=3.03" type="text/javascript"></script>
@@ -715,6 +716,17 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 	<script language="JavaScript" src="js/controllers/login.js?v=3.03" type="text/javascript"></script>
 
 	<script language="JavaScript" src="js/script.js?v=3.03" type="text/javascript"></script>
+=======
+	<script language="JavaScript" src="js/app.js?v=3.02" type="text/javascript"></script>
+	<script language="JavaScript" src="js/directive.js?v=3.02" type="text/javascript"></script>
+	<script language="JavaScript" src="js/services.js?v=3.02" type="text/javascript"></script>
+	<script language="JavaScript" src="js/filter.js?v=3.02" type="text/javascript"></script>
+	<script language="JavaScript" src="js/factory.js?v=3.02" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/maincontroller.js?v=3.02" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/login.js?v=3.02" type="text/javascript"></script>
+
+	<script language="JavaScript" src="js/script.js?v=3.02" type="text/javascript"></script>
+>>>>>>> 665b31e... mmf detail
 	<script type="text/javascript" src="assets/scripts/main.js"></script>
 </body>
 </html>
