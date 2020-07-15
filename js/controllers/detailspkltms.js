@@ -418,10 +418,14 @@ app.register.controller('detailspkltmsCtrl', ['$rootScope','$scope', '$http', '$
 			{dataField:'estimateovertimehours',caption: "Plan Overtime Hrs",dataType: "string",width:60,editorOptions: {disabled:true}},
 			{dataField:'actualstartwork',width:100,caption: "Start Work",format: 'dd/MM/yyyy HH:mm',editorType: "dxDateBox",dataType:"date",editorOptions: {displayFormat : "dd/MM/yyyy HH:mm",type:"datetime", disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
 			{dataField:'actualendwork',width:100,caption: "End Work",format: 'dd/MM/yyyy HH:mm',editorType: "dxDateBox",dataType:"date",editorOptions: {displayFormat : "dd/MM/yyyy HH:mm",type:"datetime", disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
-			{dataField:'actualtotalhours',calculateCellValue: function (e) {
-				return Math.round((Math.abs(new Date(e.actualendwork) -  new Date(e.actualstartwork)) / 36e5)*10)/10;  
-			} ,caption: "Act Total Hrs",dataType: "string",width:60,editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
-			{dataField:'actualnormalhours',caption: "Act Notmal Hrs",dataType: "string",width:60,editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			{dataField:'actualtotalhours',
+			/*calculateCellValue: function (e) {
+				var hours = Math.round((Math.abs(new Date(e.actualendwork) -  new Date(e.actualstartwork)) / 36e5)*10)/10;
+				hours = (hours>5)?hours -1:hours;
+				return hours;
+			} ,*/
+			caption: "Act Total Hrs",dataType: "string",width:60,editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			{dataField:'actualnormalhours',caption: "Act Normal Hrs",dataType: "string",width:60,editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
 			{dataField:'actualovertimehours',caption: "Act Overtime Hrs",dataType: "string",width:60,editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
 			{dataField:'target',caption: "Target Work",encodeHtml: false,width:150,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
 			{dataField:'descriptionofwork',caption: "Achievement",width:250,encodeHtml: false,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
@@ -481,11 +485,6 @@ app.register.controller('detailspkltmsCtrl', ['$rootScope','$scope', '$http', '$
 				e.editorOptions.items = $scope.appText;
                 //e.editorOptions.switchedOffText = "No";
             }
-			if((e.dataField == "descriptionofwork") || (e.dataField == "remarks")){
-				e.editorName = "dxHtmlEditor";
-				e.editorOptions.height = 250;
-				e.editorOptions.toolbar = {	items: ["bold", "italic", "underline"]	};
-			} 
 		},
 		onToolbarPreparing: function(e) {   
             e.toolbarOptions.items.unshift({						

@@ -289,11 +289,25 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 		}
 	}
 	$scope.loadSPKLTMS= function(data,mode,filter){
-		$scope.Filter=filter;
-		$scope.mode = mode;
-		$scope.Requestid = data.id;
-		$scope.Employeeid = data.employee_id;
-		$location.path( "/detailspkltms" );
+		if (mode=='edit'){
+			CrudService.Update('spkltms',data.id,data).then(function (response) {
+				if(response.status=="error"){
+					DevExpress.ui.dialog.alert(response.message,"Error");
+				}else{
+					$scope.Filter=filter;
+					$scope.mode = mode;
+					$scope.Requestid = data.id;
+					$scope.Employeeid = data.employee_id;
+					$location.path( "/detailspkltms" );
+				}
+			});	
+		}else{
+			$scope.Filter=filter;
+			$scope.mode = mode;
+			$scope.Requestid = data.id;
+			$scope.Employeeid = data.employee_id;
+			$location.path( "/detailspkltms" );
+		}
 	}
 	$scope.loadRFC= function(data,mode,filter){
 		$scope.Filter=filter;

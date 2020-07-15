@@ -119,17 +119,21 @@ Class SpklModule extends Application{
 		$joinx   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";					
 		$Spklapproval = Spklapproval::find('all',array('joins'=>$joinx,'conditions' => array("spkl_id=?",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
 		$pdfContent .= "<br><br><table border=0 cellspacing=4 cellpadding=3>
-						<tr><td align='center'>Diperintahkan Oleh,</td><td width='50'></td><td align='center'>Disetujui Oleh,</td><td width='50'></td><td align='center'>Diperiksa Oleh,</td></tr>
-						<tr><td align='center'>Askep</td><td width='50'></td><td align='center'>Dept. Head / Sector Manager</td><td width='50'></td><td align='center'>Askep SDM/CS</td></tr>
+						<tr><td align='center'>Diperintahkan Oleh,</td><td width='50'></td><td align='center'>Disetujui Oleh,</td><td width='50'></td><td align='center'>Diperiksa Oleh,</td><td align='center'>Disetujui Oleh,</td></tr>
+						<tr><td align='center'>Askep</td><td width='50'></td><td align='center'>Dept. Head / Sector Manager</td><td width='50'></td><td align='center'>HR BU/HO</td><td align='center'>BU Head</td></tr>
 						";
 		foreach ($Spklapproval as $data){
-			if(($data->approver->approvaltype->id==21) || ($data->approver->employee_id==$Spkl->depthead)){
+			if(($data->approver->approvaltype->id==20) || ($data->approver->employee_id==$Spkl->depthead)){
 				$deptheadname = $data->approver->employee->fullname;
 				$datedepthead = date("d/m/Y",strtotime($data->approvaldate));
 			}
-			if($data->approver->approvaltype->id==22) {
+			if($data->approver->approvaltype->id==21) {
 				$hrname = $data->approver->employee->fullname;
 				$hrdate = date("d/m/Y",strtotime($data->approvaldate));
+			}
+			if($data->approver->approvaltype->id==22) {
+				$buheadname = $data->approver->employee->fullname;
+				$buheaddate = date("d/m/Y",strtotime($data->approvaldate));
 			}
 		}
 		$pdfContent .= '<tr><td align="center" style="padding:2pt 2.4pt 0in 2.4pt;"><img src="images/approved.png" style="height:25pt" alt="Approved from System"></td>
@@ -903,6 +907,16 @@ Class SpklModule extends Application{
 										$Spkltmshistory->actiontype = 5;
 										$this->mail->Subject = "Online Approval System -> Request Rejected";
 										$red = 'Your Overtime Timesheet request has been rejected';
+										$Spklapproval = Spklapproval::find('all', array('conditions' => array("spkl_id=? and approvalstatus='0'",$doid)));
+										foreach ($Spklapproval as $data) {
+											$data->approvalstatus=4;
+											$data->save();
+										}
+										$Spkldetail = Spkldetail::find('all', array('conditions' => array("spkl_id=?",$doid)));
+										foreach ($Spkldetail as $data) {
+											$data->isotapproved=false;
+											$data->save();
+										}
 										break;
 									default:
 										break;
@@ -1048,17 +1062,39 @@ Class SpklModule extends Application{
 						$Spkldetail = Spkldetail::find($id);
 						$Spkl = Spkl::find($Spkldetail->spkl_id);
 						$olddata = $Spkldetail->to_array();
-						if(!isset($data['actualstartwork']) && ($Spkldetail->actualstartwork== null)){
-							$Spkldetail->actualstartwork = $Spkl->datework;
+						if (isset($data['actualstartwork']) || isset($data['actualendwork'])){
+							if(!isset($data['actualstartwork']) && ($Spkldetail->actualstartwork== null)){
+								$Spkldetail->actualstartwork = $Spkl->datework;
+							}
+							if(!isset($data['actualendwork']) && ($Spkldetail->actualendwork== null)){
+								$Spkldetail->actualendwork = $Spkl->datework;
+							}
+							$start= isset($data['actualstartwork'])?$data['actualstartwork']:$Spkldetail->actualstartwork;
+							$date1 = new DateTime($start);
+							$date2 =  isset($data['actualendwork'])?new DateTime($data['actualendwork']):new DateTime($Spkldetail->actualendwork);
+							$diff = $date2->diff($date1);
+							$hours = $diff->h + ($diff->days*24)+($diff->i/60);
+							$hours =($hours >5)?$hours-1:$hours;
+							$Spkldetail->actualtotalhours = round($hours,1);
+							$Holiday = Holiday::find('all',array('conditions' => array("HolidayDate=?",date("Y-m-d", strtotime($start)))));
+							if(count($Holiday)>0){
+								$Spkldetail->actualnormalhours = 0;
+								$Spkldetail->actualovertimehours = round($hours,1);
+							}else{
+								$wd =date('N',strtotime($start));
+								if ($wd=='6'){
+									$Spkldetail->actualnormalhours = ($hours>5)?5:round($hours,1);
+									$Spkldetail->actualovertimehours = ($hours>5)?round($hours,1) - 5:0 ;
+								}else if($wd=='7'){
+									$Spkldetail->actualnormalhours = 0;
+									$Spkldetail->actualovertimehours = round($hours,1);
+								}else{
+									$Spkldetail->actualnormalhours = ($hours>8)?8:round($hours,1);
+									$Spkldetail->actualovertimehours = ($hours>8)?round($hours,1) - 8 :0;
+								}
+							}
 						}
-						if(!isset($data['actualendwork']) && ($Spkldetail->actualendwork== null)){
-							$Spkldetail->actualendwork = $Spkl->datework;
-						}
-						$date1 = new DateTime($Spkldetail->actualstartwork);
-						$date2 = new DateTime($Spkldetail->actualendwork);
-						$diff = $date2->diff($date1);
-						$hours = $diff->h + ($diff->days*24)+($diff->i/60);
-						$Spkldetail->actualtotalhours = round($hours,1);
+						
 						foreach($data as $key=>$val){					
 							$val=($val=='No')?false:(($val=='Yes')?true:$val);
 							$Spkldetail->$key=$val;
@@ -1066,6 +1102,7 @@ Class SpklModule extends Application{
 						$Spkldetail->save();
 						$logger = new Datalogger("Spkldetail","update",json_encode($olddata),json_encode($data));
 						$logger->SaveData();
+
 						echo json_encode($Spkldetail);
 						
 						break;
@@ -1078,10 +1115,6 @@ Class SpklModule extends Application{
 						break;
 				}
 			}
-			// else{
-				// $result= array("status"=>"error","message"=>"Authentication error or expired, please refresh and re login application");
-				// echo json_encode($result);
-			// }
 		}
 	}
 	
@@ -1148,7 +1181,49 @@ Class SpklModule extends Application{
 								$Spklhistory->spkl_id = $Spkl->id;
 								$Spklhistory->actiontype = 0;
 								$Spklhistory->save();
-								
+								$joins   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
+								if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="022")){
+									$ApproverHR = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='SPKL' and tbl_approver.isactive='1' and approvaltype_id='21' and tbl_employee.location_id='1'")));
+									if(count($ApproverHR)>0){
+										$Spklapproval = new Spklapproval();
+										$Spklapproval->spkl_id =$Spkl->id;
+										$Spklapproval->approver_id = $ApproverHR->id;
+										$Spklapproval->save();
+										$logger = new Datalogger("Spklapproval","add","Add initial HR Approval",json_encode($Spklapproval->to_array()));
+										$logger->SaveData();
+									}
+									if(($Employee->company->sapcode!="NKF") && ($Employee->company->sapcode!="RND")  && ($Employee->company->companycode!="BCL")  && ($Employee->company->companycode!="LDU")){	
+										$ApproverBUHead = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='SPKL' and tbl_approver.isactive='1' and approvaltype_id=22 and tbl_employee.companycode='KPSI' and not(tbl_employee.id=?)",$Employee->id)));
+										if(count($ApproverBUHead)>0){
+											$Spklapproval = new Spklapproval();
+											$Spklapproval->spkl_id = $Spkl->id;
+											$Spklapproval->approver_id = $ApproverBUHead->id;
+											$Spklapproval->save();
+											$logger = new Datalogger("Spklapproval","add","Add initial BUHead Approval",json_encode($Spklapproval->to_array()));
+											$logger->SaveData();
+										}
+									}else{
+										$ApproverBUHead = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='SPKL' and tbl_approver.isactive='1' and approvaltype_id=22 and tbl_employee.company_id=? and not tbl_employee.companycode='KPSI'  and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+										if(count($ApproverBUHead)>0){
+											$Spklapproval = new Spklapproval();
+											$Spklapproval->spkl_id = $Spkl->id;
+											$Spklapproval->approver_id = $AppApproverBUHeadrover->id;
+											$Spklapproval->save();
+											$logger = new Datalogger("Spklapproval","add","Add initial BUHead Approval",json_encode($Spklapproval->to_array()));
+											$logger->SaveData();
+										}
+									}	
+								}else{
+									$ApproverHR = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='SPKL' and tbl_approver.isactive='1' and approvaltype_id='21'  and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
+									if(count($ApproverHR)>0){
+										$Spklapproval = new Spklapproval();
+										$Spklapproval->spkl_id = $Spkl->id;
+										$Spklapproval->approver_id = $ApproverHR->id;
+										$Spklapproval->save();
+										$logger = new Datalogger("Spklapproval","add","Add initial HR Approval",json_encode($Spklapproval->to_array()));
+										$logger->SaveData();
+									}
+								}
 							}catch (Exception $e){
 								$err = new Errorlog();
 								$err->errortype = "CreateSpkl";
@@ -1220,128 +1295,142 @@ Class SpklModule extends Application{
 						foreach($data as $key=>$val){
 							$Spkl->$key=$val;
 						}
+						$Spkldetail=Spkldetail::find('all',array('conditions'=>array("spkl_id=?",$id),'include'=>array('spkl','employee'=>array('company','department','designation','grade'))));
+						if ($Spkl->datework !== null){
+							foreach ($Spkldetail as $row){
+								$time = new DateTime($Spkl->datework);
+								$time->add(new DateInterval('PT8H'));
+								$start = $time->format('Y-m-d H:i');
+								$row->actualstartwork = $start;
+								$time = new DateTime($start);
+								$time->add(new DateInterval('PT' . ($row->estimatenormalhours + $row->estimateovertimehours+1). 'H'));
+								$end = $time->format('Y-m-d H:i');
+								$row->actualendwork = $end;
+								$row->actualtotalhours = $row->estimatenormalhours + $row->estimateovertimehours;
+								$row->actualnormalhours = $row->estimatenormalhours;
+								$row->actualovertimehours = $row->estimateovertimehours;
+								$row->save();
+							}
+						}
 						$Spkl->save();
-							if (isset($data['depthead'])){
-								// if(($Employee->level_id==4) || ($Employee->level_id==6) ){
-								// }else{
-									$joins   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";					
-									$dx = Spklapproval::find('all',array('joins'=>$joins,'conditions' => array("spkl_id=? and tbl_approver.approvaltype_id=21 and not(tbl_approver.employee_id=?)",$id,$depthead)));	
-									foreach ($dx as $result) {
-										//delete same type approver
-										$result->delete();
-										$logger = new Datalogger("Spklapproval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
-									}
-									$joins   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";					
-									$Spklapproval = Spklapproval::find('all',array('joins'=>$joins,'conditions' => array("spkl_id=? and tbl_approver.employee_id=?",$id,$depthead)));	
-									foreach ($Spklapproval as &$result) {
-										$result		= $result->to_array();
-										$result['no']=1;
-									}			
-									if(count($Spklapproval)==0){ 
-										$Approver = Approver::find('first',array('conditions'=>array("module='SPKL' and employee_id=? and approvaltype_id=21",$depthead)));
-										if(count($Approver)>0){
-											$Spklapproval = new Spklapproval();
-											$Spklapproval->spkl_id = $Spkl->id;
-											$Spklapproval->approver_id = $Approver->id;
-											$Spklapproval->save();
-										}else{
-											$approver = new Approver();
-											$approver->module = "SPKL";
-											$approver->employee_id=$depthead;
-											$approver->sequence=1;
-											$approver->approvaltype_id = 21;
-											$approver->isfinal = false;
-											$approver->save();
-											$Spklapproval = new Spklapproval();
-											$Spklapproval->spkl_id = $Spkl->id;
-											$Spklapproval->approver_id = $approver->id;
-											$Spklapproval->save();
-										}
-									}
-								// }
+						
+						if (isset($data['depthead'])){
+							$joins   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";					
+							$dx = Spklapproval::find('all',array('joins'=>$joins,'conditions' => array("spkl_id=? and tbl_approver.approvaltype_id=20 and not(tbl_approver.employee_id=?)",$id,$depthead)));	
+							foreach ($dx as $result) {
+								//delete same type approver
+								$result->delete();
+								$logger = new Datalogger("Spklapproval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
+							}				
+							$Spklapproval = Spklapproval::find('all',array('joins'=>$joins,'conditions' => array("spkl_id=? and tbl_approver.employee_id=?",$id,$depthead)));	
+							foreach ($Spklapproval as &$result) {
+								$result		= $result->to_array();
+								$result['no']=1;
+							}			
+							if(count($Spklapproval)==0){ 
+								$Approver = Approver::find('first',array('conditions'=>array("module='SPKL' and employee_id=? and approvaltype_id=20",$depthead)));
+								if(count($Approver)>0){
+									$Spklapproval = new Spklapproval();
+									$Spklapproval->spkl_id = $Spkl->id;
+									$Spklapproval->approver_id = $Approver->id;
+									$Spklapproval->save();
+								}else{
+									$approver = new Approver();
+									$approver->module = "SPKL";
+									$approver->employee_id=$depthead;
+									$approver->sequence=1;
+									$approver->approvaltype_id = 20;
+									$approver->isfinal = false;
+									$approver->save();
+									$Spklapproval = new Spklapproval();
+									$Spklapproval->spkl_id = $Spkl->id;
+									$Spklapproval->approver_id = $approver->id;
+									$Spklapproval->save();
+								}
 							}
-							if($data['requeststatus']==1){
-								$Spklapproval = Spklapproval::find('all', array('conditions' => array("spkl_id=?",$id)));					
-								foreach($Spklapproval as $data){
-									$data->approvalstatus=0;
-									$data->save();
-								}
-								$joinx   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";					
-								$Spklapproval = Spklapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and spkl_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
-								$username = $Spklapproval->approver->employee->loginname;
-								$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
-								$email = $adb->email;
-								$Spkldetail=Spkldetail::find('all',array('conditions'=>array("spkl_id=?",$id),'include'=>array('spkl','employee'=>array('company','department','designation','grade'))));
-								$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$adb->fullname.',</span></p>
-													<p class=MsoNormal><span style="color:#1F497D">New SPKL/Overtime request is awaiting for your approval:</span></p>
-													<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
-													<table border=1 cellspacing=0 cellpadding=3 width=683>
-														<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Spkl->employee->fullname.'</b></p></td></tr>
-														<tr><td><p class=MsoNormal>Creation Date</p></td><td>:</td><td><p class=MsoNormal><b>'.date("d/m/Y",strtotime($Spkl->createddate)).'</b></p></td></tr>
-														<tr><td><p class=MsoNormal>Date Work</p></td><td>:</td><td><p class=MsoNormal><b>'.date("d/m/Y",strtotime($Spkl->datework)).'</b></p></td></tr>';
-								$this->mailbody .='</table>
-													<p class=MsoNormal><b>SPKL Detail :</b></p>
-													<table border=1 cellspacing=0 cellpadding=3 width=683><tr><th  rowspan="2"><p class=MsoNormal>No</p></th>
-													<th rowspan="2"><p class=MsoNormal>Employee Name</p></th>
-													<th rowspan="2"><p class=MsoNormal>SAPID</p></th>
-													<th rowspan="2"><p class=MsoNormal>Position</p></th>
-													<th colspan="2"><p class=MsoNormal>Estimate Time for Work</p></th>
-													
-													<th rowspan="2"><p class=MsoNormal>Target Work</p></th>
-													<th rowspan="2"><p class=MsoNormal>Remarks</p></th>
-													</tr>
-													<tr><th><p class=MsoNormal>Normal</p></th>
-													<th><p class=MsoNormal>Overtime</p></th></tr>
-													';
-								$no=1;
-								foreach ($Spkldetail as $data){
-									$this->mailbody .='<tr style="height:22.5pt">
-												<td><p class=MsoNormal> '.$no.'</p></td>
-												<td><p class=MsoNormal> '.$data->employee->fullname.'</p></td>
-												<td><p class=MsoNormal> '.$data->employee->sapid.'</p></td>
-												<td><p class=MsoNormal> '.$data->employee->designation->designationname.'</p></td>
-												<td><p class=MsoNormal> '.$data->estimatenormalhours.'</p></td>
-												<td><p class=MsoNormal> '.$data->estimateovertimehours.'</p></td>
-												<td><p class=MsoNormal> '.$data->target.'</p></td>
-												<td><p class=MsoNormal> '.$data->remarks.'</p></td>
-									</tr>';
-									$no++;
-								}
-								$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
-								$this->mail->addAddress($adb->email, $adb->fullname);
-								$this->mail->Subject = "Online Approval System -> New SPKL / Overtime Submission";
-								$this->mail->msgHTML($this->mailbody);
-								if (!$this->mail->send()) {
-									$err = new Errorlog();
-									$err->errortype = "SPKL Mail";
-									$err->errordate = date("Y-m-d h:i:s");
-									$err->errormessage = $this->mail->ErrorInfo;
-									$err->user = $this->currentUser->username;
-									$err->ip = $this->ip;
-									$err->save();
-									echo "Mailer Error: " . $this->mail->ErrorInfo;
-								} else {
-									echo "Message sent!";
-								}
-								$Spklhistory = new Spklhistory();
-								$Spklhistory->date = date("Y-m-d h:i:s");
-								$Spklhistory->fullname = $Employee->fullname;
-								$Spklhistory->spkl_id = $id;
-								$Spklhistory->approvaltype = "Originator";
-								$Spklhistory->actiontype = 2;
-								$Spklhistory->save();
-							}else{
-								$Spklhistory = new Spklhistory();
-								$Spklhistory->date = date("Y-m-d h:i:s");
-								$Spklhistory->fullname = $Employee->fullname;
-								$Spklhistory->spkl_id = $id;
-								$Spklhistory->approvaltype = "Originator";
-								$Spklhistory->actiontype = 1;
-								$Spklhistory->save();
+						}
+						if($data['requeststatus']==1){
+							$Spklapproval = Spklapproval::find('all', array('conditions' => array("spkl_id=?",$id)));					
+							foreach($Spklapproval as $data){
+								$data->approvalstatus=0;
+								$data->save();
 							}
-							$logger = new Datalogger("SPKL","update",json_encode($olddata),json_encode($data));
-							$logger->SaveData();
-							//echo json_encode($Spkl);
+							$joinx   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";					
+							$Spklapproval = Spklapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and spkl_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+							$username = $Spklapproval->approver->employee->loginname;
+							$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
+							$email = $adb->email;
+							
+							$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$adb->fullname.',</span></p>
+												<p class=MsoNormal><span style="color:#1F497D">New SPKL/Overtime request is awaiting for your approval:</span></p>
+												<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
+												<table border=1 cellspacing=0 cellpadding=3 width=683>
+													<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Spkl->employee->fullname.'</b></p></td></tr>
+													<tr><td><p class=MsoNormal>Creation Date</p></td><td>:</td><td><p class=MsoNormal><b>'.date("d/m/Y",strtotime($Spkl->createddate)).'</b></p></td></tr>
+													<tr><td><p class=MsoNormal>Date Work</p></td><td>:</td><td><p class=MsoNormal><b>'.date("d/m/Y",strtotime($Spkl->datework)).'</b></p></td></tr>';
+							$this->mailbody .='</table>
+												<p class=MsoNormal><b>SPKL Detail :</b></p>
+												<table border=1 cellspacing=0 cellpadding=3 width=683><tr><th  rowspan="2"><p class=MsoNormal>No</p></th>
+												<th rowspan="2"><p class=MsoNormal>Employee Name</p></th>
+												<th rowspan="2"><p class=MsoNormal>SAPID</p></th>
+												<th rowspan="2"><p class=MsoNormal>Position</p></th>
+												<th colspan="2"><p class=MsoNormal>Estimate Time for Work</p></th>
+												
+												<th rowspan="2"><p class=MsoNormal>Target Work</p></th>
+												<th rowspan="2"><p class=MsoNormal>Remarks</p></th>
+												</tr>
+												<tr><th><p class=MsoNormal>Normal</p></th>
+												<th><p class=MsoNormal>Overtime</p></th></tr>
+												';
+							$no=1;
+							foreach ($Spkldetail as $data){
+								$this->mailbody .='<tr style="height:22.5pt">
+											<td><p class=MsoNormal> '.$no.'</p></td>
+											<td><p class=MsoNormal> '.$data->employee->fullname.'</p></td>
+											<td><p class=MsoNormal> '.$data->employee->sapid.'</p></td>
+											<td><p class=MsoNormal> '.$data->employee->designation->designationname.'</p></td>
+											<td><p class=MsoNormal> '.$data->estimatenormalhours.'</p></td>
+											<td><p class=MsoNormal> '.$data->estimateovertimehours.'</p></td>
+											<td><p class=MsoNormal> '.$data->target.'</p></td>
+											<td><p class=MsoNormal> '.$data->remarks.'</p></td>
+								</tr>';
+								$no++;
+							}
+							$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+							$this->mail->addAddress($adb->email, $adb->fullname);
+							$this->mail->Subject = "Online Approval System -> New SPKL / Overtime Submission";
+							$this->mail->msgHTML($this->mailbody);
+							if (!$this->mail->send()) {
+								$err = new Errorlog();
+								$err->errortype = "SPKL Mail";
+								$err->errordate = date("Y-m-d h:i:s");
+								$err->errormessage = $this->mail->ErrorInfo;
+								$err->user = $this->currentUser->username;
+								$err->ip = $this->ip;
+								$err->save();
+								echo "Mailer Error: " . $this->mail->ErrorInfo;
+							} else {
+								echo "Message sent!";
+							}
+							$Spklhistory = new Spklhistory();
+							$Spklhistory->date = date("Y-m-d h:i:s");
+							$Spklhistory->fullname = $Employee->fullname;
+							$Spklhistory->spkl_id = $id;
+							$Spklhistory->approvaltype = "Originator";
+							$Spklhistory->actiontype = 2;
+							$Spklhistory->save();
+						}else{
+							$Spklhistory = new Spklhistory();
+							$Spklhistory->date = date("Y-m-d h:i:s");
+							$Spklhistory->fullname = $Employee->fullname;
+							$Spklhistory->spkl_id = $id;
+							$Spklhistory->approvaltype = "Originator";
+							$Spklhistory->actiontype = 1;
+							$Spklhistory->save();
+						}
+						$logger = new Datalogger("SPKL","update",json_encode($olddata),json_encode($data));
+						$logger->SaveData();
+						//echo json_encode($Spkl);
 						
 						break;
 					default:
@@ -1353,10 +1442,6 @@ Class SpklModule extends Application{
 						break;
 				}
 			}
-			// else{
-				// $result= array("status"=>"error","message"=>"Authentication error or expired, please refresh and re login application");
-				// echo json_encode($result);
-			// }
 		}
 	}
 	function spklByEmp(){	

@@ -12,7 +12,8 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 			visibleIndex: -1,
 			width: 80 
 		});
-    }
+	}
+
 	CrudService.GetById('spkl',$scope.Requestid).then(function(response){
 		if(response.status=="autherror"){
 			$scope.logout();
@@ -50,14 +51,19 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 					loadMode: "raw",
 					load: function() {
 						criteria = {filter:'bydept3',dept:$scope.data.department};
-						return CrudService.FindData('emp',criteria).then(function (response) {
-							if(response.status=="error"){
-								DevExpress.ui.notify(response.message,"error");
-							}else{
-								return response;
-							}
-						});
+						return CrudService.FindData('emp',criteria);
 					}
+				}),
+				sort: "id"
+			}
+			$scope.empDataSource = {
+				store: new DevExpress.data.CustomStore({
+					key: "id",
+					loadMode: "raw",
+					load: function() {
+						criteria = {module:'SPKL',mode:$scope.mode};
+						return CrudService.FindData('appr',criteria);
+					},
 				}),
 				sort: "id"
 			}
@@ -84,7 +90,8 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 						colSpan :2,
 						items: [
 						{dataField:'createddate',editorType: "dxDateBox",label: {text: "Creation Date"},editorOptions: {displayFormat:"dd/MM/yyyy",disabled: true}},
-						{dataField:'datework',editorType: "dxDateBox",label: {text: "Date Work"},editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now()},validationRules: [{
+						{dataField:'datework',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,editorType: "dxDateBox",label: {text: "Date Work"},editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now()},
+						validationRules: [{
 							type: "required",
 							message: "Please select Work Date"
 						}]},
@@ -189,7 +196,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 								text: "Back",
 								type: "danger",
 								onClick: function(){
-									$scope.spklApproval();							
+									$scope.SPKLApproval();							
 								},
 								visible: ($scope.mode=='approve') ?true:false,
 								useSubmitBehavior: false
@@ -274,317 +281,302 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 				],			
 			};
 		}
+		var myStore = new DevExpress.data.CustomStore({
+			load: function() {			
+				$scope.isLoaded =true;
+				return CrudService.GetById('spkldetail',$scope.Requestid);         		
+			},
+			byKey: function(key) {
+				CrudService.GetById('spkldetail',encodeURIComponent(key)).then(function (response) {
+					return response;
+				});
+			},
+			insert: function(values) {
+				values.spkl_id=$scope.Requestid;
+				CrudService.Create('spkldetail',values).then(function (response) {
+					if(response.status=="error"){
+						DevExpress.ui.dialog.alert(response.message,"Error");
+					}
+					$scope.grid1Component.refresh();
+				});
+			},
+			update: function(key, values) {
+				CrudService.Update('spkldetail',key.id,values).then(function (response) {
+					if(response.status=="error"){
+						DevExpress.ui.dialog.alert(response.message,"Error");
+					}
+					$scope.grid1Component.refresh();
+				});
+			},
+			remove: function(key) {
+				CrudService.Delete('spkldetail',key.id).then(function (response) {
+					if(response.status=="error"){
+						DevExpress.ui.dialog.alert(response.message,"Error");
+					}
+					$scope.grid1Component.refresh();
+				});
+			}
+		});
+		var myData = new DevExpress.data.DataSource({
+			store: myStore
+		});
+		var myStore2 = new DevExpress.data.CustomStore({
+			load: function() {			
+				$scope.isLoaded =true;
+				return CrudService.GetById('spklapp',$scope.Requestid);         		
+			},
+			byKey: function(key) {
+				CrudService.GetById('spklapp',encodeURIComponent(key)).then(function (response) {
+					return response;
+				});
+			},
+			insert: function(values) {
+				values.approvaldate = $filter("date")(values.approvaldate, "yyyy-MM-dd HH:mm")
+				values.spkl_id=$scope.Requestid;
+				CrudService.Create('spklapp',values).then(function (response) {
+					if(response.status=="error"){
+						DevExpress.ui.dialog.alert(response.message,"Error");
+					}
+					$scope.grid2Component.refresh();
+				});
+			},
+			update: function(key, values) {
+				values.approvaldate = $filter("date")(values.approvaldate, "yyyy-MM-dd HH:mm")
+				CrudService.Update('spklapp',key.id,values).then(function (response) {
+					if(response.status=="error"){
+						DevExpress.ui.dialog.alert(response.message,"Error");
+					}
+					$scope.grid2Component.refresh();
+				});
+			},
+			remove: function(key) {
+				CrudService.Delete('spklapp',key.id).then(function (response) {
+					if(response.status=="error"){
+						DevExpress.ui.dialog.alert(response.message,"Error");
+					}
+					$scope.grid2Component.refresh();
+				});
+			}
+		});
+		var myStore3 = new DevExpress.data.CustomStore({
+			load: function() {			
+				$scope.isLoaded =true;
+				return CrudService.GetById('spklhist',$scope.Requestid);         		
+			},
+			byKey: function(key) {
+				//
+			},
+			insert: function(values) {
+				//
+			},
+			update: function(key, values) {
+				//
+			},
+			remove: function(key) {
+				//
+			}
+		});
+		var myData2 = new DevExpress.data.DataSource({
+			store: myStore2
+		});
+		var myData3 = new DevExpress.data.DataSource({
+			store: myStore3
+		});
+		
+		
+		$scope.showHistory = true;
+		$scope.appText = ["No","Yes"];
+		$scope.loadPanelVisible = false;
+		$scope.grid1Options = {
+			dataSource: myData,
+			allowColumnResizing: true,
+			wordWrapEnabled: true,
+			columnResizingMode : "widget",
+			columnMinWidth: 50,
+			columnAutoWidth: true,
+			columns: [
+				{dataField:'isapproved',width:110,caption: "Approved",dataType: "boolean", showEditorAlways: true,formItem: { visible: (($scope.mode=='approve') ||($scope.mode=='view') ||($scope.mode=='report'))?true:false} ,visible: (($scope.mode=='approve') ||($scope.mode=='view') ||($scope.mode=='report'))?true:false },	
+				{
+						dataField: "employee_id",
+						caption: "Employee",
+						width: 200,
+						allowSorting: false,
+						visible:true,
+						lookup: {
+							dataSource: $scope.allDeptEmpDataSource,
+							valueExpr: "id",
+							displayExpr: "fullname" 
+						},
+						editCellTemplate: "dropDownBoxEditorTemplate" 
+				},
+				//{dataField:'fullname',width:200,dataType: "string",editorOptions: {disabled:true},formItem: { visible: false},},	
+				{dataField:'sapid',width:90,dataType: "string",editorOptions: {disabled:true},formItem: { visible: false}},	
+				{dataField:'position',caption: "Position",width:150,dataType: "string",editorOptions: {disabled:true},formItem: { visible: false}},
+				{dataField:'estimatenormalhours',caption: "Normal Hours Estimate (hrs)",width:80,dataType: "number",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+				{dataField:'estimateovertimehours',caption: "Overtime Hours Estimate (hrs)",width:80,dataType: "number",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+				{dataField:'target',caption: "Target Work",encodeHtml: false,width:250,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+				
+			],editing: {
+				useIcons:true,
+				mode: "cell",
+				allowUpdating:(($scope.mode=='view') ||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+				allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+				allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+				//allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
+				//allowAdding: ($rootScope.isAdmin)?true:false, // Enables insertion
+				form:{colCount: 1,
+				},
+			},
+			onInitialized:function (e){
+				$scope.grid1Component = e.component;
+			},
+			onContentReady: function(e){
+				moveEditColumnToLeft(e.component);
+			},
+			onEditorPreparing: function (e) {  
+				$scope.grid1Component = e.component;
+				if ((e.dataField == "isapproved") || (e.dataField == "isused")){
+					e.editorName = "dxRadioGroup";
+					e.editorOptions.layout = "horizontal";
+					e.editorOptions.items = $scope.appText;
+					//e.editorOptions.switchedOffText = "No";
+				}
+			},
+			onToolbarPreparing: function(e) {   
+				e.toolbarOptions.items.unshift({						
+					location: "after",
+					widget: "dxButton",
+					options: {
+						hint: "Refresh Data",
+						icon: "refresh",
+						onClick: function() {
+							$scope.grid1Component.refresh();
+						}
+					}
+				});
+			},
+		};
+		$scope.AppType = [{id:0,apptype:"Verification"},{id:1,apptype:"HOD Approval"},{id:2,apptype:"Final Approval"}];
+	
+		
+		$scope.grid2Options = {
+			dataSource: myData2,
+			allowColumnResizing: true,
+			columnResizingMode : "widget",
+			columnMinWidth: 50,
+			columnAutoWidth: true,
+			columns: [
+				{
+							dataField: "approver_id",
+							caption: "Employee",
+							width: 200,
+							allowSorting: false,
+							lookup: {
+								dataSource: $scope.empDataSource,
+								valueExpr: "id",
+								displayExpr: "fullname" },
+							editCellTemplate: "dropDownBoxEditorTemplatex" },
+				{dataField:'approvaldate',width:150,dataType:"date", format:"dd/MM/yyyy",allowEditing:false, visible: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false},
+				{dataField:'approvaltype' ,width:200,allowEditing:false,
+					lookup: {  
+						dataSource:$scope.apptypeDatasource,  
+						valueExpr: 'id',
+						displayExpr: 'approvaltype'
+					}},
+				{dataField:'approvalstatus',width:150,allowEditing:false, visible: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false,encodeHtml: false,
+				customizeText: function (e) {
+						var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
+						return rDesc[e.value];
+					}},
+				//{dataField:'remarks',encodeHtml: false,}
+			],
+			bindingOptions :{
+				"columns[2].lookup.dataSource":"apptypeDatasource"
+			},
+			editing: {
+				useIcons:true,
+				mode: "cell",
+				allowUpdating: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+				allowAdding:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+				allowDeleting:($rootScope.isAdmin)?true:false,
+				form:{colCount: 1,
+				},
+			},
+			onInitialized:function (e){
+				$scope.grid2Component = e.component;
+			},
+			onContentReady: function(e){
+				moveEditColumnToLeft(e.component);
+			},
+			onToolbarPreparing: function(e) {
+				$scope.dataGrid2 = e.component;
+		
+				e.toolbarOptions.items.unshift({						
+					location: "after",
+					widget: "dxButton",
+					options: {
+						hint: "Refresh Data",
+						icon: "refresh",
+						onClick: function() {
+							$scope.dataGrid2.refresh();
+						}
+					}
+				});
+			},
+			
+		};
+		$scope.grid3Options = {
+			dataSource: myData3,
+			allowColumnResizing: true,
+			columnResizingMode : "widget",
+			columnMinWidth: 50,
+			columnAutoWidth: true,
+			wordWrapEnabled: true,
+			columns: [
+				{dataField:'date',width:150,dataType: "date",format: 'dd/MM/yyyy HH:mm:ss'},
+				{dataField:'fullname',width:200,caption: "Employee",allowEditing:false,dataType: "string"},
+				{dataField:'approvaltype',width:150,caption: "Role",allowEditing:false,dataType: "string"},
+				{dataField:'actiontype',width:150,caption: "Action",allowEditing:false,encodeHtml: false,
+				customizeText: function (e) {
+						var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-default'>Created</span>","<span class='mb-2 mr-2 badge badge-pill badge-default'>Save as Draft</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Submitted</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Ask Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
+						return rDesc[e.value];
+					}},
+				{dataField:'remarks',encodeHtml: false}
+			],editing: {
+				useIcons:true,
+				allowUpdating:false,
+				allowAdding:false,
+				allowDeleting:false,
+				form:{colCount: 1,
+				},
+			},
+			onInitialized:function (e){
+				$scope.grid3Component = e.component;
+			},
+			onContentReady: function(e){
+				moveEditColumnToLeft(e.component);
+			},
+			onToolbarPreparing: function(e) {   
+				e.toolbarOptions.items.unshift({						
+					location: "after",
+					widget: "dxButton",
+					options: {
+						hint: "Refresh Data",
+						icon: "refresh",
+						onClick: function() {
+							$scope.grid3Component.refresh();
+						}
+					}
+				});
+			},
+		};
+		
 	});
-	var myStore = new DevExpress.data.CustomStore({
-		load: function() {			
-            $scope.isLoaded =true;
-			return CrudService.GetById('spkldetail',$scope.Requestid);         		
-		},
-		byKey: function(key) {
-            CrudService.GetById('spkldetail',encodeURIComponent(key)).then(function (response) {
-				return response;
-			});
-		},
-		insert: function(values) {
-			values.spkl_id=$scope.Requestid;
-            CrudService.Create('spkldetail',values).then(function (response) {
-				if(response.status=="error"){
-					DevExpress.ui.dialog.alert(response.message,"Error");
-				}
-				$scope.grid1Component.refresh();
-			});
-		},
-		update: function(key, values) {
-            CrudService.Update('spkldetail',key.id,values).then(function (response) {
-				if(response.status=="error"){
-					DevExpress.ui.dialog.alert(response.message,"Error");
-				}
-				$scope.grid1Component.refresh();
-			});
-		},
-		remove: function(key) {
-			CrudService.Delete('spkldetail',key.id).then(function (response) {
-				if(response.status=="error"){
-					DevExpress.ui.dialog.alert(response.message,"Error");
-				}
-				$scope.grid1Component.refresh();
-			});
-		}
-    });
-	var myData = new DevExpress.data.DataSource({
-		store: myStore
-    });
-	var myStore2 = new DevExpress.data.CustomStore({
-		load: function() {			
-            $scope.isLoaded =true;
-			return CrudService.GetById('spklapp',$scope.Requestid);         		
-		},
-		byKey: function(key) {
-            CrudService.GetById('spklapp',encodeURIComponent(key)).then(function (response) {
-				return response;
-			});
-		},
-		insert: function(values) {
-			values.approvaldate = $filter("date")(values.approvaldate, "yyyy-MM-dd HH:mm")
-			values.spkl_id=$scope.Requestid;
-            CrudService.Create('spklapp',values).then(function (response) {
-				if(response.status=="error"){
-					DevExpress.ui.dialog.alert(response.message,"Error");
-				}
-				$scope.grid2Component.refresh();
-			});
-		},
-		update: function(key, values) {
-			values.approvaldate = $filter("date")(values.approvaldate, "yyyy-MM-dd HH:mm")
-            CrudService.Update('spklapp',key.id,values).then(function (response) {
-				if(response.status=="error"){
-					DevExpress.ui.dialog.alert(response.message,"Error");
-				}
-				$scope.grid2Component.refresh();
-			});
-		},
-		remove: function(key) {
-			CrudService.Delete('spklapp',key.id).then(function (response) {
-				if(response.status=="error"){
-					DevExpress.ui.dialog.alert(response.message,"Error");
-				}
-				$scope.grid2Component.refresh();
-			});
-		}
-    });
-	var myStore3 = new DevExpress.data.CustomStore({
-		load: function() {			
-            $scope.isLoaded =true;
-			return CrudService.GetById('spklhist',$scope.Requestid);         		
-		},
-		byKey: function(key) {
-            //
-		},
-		insert: function(values) {
-			//
-		},
-		update: function(key, values) {
-			//
-		},
-		remove: function(key) {
-			//
-		}
-    });
-	var myData2 = new DevExpress.data.DataSource({
-		store: myStore2
-    });
-	var myData3 = new DevExpress.data.DataSource({
-		store: myStore3
-    });
 	$scope.tabs = [
 		{ id:1, TabName : "Detail SPKL", title: 'Detail SPKL / Employee List', template: "tab1"   },
 		{ id:2, TabName : "Approver List", title: 'Approver List', template: "tab2"   },
 		{ id:3, TabName : "History Tracking", title: 'History Tracking', template: "tab3"   },
 	];
-	$scope.showHistory = true;
-	$scope.appText = ["No","Yes"];
-	$scope.loadPanelVisible = false;
-	$scope.grid1Options = {
-		dataSource: myData,
-		allowColumnResizing: true,
-		wordWrapEnabled: true,
-		columnResizingMode : "widget",
-        columnMinWidth: 50,
-        columnAutoWidth: true,
-		columns: [{
-					dataField: "employee_id",
-					caption: "Employee",
-					width: 200,
-					allowSorting: false,
-					visible:false,
-					lookup: {
-						dataSource: $scope.allDeptEmpDataSource,
-						valueExpr: "id",
-						displayExpr: "fullname" 
-					},
-					editCellTemplate: "dropDownBoxEditorTemplate" 
-			},
-			{dataField:'fullname',width:200,dataType: "string",editorOptions: {disabled:true},formItem: { visible: false},},	
-			{dataField:'sapid',width:90,dataType: "string",editorOptions: {disabled:true},formItem: { visible: false}},	
-			{dataField:'position',caption: "Position",width:150,dataType: "string",editorOptions: {disabled:true},formItem: { visible: false}},
-			{dataField:'estimatenormalhours',caption: "Normal Hours Estimate (hrs)",width:80,dataType: "number",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
-			{dataField:'estimateovertimehours',caption: "Overtime Hours Estimate (hrs)",width:80,dataType: "number",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
-			{dataField:'target',caption: "Target Work",encodeHtml: false,width:250,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
-			{dataField:'isapproved',width:80,caption: "Approved",dataType: "boolean", showEditorAlways: true,formItem: { visible: (($scope.mode=='approve') ||($scope.mode=='view') ||($scope.mode=='report'))?true:false} ,visible: (($scope.mode=='approve') ||($scope.mode=='view') ||($scope.mode=='report'))?true:false },	
-		],editing: {
-            useIcons:true,
-            mode: "popup",
-			allowUpdating:(($scope.mode=='view') ||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
-			allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
-			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
-            //allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
-            //allowAdding: ($rootScope.isAdmin)?true:false, // Enables insertion
-            form:{colCount: 1,
-            },
-        },
-		onInitialized:function (e){
-			$scope.grid1Component = e.component;
-		},
-		onContentReady: function(e){
-            moveEditColumnToLeft(e.component);
-        },
-		onEditorPreparing: function (e) {  
-			$scope.grid1Component = e.component;
-			if ((e.dataField == "isapproved") || (e.dataField == "isused")){
-                e.editorName = "dxRadioGroup";
-                e.editorOptions.layout = "horizontal";
-				e.editorOptions.items = $scope.appText;
-                //e.editorOptions.switchedOffText = "No";
-            }
-			if((e.dataField == "target") || (e.dataField == "remarks")){
-				e.editorName = "dxHtmlEditor";
-				e.editorOptions.height = 250;
-				e.editorOptions.toolbar = {	items: ["bold", "italic", "underline"]	};
-			} 
-		},
-		onToolbarPreparing: function(e) {   
-            e.toolbarOptions.items.unshift({						
-                location: "after",
-                widget: "dxButton",
-                options: {
-                    hint: "Refresh Data",
-                    icon: "refresh",
-                    onClick: function() {
-                        $scope.grid1Component.refresh();
-                    }
-                }
-            });
-        },
-    };
-	$scope.AppType = [{id:0,apptype:"Verification"},{id:1,apptype:"HOD Approval"},{id:2,apptype:"Final Approval"}];
-
-	$scope.empDataSource = {
-        store: new DevExpress.data.CustomStore({
-            key: "id",
-            loadMode: "raw",
-            load: function() {
-				criteria = {module:'SPKL',mode:$scope.mode};
-                return CrudService.FindData('appr',criteria);
-            },
-            // byKey:function(key){
-                // CrudService.GetById('employee',encodeURIComponent(key)).then(function (emp) {
-                    // return emp;
-                // });
-            // }
-        }),
-        sort: "id"
-    }
-	$scope.grid2Options = {
-		dataSource: myData2,
-		allowColumnResizing: true,
-		columnResizingMode : "widget",
-        columnMinWidth: 50,
-        columnAutoWidth: true,
-		columns: [
-			{
-						dataField: "approver_id",
-						caption: "Employee",
-						width: 200,
-						allowSorting: false,
-						lookup: {
-							dataSource: $scope.empDataSource,
-							valueExpr: "id",
-							displayExpr: "fullname" },
-						editCellTemplate: "dropDownBoxEditorTemplatex" },
-			{dataField:'approvaldate',width:150,dataType:"date", format:"dd/MM/yyyy",allowEditing:false, visible: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false},
-			{dataField:'approvaltype' ,width:200,allowEditing:false,
-				lookup: {  
-					dataSource:$scope.apptypeDatasource,  
-					valueExpr: 'id',
-					displayExpr: 'approvaltype'
-				}},
-			{dataField:'approvalstatus',width:150,allowEditing:false, visible: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false,encodeHtml: false,
-			customizeText: function (e) {
-					var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
-					return rDesc[e.value];
-				}},
-			//{dataField:'remarks',encodeHtml: false,}
-		],
-		bindingOptions :{
-            "columns[2].lookup.dataSource":"apptypeDatasource"
-        },
-		editing: {
-            useIcons:true,
-            mode: "cell",
-			allowUpdating: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
-			allowAdding:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
-			allowDeleting:($rootScope.isAdmin)?true:false,
-            form:{colCount: 1,
-            },
-        },
-		onInitialized:function (e){
-			$scope.grid2Component = e.component;
-		},
-		onContentReady: function(e){
-            moveEditColumnToLeft(e.component);
-        },
-		onToolbarPreparing: function(e) {
-            $scope.dataGrid2 = e.component;
-    
-            e.toolbarOptions.items.unshift({						
-                location: "after",
-                widget: "dxButton",
-                options: {
-                    hint: "Refresh Data",
-                    icon: "refresh",
-                    onClick: function() {
-                        $scope.dataGrid2.refresh();
-                    }
-                }
-            });
-        },
-		
-    };
-	$scope.grid3Options = {
-		dataSource: myData3,
-		allowColumnResizing: true,
-		columnResizingMode : "widget",
-        columnMinWidth: 50,
-        columnAutoWidth: true,
-		wordWrapEnabled: true,
-		columns: [
-			{dataField:'date',width:150,dataType: "date",format: 'dd/MM/yyyy HH:mm:ss'},
-			{dataField:'fullname',width:200,caption: "Employee",allowEditing:false,dataType: "string"},
-			{dataField:'approvaltype',width:150,caption: "Role",allowEditing:false,dataType: "string"},
-			{dataField:'actiontype',width:150,caption: "Action",allowEditing:false,encodeHtml: false,
-			customizeText: function (e) {
-					var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-default'>Created</span>","<span class='mb-2 mr-2 badge badge-pill badge-default'>Save as Draft</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Submitted</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Ask Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
-					return rDesc[e.value];
-				}},
-			{dataField:'remarks',encodeHtml: false}
-		],editing: {
-            useIcons:true,
-			allowUpdating:false,
-			allowAdding:false,
-			allowDeleting:false,
-            form:{colCount: 1,
-            },
-        },
-		onInitialized:function (e){
-			$scope.grid3Component = e.component;
-		},
-		onContentReady: function(e){
-            moveEditColumnToLeft(e.component);
-        },
-		onToolbarPreparing: function(e) {   
-            e.toolbarOptions.items.unshift({						
-                location: "after",
-                widget: "dxButton",
-                options: {
-                    hint: "Refresh Data",
-                    icon: "refresh",
-                    onClick: function() {
-                        $scope.grid3Component.refresh();
-                    }
-                }
-            });
-        },
-    };
 	$scope.selectedTab = 0;
 	$scope.tabSettings = {
 		dataSource: $scope.tabs,
@@ -619,6 +611,10 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 			delete data.employee_id;
 			delete data.requeststatus;
 			delete data.depthead;
+			delete data.spklno;
+			delete data.fullname;
+			delete data.tmsreqstatus;
+			delete data.department;
 			CrudService.Update('spklapp',data.id,data).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.dialog.alert(response.message,"Error");
@@ -652,6 +648,10 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 					delete data.employee_id;
 					delete data.requeststatus;
 					delete data.depthead;
+					delete data.spklno;
+					delete data.fullname;
+					delete data.tmsreqstatus;
+					delete data.department;
 					CrudService.Update('spklapp',data.id,data).then(function (response) {
 						if(response.status=="error"){
 							DevExpress.ui.dialog.alert(response.message,"Error");
@@ -732,6 +732,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 						delete data.approvalstatus;
 						delete data.mtd;
 						delete data.ytd;
+						data.datework = $filter("date")(data.datework, "yyyy-MM-dd HH:mm")
 						CrudService.Update('spkl',data.id,data).then(function (response) {
 							if(response.status=="error"){
 								 DevExpress.ui.notify(response.message,"error");
@@ -784,7 +785,6 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 		})	 	   
     };
 	$scope.initDropDownBoxEditor = function(data) {
-		console.log(data);
         return {
             dropDownOptions: { width: 500 },
             dataSource: $scope.allDeptEmpDataSource,
