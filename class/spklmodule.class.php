@@ -119,8 +119,8 @@ Class SpklModule extends Application{
 		$joinx   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";					
 		$Spklapproval = Spklapproval::find('all',array('joins'=>$joinx,'conditions' => array("spkl_id=?",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
 		$pdfContent .= "<br><br><table border=0 cellspacing=4 cellpadding=3>
-						<tr><td align='center'>Diperintahkan Oleh,</td><td width='50'></td><td align='center'>Disetujui Oleh,</td><td width='50'></td><td align='center'>Diperiksa Oleh,</td><td align='center'>Disetujui Oleh,</td></tr>
-						<tr><td align='center'>Askep</td><td width='50'></td><td align='center'>Dept. Head / Sector Manager</td><td width='50'></td><td align='center'>HR BU/HO</td><td align='center'>BU Head</td></tr>
+						<tr><td align='center'>Diperintahkan Oleh,</td><td width='50'></td><td align='center'>Disetujui Oleh,</td><td width='50'></td><td align='center'>Diperiksa Oleh,</td><td width='50'></td><td align='center'>Disetujui Oleh,</td></tr>
+						<tr><td align='center'>Askep</td><td width='50'></td><td align='center'>Dept. Head / Sector Manager</td><td width='50'></td><td align='center'>HR BU/HO</td><td width='50'></td><td align='center'>BU Head</td></tr>
 						";
 		foreach ($Spklapproval as $data){
 			if(($data->approver->approvaltype->id==20) || ($data->approver->employee_id==$Spkl->depthead)){
@@ -145,7 +145,9 @@ Class SpklModule extends Application{
 					<td width="50"></td>
 					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$deptheadname.'<br><small>'.(($deptheadname=="")?"":date("d/m/Y",strtotime($datedepthead))).'</small></td>
 					<td width="50"></td>
-					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$hrname.'<br><small>'.(($hrname=="")?"":date("d/m/Y",strtotime($hrdate))).'</small></td></tr>';
+					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$hrname.'<br><small>'.(($hrname=="")?"":date("d/m/Y",strtotime($hrdate))).'</small></td>
+					<td width="50"></td>
+					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$buheadname.'<br><small>'.(($buheadname=="")?"":date("d/m/Y",strtotime($buheaddate))).'</small></td></tr>';
 		$pdfContent .= "</table>";
 		
 		try {
@@ -203,16 +205,18 @@ Class SpklModule extends Application{
 						';
 		$no=1;
 		foreach ($Spkldetail as $data){
-			$pdfContent .='<tr style="height:12pt">
-						<td> '.$no.'</td>
-						<td> '.$data->employee->fullname.'</td>
-						<td> '.$data->employee->sapid.'</td>
-						<td> '.$data->employee->designation->designationname.'</td>
-						<td> '.$data->estimatenormalhours.'</td>
-						<td> '.$data->estimateovertimehours.'</td>
-						<td> '.wordwrap($data->target, 60, "<br>").'</td>
-			</tr>';
-			$no++;
+			if ($data->isapproved){
+				$pdfContent .='<tr style="height:12pt">
+							<td> '.$no.'</td>
+							<td> '.$data->employee->fullname.'</td>
+							<td> '.$data->employee->sapid.'</td>
+							<td> '.$data->employee->designation->designationname.'</td>
+							<td> '.$data->estimatenormalhours.'</td>
+							<td> '.$data->estimateovertimehours.'</td>
+							<td> '.wordwrap($data->target, 60, "<br>").'</td>
+				</tr>';
+				$no++;
+			}
 		}
 		$pdfContent .= "</table>
 						<small><b>Catatan : </b>
@@ -223,27 +227,35 @@ Class SpklModule extends Application{
 		$joinx   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";					
 		$Spklapproval = Spklapproval::find('all',array('joins'=>$joinx,'conditions' => array("spkl_id=?",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
 		$pdfContent .= "<table border=0 cellspacing=4 cellpadding=3>
-						<tr><td align='center'>Diperintahkan Oleh, <br>Askep</td><td width='50'></td><td align='center'>Disetujui Oleh,<br>Dept. Head / Sector Manager</td><td width='50'></td><td align='center'>Diperiksa Oleh,<br>Askep SDM/CS</td></tr>";
+						<tr><td align='center'>Diperintahkan Oleh, <br>Askep</td><td width='50'></td><td align='center'>Disetujui Oleh,<br>Dept. Head / Sector Manager</td><td width='50'></td><td align='center'>Diperiksa Oleh,<br>HR BU/HO</td><td width='50'></td><td align='center'>Disetujui Oleh,<br>BU Head</td></tr>";
 		foreach ($Spklapproval as $data){
-			if(($data->approver->approvaltype->id==21) || ($data->approver->employee_id==$Spkl->depthead)){
+			if(($data->approver->approvaltype->id==20) || ($data->approver->employee_id==$Spkl->depthead)){
 				$deptheadname = $data->approver->employee->fullname;
 				$datedepthead = date("d/m/Y",strtotime($data->approvaldate));
 			}
-			if($data->approver->approvaltype->id==22) {
+			if($data->approver->approvaltype->id==21) {
 				$hrname = $data->approver->employee->fullname;
 				$hrdate = date("d/m/Y",strtotime($data->approvaldate));
+			}
+			if($data->approver->approvaltype->id==22) {
+				$buheadname = $data->approver->employee->fullname;
+				$buheaddate = date("d/m/Y",strtotime($data->approvaldate));
 			}
 		}
 		$pdfContent .= '<tr><td align="center" style="padding:2pt 2.4pt 0in 2.4pt;"><img src="images/approved.png" style="height:25pt" alt="Approved from System"></td>
 					<td width="50"></td>
 					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.(($deptheadname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
 					<td width="50"></td>
-					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.(($hrname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td></tr>';
+					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.(($hrname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
+					<td width="50"></td>
+					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.(($buheadname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td></tr>';
 		$pdfContent .= '<tr><td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$Spkl->employee->fullname.'<br><small>'.date("d/m/Y",strtotime($Spkl->createddate)).'</small></td>
 					<td width="50"></td>
 					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$deptheadname.'<br><small>'.(($deptheadname=="")?"":date("d/m/Y",strtotime($datedepthead))).'</small></td>
 					<td width="50"></td>
-					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$hrname.'<br><small>'.(($hrname=="")?"":date("d/m/Y",strtotime($hrdate))).'</small></td></tr>';
+					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$hrname.'<br><small>'.(($hrname=="")?"":date("d/m/Y",strtotime($hrdate))).'</small></td>
+					<td width="50"></td>
+					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$buheadname.'<br><small>'.(($buheadname=="")?"":date("d/m/Y",strtotime($buheaddate))).'</small></td></tr>';
 		$pdfContent .= "</table></td></tr></table>";
 		
 		$tmsContent ="<table border=0 cellpadding=2 cellspacing=0 style='width:100%; margin:2px;margin-left:10px;'><tr><td  style='border:0.5px solid #212; width:700px;margin-left:20px;padding-left:15px;'><h5 style='width:100%;text-align:center'><b><u>DAFTAR HADIR KERJA LEMBUR KARYAWAN</u></b>";
@@ -274,19 +286,21 @@ Class SpklModule extends Application{
 		
 		$no=1;
 		foreach ($Spkldetail as $data){
-			$tmsContent .='<tr style="height:12pt;">
-						<td> '.$no.'</td>
-						<td> '.$data->employee->fullname.'</td>
-						<td> '.$data->employee->sapid.'</td>
-						<td> '.$data->employee->designation->designationname.'</td>
-						<td> '.date("H:i",strtotime($data->actualstartwork)).'</td>
-						<td> '.date("H:i",strtotime($data->actualendwork)).'</td>
-						<td> '.$data->actualtotalhours.'</td>
-						<td> '.$data->actualnormalhours.'</td>
-						<td> '.$data->actualovertimehours.'</td>
-						<td> '.wordwrap($data->descriptionofwork, 60, "<br>").'</td>
-			</tr>';
-			$no++;
+			if ($data->isotapproved){
+				$tmsContent .='<tr style="height:12pt;">
+							<td> '.$no.'</td>
+							<td> '.$data->employee->fullname.'</td>
+							<td> '.$data->employee->sapid.'</td>
+							<td> '.$data->employee->designation->designationname.'</td>
+							<td> '.date("H:i",strtotime($data->actualstartwork)).'</td>
+							<td> '.date("H:i",strtotime($data->actualendwork)).'</td>
+							<td> '.$data->actualtotalhours.'</td>
+							<td> '.$data->actualnormalhours.'</td>
+							<td> '.$data->actualovertimehours.'</td>
+							<td> '.wordwrap($data->descriptionofwork, 60, "<br>").'</td>
+				</tr>';
+				$no++;
+			}
 		}
 		$tmsContent .= "</table>
 						<small><b>Note : </b>
@@ -297,27 +311,21 @@ Class SpklModule extends Application{
 		
 		$Spkltmsapproval = Spkltmsapproval::find('all',array('joins'=>$joinx,'conditions' => array("spkl_id=?",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
 		$tmsContent .= "<table border=0 cellspacing=4 cellpadding=3>
-						<tr><td align='center'>Dibuat Oleh,<br>Askep</td><td width='50'></td><td align='center'>Disetujui Oleh,<br>Dept. Head / Sector Manager</td><td width='50'></td><td align='center'>Diperiksa Oleh,<br>Askep SDM/CS</td></tr>";
+						<tr><td align='center'>Dibuat Oleh,<br>Askep</td><td width='50'></td><td align='center'>Disetujui Oleh,<br>Dept. Head / Sector Manager</td></tr>";
 		foreach ($Spkltmsapproval as $data){
-			if(($data->approver->approvaltype->id==21) || ($data->approver->employee_id==$Spkl->depthead)){
+			if(($data->approver->approvaltype->id==20) || ($data->approver->employee_id==$Spkl->depthead)){
 				$deptheadname = $data->approver->employee->fullname;
 				$datedepthead = date("d/m/Y",strtotime($data->approvaldate));
-			}
-			if($data->approver->approvaltype->id==22) {
-				$hrname = $data->approver->employee->fullname;
-				$hrdate = date("d/m/Y",strtotime($data->approvaldate));
 			}
 		}
 		$tmsContent .= '<tr><td align="center" style="padding:2pt 2.4pt 0in 2.4pt;"><img src="images/approved.png" style="height:25pt" alt="Approved from System"></td>
 					<td width="50"></td>
 					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.(($deptheadname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
-					<td width="50"></td>
-					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.(($hrname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td></tr>';
+					</tr>';
 		$tmsContent .= '<tr><td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$Spkl->employee->fullname.'<br><small>'.date("d/m/Y",strtotime($Spkl->createddate)).'</small></td>
 					<td width="50"></td>
 					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$deptheadname.'<br><small>'.(($deptheadname=="")?"":date("d/m/Y",strtotime($datedepthead))).'</small></td>
-					<td width="50"></td>
-					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$hrname.'<br><small>'.(($hrname=="")?"":date("d/m/Y",strtotime($hrdate))).'</small></td></tr>';
+					</tr>';
 		$tmsContent .= "</table></td></tr></table>";
 		
 		$pdfContent .=$tmsContent;
@@ -1563,7 +1571,7 @@ Class SpklModule extends Application{
 							$result['no']=1;
 						}			
 						if(count($Spkltmsapproval)==0){
-							$Approver = Approver::find('first',array('conditions'=>array("module='SPKL' and employee_id=? and approvaltype_id=21",$Spkl->depthead)));
+							$Approver = Approver::find('first',array('conditions'=>array("module='SPKL' and employee_id=? and approvaltype_id=20",$Spkl->depthead)));
 							if(count($Approver)>0){
 								$Spkltmsapproval = new Spkltmsapproval();
 								$Spkltmsapproval->spkl_id = $Spkl->id;
