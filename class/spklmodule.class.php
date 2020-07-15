@@ -99,16 +99,18 @@ Class SpklModule extends Application{
 						';
 		$no=1;
 		foreach ($Spkldetail as $data){
-			$pdfContent .='<tr style="height:19pt">
-						<td><p class=MsoNormal> '.$no.'</p></td>
-						<td><p class=MsoNormal> '.$data->employee->fullname.'</p></td>
-						<td><p class=MsoNormal> '.$data->employee->sapid.'</p></td>
-						<td><p class=MsoNormal> '.$data->employee->designation->designationname.'</p></td>
-						<td><p class=MsoNormal> '.$data->estimatenormalhours.'</p></td>
-						<td><p class=MsoNormal> '.$data->estimateovertimehours.'</p></td>
-						<td><p class=MsoNormal> '.wordwrap($data->target, 60, "<br>").'</p></td>
-			</tr>';
-			$no++;
+			if ($data->isapproved){
+				$pdfContent .='<tr style="height:19pt">
+							<td><p class=MsoNormal> '.$no.'</p></td>
+							<td><p class=MsoNormal> '.$data->employee->fullname.'</p></td>
+							<td><p class=MsoNormal> '.$data->employee->sapid.'</p></td>
+							<td><p class=MsoNormal> '.$data->employee->designation->designationname.'</p></td>
+							<td><p class=MsoNormal> '.$data->estimatenormalhours.'</p></td>
+							<td><p class=MsoNormal> '.$data->estimateovertimehours.'</p></td>
+							<td><p class=MsoNormal> '.wordwrap($data->target, 60, "<br>").'</p></td>
+				</tr>';
+				$no++;
+			}
 		}
 		$pdfContent .= "</table><br>
 						<b>Catatan : </b>
