@@ -127,15 +127,15 @@ Class SpklModule extends Application{
 		foreach ($Spklapproval as $data){
 			if(($data->approver->approvaltype->id==20) || ($data->approver->employee_id==$Spkl->depthead)){
 				$deptheadname = $data->approver->employee->fullname;
-				$datedepthead = date("d/m/Y",strtotime($data->approvaldate));
+				$datedepthead = $data->approvaldate;
 			}
 			if($data->approver->approvaltype->id==21) {
 				$hrname = $data->approver->employee->fullname;
-				$hrdate = date("d/m/Y",strtotime($data->approvaldate));
+				$hrdate = $data->approvaldate;
 			}
 			if($data->approver->approvaltype->id==22) {
 				$buheadname = $data->approver->employee->fullname;
-				$buheaddate = date("d/m/Y",strtotime($data->approvaldate));
+				$buheaddate =$data->approvaldate;
 			}
 		}
 		$pdfContent .= '<tr><td align="center" style="padding:2pt 2.4pt 0in 2.4pt;"><img src="images/approved.png" style="height:25pt" alt="Approved from System"></td>
@@ -233,15 +233,15 @@ Class SpklModule extends Application{
 		foreach ($Spklapproval as $data){
 			if(($data->approver->approvaltype->id==20) || ($data->approver->employee_id==$Spkl->depthead)){
 				$deptheadname = $data->approver->employee->fullname;
-				$datedepthead = date("d/m/Y",strtotime($data->approvaldate));
+				$datedepthead =$data->approvaldate;
 			}
 			if($data->approver->approvaltype->id==21) {
 				$hrname = $data->approver->employee->fullname;
-				$hrdate = date("d/m/Y",strtotime($data->approvaldate));
+				$hrdate = $data->approvaldate;
 			}
 			if($data->approver->approvaltype->id==22) {
 				$buheadname = $data->approver->employee->fullname;
-				$buheaddate = date("d/m/Y",strtotime($data->approvaldate));
+				$buheaddate = $data->approvaldate;
 			}
 		}
 		$pdfContent .= '<tr><td align="center" style="padding:2pt 2.4pt 0in 2.4pt;"><img src="images/approved.png" style="height:25pt" alt="Approved from System"></td>
@@ -317,7 +317,7 @@ Class SpklModule extends Application{
 		foreach ($Spkltmsapproval as $data){
 			if(($data->approver->approvaltype->id==20) || ($data->approver->employee_id==$Spkl->depthead)){
 				$deptheadname = $data->approver->employee->fullname;
-				$datedepthead = date("d/m/Y",strtotime($data->approvaldate));
+				$datedepthead = $data->approvaldate;
 			}
 		}
 		$tmsContent .= '<tr><td align="center" style="padding:2pt 2.4pt 0in 2.4pt;"><img src="images/approved.png" style="height:25pt" alt="Approved from System"></td>
@@ -830,7 +830,7 @@ Class SpklModule extends Application{
 						$Spkldetail=Spkldetail::find('all',array('conditions'=>array("spkl_id=?",$doid),'include'=>array('spkl'=>array('employee'=>array('company','department','designation','grade')))));
 						$allcheck = 0;
 						foreach ($Spkldetail as $result) {
-							if(is_null($result->isotapproved)){
+							if($result->isapproved=='1' and is_null($result->isotapproved)){
 								$allcheck+=1;
 							}
 						}
@@ -1025,7 +1025,7 @@ Class SpklModule extends Application{
 						if ($id!=""){
 							$joinx="left join tbl_employee on tbl_spkldetail.employee_id=tbl_employee.id left join tbl_designation on tbl_employee.designation_id=tbl_designation.id";
 							$sel="tbl_spkldetail.*,tbl_employee.fullname,tbl_employee.sapid,tbl_designation.designationname as position";
-							$Spkldetail = Spkldetail::find('all', array("joins"=>$joinx,"select"=>$sel,'conditions' => array("spkl_id=?",$id)));
+							$Spkldetail = Spkldetail::find('all', array("joins"=>$joinx,"select"=>$sel,'conditions' => array("spkl_id=? and (isapproved is null or isapproved = '1')",$id)));
 							foreach ($Spkldetail as &$result) {
 								$appText = ($result->isapproved==null)?"":(($result->isapproved)?"Yes":"No");
 								$usedText = ($result->isotapproved==null)?"":(($result->isotapproved)?"Yes":"No");
