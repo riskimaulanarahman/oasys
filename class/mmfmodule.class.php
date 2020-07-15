@@ -158,6 +158,46 @@ Class Mmfmodule extends Application{
 							switch ($query['status']){
 								case 'chemp':
 									break;
+								case 'addbuyer':
+										// $data = $this->post['data'];
+										$buyer = $query['employee_id'];
+										$id=$query['mmf28_id'];
+										$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
+										$dx = Mmfapproval::find('all',array('joins'=>$joins,'conditions' => array("mmf28_id=? and tbl_approver.approvaltype_id=25 and not(tbl_approver.employee_id=?)",$id,$buyer)));	
+										foreach ($dx as $result) {
+											//delete same type dept head approver
+											$result->delete();
+											$logger = new Datalogger("MMfapproval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
+										}
+										$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
+										$Trapproval = Mmfapproval::find('all',array('joins'=>$joins,'conditions' => array("mmf28_id=? and tbl_approver.employee_id=?",$id,$buyer)));	
+										foreach ($Trapproval as &$result) {
+											$result		= $result->to_array();
+											$result['no']=1;
+										}			
+										if(count($Trapproval)==0){ 
+											$Approver = Approver::find('first',array('conditions'=>array("module='MMF' and employee_id=? and approvaltype_id=25",$buyer)));
+											if(count($Approver)>0){
+												$Trapproval = new Mmfapproval();
+												$Trapproval->mmf28_id = $id;
+												$Trapproval->approver_id = $Approver->id;
+												$Trapproval->save();
+											}else{
+												$approver = new Approver();
+												$approver->module = "MMF";
+												$approver->employee_id=$buyer;
+												$approver->sequence=3;
+												$approver->approvaltype_id = 25;
+												$approver->isfinal = true;
+												$approver->save();
+												$Trapproval = new Mmfapproval();
+												$Trapproval->mmf28_id = $id;
+												$Trapproval->approver_id = $approver->id;
+												$Trapproval->save();
+											}
+										}
+										
+								break;
 								case "reschedule":
 									$id = $query['mmf28_id'];
 									$Tr = Mmf::find($id,array('include'=>array('employee'=>array('company','department','designation','grade'))));
@@ -758,6 +798,14 @@ Class Mmfmodule extends Application{
 						unset($data['department']);
 						unset($data['approveddoc']);
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+						$mmf = Mmf::find($doid);
+						foreach($data as $key=>$val) {
+							if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks')) {
+								$mmf->$key=$val;
+							}
+						}
+						unset($data['isrepair']);
+						unset($data['buyer']);
 						
 						$join   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";
 						if (isset($data['mode'])){

@@ -336,11 +336,20 @@
                         dataField:"buyer",
                         editorType: "dxDropDownBox",
                         visible: (($scope.data.apprstatuscode==2)) ?true:false,
-                        disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                        disabled: (($scope.mode=='edit')|| ($scope.mode=='add') || ($scope.mode=='approve')) ?false:true,
                         editorOptions: { 
                             dataSource:$scope.buyerDataSource,  
                             valueExpr: 'employee_id',
                             displayExpr: 'fullname',
+                            onValueChanged: function(e){
+								console.log(e);
+								criteria = {status:'addbuyer',employee_id:e.value,mmf28_id:$scope.Requestid};
+								CrudService.FindData('mmf',criteria).then(function (response){
+                                    $scope.grid2Component.refresh();
+                                    console.log(e.value + ' & ' + $scope.Requestid);
+                                    console.log(response);
+								})
+							},
                             searchEnabled: true,
                             contentTemplate: function(e){
                                 var $dataGrid = $("<div>").dxDataGrid({
@@ -1152,14 +1161,14 @@
 				delete data.nonhazchemicalname;
 				delete data.isnonchemical;
 				delete data.materialdispatchno;
-				delete data.isrepair;
+				// delete data.isrepair;
 				delete data.isscrap;
 				delete data.estimatecost;
 				delete data.pono;
 				delete data.materialreturneddate;
 				delete data.supplierdodnno;
 				delete data.depthead;
-				delete data.buyer;
+				// delete data.buyer;
 				delete data.apprstatuscode;
 				CrudService.Update('mmfapp',data.id,data).then(function (response) {
 					if(response.status=="error"){
@@ -1213,14 +1222,14 @@
                         delete data.nonhazchemicalname;
                         delete data.isnonchemical;
                         delete data.materialdispatchno;
-                        delete data.isrepair;
+                        // delete data.isrepair;
                         delete data.isscrap;
                         delete data.estimatecost;
                         delete data.pono;
                         delete data.materialreturneddate;
                         delete data.supplierdodnno;
                         delete data.depthead;
-                        delete data.buyer;
+                        // delete data.buyer;
 				        delete data.apprstatuscode;
 						CrudService.Update('mmfapp',data.id,data).then(function (response) {
 							if(response.status=="error"){
