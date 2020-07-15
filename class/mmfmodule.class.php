@@ -799,6 +799,13 @@ Class Mmfmodule extends Application{
 						unset($data['approveddoc']);
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 						$mmf = Mmf::find($doid);
+						$join   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";
+						if (isset($data['mode'])){
+							$Trapproval = Mmfapproval::find('first', array('joins'=>$join,'conditions' => array("mmf28_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
+							unset($data['mode']);
+						}else{
+							$Trapproval = Mmfapproval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
+						}
 						foreach($data as $key=>$val) {
 							if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks')) {
 								$mmf->$key=$val;
@@ -807,13 +814,7 @@ Class Mmfmodule extends Application{
 						unset($data['isrepair']);
 						unset($data['buyer']);
 						
-						$join   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";
-						if (isset($data['mode'])){
-							$Trapproval = Mmfapproval::find('first', array('joins'=>$join,'conditions' => array("mmf28_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
-							unset($data['mode']);
-						}else{
-							$Trapproval = Mmfapproval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
-						}
+						
 						$olddata = $Trapproval->to_array();
 						foreach($data as $key=>$val){
 							$val=($val=='false')?false:(($val=='true')?true:$val);
