@@ -583,7 +583,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 									<li class="nav-item"><a href="" ng-click="TRApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
 								</ul>
 							</li>
-                            <li ng-class="{'mm-active': (isActive('/mmf') || isActive('/mmf30') || isActive('/mmf28approval') || isActive('/mmf30approval'))}">
+                            <li ng-class="{'mm-active': (isActive('/mmf') || isActive('/mmf30') || isActive('/mmfdetail') || isActive('/mmfapproval') || isActive('/mmf30approval'))}">
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>MMF Approval<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul ng-class="{'mm-show': (isActive('/mmf') || isActive('/mmf30') || isActive('/mmf28approval') || isActive('/mmf30approval'))}">
 									<!-- <li class="nav-item"><a href="" ng-click="myMMF()" class="nav-link" ><i class='fa fa-calendar-alt'></i> My Request</a></li> -->
@@ -606,7 +606,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                             
                                         </ul>
                                     </li>
-									<li class="nav-item"><a href="" ng-click="MMFApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
+									<li class="nav-item"><a href="" ng-click="mmfApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
 								</ul>
 							</li>
                             <!--

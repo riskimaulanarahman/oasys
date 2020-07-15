@@ -45,8 +45,14 @@ Class ApproverModule extends Application{
 							if(($query['mode']=='report') || ($query['mode']=='view') || ($query['mode']=='approve')){
 								$Approver = Approver::find('all', array('conditions' => array("module=? ",$query['module']),'include' => array('employee','approvaltype')));
 							}else{
-								$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-								$Approver = Approver::find('all', array('conditions' => array("module=? ",$query['module']),'include' => array('employee','approvaltype')));
+								if($query['type'] == 'buyer') {
+									$Approver = Approver::find('all', array('conditions' => array("module=? AND approvaltype_id = 25 ",$query['module']),'include' => array('employee','approvaltype')));
+								} else {
+									$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+									$Approver = Approver::find('all', array('conditions' => array("module=? ",$query['module']),'include' => array('employee','approvaltype')));
+								}
+								// $Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+								// $Approver = Approver::find('all', array('conditions' => array("module=? ",$query['module']),'include' => array('employee','approvaltype')));
 							}
 							foreach ($Approver as &$result) {
 								$dept=$result->employee->department->departmentname;

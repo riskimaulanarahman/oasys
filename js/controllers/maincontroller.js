@@ -162,7 +162,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.dayoffApproval= function(){ loadModule(true,"doapproval",true);$rootScope.$broadcast("initDO", "");} 
 	$scope.RFCApproval= function(){ loadModule(true,"rfcapproval",true);$rootScope.$broadcast("initRFC", "");} 
 	$scope.TRApproval= function(){ loadModule(true,"trapproval",true);$rootScope.$broadcast("initTR", "");} 
-	// $scope.MMFApproval= function(){ loadModule(true,"mmfapproval",true);$rootScope.$broadcast("initMMF", "");} 
+	$scope.mmfApproval= function(){ loadModule(true,"mmfapproval",true);$rootScope.$broadcast("initMMF", "");} 
 	$scope.SPKLApproval= function(){ loadModule(true,"spklapproval",true);$rootScope.$broadcast("initSPKL", "");} 
 	$scope.TimesheetApproval= function(){ loadModule(true,"spkltmsapproval",true);$rootScope.$broadcast("initSPKLTMS", "");} 
 	function loadModule(access,template,filter){
