@@ -146,14 +146,16 @@ Class DayoffModule extends Application{
 					<tr><td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;text-align:center;background:#C2C2F2;">BU Head</td>
 					<td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;text-align:center;background:#C2C2F2;">Deputy MD</td></tr>';
 		foreach ($Dayoffdetail as $data){
-			$reason = wordwrap($data['reason'], 60, "<br>");
-			$pdfContent .= '<tr><td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;none;border-top:none;">'.date('d/m/Y', strtotime($data['dateworked'])).'</td>
-							<td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;min-width:100px;max-width:300px;">'.wordwrap($data['reason'], 60, "<br>") .'</td>
-							<td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;min-width:50px;max-width:100px;">'.wordwrap($data['remarks'], 50, "<br>").'</td>
-							<td style="border:solid windowtext 1.0pt;border-left:none;border-top:none;">'.(($dhname=="")?'':(($data['isapproved']==1)?'<img src="images/approved.png" style="height:12.5pt" alt="Approved from System">':'<img src="images/rejected.png" style="height:12.5pt" alt="Rejected from System">')).'<br><small>'.$dhname.'<br>'.$datedh.'</small></td>
-							<td style="border:solid windowtext 1.0pt;border-left:none;border-top:none;">'.(($buhname=="")?'':(($data['isapproved']==1)?'<img src="images/approved.png" style="height:12.5pt" alt="Approved from System">':'<img src="images/rejected.png" style="height:12.5pt" alt="Rejected from System">')).'<br><small>'.$buhname.'<br>'.$datebuh.'</small></td>
-							<td style="border:solid windowtext 1.0pt;border-left:none;border-top:none;">'.((($levelid==4) || ($levelid==6))?(($data['isapproved']==1)?'<img src="images/approved.png" style="height:12.5pt" alt="Approved from System">':'<img src="images/rejected.png" style="height:12.5pt" alt="Rejected from System">'):'').'<br><small>'.$mdname.'<br>'.$datemd.'</small></td>
-						</tr>';
+			if($data->isapproved){
+				$reason = wordwrap($data['reason'], 60, "<br>");
+				$pdfContent .= '<tr><td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;none;border-top:none;">'.date('d/m/Y', strtotime($data['dateworked'])).'</td>
+								<td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;min-width:100px;max-width:300px;">'.wordwrap($data['reason'], 60, "<br>") .'</td>
+								<td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;min-width:50px;max-width:100px;">'.wordwrap($data['remarks'], 50, "<br>").'</td>
+								<td style="border:solid windowtext 1.0pt;border-left:none;border-top:none;">'.(($dhname=="")?'':(($data['isapproved']==1)?'<img src="images/approved.png" style="height:12.5pt" alt="Approved from System">':'<img src="images/rejected.png" style="height:12.5pt" alt="Rejected from System">')).'<br><small>'.$dhname.'<br>'.$datedh.'</small></td>
+								<td style="border:solid windowtext 1.0pt;border-left:none;border-top:none;">'.(($buhname=="")?'':(($data['isapproved']==1)?'<img src="images/approved.png" style="height:12.5pt" alt="Approved from System">':'<img src="images/rejected.png" style="height:12.5pt" alt="Rejected from System">')).'<br><small>'.$buhname.'<br>'.$datebuh.'</small></td>
+								<td style="border:solid windowtext 1.0pt;border-left:none;border-top:none;">'.((($levelid==4) || ($levelid==6))?(($data['isapproved']==1)?'<img src="images/approved.png" style="height:12.5pt" alt="Approved from System">':'<img src="images/rejected.png" style="height:12.5pt" alt="Rejected from System">'):'').'<br><small>'.$mdname.'<br>'.$datemd.'</small></td>
+							</tr>';
+			}
 		}
 		$pdfContent .= "</table><small>Note :<br>";
 		$pdfContent .= "- The coverage days listed will be forfeited if it is not claimed within the validity period as per SOP.<br>";
@@ -627,13 +629,15 @@ Class DayoffModule extends Application{
 													<tr><td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;text-align:center;background:#C2C2F2;">BU Head</td>
 													<td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;text-align:center;background:#C2C2F2;">Deputy MD</td></tr>';
 										foreach ($Dayoffdetail as $data){
-											$pdfContent .= '<tr><td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;none;border-top:none;">'.date('d/m/Y', strtotime($data['dateworked'])).'</td>
-															<td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;min-width:100px;max-width:300px;">'.wordwrap($data['reason'], 60, "<br>").'</td>
-															<td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;min-width:50px;max-width:100px;">'.wordwrap($data['remarks'], 50, "<br>").'</td>
-															<td style="border:solid windowtext 1.0pt;border-left:none;border-top:none;">'.(($dhname=="")?'':(($data['isapproved']==1)?'<img src="images/approved.png" style="height:12.5pt" alt="Approved from System">':'<img src="images/rejected.png" style="height:12.5pt" alt="Rejected from System">')).'<br><small>'.$dhname.'<br>'.$datedh.'</small></td>
-															<td style="border:solid windowtext 1.0pt;border-left:none;border-top:none;">'.(($buhname=="")?'':(($data['isapproved']==1)?'<img src="images/approved.png" style="height:12.5pt" alt="Approved from System">':'<img src="images/rejected.png" style="height:12.5pt" alt="Rejected from System">')).'<br><small>'.$buhname.'<br>'.$datebuh.'</small></td>
-															<td style="border:solid windowtext 1.0pt;border-left:none;border-top:none;">'.((($levelid==4) || ($levelid==6))?(($data['isapproved']==1)?'<img src="images/approved.png" style="height:12.5pt" alt="Approved from System">':'<img src="images/rejected.png" style="height:12.5pt" alt="Rejected from System">'):'').'<br><small>'.$mdname.'<br>'.$datemd.'</small></td>
-														</tr>';
+											if ($data->isapproved){
+												$pdfContent .= '<tr><td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;none;border-top:none;">'.date('d/m/Y', strtotime($data['dateworked'])).'</td>
+																<td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;min-width:100px;max-width:300px;">'.wordwrap($data['reason'], 60, "<br>").'</td>
+																<td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;min-width:50px;max-width:100px;">'.wordwrap($data['remarks'], 50, "<br>").'</td>
+																<td style="border:solid windowtext 1.0pt;border-left:none;border-top:none;">'.(($dhname=="")?'':(($data['isapproved']==1)?'<img src="images/approved.png" style="height:12.5pt" alt="Approved from System">':'<img src="images/rejected.png" style="height:12.5pt" alt="Rejected from System">')).'<br><small>'.$dhname.'<br>'.$datedh.'</small></td>
+																<td style="border:solid windowtext 1.0pt;border-left:none;border-top:none;">'.(($buhname=="")?'':(($data['isapproved']==1)?'<img src="images/approved.png" style="height:12.5pt" alt="Approved from System">':'<img src="images/rejected.png" style="height:12.5pt" alt="Rejected from System">')).'<br><small>'.$buhname.'<br>'.$datebuh.'</small></td>
+																<td style="border:solid windowtext 1.0pt;border-left:none;border-top:none;">'.((($levelid==4) || ($levelid==6))?(($data['isapproved']==1)?'<img src="images/approved.png" style="height:12.5pt" alt="Approved from System">':'<img src="images/rejected.png" style="height:12.5pt" alt="Rejected from System">'):'').'<br><small>'.$mdname.'<br>'.$datemd.'</small></td>
+															</tr>';
+											}
 										}
 										$pdfContent .= "</table><small>Note :<br>";
 										$pdfContent .= "- The coverage days listed will be forfeited if it is not claimed within the validity period as per SOP.<br>";

@@ -66,17 +66,17 @@ app.register.controller('spkltmsCtrl', ['$rootScope','$scope', '$http', '$interv
                             .text('')
                             .on('dxclick', function () {
                                 DevExpress.ui.notify("Loading detail data for "+options.data.requestdate,"info",600);
-								$scope.loadSPKL(options.data,"view",true);
+								$scope.loadSPKLTMS(options.data,"view",true);
                             })
                             .appendTo(container);
-						if((options.data.requeststatus=='0') || (options.data.requeststatus=='2')){	
+						if((options.data.tmsreqstatus=='0') || (options.data.tmsreqstatus=='2')){	
 							$('<div style="padding:2px 15px 2px 15px;"/>').addClass('dx-icon-edit btn-pill btn-shadow btn btn-success')
                             .text('')
                             .on('dxclick', function () {
 								// if (!$scope.allowEdit){
 									// DevExpress.ui.notify("You don't have authority to edit data","error");
 								// } else{
-									$scope.loadSPKL(options.data,"edit",true);
+									$scope.loadSPKLTMS(options.data,"edit",true);
 								// }
                             })
                             .appendTo(container);
@@ -92,19 +92,14 @@ app.register.controller('spkltmsCtrl', ['$rootScope','$scope', '$http', '$interv
                 },
 				{dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200},
 				{dataField:'datework',caption:"Date Work",dataType:"date", format:"dd/MM/yyyy",width: 200},
-				{dataField:'requeststatus',encodeHtml: false ,width: 300,
+				{dataField:'tmsreqstatus',caption:"Status",encodeHtml: false ,width: 300,
 					customizeText: function (e) {
-						var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Saved as Draft</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
-						return rDesc[e.value];
-					}},
-				{dataField:'tmsreqstatus',encodeHtml: false ,width: 300,
-					customizeText: function (e) {
-						var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Saved as Draft</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
+						var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Not yet Submitted</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
 						return rDesc[e.value];
 					}},
 				{dataField:'remarks',encodeHtml: false },
 				{
-							dataField: "approveddoc",
+							dataField: "approvedtmsdoc",
 							caption:"Approval Doc",
 							width: 100,
 							allowFiltering: false,

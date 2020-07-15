@@ -43,12 +43,6 @@ app.register.controller('spklapprovalCtrl', ['$rootScope','$scope', '$http', '$i
 			width: 80 
 		});
     }
-	CrudService.GetAll('spklactivity').then(function (resp) {
-        $scope.activityDatasource=resp;
-    });
-	CrudService.GetAll('spklcontractor').then(function (resp) {
-        $scope.contractorDatasource=resp;
-    })
     $scope.dataGridOptions = {
         dataSource: myData,
         showColumnLines: true,

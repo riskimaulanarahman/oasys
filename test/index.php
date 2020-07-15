@@ -27,7 +27,7 @@ try{
 }catch (Exception $e){
 	print_r($e);
 }
-echo json_encode($Skrate, JSON_NUMERIC_CHECK);
+//echo json_encode($Skrate, JSON_NUMERIC_CHECK);
 switch (json_last_error()) {
 	case JSON_ERROR_NONE:
 		echo ' - No errors';
@@ -51,7 +51,4 @@ switch (json_last_error()) {
 		echo ' - Unknown error';
 	break;
 }
-echo "<pre>";
-//print_r($Skrate);
-echo "</pre>";
 ?>
