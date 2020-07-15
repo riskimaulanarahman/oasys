@@ -808,10 +808,22 @@ Class Mmfmodule extends Application{
 						}
 						foreach($data as $key=>$val) {
 							if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks')) {
+								if(($key == 'isrepair') || ($key == 'isscrap')) {
+									$val = ($val==0) ? false:true;
+									$val = ($val=='false') ? false:true;
+								}
 								$mmf->$key=$val;
 							}
 						}
+						$mmf->save();
+
+						unset($data['materialdispatchno']);
 						unset($data['isrepair']);
+						unset($data['isscrap']);
+						unset($data['estimatecost']);
+						unset($data['pono']);
+						unset($data['materialreturneddate']);
+						unset($data['supplierdodnno']);
 						unset($data['buyer']);
 						
 						
@@ -905,7 +917,7 @@ Class Mmfmodule extends Application{
 							}else {
 								$required = '';
 							}
-							$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$adb->fullname.',</span></p>
+							$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$emname.',</span></p>
 										<p class=MsoNormal><span style="color:#1F497D">'.$red.'</span></p>
 										<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
 										<table border=1 cellspacing=0 cellpadding=3 width=683>
@@ -949,11 +961,11 @@ Class Mmfmodule extends Application{
 										';
 							$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 							$this->mail->msgHTML($this->mailbody);
-							if ($complete){
-								$fileName = $this->generatePDF($doid);
-								$filePath = SITE_PATH.DS.$fileName;
-								$this->mail->addAttachment($filePath);
-							}
+							// if ($complete){
+							// 	$fileName = $this->generatePDF($doid);
+							// 	$filePath = SITE_PATH.DS.$fileName;
+							// 	$this->mail->addAttachment($filePath);
+							// }
 							if (!$this->mail->send()) {
 								$err = new Errorlog();
 								$err->errortype = "MMF Mail";
@@ -984,8 +996,8 @@ Class Mmfmodule extends Application{
 	function generatePDF($doid){
 		
 		$Tr = Mmf::find($doid);
-		$Trschedule=Trschedule::find('all',array('conditions'=>array("mmf28_id=?",$doid),'include'=>array('mmf'=>array('employee'=>array('company','department','designation','grade','location')))));
-		$Trticket=Trticket::find('all',array('conditions'=>array("mmf28_id=?",$doid),'include'=>array('mmf'=>array('employee'=>array('company','department','designation','grade','location')))));					
+		// $Trschedule=Trschedule::find('all',array('conditions'=>array("mmf28_id=?",$doid),'include'=>array('mmf'=>array('employee'=>array('company','department','designation','grade','location')))));
+		// $Trticket=Trticket::find('all',array('conditions'=>array("mmf28_id=?",$doid),'include'=>array('mmf'=>array('employee'=>array('company','department','designation','grade','location')))));					
 		$superiorId=$Tr->depthead;
 		$Superior = Employee::find($superiorId);
 		$supAdb = Addressbook::find('first',array('conditions'=>array("username=?",$Superior->loginname)));
@@ -1357,7 +1369,7 @@ Class Mmfmodule extends Application{
 			$html2pdf->clean();
 			$formatter = new ExceptionFormatter($e);
 			$err = new Errorlog();
-			$err->errortype = "TRPDFGenerator";
+			$err->errortype = "MMFPDFGenerator";
 			$err->errordate = date("Y-m-d h:i:s");
 			$err->errormessage = $formatter->getHtmlMessage();
 			$err->user = $this->currentUser->username;

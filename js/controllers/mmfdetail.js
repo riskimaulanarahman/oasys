@@ -1135,7 +1135,8 @@
 			}else if($scope.formInstance.option("formData").approvalstatus==3){
 				var data = $scope.formInstance.option("formData");
 				var date = new Date();
-				var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
+                var d= $filter("date")(date, "yyyy-MM-dd HH:mm");
+                data.materialreturneddate = $filter("date")(data.materialreturneddate, "yyyy-MM-dd HH:mm");
 				data.approvaldate = d;
 				data.mode="approve";
 				delete data.createddate;
@@ -1160,13 +1161,13 @@
 				delete data.isnonhazardous;
 				delete data.nonhazchemicalname;
 				delete data.isnonchemical;
-				delete data.materialdispatchno;
+				// delete data.materialdispatchno;
 				// delete data.isrepair;
-				delete data.isscrap;
-				delete data.estimatecost;
-				delete data.pono;
-				delete data.materialreturneddate;
-				delete data.supplierdodnno;
+				// delete data.isscrap;
+				// delete data.estimatecost;
+				// delete data.pono;
+				// delete data.materialreturneddate;
+				// delete data.supplierdodnno;
 				delete data.depthead;
 				// delete data.buyer;
 				delete data.apprstatuscode;
@@ -1196,7 +1197,8 @@
 					if(response.jml>0){
 						var data = $scope.formInstance.option("formData");
 						var date = new Date();
-						var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
+                        var d= $filter("date")(date, "yyyy-MM-dd HH:mm");
+                        data.materialreturneddate = $filter("date")(data.materialreturneddate, "yyyy-MM-dd HH:mm");
 						data.approvaldate = d;
 						data.mode="approve";
 						delete data.createddate;
@@ -1221,13 +1223,13 @@
                         delete data.isnonhazardous;
                         delete data.nonhazchemicalname;
                         delete data.isnonchemical;
-                        delete data.materialdispatchno;
+                        // delete data.materialdispatchno;
                         // delete data.isrepair;
-                        delete data.isscrap;
-                        delete data.estimatecost;
-                        delete data.pono;
-                        delete data.materialreturneddate;
-                        delete data.supplierdodnno;
+                        // delete data.isscrap;
+                        // delete data.estimatecost;
+                        // delete data.pono;
+                        // delete data.materialreturneddate;
+                        // delete data.supplierdodnno;
                         delete data.depthead;
                         // delete data.buyer;
 				        delete data.apprstatuscode;
