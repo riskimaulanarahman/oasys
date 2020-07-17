@@ -44,8 +44,8 @@ Class Mmfmodule extends Application{
 					$this->mmfApproval();
 					break;
 				case 'apimmfpdf':
-					$id = $this->get['id'];
-					$this->generatePDF($id);
+					// $id = $this->get['id'];
+					$this->generatePDF();
 					break;
 				case 'apimmfhist':
 					$this->mmfHistory();
@@ -992,9 +992,9 @@ Class Mmfmodule extends Application{
 			}
 		}
 	}
-	function generatePDF($doid){
-		
-		$Tr = Mmf::find($doid);
+	function generatePDF(){
+		$id = $this->get['id'];
+		$Tr = Mmf::find($id);
 		// $Trschedule=Trschedule::find('all',array('conditions'=>array("mmf28_id=?",$doid),'include'=>array('mmf'=>array('employee'=>array('company','department','designation','grade','location')))));
 		// $Trticket=Trticket::find('all',array('conditions'=>array("mmf28_id=?",$doid),'include'=>array('mmf'=>array('employee'=>array('company','department','designation','grade','location')))));					
 		$superiorId=$Tr->depthead;
@@ -1002,529 +1002,222 @@ Class Mmfmodule extends Application{
 		$supAdb = Addressbook::find('first',array('conditions'=>array("username=?",$Superior->loginname)));
 		$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Tr->employee->loginname)));
 		$email=$usr->email;
-		$pdfContent = '<style type="text/css">
-		table tr td { 
-				font-size:10px;
-				font-family: arial;
-			}
-		.tg-left {
-			border-left: 1px solid #000;
-			padding: 5px;
-		}
-		.tg-right {
-			border-right: 1px solid #000;
-		}
+		$v_date = date("d/m/Y",strtotime($Tr->createddate));
+		$pdfContent = '<style type="text/css">table tr td { font-size:10px;font-family: arial;}.tg-left {border-left: 1px solid #000;padding: 5px;}.tg-right {border-right: 1px solid #000;}.tg-bottom {border-bottom: 1px solid #000;	}
+						.tg-top {border-top: 1px solid #000;}.tg-full {border: 1px solid #000;padding: 5px;text-align: center;vertical-a.tg-border {border: 1px solid #000;}.red {color: red;}.blue {color: blue;}.p-5 {padding: 5px;}.tg-value {text-decoration-line: underline;}
+						.tg-bi {font: italic bold 10px/30px Arial;}img {height: 25pt;}</style>
 	  
-		.tg-bottom {
-			border-bottom: 1px solid #000;
-		}
-		.tg-top {
-			border-top: 1px solid #000;
-		}
-	  
-		.tg-full {
-			border: 1px solid #000;
-			padding: 5px;
-			text-align: center;
-			vertical-align: middle;
-		}
-	  
-		.tg-border {
-			border: 1px solid #000;
-		}
-	  
-		.red {
-			color: red;
-		}
-	  
-		.blue {
-			color: blue;
-		}
-	  
-		.p-5 {
-		  padding: 5px;
-		}
-	  
-		.tg-value {
-			text-decoration-line: underline;
-		}
-	  
-		.tg-bi {
-			font: italic bold 10px/30px Arial;
-		}
-	  
-		img {
-		  height: 25pt;
-		}
-	  </style>
-	  
-	  <table class="tg" style="width:800px;max-width:800px" cellspacing="0" border="0"  width="100%">
-	  <thead>
-		<tr>
-		  <th class="tg-7btt" colspan="9" style="width:700px; height:15px;font-size:15pt">REPAIRABLE FORM</th>
-		</tr>
-		<tr>
-		  <td class="tg-fymr" colspan="9">&nbsp;</td>
-		</tr>
-		<tr>
-		  <td class="tg-fymr" colspan="9">&nbsp;</td>
-		</tr>
-		
-	  </thead>
-	  <tbody>
-		<tr>
-		  <td class="tg-bi tg-border" colspan="9">To be completed by End-User</td>
-		</tr>
-		<tr>
-		  <td class="tg-left">Date :</td>
-		  <td class="tg-value">{{value}}</td>
-		  <td class="">Requested by :</td>
-		  <td class="tg-value" colspan="2">{{value}}</td>
-		  <td class="">Tel No :</td>
-		  <td class="tg-right tg-value" colspan="3">{{value}}</td>
-		</tr>
-		<tr>
-		  <td class="tg-left" colspan="1">Work Order No :</td>
-		  <td class="tg-value" colspan="1">{{value}}</td>
-		  <td class="">Charge Code :</td>
-		  <td class="tg-right tg-value" colspan="6">{{value}}</td>
-		</tr>
-		<tr>
-		  <td class="tg-left" colspan="1">Material Dispatch No :</td>
-		  <td class="tg-value" colspan="1">{{value}}</td>
-		  <td class="">Required By (Date) :</td>
-		  <td class="tg-right tg-value" colspan="6">{{value}}</td>
-		</tr>
-		<tr>
-		  <td class="tg-left" colspan="1">Material Code :</td>
-		  <td class="tg-right tg-value" colspan="8">{{value}}</td>
-		</tr>
-		<tr>
-		  <td class="tg-left">Material Description :</td>
-		  <td class="tg-right tg-value" colspan="8">{{value}}</td>
-		</tr>
-		<tr>
-		  <td class="tg-left">Symptoms (problem) :</td>
-		  <td class="tg-right tg-value" colspan="8">{{value}}</td>
-		</tr>
-		<tr>
-		  <td class="tg-left" rowspan="2">Required :</td>
-		  <td class="tg-full">{{checkbox}}</td>
-		  <td class="p-5">Repair</td>
-		  <td class="tg-full">{{checkbox}}</td>
-		  <td class="p-5">Servicing</td>
-		  <td class="tg-full">{{checkbox}}</td>
-		  <td class="tg-right p-5" colspan="3">Calibratior</td>
-		</tr>
-		<tr>
-		  <td class="tg-full">{{checkbox}}</td>
-		  <td class="p-5" colspan="1">others, pls specify</td>
-		  <td class="tg-right tg-value" colspan="6">{{value}}</td>
-		</tr>
-		<tr>
-		  <td class="tg-left">Instruction :</td>
-		  <td class="tg-right tg-value" colspan="8">{{value}}</td>
-		</tr>
-		<tr>
-		  <td class="tg-left" rowspan="6">Chemical Content :</td>
-		  <td class="tg-full">{{checkbox}}</td>
-		  <td class="p-5">Hazardous Chemical</td>
-		  <td class=""></td>
-		  <td class="p-5">Chemical Name :</td>
-		  <td class="tg-right tg-value" colspan="4">{{value}}</td>
-		</tr>
-		<tr>
-		  <td class="tg-right tg-bi" colspan="8">Must ensure material has been decontaminated</td>
-		</tr>
-		<tr>
-		  <td class="tg-full">{{checkbox}}</td>
-		  <td class="p-5">Decontaminated</td>
-		  <td class=""></td>
-		  <td class=""></td>
-		  <td class=""></td>
-		  <td class=""></td>
-		  <td class=""></td>
-		  <td class="tg-right"></td>
-		</tr>
-		<tr>
-		  <td class="tg-full">{{checkbox}}</td>
-		  <td class="p-5">Not Contaminated</td>
-		  <td class="">Reason :</td>
-		  <td class="tg-right tg-value" colspan="5">{{value}}</td>
-		</tr>
-		<tr>
-		  <td class="tg-full">{{checkbox}}</td>
-		  <td class="p-5">Non-hazardous Chemical.</td>
-		  <td class="">Chemical Name :</td>
-		  <td class="tg-right tg-value" colspan="5">{{value}}</td>
-		</tr>
-		<tr>
-		  <td class="tg-full">{{checkbox}}</td>
-		  <td class="p-5">No Chemical Involved</td>
-		  <td class=""></td>
-		  <td class=""></td>
-		  <td class=""></td>
-		  <td class=""></td>
-		  <td class=""></td>
-		  <td class="tg-right"></td>
-		</tr>
-		<tr>
-		  <td class="tg-left tg-right" colspan="9">&nbsp;</td>
-		</tr>
-		<tr>
-		  <td class="tg-left" colspan="2">Requested by:</td>
-		  <td class="tg-right" colspan="7">Approved by:</td>
-		</tr>
-		<tr>
-		  <td class="tg-left" colspan="2"><img src="images/approved.png"></td>
-		  <td class="tg-right" colspan="7"><img src="images/approved.png"></td>
-		</tr>
-		<tr>
-		  <td class="tg-left" colspan="2">Procurement Head</td>
-		  <td class="tg-right" colspan="7">Buyer</td>
-		</tr>
-		<tr>
-		  <td class="tg-left" colspan="2">{{name}} &amp; {{date}}</td>
-		  <td class="tg-right" colspan="7">{{name}} &amp; {{date}}</td>
-		</tr>
-		<tr>
-		  <td class="tg-left tg-right tg-bottom" colspan="9"></td>
-		</tr>
-		<tr>
-		  <td class="tg-fymr" colspan="9">&nbsp;</td>
-		</tr>
-		<tr>
-		  <td class="tg-bi tg-border" colspan="9">To be completed by Procurement</td>
-		</tr>
-		
-		<tr>
-		  <td class="tg-left tg-right" colspan="9">Received by:</td>
-		</tr>
-		<tr>
-		  <td class="tg-left" colspan="2"><img src="images/approved.png"></td>
-		  <td class="tg-right" colspan="7"><img src="images/approved.png"></td>
-		</tr>
-		<tr>
-		  <td class="tg-left" colspan="2">Procurement Head</td>
-		  <td class="tg-right" colspan="7">Buyer</td>
-		</tr>
-		<tr>
-		  <td class="tg-left" colspan="2">{{name}} &amp; {{date}}</td>
-		  <td class="tg-right" colspan="7">{{name}} &amp; {{date}}</td>
-		</tr>
-		<tr>
-		  <td class="tg-left tg-right" colspan="9">&nbsp;</td>
-		</tr>
-		<tr>
-		  <td class="tg-left" colspan="1">Material Dispatch No :</td>
-		  <td class="tg-right" colspan="8">{{value}}</td>
-		</tr>
-		<tr>
-		  <td class="tg-left" colspan="1">Repair :</td>
-		  <td class="tg-full">{{checkbox}}</td>
-		  <td class="p-5">Yes</td>
-		  <td class="tg-full">{{checkbox}}</td>
-		  <td class="p-5">No</td>
-		  <td class="tg-full">{{checkbox}}</td>
-		  <td class="tg-right p-5" colspan="3">Scrapped</td>
-		</tr>
-		<tr>
-		  <td class="tg-left" colspan="1">Estimation Cost :</td>
-		  <td class="tg-right" colspan="8">{{value}}</td>
-		</tr>
-		<tr>
-		  <td class="tg-left" colspan="1">PO No :</td>
-		  <td class="tg-right" colspan="8">{{value}}</td>
-		</tr>
-		<tr>
-		  <td class="tg-left" colspan="1">Material Returned Date :</td>
-		  <td class="" colspan="2">{{value}}</td>
-		  <td class="" colspan="1">Supplier DO/DN No :</td>
-		  <td class="tg-right" colspan="5">{{value}}</td>
-		</tr>
-		<tr>
-		  <td class="tg-left tg-right tg-bottom" colspan="9"></td>
-		</tr>
-	  </tbody>
-	  </table>';
-		// $pdfContent = '<style>
-		// 			table tr td { font-size:10px;}
-		// 			</style><table style="width:800px;max-width:800px" cellspacing="0" border="0"  width="100%">
-		// 										<tr>
-		// 											<td style="border-top: 1px solid #000000;width:700px;height5px; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=18 align="left" valign=bottom ><small>Form No.: </small></td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-left: 1px solid #000000; border-right: 1px solid #000000;height:15px;font-size:15pt" colspan=18 align="center" valign=middle ><b>TRAVEL REQUEST FORM</b></td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-bottom: 1px solid #000000; height5px;border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=18 align="center" valign=bottom >(Permohonan Dinas Luar)</td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-top: 1px solid #000000;height5px; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=18 align="center" valign=bottom ></td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-left: 1px solid #000000; width:2px;max-width:2px;height:15px" align="left" valign=bottom></td>
-		// 											<td style="width:150px;max-width:150px;" colspan=4 align="left" valign=bottom ><b>*Personnel Number (SAP ID)</b></td>
-		// 											<td style="width:5px;max-width:5px;"  align="center" valign=bottom >:</td>
-		// 											<td style="width:80px;max-width:800px;border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=3 align="left" valign=bottom >'.$Tr->employee->sapid.'</td>
-		// 											<td style="width:5px;max-width:5px;" align="left" valign=bottom ></td>
-		// 											<td style="width:80px;max-width:80px;" colspan=3 align="left" valign=bottom >Superior\'s Name </td>
-		// 											<td style="width:5px;max-width:5px;" align="center" valign=bottom >:</td>
-		// 											<td style="width:80px;max-width:80px;border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=3 align="left" valign=bottom >'.$Superior->fullname.'</td>
-		// 											<td style="width:5px;max-width:5px;border-right: 1px solid #000000" align="left" valign=bottom ></td>
-		// 										</tr>
-		// 										<tr>
-		// 											<td style="border-left: 1px solid #000000" colspan=10 height="11" align="center" valign=middle ><br></td>
-		// 											<td style="border-right: 1px solid #000000" colspan=8 align="left" valign=middle ><small>(Nama Atasan)</small></td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-left: 1px solid #000000; width:2px;" height="20" align="left" valign=bottom ></td>
-		// 											<td colspan=4 align="left" valign=bottom >Name (Nama)</td>
-		// 											<td align="center" valign=bottom >:</td>
-		// 											<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=3 align="left" valign=bottom >'.$Tr->employee->fullname.'</td>
-		// 											<td align="left" valign=bottom ><br></td>
-		// 											<td colspan=3 align="left" valign=bottom >Superior\'s e-mail</td>
-		// 											<td align="center" valign=bottom >:</td>
-		// 											<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=3 align="left" valign=bottom ><u><a href="mailto:'.$supAdb->email.'">'.$supAdb->email.'</a></u></td>
-		// 											<td style="border-right: 1px solid #000000" align="left" valign=bottom ><br></td>
-		// 										</tr>
-		// 										<tr>
-		// 											<td style="border-left: 1px solid #000000" colspan=10 height="11" align="center" valign=middle ><br></td>
-		// 											<td style="border-right: 1px solid #000000" colspan=8 align="left" valign=middle ><small>(E-mail Atasan)</small></td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-left: 1px solid #000000" height="20" align="left" valign=bottom ></td>
-		// 											<td colspan=4 align="left" valign=bottom >E-mail</td>
-		// 											<td align="center" valign=bottom >:</td>
-		// 											<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=3 align="left" valign=bottom ><u><a href="mailto:'.$email.'">'.$email.'</a></u></td>
-		// 											<td style="border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=9 align="center" valign=bottom ><br></td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=18 height="5" align="center" valign=bottom ></td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-left: 1px solid #000000" height="20" align="left" valign=bottom ></td>
-		// 											<td colspan=4 align="left" valign=bottom >Business Group/Business Unit</td>
-		// 											<td align="center" valign=bottom >:</td>
-		// 											<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=3 align="left" valign=bottom >'.$Tr->employee->company->companyname.'</td>
-		// 											<td align="left" valign=bottom ></td>
-		// 											<td colspan=3 align="left" valign=bottom >Position (Jabatan)</td>
-		// 											<td align="center" valign=bottom >:</td>
-		// 											<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=3 align="left" valign=bottom >'.$Tr->employee->designation->designationname.'</td>
-		// 											<td style="border-right: 1px solid #000000" align="left" valign=bottom ></td>
-		// 										</tr>
-		// 										<tr>
-		// 											<td style="border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=18 height="5" align="center" valign=bottom ></td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-left: 1px solid #000000" height="20" align="left" valign=bottom ></td>
-		// 											<td colspan=4 align="left" valign=bottom >Location (Lokasi)</td>
-		// 											<td align="center" valign=bottom >:</td>
-		// 											<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=3 align="left" valign=bottom >'.$Tr->employee->location->location.'</td>
-		// 											<td align="left" valign=bottom ></td>
-		// 											<td colspan=3 align="left" valign=bottom >Cost Center</td>
-		// 											<td align="center" valign=bottom >:</td>
-		// 											<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=3 align="left" valign=bottom ><br></td>
-		// 											<td style="border-right: 1px solid #000000" align="left" valign=bottom ></td>
-		// 										</tr>
-		// 										<tr>
-		// 											<td style="border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=18 height="5" align="center" valign=bottom ></td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-left: 1px solid #000000; border-bottom: 1px solid #000000; " height="5" align="left" valign=bottom ></td>
-		// 											<td style="border-bottom: 1px solid #000000;  border-right: 1px solid #000000" colspan=17 height="5" align="left" valign=bottom ><small>* Mandatory fields in SAP (Harus Diisi)</small></td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-top: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=9 height="5" align="center" valign=bottom ></td>
-		// 											<td style="border-top: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=9 align="center" valign=bottom ></td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-left: 1px solid #000000;" height="20" align="left" valign=bottom ></td>
-		// 											<td style="width:5px;max-width:5px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle  ><b>'.(($Tr->islandtransport)?'X':'').'</b></td>
-		// 											<td style="width:2px" align="left" valign=bottom ></td>
-		// 											<td style="width:325px;border-right: 1px solid #000000;" colspan=6 align="left" valign=bottom ><b>VIA LAND TRANSPORTATION (VIA DARAT)</b></td>
-		// 											<td style="border-left: 1px solid #000000;max-width:5px" align="left" valign=bottom ></td>
-		// 											<td style="width:10px;max-width:10px;border-top: 1px solid #000000; border-bottom: 1px solid #000000;border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle  ><b>'.(($Tr->isairtransport)?'X':'').'</b></td>
-		// 											<td style="border-left: 1px solid #000000;max-width:5px" align="left" valign=bottom></td>
-		// 											<td style="width:325px;border-right: 1px solid #000000" colspan=6 align="left" valign=botto mwidth="5"  ><b> VIA AIR TRANSPORTATION (VIA UDARA)</b></td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=9 height="5" align="center" valign=bottom ></td>
-		// 											<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=9 align="center" valign=bottom ></td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-top: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=9 height="5" align="center" valign=bottom ></td>
-		// 											<td style="border-top: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=9 align="center" valign=bottom ></td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-left: 1px solid #000000" height="20" align="left" valign=bottom ></td>
-		// 											<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle >'.(($Tr->ispersonalvehicle)?'X':'').'</td>
-		// 											<td align="left" valign=bottom ></td>
-		// 											<td style="border-right: 1px solid #000000" colspan=6 align="left" valign=bottom >Personal Vehicle (Dengan Mobil Sendiri - BK)</td>
-		// 											<td style="border-left: 1px solid #000000" align="left" valign=bottom ></td>
-		// 											<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle  >'.(($Tr->iscommercialairline)?'X':'').'</td>
-		// 											<td style="border-left: 1px solid #000000" align="left" valign=bottom ></td>
-		// 											<td style="border-right: 1px solid #000000" colspan=6 align="left" valign=bottom >Commercial Airline (Pesawat Komersial)</td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=9 height="5" align="center" valign=bottom ></td>
-		// 											<td style="border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=9 align="center" valign=bottom ></td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-left: 1px solid #000000" height="20" align="left" valign=bottom ></td>
-		// 											<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle  >'.(($Tr->ispoolcar)?'X':'').'</td>
-		// 											<td align="left" valign=bottom ><br></td>
-		// 											<td style="border-right: 1px solid #000000" colspan=6 align="left" valign=bottom >Pool Car (Dengan Mobil Pool)</td>
-		// 											<td style="border-left: 1px solid #000000" align="left" valign=bottom ></td>
-		// 											<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle  >'.(($Tr->iscompanyaircraft)?'X':'').'</td>
-		// 											<td style="border-left: 1px solid #000000" align="left" valign=bottom ></td>
-		// 											<td style="border-right: 1px solid #000000" colspan=6 align="left" valign=bottom >Company Aircraft (Pesawat Perusahaan)</td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-left: 1px solid #000000" colspan=3 rowspan=3 height="47" align="center" valign=bottom ></td>
-		// 											<td style="border-right: 1px solid #000000" colspan=6 align="left" valign=bottom > '.(($Tr->isdropoffonly)?'[X] ':'[ ] ').' Drop Off Only (Drop Saja)</td>
-		// 											<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=9 rowspan=7 align="center" valign=bottom ></td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-right: 1px solid #000000" colspan=6 align="left" valign=bottom > '.(($Tr->isuntiljobfinish)?'[X] ':'[ ] ').'Until Job Finished (Sampai Tugas Selesai)(Tgl : '.(($Tr->isuntiljobfinish)?date("d/m/Y",strtotime($Tr->jobfinishdate)):'_________').' )</td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-right: 1px solid #000000" colspan=6 align="left" valign=bottom ></td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-left: 1px solid #000000" height="20" align="left" valign=bottom ></td>
-		// 											<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="center" valign=midle >'.(($Tr->isbytrain)?'X':'').'</td>
-		// 											<td align="left" valign=bottom ></td>
-		// 											<td style="border-right: 1px solid #000000" colspan=6 align="left" valign=bottom >By Train (Dengan Kereta Api)</td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=9 height="7" align="center" valign=bottom ></td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-left: 1px solid #000000" height="20" align="left" valign=bottom ></td>
-		// 											<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle  >'.(($Tr->isother)?'X':'').'</td>
-		// 											<td align="left" valign=bottom ></td>
-		// 											<td style="border-right: 1px solid #000000" colspan=6 align="left" valign=bottom >Other (Please specify):'.(($Tr->isother)?$Tr->otherlandtransportdesc:'_____________').'</td>
-		// 											</tr>
-													
-		// 										<tr>
-		// 											<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=9 height="5" align="center" valign=bottom ></td>
-		// 											</tr></table>
-		// 										<h5><b>Travel Schedule (Jadwal Perjalanan)</b></h5>
-		// 										<table style="width:800px;max-width:800px" cellspacing="0" border="0"  width="100%">
-		// 										<tr>
-		// 											<td style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" rowspan=2 align="center" valign=middle ><b>No.</b></td>
-		// 											<td style="width:120px;max-width:120px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000;" colspan=2 align="center" valign=middle ><b>Departing <br>(Keberangkatan)</b></td>
-		// 											<td style="width:90px;max-width:90px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" rowspan=2 align="center" valign=middle ><b>From (Dari) <br> City/Country <br>(Kota/Negara)</b></td>
-		// 											<td style="width:130px;max-width:130px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" colspan=2 align="center" valign=middle ><b>Arriving (Ketibaan)</b></td>
-		// 											<td style="width:90px;max-width:90px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" rowspan=2 valign=middle ><b>To (Ke)<br>City/Country <br>(Kota/Negara)</b></td>
-		// 											<td style="width:30px;max-width:30px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" rowspan=2 align="center" valign=middle><b>Region<br>R1/ R2*</b></td>
-		// 											<td style="width:200px;max-width:200px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  rowspan=2 align="center" valign=middle ><b>Reason (Alasan)<br>(e.g. Meeting, Seminar, etc)</b></td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="width:70px;max-width:70px;border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=middle><b>Date (Tgl)<br><small>(dd/mm/yyyy)</small></b></td>
-		// 											<td style="width:50px;max-width:70px;border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=middle ><b>Time<br> (Waktu)</b></td>
-		// 											<td style="width:80px;max-width:80px;border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=middle  ><b>Date (Tgl)<br><small>(dd/mm/yyyy)</small></b></td>
-		// 											<td style="width:50px;max-width:70px;border-bottom: 1px solid #000000; border-left: 1px solid #000000;"  align="center" valign=middle  ><b>Time<br> (Waktu)</b></td>
-		// 											</tr>
-		// 										';
-		// 										$no=1;
-		// 										foreach ($Trschedule as $data){	
-		// 											$pdfContent .='<tr>
-		// 												<td style="width:15px;max-width:15px; border-bottom: 1px solid #000000; border-left: 1px solid #000000; height:25px;" align="right"  >'.$no.'</td>
-		// 												<td style="width:70px;max-width:70px; border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" >'.date("d/m/Y",strtotime($data->departdate)).'</td>
-		// 												<td style="width:50px;max-width:50px; border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" >'.date("H:i",strtotime($data->departtime)).'</td>
-		// 												<td style="width:90px;max-width:90px; border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="left" >'.$data->departfrom.'</td>
-		// 												<td style="width:70px;max-width:70px; border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="right"  >'.date("d/m/Y",strtotime($data->arrivingdate)).'</td>
-		// 												<td style="width:50px;max-width:50px; border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" >'.date("H:i",strtotime($data->arrivingtime)).'</td>
-		// 												<td style="width:90px;max-width:90px; border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="left"  >'.$data->arrivingto.'</td>
-		// 												<td style="width:30px;max-width:30px; border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="left" >'.$data->region.'</td>
-		// 												<td style="width:200px;max-width:200px; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="center" >'.wordwrap($data->reason, 40, "<br>").'</td>
-		// 												</tr>';
-		// 												$no++;
-		// 										}
-		// 										$pdfContent .='
-		// 										<tr>
-		// 										<td colspan=9><br></td>
-		// 										</tr><tr>
-		// 											<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=middle><b>No.</b></td>
-		// 											<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000;" colspan=2 align="center" valign=middle ><b>Tickets For (Untuk)</b></td>
-		// 											<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=middle ><b>Name (Nama)</b></td>
-		// 											<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=middle ><b>Date of Birth <br>(Tgl. Lahir)<br><small>(dd/mm/yyyy)</small></b></td>
-		// 											<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=middle ><b>Gender</b></td>
-		// 											<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=middle ><b>Phone Number</b></td>
-		// 											<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=2 align="center" valign=middle ><b>Remarks / Confirmation from HR (Konfirmasi dari HR)</b></td>
-		// 											</tr>
-		// 										<tr>
-		// 											</tr>';
-		// 										$no=1;
-		// 										foreach ($Trticket as $data){	
-		// 											$pdfContent .='<tr>
-		// 												<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; " height="20" align="center" valign=middle  >'.$no.'</td>
-		// 												<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; " colspan=2 align="center" valign=middle >'.$data->ticketfor.'</td>
-		// 												<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=middle >'.$data->ticketname.'</td>
-		// 												<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=middle >'.date("d/m/Y",strtotime($data->dateofbirth)).'</td>
-		// 												<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=middle >'.$data->gender.'</td>
-		// 												<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=middle >'.$data->phonenumber.'</td>
-		// 												<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=2 align="left" valign=middle >'.wordwrap($data->hrremarks, 40, "<br>").'</td>
-		// 												</tr>';
-		// 												$no++;
-		// 										}
-		// 										$joinx   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
-		// 										$Trapproval = Mmfapproval::find('all',array('joins'=>$joinx,'conditions' => array("mmf28_id=?",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
-		// 										foreach ($Trapproval as $data){
-		// 											if(($data->approver->approvaltype->id==16) || ($data->approver->employee_id==$Tr->depthead)){
-		// 												$deptheadname = $data->approver->employee->fullname;
-		// 												$datedepthead = date("d/m/Y",strtotime($data->approvaldate));
-		// 											}
-		// 											if($data->approver->approvaltype->id==17) {
-		// 												$hrbuname = $data->approver->employee->fullname;
-		// 												$hrbudate = date("d/m/Y",strtotime($data->approvaldate));
-		// 											}
-		// 											if($data->approver->approvaltype->id==18) {
-		// 												$hrmoname = $data->approver->employee->fullname;
-		// 												$hrmodate = date("d/m/Y",strtotime($data->approvaldate));
-		// 											}
-		// 											if($data->approver->approvaltype->id==19) {
-		// 												$mdname = $data->approver->employee->fullname;
-		// 												$mddate = date("d/m/Y",strtotime($data->approvaldate));
-		// 											}
-		// 										}
-		// 										$pdfContent .='</table><br>
-		// 										<table style="width:800px;max-width:800px" cellspacing="0" border="0"  width="100%"><tr>
-		// 											<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000;" height="20" align="center" valign=bottom >Prepared By (Dipersiapkan Oleh)</td>
-		// 											<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=4 align="center" valign=bottom >Approved By (Disetujui Oleh)</td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="width:140px;max-width:160px;border-bottom: 1px solid #000000; border-left: 1px solid #000000; " height="60" align="center" valign=bottom ><br><img src="images/approved.png" style="height:25pt" alt="Approved from System"></td>
-		// 											<td style="width:140px;max-width:160px;border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=bottom ><br>'.(($deptheadname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
-		// 											<td style="width:140px;max-width:160px;border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=bottom ><br>'.(($hrbuname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
-		// 											<td style="width:140px;max-width:160px;border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=bottom ><br>'.(($hrmoname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
-		// 											<td style="width:140px;max-width:160px;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="center" valign=bottom ><br>'.(($mdname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
-		// 											</tr>
-		// 										<tr>
-		// 											</tr>
-		// 										<tr>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" height="25"  valign=bottom>'.$Tr->employee->fullname.'<br><small>'.date("d/m/Y",strtotime($Tr->createddate)).'</small></td>
-		// 											<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=bottom>'.$deptheadname.'<br><small>'.(($deptheadname=="")?"":$datedepthead).'</small></td>
-		// 											<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=bottom>'.$hrbuname.'<br><small>'.(($hrbuname=="")?"":$hrbudate).'</small></td>
-		// 											<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=bottom>'.$hrmoname.'<br><small>'.(($hrmoname=="")?"":$hrmodate).'</small></td>
-		// 											<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="center" valign=bottom>'.$mdname.'<br><small>'.(($mdname=="")?"":$mddate).'</small></td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" height="15" align="center" valign=bottom >Applicant (Pemohon)</td>
-		// 											<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=bottom>Department Head</td>
-		// 											<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=bottom>HR BU</td>
-		// 											<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=bottom>HR HO</td>
-		// 											<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="center" valign=bottom>Deputy MD</td>
-		// 											</tr>
-		// 										<tr>
-		// 											<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=5 height="15" align="left" valign=bottom ><small>Copy 1 (Asli) - HRD/KTU    Copy 2 (dua) - AVERIS (Melalui scan)</small></td>
-		// 											</tr>
-		// </table>';
-											echo $pdfContent;
+						<table style="width:800px;max-width:800px" cellspacing="0" border="0"  width="100%">
+
+							<tr>
+							<th class="tg-7btt" colspan="9" style="width:700px; height:15px;font-size:15pt">REPAIRABLE FORM</th>
+							</tr>
+							<tr>
+							<td class="tg-fymr" colspan="9">&nbsp;</td>
+							</tr>
+							<tr>
+							<td class="tg-fymr" colspan="9">&nbsp;</td>
+							</tr>
+
+							<tr>
+							<td class="tg-bi tg-border" colspan="9">To be completed by End-User</td>
+							</tr>
+							<tr>
+							<td class="tg-left">Date :</td>
+							<td class="tg-value">'.$v_date.'</td>
+							<td class="">Requested by :</td>
+							<td class="tg-value" colspan="2">'.$usr->fullname.'</td>
+							<td class="">Tel No :</td>
+							<td class="tg-right tg-value" colspan="3">'.$Tr->telpno.'</td>
+							</tr>
+							<tr>
+							<td class="tg-left" colspan="1">Work Order No :</td>
+							<td class="tg-value" colspan="1">'.$Tr->wonumber.'</td>
+							<td class="">Charge Code :</td>
+							<td class="tg-right tg-value" colspan="6">'.$Tr->chargecode.'</td>
+							</tr>
+							<tr>
+							<td class="tg-left" colspan="1">Material Dispatch No :</td>
+							<td class="tg-value" colspan="1">'.$Tr->materialdispatch.'</td>
+							<td class="">Required By (Date) :</td>
+							<td class="tg-right tg-value" colspan="6">'.$Tr->requireddate.'</td>
+							</tr>
+							<tr>
+							<td class="tg-left" colspan="1">Material Code :</td>
+							<td class="tg-right tg-value" colspan="8">'.$Tr->materialcode.'</td>
+							</tr>
+							<tr>
+							<td class="tg-left">Material Description :</td>
+							<td class="tg-right tg-value" colspan="8">'.$Tr->materialdescr.'</td>
+							</tr>
+							<tr>
+							<td class="tg-left">Symptoms (problem) :</td>
+							<td class="tg-right tg-value" colspan="8">'.$Tr->symptomps.'</td>
+							</tr>
+							<tr>
+							<td class="tg-left" rowspan="2">Required :</td>
+							<td style="width:5px;max-width:5px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle  ><b>'.(($Tr->requiredtype == 1)?'X':'').'</b></td>
+							<td class="p-5">Repair</td>
+							<td style="width:5px;max-width:5px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle  ><b>'.(($Tr->requiredtype == 2)?'X':'').'</b></td>
+							<td class="p-5">Servicing</td>
+							<td style="width:5px;max-width:5px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle  ><b>'.(($Tr->requiredtype == 3)?'X':'').'</b></td>
+							<td class="tg-right p-5" colspan="3">Calibratior</td>
+							</tr>
+							<tr>
+							<td style="width:5px;max-width:5px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle  ><b>'.(($Tr->requiredtype == 4)?'X':'').'</b></td>
+							<td class="p-5" colspan="1">others, pls specify :</td>
+							<td class="tg-right tg-value" colspan="6" >'.$Tr->requiredother.'</td>
+							</tr>
+							<tr>
+							<td class="tg-left">Instruction :</td>
+							<td class="tg-right tg-value" colspan="8">'.$Tr->instruction.'</td>
+							</tr>
+							<tr>
+							<td class="tg-left" rowspan="6">Chemical Content :</td>
+							<td style="width:5px;max-width:5px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle  ><b>'.(($Tr->ishazardouschemical == 1)?'X':'').'</b></td>
+							<td class="p-5">Hazardous Chemical</td>
+							<td class=""></td>
+							<td class="p-5">Chemical Name :</td>
+							<td class="tg-right tg-value" colspan="4">'.$Tr->hazchemicalname.'</td>
+							</tr>
+							<tr>
+							<td class="tg-right tg-bi" colspan="8" style="margin-top:5px; margin-bottom:5px;"><b><i>Must ensure material has been decontaminated</i></b></td>
+							</tr>
+							<tr>
+							<td style="width:5px;max-width:5px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle  ><b>'.(($Tr->isdecontaminated == 1)?'X':'').'</b></td>
+							<td class="p-5">Decontaminated</td>
+							<td class=""></td>
+							<td class=""></td>
+							<td class=""></td>
+							<td class=""></td>
+							<td class=""></td>
+							<td class="tg-right"></td>
+							</tr>
+							<tr>
+							<td style="width:5px;max-width:5px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle  >
+							<b>'.(($Tr->isnotcontaminated == 1)?'X':'').'</b></td>
+							<td class="p-5">Not Contaminated</td>
+							<td class="">Reason :</td>
+							<td class="tg-right tg-value" colspan="5">'.$Tr->notcontaminatedreason.'</td>
+							</tr>
+							<tr>
+							<td style="width:5px;max-width:5px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle  >
+							<b>'.(($Tr->isnonhazardous == 1)?'X':'').'</b></td>
+							<td class="p-5">Non-hazardous Chemical.</td>
+							<td class="">Chemical Name :</td>
+							<td class="tg-right tg-value" colspan="5">'.$Tr->nonhazchemicalname.'</td>
+							</tr>
+							<tr>
+							<td style="width:5px;max-width:5px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle  >
+							<b>'.(($Tr->isnonchemical == 1)?'X':'').'</b></td>
+							<td class="p-5">No Chemical Involved</td>
+							<td class=""></td>
+							<td class=""></td>
+							<td class=""></td>
+							<td class=""></td>
+							<td class=""></td>
+							<td class="tg-right"></td>
+							</tr>
+							<tr>
+							<td class="tg-left tg-right" colspan="9">&nbsp;</td>
+							</tr>';
+
+							$joinx   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
+							$Mmfapproval = Mmfapproval::find('all',array('joins'=>$joinx,'conditions' => array("mmf28_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
+							foreach ($Mmfapproval as $data){
+								if(($data->approver->approvaltype->id==23) || ($data->approver->employee_id==$Tr->depthead)){
+									$deptheadname = $data->approver->employee->fullname;
+									$datedepthead = date("d/m/Y",strtotime($data->approvaldate));
+								}
+								if($data->approver->approvaltype->id==24) {
+									$procname = $data->approver->employee->fullname;
+									$procdate = date("d/m/Y",strtotime($data->approvaldate));
+								}
+								if($data->approver->approvaltype->id==25) {
+									$buyername = $data->approver->employee->fullname;
+									$buyerdate = date("d/m/Y",strtotime($data->approvaldate));
+								}
+							}
+
+							$pdfContent .= '<tr>
+							<td class="tg-left" colspan="2">Requested by:</td>
+							<td class="tg-right" colspan="7">Approved by:</td>
+							</tr>
+							<tr>
+							<td class="tg-left" colspan="2"><img src="images/approved.png" alt="Approved from System"></td>
+							<td class="tg-right" colspan="7">'.(($deptheadname=="")?"":'<img src="images/approved.png" alt="Approved from System">').'</td>
+							</tr>
+							<tr>
+							<td class="tg-left tg-right" colspan="9"></td>
+							</tr>
+							<tr>
+							<td class="tg-left" colspan="2">('.$usr->fullname.' &amp; '.$v_date.')</td>
+							<td class="tg-right" colspan="7">('.$deptheadname.' &amp; '.$datedepthead.')</td>
+							</tr>
+							<tr>
+							<td class="tg-left tg-right tg-bottom" colspan="9"></td>
+							</tr>
+							<tr>
+							<td class="tg-fymr" colspan="9">&nbsp;</td>
+							</tr>
+							</table>';
+
+							// $pdfContent .= '<td class="tg-bi tg-border" colspan="9">To be completed by Procurement</td>
+							// </tr>
+							
+							// <tr>
+							// <td class="tg-left tg-right" colspan="9">Received by:</td>
+							// </tr>
+							// <tr>
+							// <td class="tg-left" colspan="2"><img src="images/approved.png"></td>
+							// <td class="tg-right" colspan="7"><img src="images/approved.png"></td>
+							// </tr>
+							// <tr>
+							// <td class="tg-left" colspan="2">Procurement Head</td>
+							// <td class="tg-right" colspan="7">Buyer</td>
+							// </tr>
+							// <tr>
+							// <td class="tg-left" colspan="2">{{name}} &amp; {{date}}</td>
+							// <td class="tg-right" colspan="7">{{name}} &amp; {{date}}</td>
+							// </tr>
+							// <tr>
+							// <td class="tg-left tg-right" colspan="9">&nbsp;</td>
+							// </tr>
+							// <tr>
+							// <td class="tg-left" colspan="1">Material Dispatch No :</td>
+							// <td class="tg-right" colspan="8">{{value}}</td>
+							// </tr>
+							// <tr>
+							// <td class="tg-left" colspan="1">Repair :</td>
+							// <td class="tg-full">{{checkbox}}</td>
+							// <td class="p-5">Yes</td>
+							// <td class="tg-full">{{checkbox}}</td>
+							// <td class="p-5">No</td>
+							// <td class="tg-full">{{checkbox}}</td>
+							// <td class="tg-right p-5" colspan="3">Scrapped</td>
+							// </tr>
+							// <tr>
+							// <td class="tg-left" colspan="1">Estimation Cost :</td>
+							// <td class="tg-right" colspan="8">{{value}}</td>
+							// </tr>
+							// <tr>
+							// <td class="tg-left" colspan="1">PO No :</td>
+							// <td class="tg-right" colspan="8">{{value}}</td>
+							// </tr>
+							// <tr>
+							// <td class="tg-left" colspan="1">Material Returned Date :</td>
+							// <td class="" colspan="2">{{value}}</td>
+							// <td class="" colspan="1">Supplier DO/DN No :</td>
+							// <td class="tg-right" colspan="5">{{value}}</td>
+							// </tr>
+							// <tr>
+							// <td class="tg-left tg-right tg-bottom" colspan="9"></td>
+							// </tr>';
+
+							// $pdfContent .= '</tbody></table>';
+											
+							echo $pdfContent;
+											// echo json_encode($Tr->wonumber, JSON_NUMERIC_CHECK);
 		
 		try {
 			$html2pdf = new Html2Pdf('P', 'A4', 'fr');
@@ -1544,7 +1237,8 @@ Class Mmfmodule extends Application{
 			$err->errortype = "MMFPDFGenerator";
 			$err->errordate = date("Y-m-d h:i:s");
 			$err->errormessage = $formatter->getHtmlMessage();
-			$err->user = $this->currentUser->username;
+			// $err->user = $this->currentUser->username;
+			$err->user = 'userR';
 			$err->ip = $this->ip;
 			$err->save();
 			echo $formatter->getHtmlMessage();
