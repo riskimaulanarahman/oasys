@@ -709,13 +709,13 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
         columnMinWidth: 50,
         columnAutoWidth: true,
 		columns: [
-			{dataField:'departdate',width:100,caption: "Depart Date",dataType:"date", format: 'dd/MM/yyyy',editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
-			{dataField:'departtime',width:50,caption: "Depart Time",dataType:"date",format: 'HH:mm',editorOptions: {displayFormat : "HH:mm", type:'time',disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
-			{dataField:'departfrom',width:100,caption: "From",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
-			{dataField:'arrivingdate',width:100,caption: "Arriving Date",dataType:"date", format: 'dd/MM/yyyy',editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
-			{dataField:'arrivingtime',width:50,caption: "Arriving Time",format: 'HH:mm',dataType:"date",editorOptions: {displayFormat : "HH:mm", type:'time',disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
-			{dataField:'arrivingto',width:100,caption: "To",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
-			{dataField:'region',width:50,caption: "Region",dataType: "string",lookup: {dataSource: $scope.region,	displayExpr: "region",valueExpr: "id"},editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
+			{dataField:'departdate',validationRules: [{ type: "required" }],width:100,caption: "Depart Date",dataType:"date", format: 'dd/MM/yyyy',editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			{dataField:'departtime',validationRules: [{ type: "required" }],width:50,caption: "Depart Time",dataType:"date",format: 'HH:mm',editorOptions: {displayFormat : "HH:mm", type:'time',disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
+			{dataField:'departfrom',validationRules: [{ type: "required" }],width:100,caption: "From",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
+			{dataField:'arrivingdate',validationRules: [{ type: "required" }],width:100,caption: "Arriving Date",dataType:"date", format: 'dd/MM/yyyy',editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			{dataField:'arrivingtime',validationRules: [{ type: "required" }],width:50,caption: "Arriving Time",format: 'HH:mm',dataType:"date",editorOptions: {displayFormat : "HH:mm", type:'time',disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
+			{dataField:'arrivingto',validationRules: [{ type: "required" }],width:100,caption: "To",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
+			{dataField:'region',validationRules: [{ type: "required" }],width:50,caption: "Region",dataType: "string",lookup: {dataSource: $scope.region,	displayExpr: "region",valueExpr: "id"},editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
 			{dataField:'reason',width:250,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},		
 		],editing: {
             useIcons:true,
@@ -765,12 +765,12 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
         columnMinWidth: 50,
         columnAutoWidth: true,
 		columns: [
-			{dataField:'ticketfor',caption: "Ticket For",lookup: {dataSource: [{key:"Employee",val:"Employee"},{key:"Family",val:"Family"},{key:"Guest",val:"Guest"}],valueExpr: "key", displayExpr: "val" },dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
-			{dataField:'ticketname',caption: "Name",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
-			{dataField:'dateofbirth',width:100,caption: "Date of Birth",dataType:"date", format: 'dd/MM/yyyy',editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",max:Date.now(),disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			{dataField:'ticketfor',validationRules: [{ type: "required" }],caption: "Ticket For",lookup: {dataSource: [{key:"Employee",val:"Employee"},{key:"Family",val:"Family"},{key:"Guest",val:"Guest"}],valueExpr: "key", displayExpr: "val" },dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
+			{dataField:'ticketname',validationRules: [{ type: "required" }],caption: "Name",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
+			{dataField:'dateofbirth',validationRules: [{ type: "required" }],width:100,caption: "Date of Birth",dataType:"date", format: 'dd/MM/yyyy',editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",max:Date.now(),disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
 			{dataField:'phonenumber',caption: "Phone Number",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
-			{dataField:'gender',caption: "Gender",lookup: {dataSource: [{key:"Male",val:"Male"},{key:"Female",val:"Female"}],valueExpr: "key", displayExpr: "val" },dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
-			{dataField:'hrremarks',caption: "Remarks / Confirmation from HR (Konfirmasi dari HR)",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve')||($scope.mode=='reschedule') )?false:true}},
+			{dataField:'gender',validationRules: [{ type: "required" }],caption: "Gender",lookup: {dataSource: [{key:"Male",val:"Male"},{key:"Female",val:"Female"}],valueExpr: "key", displayExpr: "val" },dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
+			{dataField:'hrremarks',caption: "Remarks / Confirmation from HR (Konfirmasi dari HR)",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') )?false:true}},
 		],editing: {
             useIcons:true,
             mode: "cell",
@@ -1179,20 +1179,39 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 						criteria = {status:'approver',tr_id:$scope.Requestid};
 						CrudService.FindData('trschedule',criteria).then(function (response){
 							if(response.jml>0){
-								var data = $scope.formInstance.option("formData");
-								data.requeststatus = 1;
-								delete data.fullname;
-								delete data.department;
-								delete data.approvalstatus;
-								data.jobfinishdate= $filter("date")(data.jobfinishdate, "yyyy-MM-dd HH:mm");
-								CrudService.Update('tr',data.id,data).then(function (response) {
-									if(response.status=="error"){
-										 DevExpress.ui.notify(response.message,"error");
+								criteria = {status:'approver',tr_id:$scope.Requestid};
+								CrudService.FindData('trdetail',criteria).then(function (response){
+									if(response.jml>0){
+										var data = $scope.formInstance.option("formData");
+										data.requeststatus = 1;
+										delete data.fullname;
+										delete data.department;
+										delete data.approvalstatus;
+										data.jobfinishdate= $filter("date")(data.jobfinishdate, "yyyy-MM-dd HH:mm");
+										CrudService.Update('tr',data.id,data).then(function (response) {
+											if(response.status=="error"){
+												 DevExpress.ui.notify(response.message,"error");
+											}else{
+												DevExpress.ui.notify({
+													message: "Data has been Updated",
+													type: "success",
+													displayTime: 2000,
+													height: 80,
+													position: {
+													   my: 'top center', 
+													   at: 'center center', 
+													   of: window, 
+													   offset: '0 0' 
+												   }
+												});
+												$location.path( "/tr" );
+											}
+										});
 									}else{
 										DevExpress.ui.notify({
-											message: "Data has been Updated",
-											type: "success",
-											displayTime: 2000,
+											message: "Please add ticket detail (mohon lengkapi detail ticket)",
+											type: "warning",
+											displayTime: 5000,
 											height: 80,
 											position: {
 											   my: 'top center', 
@@ -1201,10 +1220,7 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 											   offset: '0 0' 
 										   }
 										});
-										$location.path( "/tr" );
 									}
-									
-								});
 							}else{
 								DevExpress.ui.notify({
 									message: "Please add travel schedule (mohon lengkapi jadwal perjalanan)",
