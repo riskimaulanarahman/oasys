@@ -74,6 +74,14 @@ app.register.controller('doreportCtrl', ['$rootScope','$scope', '$http', '$inter
 								$scope.loadDayoff(options.data,"report",false);
                             })
                             .appendTo(container);
+						if($rootScope.isAdmin && (options.data.requeststatus=='3')){
+							$('<div style="padding:2px 15px 2px 15px;"/>').addClass('dx-icon-repeat  btn-pill btn-shadow btn btn-success')
+								.text('')
+								.on('dxclick', function () {
+									window.open('api/apipdf?id='+options.data.id, '_blank');
+								})
+								.appendTo(container);
+						}
                     }
                 }
                 ,{caption: '#',formItem: { visible: false},width: 40,
