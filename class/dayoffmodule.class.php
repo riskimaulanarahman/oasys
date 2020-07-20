@@ -146,7 +146,7 @@ Class DayoffModule extends Application{
 					<tr><td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;text-align:center;background:#C2C2F2;">BU Head</td>
 					<td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;text-align:center;background:#C2C2F2;">Deputy MD</td></tr>';
 		foreach ($Dayoffdetail as $data){
-			if($data->isapproved){
+			if($data['isapproved']){
 				$reason = wordwrap($data['reason'], 60, "<br>");
 				$pdfContent .= '<tr><td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;none;border-top:none;">'.date('d/m/Y', strtotime($data['dateworked'])).'</td>
 								<td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;min-width:100px;max-width:300px;">'.wordwrap($data['reason'], 60, "<br>") .'</td>
