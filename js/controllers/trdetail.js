@@ -1221,6 +1221,7 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 										   }
 										});
 									}
+								});
 							}else{
 								DevExpress.ui.notify({
 									message: "Please add travel schedule (mohon lengkapi jadwal perjalanan)",
@@ -1250,10 +1251,9 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 						   }
 						});
 					}			
-				})
+				});
 			}
-		})
-			 	   
+		});			 	   
     };
 	$scope.initDropDownBoxEditorx = function(data) {
         return {
