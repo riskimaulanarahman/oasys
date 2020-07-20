@@ -1180,7 +1180,7 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 						CrudService.FindData('trschedule',criteria).then(function (response){
 							if(response.jml>0){
 								criteria = {status:'approver',tr_id:$scope.Requestid};
-								CrudService.FindData('apitrticket',criteria).then(function (response){
+								CrudService.FindData('trticket',criteria).then(function (response){
 									if(response.jml>0){
 										var data = $scope.formInstance.option("formData");
 										data.requeststatus = 1;
