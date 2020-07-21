@@ -3,7 +3,7 @@ use Spipu\Html2Pdf\Html2Pdf;
 use Spipu\Html2Pdf\Exception\Html2PdfException;
 use Spipu\Html2Pdf\Exception\ExceptionFormatter;
 
-Class Mmfmodule extends Application{
+Class Mmf30module extends Application{
 	private $mailbody;
 	private $mail;
 	public function __construct(){
@@ -34,21 +34,24 @@ Class Mmfmodule extends Application{
 						p.MsoNormal, li.MsoNormal, div.MsoNormal {margin:0in; margin-bottom:.0001pt; font-size:11.0pt; font-family:"Calibri","sans-serif";} a:link, span.MsoHyperlink {mso-style-priority:99; color:#0563C1; text-decoration:underline;} a:visited, span.MsoHyperlinkFollowed {mso-style-priority:99; color:#954F72; text-decoration:underline;} span.EmailStyle17 {mso-style-type:personal-reply;	font-family:"Calibri","sans-serif";	color:#1F497D;} .MsoChpDefault {mso-style-type:export-only;} @page WordSection1 {size:8.5in 11.0in;margin:1.0in 1.0in 1.0in 1.0in;} div.WordSection1 {page:WordSection1;} --></style><!--[if gte mso 9]><xml><o:shapedefaults v:ext="edit" spidmax="1026" /></xml><![endif]--><!--[if gte mso 9]><xml><o:shapelayout v:ext="edit"><o:idmap v:ext="edit" data="1" /></o:shapelayout></xml><![endif]--></head>';
 		if (isset($this->get)){
 			switch ($this->get['action']){
-				case 'apimmfbyemp':
+				case 'apimmf30byemp':
 					$this->mmfByEmp();
 					break;
-				case 'apimmf':
+				case 'apimmf30':
 					$this->Mmf();
 					break;
-				case 'apimmfapp':
+				case 'apimmf30app':
 					$this->mmfApproval();
 					break;
-				case 'apimmfpdf':
-					$id = $this->get['id'];
-					$this->generatePDF($id);
+				case 'apimmf30pdf':
+					// $id = $this->get['id'];
+					$this->generatePDF();
 					break;
-				case 'apimmfhist':
+				case 'apimmf30hist':
 					$this->mmfHistory();
+					break;
+				case 'apimmf30detail':
+					$this->mmfDetail();
 					break;
 				
 				default:
@@ -69,13 +72,13 @@ Class Mmfmodule extends Application{
 						$id = $this->post['id'];
 						$Employee = Employee::find($id);
 						if ($Employee){
-							$Tr = Mmf::find('all', array('conditions' => array("employee_id=?",$Employee->id),'include' => array('employee')));
-							foreach ($Tr as &$result) {
+							$Mmf30 = Mmf30::find('all', array('conditions' => array("employee_id=?",$Employee->id),'include' => array('employee')));
+							foreach ($Mmf30 as &$result) {
 								$fullname	= $result->employee->fullname;		
 								$result		= $result->to_array();
 								$result['fullname']=$fullname;
 							}
-							echo json_encode($Tr, JSON_NUMERIC_CHECK);
+							echo json_encode($Mmf30, JSON_NUMERIC_CHECK);
 						}else{
 							echo json_encode(array());
 						}
@@ -85,23 +88,23 @@ Class Mmfmodule extends Application{
 						if(isset($query['status'])){
 							switch ($query['status']){
 								case 'waiting':
-									$Tr = Mmf::find('all', array('conditions' => array("employee_id=? and RequestStatus<3 and id<>?",$query['username'],$query['id']),'include' => array('employee')));
-									foreach ($Tr as &$result) {
+									$Mmf30 = Mmf30::find('all', array('conditions' => array("employee_id=? and RequestStatus<3 and id<>?",$query['username'],$query['id']),'include' => array('employee')));
+									foreach ($Mmf30 as &$result) {
 										$fullname	= $result->employee->fullname;		
 										$result		= $result->to_array();
 										$result['fullname']=$fullname;
 									}
-									$data=array("jml"=>count($Tr));
+									$data=array("jml"=>count($Mmf30));
 									break;
 								default:
 									$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-									$Tr = Mmf::find('all', array('conditions' => array("employee_id=? and RequestStatus<3",$Employee->id),'include' => array('employee')));
-									foreach ($Tr as &$result) {
+									$Mmf30 = Mmf30::find('all', array('conditions' => array("employee_id=? and RequestStatus<3",$Employee->id),'include' => array('employee')));
+									foreach ($Mmf30 as &$result) {
 										$fullname	= $result->employee->fullname;		
 										$result		= $result->to_array();
 										$result['fullname']=$fullname;
 									}
-									$data=array("jml"=>count($Tr));
+									$data=array("jml"=>count($Mmf30));
 									break;
 							}
 						} else{
@@ -112,13 +115,13 @@ Class Mmfmodule extends Application{
 					default:
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 						if ($Employee){
-							$Tr = Mmf::find('all', array('conditions' => array("employee_id=?",$Employee->id),'include' => array('employee')));
-							foreach ($Tr as &$result) {
+							$Mmf30 = Mmf30::find('all', array('conditions' => array("employee_id=?",$Employee->id),'include' => array('employee')));
+							foreach ($Mmf30 as &$result) {
 								$fullname=$result->employee->fullname;
 								$result = $result->to_array();
 								$result['fullname']=$fullname;
 							}
-							echo json_encode($Tr, JSON_NUMERIC_CHECK);
+							echo json_encode($Mmf30, JSON_NUMERIC_CHECK);
 						}else{
 							echo json_encode(array());
 						}
@@ -137,19 +140,20 @@ Class Mmfmodule extends Application{
 				switch ($this->post['criteria']){
 					case 'byid':
 						$id = $this->post['id'];
-						$join = "LEFT JOIN vwmmf28report ON tbl_mmf28.id = vwmmf28report.id";
-						$select = "tbl_mmf28.*,vwmmf28report.apprstatuscode";
-						$Tr = Mmf::find($id, array('joins'=>$join,'select'=>$select,'include' => array('employee'=>array('company','department','designation'))));
-						if ($Tr){
-							$fullname = $Tr->employee->fullname;
-							$department = $Tr->employee->department->departmentname;
-							$data=$Tr->to_array();
+						// $join = "LEFT JOIN vwmmf28report ON tbl_mmf28.id = vwmmf28report.id";
+						// $select = "tbl_mmf28.*,vwmmf28report.apprstatuscode";
+                        // $Mmf30 = Mmf30::find($id, array('joins'=>$join,'select'=>$select,'include' => array('employee'=>array('company','department','designation'))));
+                        $Mmf30 = Mmf30::find($id, array('include' => array('employee'=>array('company','department','designation'))));
+						if ($Mmf30){
+							$fullname = $Mmf30->employee->fullname;
+							$department = $Mmf30->employee->department->departmentname;
+							$data=$Mmf30->to_array();
 							$data['fullname']=$fullname;
 							$data['department']=$department;
 							echo json_encode($data, JSON_NUMERIC_CHECK);
 						}else{
-							$Tr = new Mmf();
-							echo json_encode($Tr);
+							$Mmf30 = new Mmf30();
+							echo json_encode($Mmf30);
 						}
 						break;
 					case 'find':
@@ -161,39 +165,39 @@ Class Mmfmodule extends Application{
 								case 'addbuyer':
 										// $data = $this->post['data'];
 										$buyer = $query['employee_id'];
-										$id=$query['mmf28_id'];
-										$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
-										$dx = Mmfapproval::find('all',array('joins'=>$joins,'conditions' => array("mmf28_id=? and tbl_approver.approvaltype_id=25 and not(tbl_approver.employee_id=?)",$id,$buyer)));	
+										$id=$query['mmf30_id'];
+										$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf30approval.approver_id = tbl_approver.id) ";					
+										$dx = Mmf30approval::find('all',array('joins'=>$joins,'conditions' => array("mmf30_id=? and tbl_approver.approvaltype_id=25 and not(tbl_approver.employee_id=?)",$id,$buyer)));	
 										foreach ($dx as $result) {
 											//delete same type dept head approver
 											$result->delete();
-											$logger = new Datalogger("MMfapproval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
+											$logger = new Datalogger("MMf30approval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
 										}
-										$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
-										$Trapproval = Mmfapproval::find('all',array('joins'=>$joins,'conditions' => array("mmf28_id=? and tbl_approver.employee_id=?",$id,$buyer)));	
-										foreach ($Trapproval as &$result) {
+										$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf30approval.approver_id = tbl_approver.id) ";					
+										$Mmf30approval = Mmf30approval::find('all',array('joins'=>$joins,'conditions' => array("mmf30_id=? and tbl_approver.employee_id=?",$id,$buyer)));	
+										foreach ($Mmf30approval as &$result) {
 											$result		= $result->to_array();
 											$result['no']=1;
 										}			
-										if(count($Trapproval)==0){ 
-											$Approver = Approver::find('first',array('conditions'=>array("module='MMF' and employee_id=? and approvaltype_id=25",$buyer)));
+										if(count($Mmf30approval)==0){ 
+											$Approver = Approver::find('first',array('conditions'=>array("module='MMF' and employee_id=? and approvaltype_id=28",$buyer)));
 											if(count($Approver)>0){
-												$Trapproval = new Mmfapproval();
-												$Trapproval->mmf28_id = $id;
-												$Trapproval->approver_id = $Approver->id;
-												$Trapproval->save();
+												$Mmf30approval = new Mmf30approval();
+												$Mmf30approval->mmf30_id = $id;
+												$Mmf30approval->approver_id = $Approver->id;
+												$Mmf30approval->save();
 											}else{
 												$approver = new Approver();
-												$approver->module = "MMF";
+												$approver->module = "MMF30";
 												$approver->employee_id=$buyer;
 												$approver->sequence=3;
-												$approver->approvaltype_id = 25;
+												$approver->approvaltype_id = 28;
 												$approver->isfinal = true;
 												$approver->save();
-												$Trapproval = new Mmfapproval();
-												$Trapproval->mmf28_id = $id;
-												$Trapproval->approver_id = $approver->id;
-												$Trapproval->save();
+												$Mmf30approval = new Mmf30approval();
+												$Mmf30approval->mmf30_id = $id;
+												$Mmf30approval->approver_id = $approver->id;
+												$Mmf30approval->save();
 											}
 										}
 										
@@ -320,20 +324,20 @@ Class Mmfmodule extends Application{
 						// $data['createdby']=$Employee->id;
 						$data['RequestStatus']=0;
 						try{
-							$Rfcnew = Mmf::find('first',array('select' => "CONCAT('MMF28/','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(wonumber,-4,4)) is null then 1 else max(substring(wonumber,-4,4))+1 end,4,'0')) as wonumber","conditions"=>array("substring(wonumber,7,".strlen($Employee->companycode).")=? and substring(wonumber,".(strlen($Employee->companycode)+8).",4)=YEAR(CURDATE())",$Employee->companycode)));
-							$data['wonumber']=$Rfcnew->wonumber;
-							$Tr = Mmf::create($data);
-							$data=$Tr->to_array();
+							$Mmf30code = Mmf30::find('first',array('select' => "CONCAT('MMF30/','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(prno,-4,4)) is null then 1 else max(substring(prno,-4,4))+1 end,4,'0')) as prno","conditions"=>array("substring(prno,7,".strlen($Employee->companycode).")=? and substring(prno,".(strlen($Employee->companycode)+8).",4)=YEAR(CURDATE())",$Employee->companycode)));
+							$data['prno']=$Mmf30code->prno;
+							$Mmf30 = Mmf30::create($data);
+							$data=$Mmf30->to_array();
 							$joinx   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
 							// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="022") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
 								
 							// }else{
-								$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='MMF' and tbl_approver.isactive='1' and approvaltype_id=24")));
+								$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='MMF30' and tbl_approver.isactive='1' and approvaltype_id=27")));
 								if(count($Approver)>0){
-									$Trapproval = new Mmfapproval();
-									$Trapproval->mmf28_id = $Tr->id;
-									$Trapproval->approver_id = $Approver->id;
-									$Trapproval->save();
+									$Mmf30approval = new Mmf30approval();
+									$Mmf30approval->mmf30_id = $Mmf30->id;
+									$Mmf30approval->approver_id = $Approver->id;
+									$Mmf30approval->save();
 								}
 							// }
 							// $Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='MMF' and tbl_approver.isactive='1' and approvaltype_id=24")));
@@ -350,17 +354,17 @@ Class Mmfmodule extends Application{
 							// 	$Trapproval->approver_id = $Approver2->id;
 							// 	$Trapproval->save();
 							// }
-							$Trhistory = new Mmfhistory();
-							$Trhistory->date = date("Y-m-d h:i:s");
-							$Trhistory->fullname = $Employee->fullname;
-							$Trhistory->approvaltype = "Originator";
-							$Trhistory->mmf28_id = $Tr->id;
-							$Trhistory->actiontype = 0;
-							$Trhistory->save();
+							$Mmf30history = new Mmf30history();
+							$Mmf30history->date = date("Y-m-d h:i:s");
+							$Mmf30history->fullname = $Employee->fullname;
+							$Mmf30history->approvaltype = "Originator";
+							$Mmf30history->mmf30_id = $Mmf30->id;
+							$Mmf30history->actiontype = 0;
+							$Mmf30history->save();
 							
 						}catch (Exception $e){
 							$err = new Errorlog();
-							$err->errortype = "CreateMMF";
+							$err->errortype = "CreateMMF30";
 							$err->errordate = date("Y-m-d h:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
@@ -368,16 +372,16 @@ Class Mmfmodule extends Application{
 							$err->save();
 							$data = array("status"=>"error","message"=>$e->getMessage());
 						}
-						$logger = new Datalogger("MMF","create",null,json_encode($data));
+						$logger = new Datalogger("MMF30","create",null,json_encode($data));
 						$logger->SaveData();
 						echo json_encode($data);									
 						break;
 					case 'delete':
 						try {				
 							$id = $this->post['id'];
-							$Tr = Mmf::find($id);
-							if ($Tr->requeststatus==0){
-								$approval = Mmfapproval::find("all",array('conditions' => array("mmf28_id=?",$id)));
+							$Mmf30 = Mmf30::find($id);
+							if ($Mmf30->requeststatus==0){
+								$approval = Mmf30approval::find("all",array('conditions' => array("mmf30_id=?",$id)));
 								foreach ($approval as $delr){
 									$delr->delete();
 								}
@@ -389,22 +393,22 @@ Class Mmfmodule extends Application{
 								// foreach ($detail as $delr){
 								// 	$delr->delete();
 								// }
-								$hist = Mmfhistory::find("all",array('conditions' => array("mmf28_id=?",$id)));
+								$hist = Mmf30history::find("all",array('conditions' => array("mmf30_id=?",$id)));
 								foreach ($hist as $delr){
 									$delr->delete();
 								}
-								$data = $Tr->to_array();
-								$Tr->delete();
-								$logger = new Datalogger("MMF","delete",json_encode($data),null);
+								$data = $Mmf30->to_array();
+								$Mmf30->delete();
+								$logger = new Datalogger("MMF30","delete",json_encode($data),null);
 								$logger->SaveData();
-								echo json_encode($Tr);
+								echo json_encode($Mmf30);
 							} else {
 								$data = array("status"=>"error","message"=>"You can't delete submitted request");
 								echo json_encode($data);
 							}
 						}catch (Exception $e){
 							$err = new Errorlog();
-							$err->errortype = "DeleteMMF";
+							$err->errortype = "DeleteMMF30";
 							$err->errordate = date("Y-m-d h:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
@@ -417,8 +421,8 @@ Class Mmfmodule extends Application{
 						try{
 							$id = $this->post['id'];
 							$data = $this->post['data'];
-							$Tr = Mmf::find($id,array('include'=>array('employee'=>array('company','department','designation','grade'))));
-							$olddata = $Tr->to_array();
+							$Mmf30 = Mmf30::find($id,array('include'=>array('employee'=>array('company','department','designation','grade'))));
+							$olddata = $Mmf30->to_array();
 							$depthead = $data['depthead'];
 							$buyer = $data['buyer'];
 							unset($data['fullname']);
@@ -431,192 +435,177 @@ Class Mmfmodule extends Application{
 							}else{
 								foreach($data as $key=>$val){
 									$value=(($val===0) || ($val==='0') || ($val==='false'))?false:((($val===1) || ($val==='1') || ($val==='true'))?true:$val);
-									$Tr->$key=$value;
+									$Mmf30->$key=$value;
 								}
-								$Tr->save();
+								$Mmf30->save();
 								
 								if (isset($data['depthead'])){
-									$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
-									$dx = Mmfapproval::find('all',array('joins'=>$joins,'conditions' => array("mmf28_id=? and tbl_approver.approvaltype_id=23 and not(tbl_approver.employee_id=?)",$id,$depthead)));	
+									$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf30approval.approver_id = tbl_approver.id) ";					
+									$dx = Mmfapproval::find('all',array('joins'=>$joins,'conditions' => array("mmf30_id=? and tbl_approver.approvaltype_id=26 and not(tbl_approver.employee_id=?)",$id,$depthead)));	
 									foreach ($dx as $result) {
 										//delete same type dept head approver
 										$result->delete();
-										$logger = new Datalogger("MMfapproval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
+										$logger = new Datalogger("MMf30approval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
 									}
-									$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
-									$Trapproval = Mmfapproval::find('all',array('joins'=>$joins,'conditions' => array("mmf28_id=? and tbl_approver.employee_id=?",$id,$depthead)));	
-									foreach ($Trapproval as &$result) {
+									$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf30approval.approver_id = tbl_approver.id) ";					
+									$Mmf30approval = Mmf30approval::find('all',array('joins'=>$joins,'conditions' => array("mmf30_id=? and tbl_approver.employee_id=?",$id,$depthead)));	
+									foreach ($Mmf30approval as &$result) {
 										$result		= $result->to_array();
 										$result['no']=1;
 									}			
-									if(count($Trapproval)==0){ 
-										$Approver = Approver::find('first',array('conditions'=>array("module='MMF' and employee_id=? and approvaltype_id=23",$depthead)));
+									if(count($Mmf30approval)==0){ 
+										$Approver = Approver::find('first',array('conditions'=>array("module='MMF30' and employee_id=? and approvaltype_id=26",$depthead)));
 										if(count($Approver)>0){
-											$Trapproval = new Mmfapproval();
-											$Trapproval->mmf28_id = $Tr->id;
-											$Trapproval->approver_id = $Approver->id;
-											$Trapproval->save();
+											$Mmf30approval = new Mmf30approval();
+											$Mmf30approval->mmf30_id = $Mmf30->id;
+											$Mmf30approval->approver_id = $Approver->id;
+											$Mmf30approval->save();
 										}else{
 											$approver = new Approver();
-											$approver->module = "MMF";
+											$approver->module = "MMF30";
 											$approver->employee_id=$depthead;
 											$approver->sequence=1;
-											$approver->approvaltype_id = 23;
+											$approver->approvaltype_id = 26;
 											$approver->isfinal = false;
 											$approver->save();
-											$Trapproval = new Mmfapproval();
-											$Trapproval->mmf28_id = $Tr->id;
-											$Trapproval->approver_id = $approver->id;
-											$Trapproval->save();
+											$Mmf30approval = new Mmfapproval();
+											$Mmf30approval->mmf30_id = $Mmf30->id;
+											$Mmf30approval->approver_id = $approver->id;
+											$Mmf30approval->save();
 										}
 									}
 									
 								}
 
 								if (isset($data['buyer'])){
-									$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
-									$dx = Mmfapproval::find('all',array('joins'=>$joins,'conditions' => array("mmf28_id=? and tbl_approver.approvaltype_id=25 and not(tbl_approver.employee_id=?)",$id,$buyer)));	
+									$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf30approval.approver_id = tbl_approver.id) ";					
+									$dx = Mmf30approval::find('all',array('joins'=>$joins,'conditions' => array("mmf30_id=? and tbl_approver.approvaltype_id=28 and not(tbl_approver.employee_id=?)",$id,$buyer)));	
 									foreach ($dx as $result) {
 										//delete same type dept head approver
 										$result->delete();
-										$logger = new Datalogger("MMfapproval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
+										$logger = new Datalogger("MMf30approval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
 									}
-									$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
-									$Trapproval = Mmfapproval::find('all',array('joins'=>$joins,'conditions' => array("mmf28_id=? and tbl_approver.employee_id=?",$id,$buyer)));	
-									foreach ($Trapproval as &$result) {
+									$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf30approval.approver_id = tbl_approver.id) ";					
+									$Mmf30approval = Mmf30approval::find('all',array('joins'=>$joins,'conditions' => array("mmf30_id=? and tbl_approver.employee_id=?",$id,$buyer)));	
+									foreach ($Mmf30approval as &$result) {
 										$result		= $result->to_array();
 										$result['no']=1;
 									}			
-									if(count($Trapproval)==0){ 
-										$Approver = Approver::find('first',array('conditions'=>array("module='MMF' and employee_id=? and approvaltype_id=25",$buyer)));
+									if(count($Mmf30approval)==0){ 
+										$Approver = Approver::find('first',array('conditions'=>array("module='MMF30' and employee_id=? and approvaltype_id=28",$buyer)));
 										if(count($Approver)>0){
-											$Trapproval = new Mmfapproval();
-											$Trapproval->mmf28_id = $Tr->id;
-											$Trapproval->approver_id = $Approver->id;
-											$Trapproval->save();
+											$Mmf30approval = new Mmf30approval();
+											$Mmf30approval->mmf30_id = $Mmf30->id;
+											$Mmf30approval->approver_id = $Approver->id;
+											$Mmf30approval->save();
 										}else{
 											$approver = new Approver();
-											$approver->module = "MMF";
+											$approver->module = "MMF30";
 											$approver->employee_id=$buyer;
 											$approver->sequence=3;
-											$approver->approvaltype_id = 25;
+											$approver->approvaltype_id = 28;
 											$approver->isfinal = true;
 											$approver->save();
-											$Trapproval = new Mmfapproval();
-											$Trapproval->mmf28_id = $Tr->id;
-											$Trapproval->approver_id = $approver->id;
-											$Trapproval->save();
+											$Mmf30approval = new Mmf30approval();
+											$Mmf30approval->mmf30_id = $Mmf30->id;
+											$Mmf30approval->approver_id = $approver->id;
+											$Mmf30approval->save();
 										}
 									}
 									
 								}
 								
 								if($data['requeststatus']==1){
-									$Trapproval = Mmfapproval::find('all', array('conditions' => array("mmf28_id=?",$id)));					
-									foreach($Trapproval as $data){
+									$Mmf30approval = Mmf30approval::find('all', array('conditions' => array("mmf30_id=?",$id)));					
+									foreach($Mmf30approval as $data){
 										$data->approvalstatus=0;
 										$data->save();
 									}
-									$joinx   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
-									$Trapproval = Mmfapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and mmf28_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
-									$username = $Trapproval->approver->employee->loginname;
+									$joinx   = "LEFT JOIN tbl_approver ON (tbl_mmf30approval.approver_id = tbl_approver.id) ";					
+									$Mmf30approval = Mmf30approval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and mmf30_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+									$username = $Mmf30approval->approver->employee->loginname;
 									$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
-									$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Tr->employee->loginname)));
+									$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Mmf30->employee->loginname)));
 									$email=$usr->email;
-									if($Tr->requiredtype == 1) {
-										$required = 'Repair';
-									}else if($Tr->requiredtype == 2) {
-										$required = 'Servicing';
-									}else if($Tr->requiredtype == 3) {
-										$required = 'Calibration';
-									}else if($Tr->requiredtype == 2) {
-										$required = 'Others';
-									}else {
-										$required = '';
-									}
+									// if($Mmf30->requiredtype == 1) {
+									// 	$required = 'Repair';
+									// }else if($Mmf30->requiredtype == 2) {
+									// 	$required = 'Servicing';
+									// }else if($Mmf30->requiredtype == 3) {
+									// 	$required = 'Calibration';
+									// }else if($Mmf30->requiredtype == 2) {
+									// 	$required = 'Others';
+									// }else {
+									// 	$required = '';
+									// }
 									// $Trschedule=Trschedule::find('all',array('conditions'=>array("mmf28_id=?",$id),'include'=>array('tr'=>array('employee'=>array('company','department','designation','grade')))));
-									// $Trticket=Trticket::find('all',array('conditions'=>array("mmf28_id=?",$id),'include'=>array('tr'=>array('employee'=>array('company','department','designation','grade')))));
+									$Mmf30detail = Mmf30detail::find('all',array('conditions'=>array("mmf30_id=?",$id),'include'=>array('mmf30'=>array('employee'=>array('company','department','designation','grade')))));
 									$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$adb->fullname.',</span></p>
 										<p class=MsoNormal><span style="color:#1F497D">new MMF 28 Request is awaiting for your approval:</span></p>
 										<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
 										<table border=1 cellspacing=0 cellpadding=3 width=683>
-										<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->fullname.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>SAP ID</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->sapid.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>Position</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->designation->designationname.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>Business Group / Business Unit</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->company->companyname.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>Location</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->location->location.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Mmf30->employee->fullname.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>SAP ID</p></td><td>:</td><td><p class=MsoNormal><b>'.$Mmf30->employee->sapid.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>Position</p></td><td>:</td><td><p class=MsoNormal><b>'.$Mmf30->employee->designation->designationname.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>Business Group / Business Unit</p></td><td>:</td><td><p class=MsoNormal><b>'.$Mmf30->employee->company->companyname.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>Location</p></td><td>:</td><td><p class=MsoNormal><b>'.$Mmf30->employee->location->location.'</b></p></td></tr>
 										<tr><td><p class=MsoNormal>Email</p></td><td>:</td><td><p class=MsoNormal><b>'.$email.'</b></p></td></tr>
 										</table>
 										<p class=MsoNormal><b>Repairable Form</b></p>
 										<table border=1 cellspacing=0 cellpadding=3 width=683>
 										
-										<tr><th><p class=MsoNormal>Date</small></p></th>
-											<th><p class=MsoNormal>Requested By</p></th>
-											<th><p class=MsoNormal>Tel No</p></th>
-											<th><p class=MsoNormal>WO No</p></th>
-											<th><p class=MsoNormal>Charger Code</p></th>
-											<th><p class=MsoNormal>Material Dispatch No</p></th>
-											<th><p class=MsoNormal>Required By (Date)</p></th>
-											<th><p class=MsoNormal>Material Code</p></th>
-											<th><p class=MsoNormal>Material Description</p></th>
-											<th><p class=MsoNormal>Symtoms (Problem)</p></th>
-											<th><p class=MsoNormal>Required</p></th>
-											<th><p class=MsoNormal>Instsruction</p></th>
+										<tr><th><p class=MsoNormal>PR Type</p></th>
+											<th><p class=MsoNormal>Requisition Material</p></th>
+											<th><p class=MsoNormal>PR No</p></th>
+											<th><p class=MsoNormal>Date</p></th>
+											<th><p class=MsoNormal>Required by</p></th>
+											<th><p class=MsoNormal>Deliver To</p></th>
+											<th><p class=MsoNormal>Cost Code</p></th>
+											<th><p class=MsoNormal>Cost Element</p></th>
 										</tr>
 										<tr style="height:22.5pt">
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Tr->createddate)).'</p></td>
-											<td><p class=MsoNormal> '.$Tr->employee->fullname.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->telpno.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->wonumber.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->chargecode.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->materialdispatch.'</p></td>
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Tr->requireddate)).'</p></td>
-											<td><p class=MsoNormal> '.$Tr->materialcode.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->materialdescr.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->symptomps.'</p></td>
-											<td><p class=MsoNormal> '.$required.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->instruction.'</p></td>
+											<td><p class=MsoNormal> '.$Mmf30->prtype.'</p></td>
+											<td><p class=MsoNormal> '.$Mmf30->requisitiontype.'</p></td>
+											<td><p class=MsoNormal> '.$Mmf30->prno.'</p></td>
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Mmf30->createddate)).'</p></td>
+											<td><p class=MsoNormal> '.$Mmf30->employee->fullname.'</p></td>
+											<td><p class=MsoNormal> '.$Mmf30->deliverto.'</p></td>
+											<td><p class=MsoNormal> '.$Mmf30->costcode.'</p></td>
+											<td><p class=MsoNormal> '.$Mmf30->costelement.'</p></td>
 										</tr>
 										';
-									// $no=1;					
-									// foreach ($Trschedule as $data){
-									// 	$this->mailbody .='<tr style="height:22.5pt">
-									// 		<td><p class=MsoNormal> '.$no.'</p></td>
-									// 		<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->departdate)).'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->departtime.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->departfrom.'</p></td>
-									// 		<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->arrivingdate)).'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->arrivingtime.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->arrivingto.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->region.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->reason.'</p></td>
-									// 	</tr>';
-									// 	$no++;
-									// }
-									// $this->mailbody .='</table>
-									// 	<table border=1 cellspacing=0 cellpadding=3 width=683>
-									// 	<tr><th><p class=MsoNormal>No</p></th>
-									// 		<th><p class=MsoNormal>Ticket For (Untuk)</p></th>
-									// 		<th><p class=MsoNormal>Name <br>( Nama )</p></th>
-									// 		<th><p class=MsoNormal>Date of Birth <br>( Tgl. Lahir) <br> <small>(dd/mm/yyyy)</small></p></th>
-									// 		<th><p class=MsoNormal>Phone Number</p></th>
-									// 		<th><p class=MsoNormal>Gender</p></th>
-									// 		<th><p class=MsoNormal>Remarks /Confirmation from HR <br> ( Konfirmasi dari HR )</p></th>
-									// 	</tr>
-									// 	';
-									// $no=1;
-									// foreach ($Trticket as $data){
-									// 	$this->mailbody .='<tr style="height:22.5pt">
-									// 		<td><p class=MsoNormal> '.$no.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->ticketfor.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->ticketname.'</p></td>
-									// 		<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->dateofbirth)).'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->phonenumber.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->gender.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->hrremarks.'</p></td>
-									// 		</tr>';
-									// 	$no++;
-									// }
+									$this->mailbody .='</table>
+										<table border=1 cellspacing=0 cellpadding=3 width=683>
+										<tr><th><p class=MsoNormal>No</p></th>
+											<th><p class=MsoNormal>Material Code</p></th>
+											<th><p class=MsoNormal>Description</p></th>
+											<th><p class=MsoNormal>Part Number</p></th>
+											<th><p class=MsoNormal>Brand/Manufacturer</p></th>
+											<th><p class=MsoNormal>Qty</p></th>
+											<th><p class=MsoNormal>Unit</p></th>
+											<th><p class=MsoNormal>Currency</p></th>
+											<th><p class=MsoNormal>Unit Price</p></th>
+											<th><p class=MsoNormal>Extended Price</p></th>
+											<th><p class=MsoNormal>Remarks</p></th>
+										</tr>
+										';
+									$no=1;
+									foreach ($Mmf30detail as $data){
+										$this->mailbody .='<tr style="height:22.5pt">
+											<td><p class=MsoNormal> '.$no.'</p></td>
+											<td><p class=MsoNormal> '.$data->materialcode.'</p></td>
+											<td><p class=MsoNormal> '.$data->materialdescr.'</p></td>
+											<td><p class=MsoNormal> '.$data->partnumber.'</p></td>
+											<td><p class=MsoNormal> '.$data->brandmanufacturer.'</p></td>
+											<td><p class=MsoNormal> '.$data->qty.'</p></td>
+											<td><p class=MsoNormal> '.$data->unit.'</p></td>
+											<td><p class=MsoNormal> '.$data->currency.'</p></td>
+											<td><p class=MsoNormal> '.$data->unitprice.'</p></td>
+											<td><p class=MsoNormal> '.$data->extendedprice.'</p></td>
+											<td><p class=MsoNormal> '.$data->remarks.'</p></td>
+											</tr>';
+										$no++;
+									}
 									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 									$this->mail->addAddress($adb->email, $adb->fullname);
 									$this->mail->Subject = "Online Approval System -> new MMF 28 Request Submission";
@@ -633,28 +622,28 @@ Class Mmfmodule extends Application{
 									} else {
 										echo "Message sent!";
 									}
-									$Trhistory = new Mmfhistory();
-									$Trhistory->date = date("Y-m-d h:i:s");
-									$Trhistory->fullname = $Employee->fullname;
-									$Trhistory->mmf28_id = $id;
-									$Trhistory->approvaltype = "Originator";
-									$Trhistory->actiontype = 2;
-									$Trhistory->save();
+									$Mmf30history = new Mmfhistory();
+									$Mmf30history->date = date("Y-m-d h:i:s");
+									$Mmf30history->fullname = $Employee->fullname;
+									$Mmf30history->mmf30_id = $id;
+									$Mmf30history->approvaltype = "Originator";
+									$Mmf30history->actiontype = 2;
+									$Mmf30history->save();
 								}else{
-									$Trhistory = new Mmfhistory();
-									$Trhistory->date = date("Y-m-d h:i:s");
-									$Trhistory->fullname = $Employee->fullname;
-									$Trhistory->mmf28_id = $id;
-									$Trhistory->approvaltype = "Originator";
-									$Trhistory->actiontype = 1;
-									$Trhistory->save();
+									$Mmf30history = new Mmfhistory();
+									$Mmf30history->date = date("Y-m-d h:i:s");
+									$Mmf30history->fullname = $Employee->fullname;
+									$Mmf30history->mmf30_id = $id;
+									$Mmf30history->approvaltype = "Originator";
+									$Mmf30history->actiontype = 1;
+									$Mmf30history->save();
 								}
-								$logger = new Datalogger("MMF","update",json_encode($olddata),json_encode($data));
+								$logger = new Datalogger("MMF30","update",json_encode($olddata),json_encode($data));
 								$logger->SaveData();
 							}
 						}catch (Exception $e){
 							$err = new Errorlog();
-							$err->errortype = "UpdateMMF";
+							$err->errortype = "UpdateMMF30";
 							$err->errordate = date("Y-m-d h:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
@@ -664,11 +653,11 @@ Class Mmfmodule extends Application{
 						}
 						break;
 					default:
-						$Tr = Mmf::all();
-						foreach ($Tr as &$result) {
+						$Mmf30 = Mmf30::all();
+						foreach ($Mmf30 as &$result) {
 							$result = $result->to_array();
 						}					
-						echo json_encode($Tr, JSON_NUMERIC_CHECK);
+						echo json_encode($Mmf30, JSON_NUMERIC_CHECK);
 						break;
 				}
 			}
@@ -685,88 +674,88 @@ Class Mmfmodule extends Application{
 					case 'byid':
 						$id = $this->post['id'];
 						if ($id!=""){
-							$join   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";
-							$Trapproval = Mmfapproval::find('all', array('joins'=>$join,'conditions' => array("mmf28_id=?",$id),'include' => array('approver'=>array('approvaltype')),"order"=>"tbl_approver.sequence"));
-							foreach ($Trapproval as &$result) {
+							$join   = "LEFT JOIN tbl_approver ON (tbl_mmf30approval.approver_id = tbl_approver.id) ";
+							$Mmf30approval = Mmf30approval::find('all', array('joins'=>$join,'conditions' => array("mmf30_id=?",$id),'include' => array('approver'=>array('approvaltype')),"order"=>"tbl_approver.sequence"));
+							foreach ($Mmf30approval as &$result) {
 								$approvaltype = $result->approver->approvaltype_id;
 								$result		= $result->to_array();
 								$result['approvaltype']=$approvaltype;
 							}
-							echo json_encode($Trapproval, JSON_NUMERIC_CHECK);
+							echo json_encode($Mmf30approval, JSON_NUMERIC_CHECK);
 						}else{
-							$Trapproval = new Mmfapproval();
-							echo json_encode($Trapproval);
+							$Mmf30approval = new Mmf30approval();
+							echo json_encode($Mmf30approval);
 						}
 						break;
 					case 'find':
 						$query=$this->post['query'];		
 						if(isset($query['status'])){
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-							$join   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";
-							$dx = Mmfapproval::find('first', array('joins'=>$join,'conditions' => array("mmf28_id=? and tbl_approver.employee_id = ?",$query['mmf28_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
-							$Tr = Mmf::find($query['mmf28_id']);
+							$join   = "LEFT JOIN tbl_approver ON (tbl_mmf30approval.approver_id = tbl_approver.id) ";
+							$dx = Mmf30approval::find('first', array('joins'=>$join,'conditions' => array("mmf30_id=? and tbl_approver.employee_id = ?",$query['mmf30_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
+							$Mmf = Mmf30::find($query['mmf30_id']);
 							if($dx->approver->isfinal==1){
 								$data=array("jml"=>1);
 							}else{
-								$join   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";
-								$Trapproval = Mmfapproval::find('all', array('joins'=>$join,'conditions' => array("mmf28_id=? and ApprovalStatus<=1 and not tbl_approver.employee_id=?",$query['mmf28_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
-								// $Trapproval = Mmfapproval::find('all', array('joins'=>$join,'conditions' => array("mmf28_id=? and ApprovalStatus<=1 and tbl_approver.employee_id=?",$query['mmf28_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
-								foreach ($Trapproval as &$result) {
+								$join   = "LEFT JOIN tbl_approver ON (tbl_mmf30approval.approver_id = tbl_approver.id) ";
+								$Mmfapproval = Mmf30approval::find('all', array('joins'=>$join,'conditions' => array("mmf30_id=? and ApprovalStatus<=1 and not tbl_approver.employee_id=?",$query['mmf30_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
+								// $Mmfapproval = Mmf30approval::find('all', array('joins'=>$join,'conditions' => array("mmf30_id=? and ApprovalStatus<=1 and tbl_approver.employee_id=?",$query['mmf30_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
+								foreach ($Mmfapproval as &$result) {
 									$fullname	= $result->approver->employee->fullname;
 									$result		= $result->to_array();
 									$result['fullname']=$fullname;
 								}
-								$data=array("jml"=>count($Trapproval));
+								$data=array("jml"=>count($Mmfapproval));
 							}						
 						} else if(isset($query['pending'])){						
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$emp_id = $Employee->id;
-							$Tr = Mmf::find('all', array('conditions' => array("RequestStatus =1"),'include' => array('employee')));
-							foreach ($Tr as $result) {
-								$joinx   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
-								$Trapproval = Mmfapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and mmf28_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
-								if($Trapproval->approver->employee_id==$emp_id){
+							$Mmf = Mmf30::find('all', array('conditions' => array("RequestStatus =1"),'include' => array('employee')));
+							foreach ($Mmf as $result) {
+								$joinx   = "LEFT JOIN tbl_approver ON (tbl_mmf30approval.approver_id = tbl_approver.id) ";					
+								$Mmfapproval = Mmf30approval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and mmf30_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+								if($Mmfapproval->approver->employee_id==$emp_id){
 									$request[]=$result->id;
 								}
 							}
-							$Tr = Mmf::find('all', array('conditions' => array("id in (?)",$request),'include' => array('employee')));
-							foreach ($Tr as &$result) {
+							$Mmf = Mmf30::find('all', array('conditions' => array("id in (?)",$request),'include' => array('employee')));
+							foreach ($Mmf as &$result) {
 								$fullname	= $result->employee->fullname;
 								$department	= $result->employee->department->departmentname;
 								$result		= $result->to_array();
 								$result['fullname']=$fullname;
 								$result['department']=$department;
 							}
-							$data=$Tr;
+							$data=$Mmf;
 						} else if(isset($query['mypending'])){						
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$emp_id = $Employee->id;
-							$Tr = Mmf::find('all', array('conditions' => array("RequestStatus =1"),'include' => array('employee')));
+							$Mmf = Mmf30::find('all', array('conditions' => array("RequestStatus =1"),'include' => array('employee')));
 							$jml=0;
-							foreach ($Tr as $result) {
-								$joinx   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
-								$Trapproval = Mmfapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and mmf28_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
-								if($Trapproval->approver->employee_id==$emp_id){
+							foreach ($Mmf as $result) {
+								$joinx   = "LEFT JOIN tbl_approver ON (tbl_mmf30approval.approver_id = tbl_approver.id) ";					
+								$Mmfapproval = Mmf30approval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and mmf30_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+								if($Mmfapproval->approver->employee_id==$emp_id){
 									$request[]=$result->id;
 								}
 							}
-							$Tr = Mmf::find('all', array('conditions' => array("id in (?)",$request),'include' => array('employee')));
-							foreach ($Tr as &$result) {
+							$Mmf = Mmf30::find('all', array('conditions' => array("id in (?)",$request),'include' => array('employee')));
+							foreach ($Mmf as &$result) {
 								$fullname	= $result->employee->fullname;		
 								$result		= $result->to_array();
 								$result['fullname']=$fullname;
 							}
-							$data=array("jml"=>count($Tr));
+							$data=array("jml"=>count($Mmf));
 						} else if(isset($query['filter'])){
 							$join = "LEFT JOIN vwtrreport v on tbl_tr.id=v.id";
 							$sel = 'tbl_tr.*, v.laststatus,v.personholding ';
-							$Tr = Mmf::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
-							foreach ($Tr as &$result) {
+							$Mmf = Mmf30::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
+							foreach ($Mmf as &$result) {
 								$fullname	= $result->employee->fullname;		
 								$result		= $result->to_array();
 								$result['fullname']=$fullname;
 							}
-							$data=$Tr;
+							$data=$Mmf;
 						} else{
 							$data=array();
 						}
@@ -775,16 +764,16 @@ Class Mmfmodule extends Application{
 					case 'create':
 						$data = $this->post['data'];
 						unset($data['__KEY__']);
-						$Trapproval = Mmfapproval::create($data);
-						$logger = new Datalogger("MMfapproval","create",null,json_encode($data));
+						$Trapproval = Mmf30approval::create($data);
+						$logger = new Datalogger("MMf30approval","create",null,json_encode($data));
 						$logger->SaveData();
 						break;
 					case 'delete':
 						$id = $this->post['id'];
-						$Trapproval = Mmfapproval::find($id);
+						$Trapproval = Mmf30approval::find($id);
 						$data=$Trapproval->to_array();
 						$Trapproval->delete();
-						$logger = new Datalogger("MMfapproval","delete",json_encode($data),null);
+						$logger = new Datalogger("MMf30approval","delete",json_encode($data),null);
 						$logger->SaveData();
 						echo json_encode($Trapproval);
 						break;
@@ -799,12 +788,12 @@ Class Mmfmodule extends Application{
 						unset($data['approveddoc']);
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 						$mmf = Mmf::find($doid);
-						$join   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";
+						$join   = "LEFT JOIN tbl_approver ON (tbl_mmf30approval.approver_id = tbl_approver.id) ";
 						if (isset($data['mode'])){
-							$Trapproval = Mmfapproval::find('first', array('joins'=>$join,'conditions' => array("mmf28_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
+							$Trapproval = Mmf30approval::find('first', array('joins'=>$join,'conditions' => array("mmf30_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
 							unset($data['mode']);
 						}else{
-							$Trapproval = Mmfapproval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
+							$Trapproval = Mmf30approval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
 						}
 						foreach($data as $key=>$val) {
 							if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks')) {
@@ -832,16 +821,16 @@ Class Mmfmodule extends Application{
 							$Trapproval->$key=$val;
 						}
 						$Trapproval->save();
-						$logger = new Datalogger("Mmfapproval","update",json_encode($olddata),json_encode($data));
+						$logger = new Datalogger("Mmf30approval","update",json_encode($olddata),json_encode($data));
 						$logger->SaveData();
 						if (isset($mode) && ($mode=='approve')){
 							$Tr = Mmf::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
-							$joinx   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
-							$nTrapproval = Mmfapproval::find('first',array('joins'=>$joinx,'conditions' => array("mmf28_id=? and ApprovalStatus=0",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+							$joinx   = "LEFT JOIN tbl_approver ON (tbl_mmf30approval.approver_id = tbl_approver.id) ";					
+							$nTrapproval = Mmf30approval::find('first',array('joins'=>$joinx,'conditions' => array("mmf30_id=? and ApprovalStatus=0",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 							$username = $nTrapproval->approver->employee->loginname;
 							$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
-							// $Trschedule=Trschedule::find('all',array('conditions'=>array("mmf28_id=?",$doid),'include'=>array('mmf'=>array('employee'=>array('company','department','designation','grade','location')))));
-							// $Trticket=Trticket::find('all',array('conditions'=>array("mmf28_id=?",$doid),'include'=>array('mmf'=>array('employee'=>array('company','department','designation','grade','location')))));
+							// $Trschedule=Trschedule::find('all',array('conditions'=>array("mmf30_id=?",$doid),'include'=>array('mmf'=>array('employee'=>array('company','department','designation','grade','location')))));
+							// $Trticket=Trticket::find('all',array('conditions'=>array("mmf30_id=?",$doid),'include'=>array('mmf'=>array('employee'=>array('company','department','designation','grade','location')))));
 							$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Tr->employee->loginname)));
 							$email=$usr->email;
 							$superiorId=$Tr->depthead;
@@ -853,7 +842,7 @@ Class Mmfmodule extends Application{
 							$Trhistory->fullname = $Employee->fullname;
 							$Trhistory->approvaltype = $Trapproval->approver->approvaltype->approvaltype;
 							$Trhistory->remarks = $data['remarks'];
-							$Trhistory->mmf28_id = $doid;
+							$Trhistory->mmf30_id = $doid;
 							
 							switch ($data['approvalstatus']){
 								case '1':
@@ -872,10 +861,10 @@ Class Mmfmodule extends Application{
 										$red = '<p>Your MMF 28. request has been approved</p>
 													<p><b><span lang=EN-US style=\'color:#002060\'>Note : Please <u>forward</u> this electronic approval to your respective Human Resource Department.</span></b></p>';
 										//delete unnecessary approver
-										$Trapproval = Mmfapproval::find('all', array('joins'=>$join,'conditions' => array("mmf28_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
+										$Trapproval = Mmf30approval::find('all', array('joins'=>$join,'conditions' => array("mmf30_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
 										foreach ($Trapproval as $data) {
 											if($data->approvalstatus==0){
-												$logger = new Datalogger("Mmfapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
+												$logger = new Datalogger("Mmf30approval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
 												$logger->SaveData();
 												$data->delete();
 											}
@@ -982,17 +971,91 @@ Class Mmfmodule extends Application{
 						echo json_encode($Spklapproval);
 						break;
 					default:
-						$Trapproval = Mmfapproval::all();
-						foreach ($Trapproval as &$result) {
+						$Mmf30approval = Mmf30approval::all();
+						foreach ($Mmf30approval as &$result) {
 							$result = $result->to_array();
 						}
-						echo json_encode($Trapproval, JSON_NUMERIC_CHECK);
+						echo json_encode($Mmf30approval, JSON_NUMERIC_CHECK);
 						break;
 				}
 			}
 		}
 	}
-	function generatePDF($id){
+	function mmfDetail(){
+		if (count($this->post)==0){
+			http_response_code(405);
+    		echo json_encode(array("message" => "Method not Allowed"));
+		}else{
+			$auth = $this->jwt->checkAuth();
+			if($auth){
+				switch ($this->post['criteria']){
+					case 'byid':
+						$id = $this->post['id'];
+						if ($id!=""){
+							$Mmf30detail = Mmf30detail::find('all', array('conditions' => array("mmf30_id=?",$id)));
+							foreach ($Mmf30detail as &$result) {
+								$result		= $result->to_array();
+							}
+							echo json_encode($Mmf30detail, JSON_NUMERIC_CHECK);
+						}else{
+							$Mmf30detail = new Mmf30detail();
+							echo json_encode($Mmf30detail);
+						}
+						break;
+					case 'find':
+						$query=$this->post['query'];
+						if(isset($query['status'])){
+							$Mmf30detail = Mmf30detail::find('all', array('conditions' => array("mmf30_id=?",$query['mmf30_id'])));
+							$data=array("jml"=>count($Mmf30detail));
+						}else{
+							$data=array();
+						}
+						echo json_encode($data, JSON_NUMERIC_CHECK);
+						break;
+					case 'create':			
+						$data = $this->post['data'];
+						unset($data['__KEY__']);
+						$Mmf30detail = Mmf30detail::create($data);
+						$logger = new Datalogger("Mmf30detail","create",null,json_encode($data));
+						$logger->SaveData();
+						break;
+					case 'delete':				
+						$id = $this->post['id'];
+						$Mmf30detail = Mmf30detail::find($id);
+						$data=$Mmf30detail->to_array();
+						$Mmf30detail->delete();
+						$logger = new Datalogger("Mmf30detail","delete",json_encode($data),null);
+						$logger->SaveData();
+						echo json_encode($Mmf30detail);
+						break;
+					case 'update':				
+						$id = $this->post['id'];
+						$data = $this->post['data'];
+						
+						$Mmf30detail = Mmf30detail::find($id);
+						$olddata = $Mmf30detail->to_array();
+						foreach($data as $key=>$val){
+							$Mmf30detail->$key=$val;
+						}
+						$Mmf30detail->save();
+						$logger = new Datalogger("Mmf30detail","update",json_encode($olddata),json_encode($data));
+						$logger->SaveData();
+						echo json_encode($Mmf30detail);
+						
+						break;
+					default:
+						$Mmf30detail = Mmf30detail::all();
+						foreach ($Mmf30detail as &$result) {
+							$result = $result->to_array();
+						}
+						echo json_encode($Mmf30detail, JSON_NUMERIC_CHECK);
+						break;
+				}
+			}
+		}
+	}
+	function generatePDF(){
+		$id = $this->get['id'];
 		$Tr = Mmf::find($id);
 		// $Trschedule=Trschedule::find('all',array('conditions'=>array("mmf28_id=?",$doid),'include'=>array('mmf'=>array('employee'=>array('company','department','designation','grade','location')))));
 		// $Trticket=Trticket::find('all',array('conditions'=>array("mmf28_id=?",$doid),'include'=>array('mmf'=>array('employee'=>array('company','department','designation','grade','location')))));					
@@ -1005,22 +1068,22 @@ Class Mmfmodule extends Application{
 		$v_reqdate = date("d/m/Y",strtotime($Tr->requireddate));
 		$v_mdate = date("d/m/Y",strtotime($Tr->materialreturneddate));
 		$pdfContent = '
-			<!DOCTYPE html>
-			<html>
-			<head>
-			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<link rel="stylesheet" type="text/css" href="responsive.css"/>
-			<style type="text/css">
-			table tr td { font-size:10px;font-family: arial; padding:5px;}
-			
-			.red {color: red;}
-			.blue {color: blue;}
-			.p-5 {padding: 5px;}
-			.tg-bi {font: italic bold 10px/30px Arial;}
-			img {height: 25pt;}
-			</style>
-			</head>
-			<body>
+		<!DOCTYPE html>
+		<html>
+		<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="responsive.css"/>
+		<style type="text/css">
+		table tr td { font-size:10px;font-family: arial; padding:5px;}
+		
+		.red {color: red;}
+		.blue {color: blue;}
+		.p-5 {padding: 5px;}
+		.tg-bi {font: italic bold 10px/30px Arial;}
+		img {height: 25pt;}
+		</style>
+		</head>
+		<body>
 
 			<h2 class="tg-7btt" style=" text-align:center;"><b>REPAIRABLE FORM</b></h2>
 		
@@ -1260,7 +1323,7 @@ Class Mmfmodule extends Application{
 			$html2pdf->pdf->SetDisplayMode('fullpage');
 			$html2pdf->writeHTML( $pdfContent);
 			ob_clean();
-			$fileName ='doc'.DS.'mmf'.DS.'pdf'.DS.'MMF28'.$Tr->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$fileName ='doc'.DS.'mmf'.DS.'pdf'.DS.'MMF'.$Tr->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$fileName = str_replace("/","",$fileName);
 			$filePath = SITE_PATH.DS.$fileName;
 			$html2pdf->output($filePath, 'F');
@@ -1274,8 +1337,8 @@ Class Mmfmodule extends Application{
 			$err->errortype = "MMFPDFGenerator";
 			$err->errordate = date("Y-m-d h:i:s");
 			$err->errormessage = $formatter->getHtmlMessage();
-			$err->user = $this->currentUser->username;
-			// $err->user = 'userR';
+			// $err->user = $this->currentUser->username;
+			$err->user = 'userR';
 			$err->ip = $this->ip;
 			$err->save();
 			echo $formatter->getHtmlMessage();
@@ -1293,11 +1356,11 @@ Class Mmfmodule extends Application{
 					case 'byid':
 						$id = $this->post['id'];
 						if ($id!=""){
-							$Trhistory = Mmfhistory::find('all', array('conditions' => array("mmf28_id=?",$id)));
-							foreach ($Trhistory as &$result) {
+							$Mmf30history = Mmf30history::find('all', array('conditions' => array("mmf30_id=?",$id)));
+							foreach ($Mmf30history as &$result) {
 								$result		= $result->to_array();
 							}
-							echo json_encode($Trhistory, JSON_NUMERIC_CHECK);
+							echo json_encode($Mmf30history, JSON_NUMERIC_CHECK);
 						}
 						break;
 					default:

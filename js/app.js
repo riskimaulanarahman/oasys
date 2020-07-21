@@ -122,6 +122,9 @@ app.config(function ($routeProvider, $controllerProvider) {
 	.when('/mmf', route.resolve("mmf"))
 	.when('/mmfdetail', route.resolve("mmfdetail"))
 	.when('/mmfapproval', route.resolve("mmfapproval"))
+	.when('/mmf30', route.resolve("mmf30"))
+	.when('/mmf30detail', route.resolve("mmf30detail"))
+	.when('/mmf30approval', route.resolve("mmf30approval"))
 	.otherwise({
 		redirectTo: '/'
 	});

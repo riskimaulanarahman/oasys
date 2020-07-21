@@ -599,14 +599,33 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="#">
+                                                <a href="" ng-click="myMMF30()">
                                                     <i class="metismenu-icon"></i>MMF 30
                                                 </a>
                                             </li>
                                             
                                         </ul>
                                     </li>
-									<li class="nav-item"><a href="" ng-click="mmfApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
+                                    <li class="">
+                                        <a href="#" aria-expanded="false">
+                                            <i class="metismenu-icon"></i><i class='fas fa-marker'></i> My Approval
+                                            <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                                        </a>
+                                        <ul class="mm-collapse" style="height: 7.04px;">
+                                            <li>
+                                                <a href="" ng-click="mmfApproval()">
+                                                    <i class="metismenu-icon"></i>MMF 28 Approval
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="metismenu-icon"></i>MMF 30 Approval
+                                                </a>
+                                            </li>
+                                            
+                                        </ul>
+                                    </li>
+									<!-- <li class="nav-item"><a href="" ng-click="mmfApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li> -->
 								</ul>
 							</li>
                             <!--
