@@ -44,7 +44,7 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 					key: "id",
 					loadMode: "raw",
 					load: function() {
-						criteria = {filter:'bydept',dept:$scope.data.department};
+						criteria = {filter:'bydept4',dept:$scope.data.department};
 						return CrudService.FindData('emp',criteria).then(function (response) {
 							if(response.status=="error"){
 								DevExpress.ui.notify(response.message,"error");
