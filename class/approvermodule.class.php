@@ -45,6 +45,8 @@ Class ApproverModule extends Application{
 							if(($query['mode']=='report') || ($query['mode']=='view') || ($query['mode']=='approve')){
 								if($query['type'] == 'buyer') {
 									$Approver = Approver::find('all', array('conditions' => array("module=? AND approvaltype_id = 25 ",$query['module']),'include' => array('employee','approvaltype')));
+								}else if($query['type'] == 'buyer30') {
+									$Approver = Approver::find('all', array('conditions' => array("module=? AND approvaltype_id = 28 ",$query['module']),'include' => array('employee','approvaltype')));
 								} else {
 									$Approver = Approver::find('all', array('conditions' => array("module=? ",$query['module']),'include' => array('employee','approvaltype')));
 								}

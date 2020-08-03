@@ -12,7 +12,8 @@
 		if(response.status=="autherror"){
 			$scope.logout();
 		}else{
-			$scope.data = response;
+            $scope.data = response;
+            console.log($scope.data);
 			if(($scope.mode=='approve')){
 				$scope.data.remarks="";
 			}
@@ -38,7 +39,7 @@
                     key: "employee_id",
                     loadMode: "raw",
                     load: function() {
-                        criteria = {module:'MMF30',type:'buyer',mode:$scope.mode};
+                        criteria = {module:'MMF30',type:'buyer30',mode:$scope.mode};
                         return CrudService.FindData('appr',criteria);
                     },
                 }),
@@ -129,13 +130,22 @@
                                 dataSource:$scope.PRType,  
                                 valueExpr: 'id',
                                 displayExpr: 'prtype',
-                                // onValueChanged: function(e){
-                                //     var vis =(e.value==4)?true:false;
-                                //     $scope.formInstance.itemOption('group2.requiredother', 'visible', vis);
-                                //     $scope.formInstance.itemOption('group2.requiredother', 'visibleIndex', 0);
-                                //     $scope.formInstance.updateData('requiredother',  "");
+                                onValueChanged: function(e){
+                                    var vis =(e.value==3)?true:false;
+                                    $scope.formInstance.itemOption('group2.group4.suppliername', 'visible', vis);
+                                    $scope.formInstance.itemOption('group2.group4.suppliername', 'visibleIndex', 0);
+                                    $scope.formInstance.updateData('suppliername',  "");
+                                    $scope.formInstance.itemOption('group2.group4.supplieraddress', 'visible', vis);
+                                    $scope.formInstance.itemOption('group2.group4.supplieraddress', 'visibleIndex', 0);
+                                    $scope.formInstance.updateData('supplieraddress',  "");
+                                    $scope.formInstance.itemOption('group2.group4.supplieremailfax', 'visible', vis);
+                                    $scope.formInstance.itemOption('group2.group4.supplieremailfax', 'visibleIndex', 0);
+                                    $scope.formInstance.updateData('supplieremailfax',  "");
+                                    $scope.formInstance.itemOption('group2.group4.contractno', 'visible', vis);
+                                    $scope.formInstance.itemOption('group2.group4.contractno', 'visibleIndex', 0);
+                                    $scope.formInstance.updateData('contractno',  "");
                                     
-                                // }
+                                }
                             },
                         },{
                             dataField:'requisitiontype',
@@ -288,7 +298,7 @@
                                         return $dataGrid;
                                     },onValueChanged: function(e){
                                         console.log(e);
-                                        criteria = {status:'chemp',employee_id:e.value,mmf28_id:$scope.Requestid};
+                                        criteria = {status:'chemp',employee_id:e.value,mmf30_id:$scope.Requestid};
                                         CrudService.FindData('mmf',criteria).then(function (response){
                                             $scope.grid2Component.refresh();
                                         })
@@ -377,8 +387,8 @@
                             displayExpr: 'fullname',
                             onValueChanged: function(e){
 								console.log(e);
-								criteria = {status:'addbuyer',employee_id:e.value,mmf28_id:$scope.Requestid};
-								CrudService.FindData('mmf',criteria).then(function (response){
+								criteria = {status:'addbuyer',employee_id:e.value,mmf30_id:$scope.Requestid};
+								CrudService.FindData('mmf30',criteria).then(function (response){
                                     $scope.grid2Component.refresh();
                                     console.log(e.value + ' & ' + $scope.Requestid);
                                     console.log(response);
@@ -424,7 +434,25 @@
                             type: "required",
                             message: "Please select your department head"
                         }]
-                    }
+                    },{
+                        dataField:'reason',
+                        label: {
+                            text:"Reason for requisition/purchase",
+                        },
+                        name:'reason',
+                        disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+                    },{
+                        dataField:'remarksu',
+                        label: {
+                            text:"Remarks",
+                        },
+                        name:'remarksu',
+                        disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                        validationRules: [{
+                            type: "required",
+                            message: "Action is required"
+                        }]                         
+                    },
 
                         ]
                     },
@@ -441,30 +469,63 @@
                                     text:"Supplier Name",
                                 },
                                 name:'suppliername',
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                visible:($scope.data.prtype==3)?true:false
                             },{
                                 dataField:'supplieraddress',
                                 label: {
                                     text:"Supplier Address",
                                 },
                                 name:'supplieraddress',
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                visible:($scope.data.prtype==3)?true:false
                             },{
                                 dataField:'supplieremailfax',
                                 label: {
                                     text:"Email / Fax",
                                 },
                                 name:'supplieremailfax',
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                visible:($scope.data.prtype==3)?true:false
                             },{
                                 dataField:'contractno',
                                 label: {
                                     text:"Contract No**",
                                 },
                                 name:'contractno',
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                visible:($scope.data.prtype==3)?true:false
                             },
                             
+                        ]
+                    },
+                    {	
+                        itemType: "group",
+                        caption: "",
+                        name:" group4",
+                        // colSpan:2,
+                        colCount : 2,
+                        items: [
+                            {label:{text:"Comments"},dataField:'proccomments',colSpan:2,editorType:"dxHtmlEditor",visible: (($scope.data.apprstatuscode==3)) ?true:false,editorOptions: {height: 90,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}},
+                            {label:{text:"Remarks"},dataField:'remarks',colSpan:2,editorType:"dxHtmlEditor",visible: (($scope.data.apprstatuscode==1)) || (($scope.data.apprstatuscode==2)) ?true:false,editorOptions: {height: 90,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}},
+                            {label: {
+                                    text: "Approval Action"
+                                },
+                                dataField:"approvalstatus",
+                                editorType: "dxSelectBox",
+                                visible: ($scope.mode=='approve') ?true:false,
+                                editorOptions: { 
+                                    dataSource:$scope.AppAction,  
+                                    valueExpr: 'id',
+                                    displayExpr: 'appaction',
+                                    searchEnabled: true,
+                                    value: ""
+                                },
+                                validationRules: [{
+                                    type: "required",
+                                    message: "Action is required"
+                                }]
+                            },
                         ]
                     },
                     {
@@ -644,7 +705,7 @@
 		},
 		insert: function(values) {
 			values.approvaldate = $filter("date")(values.approvaldate, "yyyy-MM-dd HH:mm")
-			values.mmf28_id=$scope.Requestid;
+			values.mmf30_id=$scope.Requestid;
             CrudService.Create('mmf30app',values).then(function (response) {
 				if(response.status=="error"){
 					 DevExpress.ui.notify(response.message,"error");
@@ -776,7 +837,7 @@
             {
                 dataField:'currency',
                 caption: "Currency",
-                dataType: "string",
+                dataType: "number",
                 editorOptions: {
                     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }
@@ -797,14 +858,14 @@
                     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }
             },
-            {
-                dataField:'remarks',
-                caption: "Remarks",
-                dataType: "string",
-                editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
-                }
-            },
+            // {
+            //     dataField:'remarks',
+            //     caption: "Remarks",
+            //     dataType: "string",
+            //     editorOptions: {
+            //         disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+            //     }
+            // },
 			// {dataField:'dateofbirth',width:100,caption: "Date of Birth",dataType:"date", format: 'dd/MM/yyyy',editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",max:Date.now(),disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
 			// {dataField:'phonenumber',caption: "Phone Number",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
 			// {dataField:'gender',caption: "Gender",lookup: {dataSource: [{key:"Male",val:"Male"},{key:"Female",val:"Female"}],valueExpr: "key", displayExpr: "val" },dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
@@ -1034,159 +1095,137 @@
 		});
     }
 
-    // $scope.updateDayoff = function(e){
-	// 		//console.log($scope.formInstance.option("formData").approvalstatus);
-	// 		if($scope.formInstance.option("formData").approvalstatus==""){
-	// 			DevExpress.ui.notify({
-	// 				message: "Please select approval action",
-	// 				type: "warning",
-	// 				displayTime: 5000,
-	// 				height: 80,
-	// 				position: {
-	// 				   my: 'top center', 
-	// 				   at: 'center center', 
-	// 				   of: window, 
-	// 				   offset: '0 0' 
-	// 			   }
-	// 			});
-	// 		}else if($scope.formInstance.option("formData").approvalstatus==3){
-	// 			var data = $scope.formInstance.option("formData");
-	// 			var date = new Date();
-    //             var d= $filter("date")(date, "yyyy-MM-dd HH:mm");
-    //             data.materialreturneddate = $filter("date")(data.materialreturneddate, "yyyy-MM-dd HH:mm");
-	// 			data.approvaldate = d;
-	// 			data.mode="approve";
-	// 			delete data.createddate;
-	// 			delete data.employee_id;
-	// 			delete data.wonumber;
-	// 			delete data.requeststatus;
-	// 			delete data.telpno;
-	// 			delete data.chargecode;
-	// 			delete data.materialdispatch;
-	// 			delete data.requireddate;
-	// 			delete data.materialcode;
-	// 			delete data.materialdescr;
-	// 			delete data.symptomps;
-	// 			delete data.requiredtype;
-	// 			delete data.requiredother;
-	// 			delete data.instruction;
-	// 			delete data.ishazardouschemical;
-	// 			delete data.hazchemicalname;
-	// 			delete data.isdecontaminated;
-	// 			delete data.isnotcontaminated;
-	// 			delete data.notcontaminatedreason;
-	// 			delete data.isnonhazardous;
-	// 			delete data.nonhazchemicalname;
-	// 			delete data.isnonchemical;
-	// 			// delete data.materialdispatchno;
-	// 			// delete data.isrepair;
-	// 			// delete data.isscrap;
-	// 			// delete data.estimatecost;
-	// 			// delete data.pono;
-	// 			// delete data.materialreturneddate;
-	// 			// delete data.supplierdodnno;
-	// 			delete data.depthead;
-	// 			// delete data.buyer;
-	// 			delete data.apprstatuscode;
-	// 			CrudService.Update('mmfapp',data.id,data).then(function (response) {
-	// 				if(response.status=="error"){
-	// 					DevExpress.ui.notify(response.message,"error");
-	// 				}else{
-	// 					DevExpress.ui.notify({
-	// 						message: "Data has been Updated",
-	// 						type: "success",
-	// 						displayTime: 2000,
-	// 						height: 80,
-	// 						position: {
-	// 						   my: 'top center', 
-	// 						   at: 'center center', 
-	// 						   of: window, 
-	// 						   offset: '0 0' 
-	// 					   }
-	// 					});
-	// 					$location.path( "/mmfapproval" );
-	// 				}
+    $scope.updateDayoff = function(e){
+			//console.log($scope.formInstance.option("formData").approvalstatus);
+			if($scope.formInstance.option("formData").approvalstatus==""){
+				DevExpress.ui.notify({
+					message: "Please select approval action",
+					type: "warning",
+					displayTime: 5000,
+					height: 80,
+					position: {
+					   my: 'top center', 
+					   at: 'center center', 
+					   of: window, 
+					   offset: '0 0' 
+				   }
+				});
+			}else if($scope.formInstance.option("formData").approvalstatus==3){
+				var data = $scope.formInstance.option("formData");
+				var date = new Date();
+                var d= $filter("date")(date, "yyyy-MM-dd HH:mm");
+                // data.materialreturneddate = $filter("date")(data.materialreturneddate, "yyyy-MM-dd HH:mm");
+				data.approvaldate = d;
+				data.mode="approve";
+				delete data.createddate;
+				delete data.employee_id;
+				delete data.requeststatus;
+				delete data.prtype;
+				delete data.requisitiontype;
+				delete data.requisitionother;
+				delete data.prno;
+				delete data.deliverto;
+				delete data.costcode;
+				delete data.costelement;
+				delete data.suppliername;
+				delete data.supplieraddress;
+				delete data.supplieremailfax;
+                delete data.contractno;
+                delete data.reason;
+                delete data.remarksu;
+				
+				delete data.depthead;
+				// delete data.buyer;
+				delete data.apprstatuscode;
+				CrudService.Update('mmf30app',data.id,data).then(function (response) {
+					if(response.status=="error"){
+						DevExpress.ui.notify(response.message,"error");
+					}else{
+						DevExpress.ui.notify({
+							message: "Data has been Updated",
+							type: "success",
+							displayTime: 2000,
+							height: 80, 
+							position: {
+							   my: 'top center', 
+							   at: 'center center', 
+							   of: window, 
+							   offset: '0 0' 
+						   }
+						});
+						$location.path( "/mmf30approval" );
+					}
 					
-	// 			});
-	// 		}else{
-	// 			criteria = {status:'approver',mmf28_id:$scope.Requestid};
-	// 			CrudService.FindData('mmfapp',criteria).then(function (response){
-	// 				if(response.jml>0){
-	// 					var data = $scope.formInstance.option("formData");
-	// 					var date = new Date();
-    //                     var d= $filter("date")(date, "yyyy-MM-dd HH:mm");
-    //                     data.materialreturneddate = $filter("date")(data.materialreturneddate, "yyyy-MM-dd HH:mm");
-	// 					data.approvaldate = d;
-	// 					data.mode="approve";
-	// 					delete data.createddate;
-    //                     delete data.employee_id;
-    //                     delete data.wonumber;
-    //                     delete data.requeststatus;
-    //                     delete data.telpno;
-    //                     delete data.chargecode;
-    //                     delete data.materialdispatch;
-    //                     delete data.requireddate;
-    //                     delete data.materialcode;
-    //                     delete data.materialdescr;
-    //                     delete data.symptomps;
-    //                     delete data.requiredtype;
-    //                     delete data.requiredother;
-    //                     delete data.instruction;
-    //                     delete data.ishazardouschemical;
-    //                     delete data.hazchemicalname;
-    //                     delete data.isdecontaminated;
-    //                     delete data.isnotcontaminated;
-    //                     delete data.notcontaminatedreason;
-    //                     delete data.isnonhazardous;
-    //                     delete data.nonhazchemicalname;
-    //                     delete data.isnonchemical;
-    //                     // delete data.materialdispatchno;
-    //                     // delete data.isrepair;
-    //                     // delete data.isscrap;
-    //                     // delete data.estimatecost;
-    //                     // delete data.pono;
-    //                     // delete data.materialreturneddate;
-    //                     // delete data.supplierdodnno;
-    //                     delete data.depthead;
-    //                     // delete data.buyer;
-	// 			        delete data.apprstatuscode;
-	// 					CrudService.Update('mmfapp',data.id,data).then(function (response) {
-	// 						if(response.status=="error"){
-	// 							DevExpress.ui.notify(response.message,"error");
-	// 						}else{
-	// 							DevExpress.ui.notify({
-	// 								message: "Data has been Updated",
-	// 								type: "success",
-	// 								displayTime: 2000,
-	// 								height: 80,
-	// 								position: {
-	// 								   my: 'top center', 
-	// 								   at: 'center center', 
-	// 								   of: window, 
-	// 								   offset: '0 0' 
-	// 							   }
-	// 							});
-	// 							$location.path( "/mmfapproval" );
-	// 						}
+				});
+			}else{
+				criteria = {status:'approver',mmf30_id:$scope.Requestid}; 
+				CrudService.FindData('mmf30app',criteria).then(function (response){
+					if(response.jml>0){
+						var data = $scope.formInstance.option("formData");
+						var date = new Date();
+                        var d= $filter("date")(date, "yyyy-MM-dd HH:mm");
+                        // data.materialreturneddate = $filter("date")(data.materialreturneddate, "yyyy-MM-dd HH:mm");
+						data.approvaldate = d;
+						data.mode="approve";
+						delete data.createddate;
+                        delete data.employee_id;
+                        delete data.requeststatus;
+                        delete data.prtype;
+                        delete data.requisitiontype;
+                        delete data.requisitionother;
+                        delete data.prno;
+                        delete data.deliverto;
+                        delete data.costcode;
+                        delete data.costelement;
+                        delete data.suppliername;
+                        delete data.supplieraddress;
+                        delete data.supplieremailfax;
+                        delete data.contractno;
+                        delete data.reason;
+                        delete data.remarksu;
+                        // delete data.ReceivedOn;
+                        // delete data.proccomments;
+                        
+                        delete data.depthead;
+                        // delete data.buyer;
+                        delete data.apprstatuscode;
+						CrudService.Update('mmf30app',data.id,data).then(function (response) {
+							if(response.status=="error"){
+								DevExpress.ui.notify(response.message,"error");
+							}else{
+								DevExpress.ui.notify({
+									message: "Data has been Updated",
+									type: "success",
+									displayTime: 2000,
+									height: 80,
+									position: {
+									   my: 'top center', 
+									   at: 'center center', 
+									   of: window, 
+									   offset: '0 0' 
+								   }
+								});
+								$location.path( "/mmf30approval" );
+							}
 							
-	// 					});
-	// 				}else{
-	// 					DevExpress.ui.notify({
-	// 						message: "Please add person to do next approval/verification in Approver List tab",
-	// 						type: "warning",
-	// 						displayTime: 5000,
-	// 						height: 80,
-	// 						position: {
-	// 						   my: 'top center', 
-	// 						   at: 'center center', 
-	// 						   of: window, 
-	// 						   offset: '0 0' 
-	// 					   }
-	// 					});
-	// 				}
-	// 			});
-	// 		}
-	// }
+						});
+					}else{
+						DevExpress.ui.notify({
+							message: "Please add person to do next approval/verification in Approver List tab",
+							type: "warning",
+							displayTime: 5000,
+							height: 80,
+							position: {
+							   my: 'top center', 
+							   at: 'center center', 
+							   of: window, 
+							   offset: '0 0' 
+						   }
+						});
+					}
+				});
+			}
+	}
     
     $scope.onFormSubmit = function(e) {
 		e.preventDefault();
@@ -1209,21 +1248,41 @@
 				criteria = {status:'approver',mmf30_id:$scope.Requestid};
 				CrudService.FindData('mmf30app',criteria).then(function (response){
 					if(response.jml>0){
-                        var data = $scope.formInstance.option("formData");
-                        data.requeststatus = 1;
-                        delete data.fullname;
-                        delete data.department;
-                        delete data.approvalstatus;
-                        delete data.apprstatuscode;
-                        data.jobfinishdate= $filter("date")(data.jobfinishdate, "yyyy-MM-dd HH:mm");
-                        CrudService.Update('mmf30',data.id,data).then(function (response) {
-                            if(response.status=="error"){
-                                    DevExpress.ui.notify(response.message,"error");
-                            }else{
+                        criteria = {status:'approver',mmf30_id:$scope.Requestid};
+						CrudService.FindData('mmf30detail',criteria).then(function (response){
+							if(response.jml>0){
+                                var data = $scope.formInstance.option("formData");
+                                data.requeststatus = 1;
+                                delete data.fullname;
+                                delete data.department;
+                                delete data.approvalstatus;
+                                delete data.apprstatuscode;
+                                data.jobfinishdate= $filter("date")(data.jobfinishdate, "yyyy-MM-dd HH:mm");
+                                CrudService.Update('mmf30',data.id,data).then(function (response) {
+                                    if(response.status=="error"){
+                                            DevExpress.ui.notify(response.message,"error");
+                                    }else{
+                                        DevExpress.ui.notify({
+                                            message: "Data has been Updated",
+                                            type: "success",
+                                            displayTime: 2000,
+                                            height: 80,
+                                            position: {
+                                                my: 'top center', 
+                                                at: 'center center', 
+                                                of: window, 
+                                                offset: '0 0' 
+                                            }
+                                        });
+                                        $location.path( "/mmf30" );
+                                    }
+                                    
+                                });
+                             }else{
                                 DevExpress.ui.notify({
-                                    message: "Data has been Updated",
-                                    type: "success",
-                                    displayTime: 2000,
+                                    message: "Please add detail (mohon lengkapi detail)",
+                                    type: "warning",
+                                    displayTime: 5000,
                                     height: 80,
                                     position: {
                                         my: 'top center', 
@@ -1232,10 +1291,8 @@
                                         offset: '0 0' 
                                     }
                                 });
-                                $location.path( "/mmf30" );
                             }
-                            
-                        });
+                        })
 					}else{
 						DevExpress.ui.notify({
 							message: "Please add person to do approval/verification in Approver List tab",

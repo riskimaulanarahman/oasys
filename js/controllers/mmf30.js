@@ -114,7 +114,7 @@
                             var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Saved as Draft</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
                             return rDesc[e.value];
                         }},
-                    {dataField:'remarks',encodeHtml: false },
+                    {dataField:'remarksu', caption:"Remarks",encodeHtml: false },
                     {
                                 dataField: "approveddoc",
                                 caption:"Approval Doc",

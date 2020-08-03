@@ -529,7 +529,7 @@ Class Mmfmodule extends Application{
 										$required = 'Servicing';
 									}else if($Tr->requiredtype == 3) {
 										$required = 'Calibration';
-									}else if($Tr->requiredtype == 2) {
+									}else if($Tr->requiredtype == 4) {
 										$required = 'Others';
 									}else {
 										$required = '';
@@ -911,7 +911,7 @@ Class Mmfmodule extends Application{
 								$required = 'Servicing';
 							}else if($Tr->requiredtype == 3) {
 								$required = 'Calibration';
-							}else if($Tr->requiredtype == 2) {
+							}else if($Tr->requiredtype == 4) {
 								$required = 'Others';
 							}else {
 								$required = '';
@@ -983,7 +983,7 @@ Class Mmfmodule extends Application{
 						break;
 					default:
 						$Trapproval = Mmfapproval::all();
-						foreach ($Trapproval as &$result) {
+						foreach ($Trapproval as $result) {
 							$result = $result->to_array();
 						}
 						echo json_encode($Trapproval, JSON_NUMERIC_CHECK);

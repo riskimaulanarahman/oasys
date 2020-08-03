@@ -618,7 +618,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="#">
+                                                <a href="" ng-click="mmf30Approval()">
                                                     <i class="metismenu-icon"></i>MMF 30 Approval
                                                 </a>
                                             </li>
