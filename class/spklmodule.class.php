@@ -1205,7 +1205,7 @@ Class SpklModule extends Application{
 										if(count($ApproverBUHead)>0){
 											$Spklapproval = new Spklapproval();
 											$Spklapproval->spkl_id = $Spkl->id;
-											$Spklapproval->approver_id = $AppApproverBUHeadrover->id;
+											$Spklapproval->approver_id = $ApproverBUHead->id;
 											$Spklapproval->save();
 											$logger = new Datalogger("Spklapproval","add","Add initial BUHead Approval",json_encode($Spklapproval->to_array()));
 											$logger->SaveData();
