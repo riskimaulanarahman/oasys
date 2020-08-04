@@ -55,7 +55,7 @@ var app=angular.module('kduApp', ['dx','ui.router','ngMessages', 'ngStorage','oc
   var RouteProvider = function () {
 	  var scriptPath = "js/controllers/";
 	  var templatePath = "template/";
-	  var v= '3.04'
+	  var v= '3.50'
 	  this.resolve = function (name) {
 		  var route = {};
 		  route.templateUrl = templatePath + name + ".html?v="+v;

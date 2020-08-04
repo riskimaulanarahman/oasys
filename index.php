@@ -576,6 +576,15 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 									<li class="nav-item"><a href="" ng-click="dayoffApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
 								</ul>
 							</li>
+							<li ng-class="{'mm-active': (isActive('/spkl') || isActive('/spklapproval') || isActive('/spkltms') || isActive('/spkltmsapproval'))}">
+								<a href="#"><i class='metismenu-icon fas fa-marker'></i>SPKL<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
+								<ul  ng-class="{'mm-show': (isActive('/spkl') || isActive('/spklapproval') || isActive('/spkltms') || isActive('/spkltmsapproval'))}">
+									<li class="nav-item"><a href="" ng-click="mySPKL()" class="nav-link" ><i class='fa fa-calendar-alt'></i> OT Instruction Request</a></li>
+									<li class="nav-item"><a href="" ng-click="SPKLApproval()" class="nav-link" ><i class='fas fa-marker'></i> OT Instruction Approval</a></li>
+									<li class="nav-item"><a href="" ng-click="myTimesheet()" class="nav-link" ><i class='fa fa-calendar-alt'></i> OT Timesheet Request</a></li>
+									<li class="nav-item"><a href="" ng-click="SPKLTMSApproval()" class="nav-link" ><i class='fas fa-marker'></i> OT Timesheet Approval</a></li>
+								</ul>
+							</li>
 							<li ng-class="{'mm-active': (isActive('/tr') || isActive('/trapproval'))}">
 								<a href="#" ><i class='metismenu-icon fas fa-marker'></i>Travel Request<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul ng-class="{'mm-show': (isActive('/tr') || isActive('/trapproval'))}">
@@ -609,15 +618,6 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 								</ul>
 							</li>
                             -->
-							<li ng-class="{'mm-active': (isActive('/spkl') || isActive('/spklapproval') || isActive('/spktms') || isActive('/spkltmsapproval'))}">
-								<a href="#"><i class='metismenu-icon fas fa-marker'></i>SPKL<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
-								<ul  ng-class="{'mm-show': (isActive('/spkl') || isActive('/spklapproval') || isActive('/spktms') || isActive('/spkltmsapproval'))}">
-									<li class="nav-item"><a href="" ng-click="mySPKL()" class="nav-link" ><i class='fa fa-calendar-alt'></i> OT Instruction Request</a></li>
-									<li class="nav-item"><a href="" ng-click="SPKLApproval()" class="nav-link" ><i class='fas fa-marker'></i> OT Instruction Approval</a></li>
-									<li class="nav-item"><a href="" ng-click="myTimesheet()" class="nav-link" ><i class='fa fa-calendar-alt'></i> OT Timesheet Request</a></li>
-									<li class="nav-item"><a href="" ng-click="SPKLTMSApproval()" class="nav-link" ><i class='fas fa-marker'></i> OT Timesheet Approval</a></li>
-								</ul>
-							</li>
 							<li ng-class="{'mm-active': (isActive('/rfc') || isActive('/rfcapproval'))}" >
 								<a href="#"  ><i class='metismenu-icon fas fa-marker'></i>RFC<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul ng-class="{'mm-show': (isActive('/rfc') || isActive('/rfcapproval'))}">
@@ -703,15 +703,15 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 	<script language="JavaScript" src="js/lib/dx.all.js" type="text/javascript"></script>
 	<script language="JavaScript" src="js/lib/FileSaver.min.js" type="text/javascript"></script>
 
-	<script language="JavaScript" src="js/app.js?v=3.04" type="text/javascript"></script>
-	<script language="JavaScript" src="js/directive.js?v=3.04" type="text/javascript"></script>
-	<script language="JavaScript" src="js/services.js?v=3.04" type="text/javascript"></script>
-	<script language="JavaScript" src="js/filter.js?v=3.04" type="text/javascript"></script>
-	<script language="JavaScript" src="js/factory.js?v=3.04" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/maincontroller.js?v=3.04" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/login.js?v=3.04" type="text/javascript"></script>
+	<script language="JavaScript" src="js/app.js?v=3.50" type="text/javascript"></script>
+	<script language="JavaScript" src="js/directive.js?v=3.50" type="text/javascript"></script>
+	<script language="JavaScript" src="js/services.js?v=3.50" type="text/javascript"></script>
+	<script language="JavaScript" src="js/filter.js?v=3.50" type="text/javascript"></script>
+	<script language="JavaScript" src="js/factory.js?v=3.50" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/maincontroller.js?v=3.50" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/login.js?v=3.50" type="text/javascript"></script>
 
-	<script language="JavaScript" src="js/script.js?v=3.04" type="text/javascript"></script>
+	<script language="JavaScript" src="js/script.js?v=3.50" type="text/javascript"></script>
 	<script type="text/javascript" src="assets/scripts/main.js"></script>
 </body>
 </html>

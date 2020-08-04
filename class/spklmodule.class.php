@@ -1532,7 +1532,15 @@ Class SpklModule extends Application{
 						if(isset($query['status'])){
 							switch ($query['status']){
 								default:
-									
+									$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+									$Spkl = Spkl::find('all', array('conditions' => array("employee_id=? and RequestStatus='3' and TMSReqStatus<3",$Employee->id),'include' => array('employee')));
+									foreach ($Spkl as &$result) {
+										$fullname	= $result->employee->fullname;		
+										$result		= $result->to_array();
+										$result['fullname']=$fullname;
+									}
+									$data=array("jml"=>count($Spkl));
+									break;
 									break;
 							}
 						} else{
