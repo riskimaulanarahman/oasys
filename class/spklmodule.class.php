@@ -142,7 +142,9 @@ Class SpklModule extends Application{
 					<td width="50"></td>
 					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.(($deptheadname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
 					<td width="50"></td>
-					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.(($hrname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td></tr>';
+					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.(($hrname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
+					<td width="50"></td>
+					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.(($buheadname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td></tr>';
 		$pdfContent .= '<tr><td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$Spkl->employee->fullname.'<br><small>'.date("d/m/Y",strtotime($Spkl->createddate)).'</small></td>
 					<td width="50"></td>
 					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$deptheadname.'<br><small>'.(($deptheadname=="")?"":date("d/m/Y",strtotime($datedepthead))).'</small></td>
@@ -599,21 +601,6 @@ Class SpklModule extends Application{
 											}
 											$complete =true;
 										}
-										// else if(($Spkl->ratetype=='SK') && ($Spklapproval->approver->approvaltype_id=='11' ) ){
-											// $Spkl->requeststatus = 3;
-											// $emto=$email;$emname=$Spkl->employee->fullname;
-											// $this->mail->Subject = "Online Approval System -> Approval Completed";
-											// $red = 'Your SPKL/Overtime request has been approved';
-											// $Spklapproval = Spklapproval::find('all', array('joins'=>$join,'conditions' => array("spkl_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
-											// foreach ($Spklapproval as $data) {
-												// if($data->approvalstatus==0){
-													// $logger = new Datalogger("Spklapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
-													// $logger->SaveData();
-													// $data->delete();
-												// }
-											// }
-											// $complete =true;
-										// }
 										else{
 											$Spkl->requeststatus = 1;
 											$emto=$adb->email;$emname=$adb->fullname;
@@ -637,7 +624,7 @@ Class SpklModule extends Application{
 								$Spklhistory->save();
 								echo "email to :".$emto." ->".$emname;
 								$this->mail->addAddress($emto, $emname);
-								$spkltype=array("New","Addendum","Project Capex");
+								
 								$SpklJ = Spkl::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
 								$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$emname.',</span></p>
 													<p class=MsoNormal><span style="color:#1F497D">'.$red.'</span></p>
@@ -887,6 +874,7 @@ Class SpklModule extends Application{
 										break;
 									case '2':
 										if ($Spkltmsapproval->approver->isfinal == 1){
+										//if (($Spkltmsapproval->approver->isfinal == 1) || ($Spkltmsapproval->approver->approvaltype_id==21)){
 											$Spkl->tmsreqstatus = 3;
 											$emto=$email;$emname=$Spkl->employee->fullname;
 											$this->mail->Subject = "Online Approval System -> Approval Completed";
