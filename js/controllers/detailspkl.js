@@ -407,14 +407,15 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 							valueExpr: "id",
 							displayExpr: "fullname" 
 						},
+						validationRules: [{ type: "required" }],
 						editCellTemplate: "dropDownBoxEditorTemplate" 
 				},
 				//{dataField:'fullname',width:200,dataType: "string",editorOptions: {disabled:true},formItem: { visible: false},},	
 				{dataField:'sapid',width:90,dataType: "string",editorOptions: {disabled:true},formItem: { visible: false}},	
 				{dataField:'position',caption: "Position",width:150,dataType: "string",editorOptions: {disabled:true},formItem: { visible: false}},
-				{dataField:'estimatenormalhours',caption: "Normal Hours Estimate (hrs)",width:80,dataType: "number",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
-				{dataField:'estimateovertimehours',caption: "Overtime Hours Estimate (hrs)",width:80,dataType: "number",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
-				{dataField:'target',caption: "Target Work",encodeHtml: false,width:250,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+				{dataField:'estimatenormalhours',validationRules: [{ type: "required" }],caption: "Normal Hours Estimate (hrs)",width:80,dataType: "number",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+				{dataField:'estimateovertimehours',validationRules: [{ type: "required" }],caption: "Overtime Hours Estimate (hrs)",width:80,dataType: "number",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+				{dataField:'target',validationRules: [{ type: "required" }],caption: "Target Work",encodeHtml: false,width:250,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
 				
 			],editing: {
 				useIcons:true,

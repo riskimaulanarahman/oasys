@@ -75,49 +75,55 @@ Class SpklModule extends Application{
 	function generatePDF($doid){
 		$Spkl = Spkl::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
 		$Spkldetail=Spkldetail::find('all',array('conditions'=>array("spkl_id=?",$doid),'include'=>array('spkl'=>array('employee'=>array('company','department','designation','grade','location')))));
-
-		$pdfContent ="<p><h5 style='width:100%;text-align:center'><b><u>SURAT PERINTAH KERJA LEMBUR (SPKL)</u></b>";
-		$pdfContent .="<br><i>Overtime Instruction & Approval Form</i></h5></p>";
+		$pdfContent ="<style>  td { padding:3px; font-size:8pt;} th { padding:3px; font-size:8pt;font-weight:normal} small {font-size:7pt;}</style>
+					<table border=0 cellpadding=2 cellspacing=0 style='width:100%; margin:2px;margin-left:10px;'><tr><td style='border:0.5px solid #212; width:700px;margin-left:20px;padding-left:15px;'><h5 style='width:100%;text-align:center'><b><u>SURAT PERINTAH KERJA LEMBUR (SPKL)</u></b>";
+		$pdfContent .="<br><i>Overtime Instruction & Approval Form</i></h5>";
 		$hari = array ( 'Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu');						
-		$pdfContent .= "<br><br>Dengan ini diperintahkan agar melaksanakan kerja lembur kepada/ <i>Herewith instructed to work overtime to</i>;
-						<table border=0 cellspacing=0 cellpadding=3>
+		$pdfContent .= "Dengan ini diperintahkan agar melaksanakan kerja lembur kepada/ <i>Herewith instructed to work overtime to</i>;
+						<table border=0 cellspacing=0 cellpadding=1>
 						<tr><td>Business Unit </td><td>:</td><td>".$Spkl->employee->companycode."</td><td width='50'></td><td>Hari</td><td>:</td><td>".$hari[(date("N",strtotime($Spkl->datework))-1)]."</td></tr>
 						<tr><td>Section </td><td>:</td><td></td><td width='50'></td><td>Tanggal</td><td>:</td><td>".date("d/m/Y",strtotime($Spkl->datework))."</td></tr>
 						<tr><td>Department  </td><td>:</td><td>".$Spkl->employee->department->departmentname."</td><td width='50'></td><td></td><td></td><td></td></tr>
-						</table><br>";
-		$pdfContent .='	<table border=1 cellspacing=0 cellpadding=1 width=650><tr>
-						<th rowspan="2" align="center"><p class=MsoNormal>No</p></th>
-						<th rowspan="2" align="center"><p class=MsoNormal>Nama</p></th>
-						<th rowspan="2" align="center"><p class=MsoNormal>No. SAP</p></th>
-						<th rowspan="2" align="center"><p class=MsoNormal>Posisi</p></th>
-						<th colspan="2" align="center"><p class=MsoNormal>Perkiraan Lama Bekerja</p></th>
+						</table>";
+		$pdfContent .='	<table border=1 cellspacing=0 cellpadding=2 width=650>
+						<tr  style="height:12pt">
+						<th rowspan="2" align="center">No</th>
+						<th rowspan="2" align="center">Nama</th>
+						<th rowspan="2" align="center">No. SAP</th>
+						<th rowspan="2" align="center">Posisi</th>
+						<th colspan="2" align="center">Perkiraan Lama Bekerja</th>
 						
-						<th rowspan="2" align="center"><p class=MsoNormal>Pekerjaan yang harus diselesaikan</p></th>
+						<th rowspan="2" align="center">Pekerjaan yang harus diselesaikan</th>
+						<th rowspan="2" align="center">Remarks</th>
 						</tr>
-						<tr><th align="center"><p class=MsoNormal>Jam Normal <br><small>( Jam )</small></p></th>
-						<th align="center"><p class=MsoNormal>Jam Lembur <br><small>( Jam )</small></p></th></tr>
+						<tr><th align="center">Jam <br>Normal <br><small>( Jam )</small></th>
+						<th align="center">Jam <br>Lembur <br><small>( Jam )</small></th></tr>
 						';
 		$no=1;
-		foreach ($Spkldetail as $data){
-			if ($data->isapproved){
-				$pdfContent .='<tr style="height:19pt">
-							<td><p class=MsoNormal> '.$no.'</p></td>
-							<td><p class=MsoNormal> '.$data->employee->fullname.'</p></td>
-							<td><p class=MsoNormal> '.$data->employee->sapid.'</p></td>
-							<td><p class=MsoNormal> '.$data->employee->designation->designationname.'</p></td>
-							<td><p class=MsoNormal> '.$data->estimatenormalhours.'</p></td>
-							<td><p class=MsoNormal> '.$data->estimateovertimehours.'</p></td>
-							<td><p class=MsoNormal> '.wordwrap($data->target, 60, "<br>").'</p></td>
-				</tr>';
-				$no++;
-			}
+		foreach ($Spkldetail as $data){			
+			$pdfContent .='<tr style="height:12pt">
+						<td> '.$no.'</td>
+						<td> '.$data->employee->fullname.'</td>
+						<td> '.$data->employee->sapid.'</td>
+						<td> '.$data->employee->designation->designationname.'</td>
+						<td> '.$data->estimatenormalhours.'</td>
+						<td> '.$data->estimateovertimehours.'</td>
+						<td> '.wordwrap($data->target, 60, "<br>").'</td>';
+					if ($data->isapproved){
+						$pdfContent .='<td> </td>';
+					}	else{
+						$Reject = Employee::find('first', array('conditions' => array("id=?", $data->rejectspklby)));
+						$pdfContent .='<td>'.wordwrap(' Rejected by '.$Reject->fullname,20,"<br>").'</td>';
+					}
+			$pdfContent .='</tr>';
+			$no++;		
 		}
-		$pdfContent .= "</table><br>
-						<b>Catatan : </b>
+		$pdfContent .= "</table>
+						<small><b>Catatan : </b>
 						<br>- SPKL wajib dikeluarkan oleh Askep/level lebih tinggi sebelum pekerjaan lembur dijalankan.
 						<br>- Satu formulir SPKL mewakili rencana kerja lembur di 1 (satu) hari/tanggal. 
-						<br>- SPKL wajib dilampirkan pada daftar hadir (timesheet) dan diserahkan kepada departemen SDM dalam waktu 1X24 jam, <br>atau pada hari kerja berikutnya.";
-		
+						<br>- SPKL wajib dilampirkan pada daftar hadir (timesheet) dan diserahkan kepada departemen SDM dalam waktu 1X24 jam,atau pada hari kerja berikutnya.</small>";
+				
 		$joinx   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";					
 		$Spklapproval = Spklapproval::find('all',array('joins'=>$joinx,'conditions' => array("spkl_id=?",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
 		$pdfContent .= "<br><br><table border=0 cellspacing=4 cellpadding=3>
@@ -152,7 +158,7 @@ Class SpklModule extends Application{
 					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$hrname.'<br><small>'.(($hrname=="")?"":date("d/m/Y",strtotime($hrdate))).'</small></td>
 					<td width="50"></td>
 					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$buheadname.'<br><small>'.(($buheadname=="")?"":date("d/m/Y",strtotime($buheaddate))).'</small></td></tr>';
-		$pdfContent .= "</table>";
+		$pdfContent .= "</table></td></tr></table>";
 		
 		try {
 			$html2pdf = new Html2Pdf('P', 'A4', 'fr');
@@ -203,24 +209,29 @@ Class SpklModule extends Application{
 						<th colspan="2" align="center">Perkiraan Lama Bekerja</th>
 						
 						<th rowspan="2" align="center">Pekerjaan yang harus diselesaikan</th>
+						<th rowspan="2" align="center">Remarks</th>
 						</tr>
 						<tr><th align="center">Jam <br>Normal <br><small>( Jam )</small></th>
 						<th align="center">Jam <br>Lembur <br><small>( Jam )</small></th></tr>
 						';
 		$no=1;
-		foreach ($Spkldetail as $data){
-			if ($data->isapproved){
-				$pdfContent .='<tr style="height:12pt">
-							<td> '.$no.'</td>
-							<td> '.$data->employee->fullname.'</td>
-							<td> '.$data->employee->sapid.'</td>
-							<td> '.$data->employee->designation->designationname.'</td>
-							<td> '.$data->estimatenormalhours.'</td>
-							<td> '.$data->estimateovertimehours.'</td>
-							<td> '.wordwrap($data->target, 60, "<br>").'</td>
-				</tr>';
-				$no++;
-			}
+		foreach ($Spkldetail as $data){			
+			$pdfContent .='<tr style="height:12pt">
+						<td> '.$no.'</td>
+						<td> '.$data->employee->fullname.'</td>
+						<td> '.$data->employee->sapid.'</td>
+						<td> '.$data->employee->designation->designationname.'</td>
+						<td> '.$data->estimatenormalhours.'</td>
+						<td> '.$data->estimateovertimehours.'</td>
+						<td> '.wordwrap($data->target, 60, "<br>").'</td>';
+					if ($data->isapproved){
+						$pdfContent .='<td> </td>';
+					}	else{
+						$Reject = Employee::find('first', array('conditions' => array("id=?", $data->rejectspklby)));
+						$pdfContent .='<td>'.wordwrap(' Rejected by '.$Reject->fullname,20,"<br>").'</td>';
+					}
+			$pdfContent .='</tr>';
+			$no++;		
 		}
 		$pdfContent .= "</table>
 						<small><b>Catatan : </b>
@@ -333,7 +344,7 @@ Class SpklModule extends Application{
 		$tmsContent .= "</table></td></tr></table>";
 		
 		$pdfContent .=$tmsContent;
-		$pdfContent .=$tmsContent;
+		//$pdfContent .=$tmsContent;
 		try {
 			$html2pdf = new Html2Pdf('P', 'A4', 'fr');
 			$html2pdf->writeHTML($pdfContent);
@@ -565,6 +576,34 @@ Class SpklModule extends Application{
 								$username = $nSpklapproval->approver->employee->loginname;
 								$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
 								$Spkldetail=Spkldetail::find('all',array('conditions'=>array("spkl_id=?",$doid),'include'=>array('spkl'=>array('employee'=>array('company','department','designation','grade','location')))));
+								if ($Spkl->datework !== null){
+									foreach ($Spkldetail as $row){
+										if ($row->isapproved){
+											$time = new DateTime($Spkl->datework);
+											$time->add(new DateInterval('PT8H'));
+											$start = $time->format('Y-m-d H:i');
+											$row->actualstartwork = $start;
+											$time = new DateTime($start);
+											$time->add(new DateInterval('PT' . ($row->estimatenormalhours + $row->estimateovertimehours+1). 'H'));
+											$end = $time->format('Y-m-d H:i');
+											$row->actualendwork = $end;
+											
+											$row->actualtotalhours = $row->estimatenormalhours + $row->estimateovertimehours;
+											$row->actualnormalhours = $row->estimatenormalhours;
+											$row->actualovertimehours = $row->estimateovertimehours;
+											
+										}else {
+											$row->actualstartwork = null;
+											$row->actualendwork= null;
+											$row->actualtotalhours = 0;
+											$row->actualnormalhours = 0;
+											$row->actualovertimehours = 0;
+											$Reject = Employee::find('first', array('conditions' => array("id=?", $row->rejectspklby)));
+											$row->descriptionofwork = "SPKL Rejected by ".$Reject->fullname;
+										}
+										$row->save();	
+									}
+								}
 								$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Spkl->employee->loginname)));
 								$email=$usr->email;
 								
@@ -1013,7 +1052,7 @@ Class SpklModule extends Application{
 						if ($id!=""){
 							$joinx="left join tbl_employee on tbl_spkldetail.employee_id=tbl_employee.id left join tbl_designation on tbl_employee.designation_id=tbl_designation.id";
 							$sel="tbl_spkldetail.*,tbl_employee.fullname,tbl_employee.sapid,tbl_designation.designationname as position";
-							$Spkldetail = Spkldetail::find('all', array("joins"=>$joinx,"select"=>$sel,'conditions' => array("spkl_id=? and (isapproved is null or isapproved = '1')",$id)));
+							$Spkldetail = Spkldetail::find('all', array("joins"=>$joinx,"select"=>$sel,'conditions' => array("spkl_id=?",$id)));
 							foreach ($Spkldetail as &$result) {
 								$appText = ($result->isapproved==null)?"":(($result->isapproved)?"Yes":"No");
 								$usedText = ($result->isotapproved==null)?"":(($result->isotapproved)?"Yes":"No");
@@ -1091,17 +1130,36 @@ Class SpklModule extends Application{
 									$Spkldetail->actualovertimehours = ($hours>8)?round($hours,1) - 8 :0;
 								}
 							}
+							if($Spkldetail->isotapproved==false){
+								$Spkldetail->actualtotalhours=0;
+								$Spkldetail->actualnormalhours=0;
+								$Spkldetail->actualovertimehours =0;
+							}
+						}
+						if (isset($data['actualovertimehours']) && (($Spkldetail->actualnormalhours+$data['actualovertimehours'])>$Spkldetail->actualtotalhours)){
+							$resp = array('status'=>'error','message'=>'Total Overtime hours calculation is not valid, please recheck');
+							echo json_encode($resp);
+						}else{
+							if (isset($data['isapproved'])  ){
+								if ($data['isapproved']=='No'){
+									$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+									$Spkldetail->rejectspklby=$Employee->id;
+									$Spkldetail->isotapproved=false;
+								}else{
+									$Spkldetail->rejectspklby=null;
+									$Spkldetail->isotapproved=null;
+								}								
+							}
+							foreach($data as $key=>$val){					
+								$val=($val=='No')?false:(($val=='Yes')?true:$val);
+								$Spkldetail->$key=$val;
+							}
+							$Spkldetail->save();
+							$logger = new Datalogger("Spkldetail","update",json_encode($olddata),json_encode($data));
+							$logger->SaveData();
+							echo json_encode($Spkldetail);
 						}
 						
-						foreach($data as $key=>$val){					
-							$val=($val=='No')?false:(($val=='Yes')?true:$val);
-							$Spkldetail->$key=$val;
-						}
-						$Spkldetail->save();
-						$logger = new Datalogger("Spkldetail","update",json_encode($olddata),json_encode($data));
-						$logger->SaveData();
-
-						echo json_encode($Spkldetail);
 						
 						break;
 					default:
@@ -1293,23 +1351,7 @@ Class SpklModule extends Application{
 						foreach($data as $key=>$val){
 							$Spkl->$key=$val;
 						}
-						$Spkldetail=Spkldetail::find('all',array('conditions'=>array("spkl_id=?",$id),'include'=>array('spkl','employee'=>array('company','department','designation','grade'))));
-						if ($Spkl->datework !== null){
-							foreach ($Spkldetail as $row){
-								$time = new DateTime($Spkl->datework);
-								$time->add(new DateInterval('PT8H'));
-								$start = $time->format('Y-m-d H:i');
-								$row->actualstartwork = $start;
-								$time = new DateTime($start);
-								$time->add(new DateInterval('PT' . ($row->estimatenormalhours + $row->estimateovertimehours+1). 'H'));
-								$end = $time->format('Y-m-d H:i');
-								$row->actualendwork = $end;
-								$row->actualtotalhours = $row->estimatenormalhours + $row->estimateovertimehours;
-								$row->actualnormalhours = $row->estimatenormalhours;
-								$row->actualovertimehours = $row->estimateovertimehours;
-								$row->save();
-							}
-						}
+						
 						$Spkl->save();
 						
 						if (isset($data['depthead'])){

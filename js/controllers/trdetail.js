@@ -169,7 +169,7 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 											var keys = selectedItems.selectedRowKeys,
 												hasSelection = keys.length;
 											if(hasSelection){
-												criteria = {status:'pending',username:keys[0],id:$scope.Requestid};
+												criteria = {status:'waiting',username:keys[0],id:$scope.Requestid};
 												CrudService.FindData('trbyemp',criteria).then(function (response){
 													if(response.jml>0){
 														DevExpress.ui.notify({

@@ -101,7 +101,7 @@ app.register.controller('detailspkltmsCtrl', ['$rootScope','$scope', '$http', '$
 							},
 							dataField:"superior",
 							editorType: "dxDropDownBox",
-							visible: true,
+							visible: false,
 							disabled: (($scope.mode=='approve') || ($scope.mode=='view') || ($scope.mode=='report'))?true:false,
 							editorOptions: { 
 								dataSource:$scope.allEmpDataSource,  
@@ -424,11 +424,11 @@ app.register.controller('detailspkltmsCtrl', ['$rootScope','$scope', '$http', '$
 				hours = (hours>5)?hours -1:hours;
 				return hours;
 			} ,*/
-			caption: "Act Total Hrs",dataType: "string",width:60,editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
-			{dataField:'actualnormalhours',caption: "Act Normal Hrs",dataType: "string",width:60,editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
-			{dataField:'actualovertimehours',caption: "Act Overtime Hrs",dataType: "string",width:60,editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
-			{dataField:'target',caption: "Target Work",encodeHtml: false,width:150,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
-			{dataField:'descriptionofwork',caption: "Achievement",width:250,encodeHtml: false,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			caption: "Act Total Hrs",dataType: "string",visible:false,width:60,editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			{dataField:'actualnormalhours',validationRules: [{ type: "required" }],caption: "Act Normal Hrs",dataType: "string",width:60,editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			{dataField:'actualovertimehours',validationRules: [{ type: "required" }],caption: "Act Overtime Hrs",dataType: "string",width:60,editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			{dataField:'target',caption: "Target Work",validationRules: [{ type: "required" }],encodeHtml: false,width:150,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			{dataField:'descriptionofwork',validationRules: [{ type: "required" }],caption: "Achievement",width:250,encodeHtml: false,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
 			],editing: {
             useIcons:true,
             mode: "cell",
@@ -477,6 +477,11 @@ app.register.controller('detailspkltmsCtrl', ['$rootScope','$scope', '$http', '$
 		onContentReady: function(e){
             moveEditColumnToLeft(e.component);
         },
+		onEditingStart: function (info) {
+            if (info.data.isotapproved == 'No' ) {  
+                info.cancel = true;  
+            }  
+		},
 		onEditorPreparing: function (e) {  
 			$scope.grid1Component = e.component;
 			if ((e.dataField == "isapproved") || (e.dataField == "isotapproved") || (e.dataField == "isused")){
