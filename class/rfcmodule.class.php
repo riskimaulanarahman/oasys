@@ -1476,7 +1476,7 @@ Class RfcModule extends Application{
 									$logger = new Datalogger("Rfcapproval","add","Add initial BU Head Approval ",json_encode($Rfcapproval->to_array()));
 									$logger->SaveData();
 								}
-								$companyFC=(($data['companycode']=='BCL') || ($data['companycode']=='KPA'))?"KPSI":$Employee->companycode;
+								$companyFC=(($data['companycode']=='BCL') || ($data['companycode']=='KPA')|| ($data['companycode']=='KPS'))?"KPSI":$Employee->companycode;
 								$ApproverBUFC = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='10' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$companyFC,$Employee->id)));
 								if(count($ApproverBUFC)>0){
 									$Rfcapproval = new Rfcapproval();
