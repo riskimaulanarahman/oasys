@@ -12,103 +12,103 @@
 			</div>
 			<div class="row widget-chart widget-chart2 border-primary">				
 				<div class="col-lg-6 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-success border-success">
-					<div class="card no-shadow rm-border bg-happy-green widget-chart text-center card-btm-border card-shadow-success border-success">
+					<div class="card no-shadow rm-border bg-happy-green widget-chart text-center card-btm-border card-shadow-success border-success" style="min-height:275px;">
 						<div class="icon-wrapper rounded-circle">
 							<div class="icon-wrapper-bg opacity-9 bg-alternate"></div>
-							<i class="icon icon-anim-pulse fas fa-file-signature text-white"></i></div>
+							<i class="icon {{ (pendingDayoffReq >0  || pendingDayoff >0 )? 'icon-anim-pulse' : ''}} fas fa-file-signature text-white"></i></div>
 						<div class="widget-chart-content">
 							<div class="widget-heading text-alternate">Weekend/PH Coverage</div>
 							<button ng-click="dayoffApproval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-alternate btn-lg">
 								<span class="mr-2 opacity-7">
-									<i class="icon icon-anim-pulse fa fa-marker"></i>
+									<i class="icon {{ pendingDayoff>0 ? 'icon-anim-pulse' : ''}}  fa fa-marker"></i>
 								</span>
-								Pending Approval <span class="badge badge-pill badge-light" ng-bind="pendingDayoff"></span>
+								Pending Approval <span class="badge badge-pill badge-light {{ pendingDayoff>0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingDayoff"></span>
 							</button>
 							<button ng-click="myDayoff()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-alternate btn-lg">
 								<span class="mr-2 opacity-7">
-									<i class="icon icon-anim-pulse fa fa-calendar-alt"></i>
+									<i class="icon {{ pendingDayoffReq>0 ? 'icon-anim-pulse' : ''}} fa fa-calendar-alt"></i>
 								</span>
-								Pending Request <span class="badge badge-pill badge-light" ng-bind="pendingDayoffReq"></span>
+								Pending Request <span class="badge badge-pill badge-light {{ pendingDayoffReq>0 ? 'icon-anim-pulse' : ''}}  text-dark" ng-bind="pendingDayoffReq"></span>
 							</button>
 							
 						</div>
 					</div>
 				</div>
 				<div class="col-lg-6 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-primary border-primary">
-					<div class="card no-shadow rm-border bg-sunny-morning widget-chart text-center card-btm-border card-shadow-primary border-primary">
+					<div class="card no-shadow rm-border bg-sunny-morning widget-chart text-center card-btm-border card-shadow-primary border-primary"  style="min-height:275px;">
 						<div class="icon-wrapper rounded-circle">
 							<div class="icon-wrapper-bg opacity-9 bg-danger"></div>
-							<i class="icon icon-anim-pulse fas fa-file-signature text-white"></i></div>
+							<i class="icon {{ ( pendingSPKL >0  || pendingSPKLReq >0 || pendingSPKLTMS >0  || pendingSPKLTMSReq >0 )? 'icon-anim-pulse' : ''}} fas fa-file-signature text-white"></i></div>
 						<div class="widget-chart-content">
 							<div class="widget-heading text-danger">SPKL/Overtime</div>
 							<button ng-click="SPKLApproval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-danger btn-lg">
 								<span class="mr-2 opacity-7">
-									<i class="icon icon-anim-pulse fa fa-marker"></i>
+									<i class="icon {{ pendingSPKL >0 ? 'icon-anim-pulse' : ''}}  fa fa-marker"></i>
 								</span>
-								Pending SPKL Approval <span class="badge badge-pill badge-light" ng-bind="pendingSPKL"></span>
+								Pending SPKL Approval <span class="badge badge-pill badge-light {{ pendingSPKL >0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingSPKL"></span>
 							</button>
 							<button ng-click="mySPKL()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-danger btn-lg">
 								<span class="mr-2 opacity-7">
-									<i class="icon icon-anim-pulse fa fa-calendar-alt"></i>
+									<i class="icon {{ pendingSPKLReq >0 ? 'icon-anim-pulse' : ''}} fa fa-calendar-alt"></i>
 								</span>
-								Pending SPKL Request <span class="badge badge-pill badge-light" ng-bind="pendingSPKLReq"></span>
+								Pending SPKL Request <span class="badge badge-pill  {{ pendingSPKLReq >0 ? 'icon-anim-pulse' : ''}} badge-light text-dark" ng-bind="pendingSPKLReq"></span>
 							</button>
 							<button ng-click="SPKLTMSApproval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-danger btn-lg">
 								<span class="mr-2 opacity-7">
-									<i class="icon icon-anim-pulse fa fa-marker"></i>
+									<i class="icon  {{ pendingSPKLTMS >0 ? 'icon-anim-pulse' : ''}} fa fa-marker"></i>
 								</span>
-								Pending OT Approval <span class="badge badge-pill badge-light" ng-bind="pendingSPKLTMS"></span>
+								Pending OT Approval <span class="badge badge-pill badge-light {{ pendingSPKLTMS >0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingSPKLTMS"></span>
 							</button>
 							<button ng-click="myTimesheet()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-danger btn-lg">
 								<span class="mr-2 opacity-7">
-									<i class="icon icon-anim-pulse fa fa-calendar-alt"></i>
+									<i class="icon {{ pendingSPKLTMSReq >0 ? 'icon-anim-pulse' : ''}} fa fa-calendar-alt"></i>
 								</span>
-								Pending OT Request <span class="badge badge-pill badge-light" ng-bind="pendingSPKLTMSReq"></span>
+								Pending OT Request <span class="badge badge-pill {{ pendingSPKLTMSReq >0 ? 'icon-anim-pulse' : ''}}  badge-light text-dark" ng-bind="pendingSPKLTMSReq"></span>
 							</button>
 						</div>
 					</div>
 				</div>
 				<div class="col-lg-6 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-primary border-primary">
-					<div class="card no-shadow rm-border bg-arielle-smile widget-chart text-center card-btm-border card-shadow-primary border-primary">
+					<div class="card no-shadow rm-border bg-arielle-smile widget-chart text-center card-btm-border card-shadow-primary border-primary"  style="min-height:275px;">
 						<div class="icon-wrapper rounded-circle">
 							<div class="icon-wrapper-bg opacity-9 bg-primary"></div>
-							<i class="icon icon-anim-pulse fas fa-file-signature text-white"></i></div>
+							<i class="icon {{ (pendingTRReq >0  || pendingTR >0 )? 'icon-anim-pulse' : ''}}  fas fa-file-signature text-white"></i></div>
 						<div class="widget-chart-content">
 							<div class="widget-heading text-primary">Travel Request</div>
 							<button ng-click="TRApproval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-primary btn-lg">
 								<span class="mr-2 opacity-7">
-									<i class="icon icon-anim-pulse fa fa-marker"></i>
+									<i class="icon {{ pendingTR >0 ? 'icon-anim-pulse' : ''}}  fa fa-marker"></i>
 								</span>
-								Pending Approval <span class="badge badge-pill badge-light" ng-bind="pendingTR"></span>
+								Pending Approval <span class="badge badge-pill badge-light {{ pendingTR >0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingTR"></span>
 							</button>
 							<button ng-click="myTR()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-primary btn-lg">
 								<span class="mr-2 opacity-7">
-									<i class="icon icon-anim-pulse fa fa-calendar-alt"></i>
+									<i class="icon {{ pendingTRReq >0 ? 'icon-anim-pulse' : ''}} fa fa-calendar-alt"></i>
 								</span>
-								Pending Request <span class="badge badge-pill badge-light" ng-bind="pendingTRReq"></span>
+								Pending Request <span class="badge badge-pill badge-light {{ pendingTRReq >0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingTRReq"></span>
 							</button>
 							
 						</div>
 					</div>
 				</div>
 				<div class="col-lg-6 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-success border-success">
-					<div class="card no-shadow rm-border bg-plum-plate widget-chart text-center card-btm-border card-shadow-success border-success">
+					<div class="card no-shadow rm-border bg-plum-plate widget-chart text-center card-btm-border card-shadow-success border-success"  style="min-height:275px;">
 						<div class="icon-wrapper rounded-circle">
 							<div class="icon-wrapper-bg opacity-9 bg-warning"></div>
-							<i class="icon icon-anim-pulse fas fa-file-signature"></i></div>
+							<i class="icon {{ (pendingRFCReq >0  || pendingRFC >0 )? 'icon-anim-pulse' : ''}}  fas fa-file-signature"></i></div>
 						<div class="widget-chart-content">
 							<div class="widget-heading text-warning">RFC </div>
 							<button ng-click="RFCApproval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-warning btn-lg">
 								<span class="mr-2 opacity-7">
-									<i class="icon icon-anim-pulse fa fa-marker"></i>
+									<i class="icon {{ pendingRFC >0 ? 'icon-anim-pulse' : ''}} fa fa-marker"></i>
 								</span>
-								Pending Approval <span class="badge badge-pill badge-light" ng-bind="pendingTR"></span>
+								Pending Approval <span class="badge badge-pill badge-light {{ pendingRFC >0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingRFC"></span>
 							</button>
 							<button ng-click="myRFC()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-warning btn-lg">
 								<span class="mr-2 opacity-7">
-									<i class="icon icon-anim-pulse fa fa-calendar-alt"></i>
+									<i class="icon {{ pendingRFCReq >0 ? 'icon-anim-pulse' : ''}} fa fa-calendar-alt"></i>
 								</span>
-								Pending Request <span class="badge badge-pill badge-light" ng-bind="pendingTRReq"></span>
+								Pending Request <span class="badge badge-pill badge-light {{ pendingRFCReq >0 ? 'icon-anim-pulse' : ''}}  text-dark" ng-bind="pendingRFCReq"></span>
 							</button>
 						</div>
 					</div>
