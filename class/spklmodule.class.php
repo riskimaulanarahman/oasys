@@ -1222,7 +1222,7 @@ Class SpklModule extends Application{
 					case 'create':		
 						$data = $this->post['data'];
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$data['username']),"include"=>array("location","company","department")));
-						if($Employee->level_id>2){
+						if($Employee->level_id>2 && $Employee->level_id !=5 ){
 							unset($data['__KEY__']);
 							unset($data['username']);
 							$data['employee_id']=$Employee->id;
