@@ -84,7 +84,7 @@ app.register.controller('detailspkltmsCtrl', ['$rootScope','$scope', '$http', '$
 						colSpan :2,
 						items: [
 						{dataField:'createddate',editorType: "dxDateBox",label: {text: "Creation Date"},editorOptions: {displayFormat:"dd/MM/yyyy",disabled: true}},
-						{dataField:'datework',editorType: "dxDateBox",label: {text: "Date Work"},editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now(),disabled: true},validationRules: [{
+						{dataField:'datework',editorType: "dxDateBox",label: {text: "Work Date"},editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now(),disabled: true},validationRules: [{
 							type: "required",
 							message: "Please select Work Date"
 						}]},
@@ -305,6 +305,7 @@ app.register.controller('detailspkltmsCtrl', ['$rootScope','$scope', '$http', '$
 					DevExpress.ui.dialog.alert(response.message,"Error");
 				}
 				$scope.grid1Component.refresh();
+				$scope.grid2Component.refresh();
 			});
 		},
 		remove: function(key) {
@@ -474,6 +475,16 @@ app.register.controller('detailspkltmsCtrl', ['$rootScope','$scope', '$http', '$
 			}  
 
 		},
+		onCellPrepared: function(e) { 
+		//console.log(cellElement)
+			if (e.rowType=='data'){
+				if (e.row.data.actualovertimehours > e.row.data.estimateovertimehours){
+					e.cellElement.addClass("performance-yellow");
+					//e.components.css( "background-color", "red" );
+				}
+				
+			}
+        },
 		onContentReady: function(e){
             moveEditColumnToLeft(e.component);
         },

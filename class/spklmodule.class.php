@@ -324,23 +324,41 @@ Class SpklModule extends Application{
 		
 		$joinx   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";					
 		
-		$Spkltmsapproval = Spkltmsapproval::find('all',array('joins'=>$joinx,'conditions' => array("spkl_id=?",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
-		$tmsContent .= "<table border=0 cellspacing=4 cellpadding=3>
-						<tr><td align='center'>Dibuat Oleh,<br>Askep</td><td width='50'></td><td align='center'>Disetujui Oleh,<br>Dept. Head / Sector Manager</td></tr>";
+		$Spkltmsapproval = Spkltmsapproval::find('all',array('joins'=>$joinx,'conditions' => array("spkl_id=?",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));	
 		foreach ($Spkltmsapproval as $data){
 			if(($data->approver->approvaltype->id==20) || ($data->approver->employee_id==$Spkl->depthead)){
 				$deptheadname = $data->approver->employee->fullname;
 				$datedepthead = $data->approvaldate;
 			}
+			if($data->approver->approvaltype->id==21) {
+				$hrname = $data->approver->employee->fullname;
+				$hrdate = $data->approvaldate;
+			}
+		}		
+		$tmsContent .= "<table border=0 cellspacing=4 cellpadding=3>
+						<tr><td align='center'>Dibuat Oleh,<br>Askep</td><td width='50'></td><td align='center'>Disetujui Oleh,<br>Dept. Head / Sector Manager</td>";
+		if ($Spkl->isexceedplan && $hrname!==""){
+			$tmsContent .= "<td width='50'></td><td align='center'>Diperiksa Oleh,<br>HR BU/HO</td>";
+						
 		}
+		$tmsContent .= "</tr>";
+		
 		$tmsContent .= '<tr><td align="center" style="padding:2pt 2.4pt 0in 2.4pt;"><img src="images/approved.png" style="height:25pt" alt="Approved from System"></td>
 					<td width="50"></td>
-					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.(($deptheadname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
-					</tr>';
+					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.(($deptheadname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>';
+		if ($Spkl->isexceedplan && $hrname!==""){
+			$tmsContent .= '<td width="50"></td><td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.(($hrname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>';
+						
+		}
+					$tmsContent .= '</tr>';
 		$tmsContent .= '<tr><td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$Spkl->employee->fullname.'<br><small>'.date("d/m/Y",strtotime($Spkl->createddate)).'</small></td>
 					<td width="50"></td>
-					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$deptheadname.'<br><small>'.(($deptheadname=="")?"":date("d/m/Y",strtotime($datedepthead))).'</small></td>
-					</tr>';
+					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$deptheadname.'<br><small>'.(($deptheadname=="")?"":date("d/m/Y",strtotime($datedepthead))).'</small></td>';
+		if ($Spkl->isexceedplan && $hrname!==""){
+			$tmsContent .= '<td width="50"></td><td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$hrname.'<br><small>'.(($hrname=="")?"":date("d/m/Y",strtotime($hrdate))).'</small></td>';
+						
+		}
+					$tmsContent .= '</tr>';
 		$tmsContent .= "</table></td></tr></table>";
 		
 		$pdfContent .=$tmsContent;
@@ -772,14 +790,19 @@ Class SpklModule extends Application{
 							if($dx->approver->isfinal==1){
 								$data=array("jml"=>1);
 							}else{
-								$join   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";
-								$Spkltmsapproval = Spkltmsapproval::find('all', array('joins'=>$join,'conditions' => array("spkl_id=? and ApprovalStatus<=1 and not tbl_approver.employee_id=?",$query['spkl_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
-								foreach ($Spkltmsapproval as &$result) {
-									$fullname	= $result->approver->employee->fullname;		
-									$result		= $result->to_array();
-									$result['fullname']=$fullname;
+								if($Spkl->isexceedplan && $dx->approver->approvatype_id=='20'){
+									$join   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";
+									$Spkltmsapproval = Spkltmsapproval::find('all', array('joins'=>$join,'conditions' => array("spkl_id=? and ApprovalStatus<=1 and not tbl_approver.employee_id=?",$query['spkl_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
+									foreach ($Spkltmsapproval as &$result) {
+										$fullname	= $result->approver->employee->fullname;		
+										$result		= $result->to_array();
+										$result['fullname']=$fullname;
+									}
+									$data=array("jml"=>count($Spkltmsapproval));
+								} else {
+									$data=array("jml"=>1);
 								}
-								$data=array("jml"=>count($Spkltmsapproval));
+								
 							}						
 						} else if(isset($query['pending'])){						
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
@@ -869,6 +892,7 @@ Class SpklModule extends Application{
 						}else{
 							unset($data['id']);
 							unset($data['datework']);
+							unset($data['isexceedplan']);
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$join   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";
 							if (isset($data['mode'])){
@@ -912,8 +936,8 @@ Class SpklModule extends Application{
 										$Spkltmshistory->actiontype = 3;
 										break;
 									case '2':
-										if ($Spkltmsapproval->approver->isfinal == 1){
-										//if (($Spkltmsapproval->approver->isfinal == 1) || ($Spkltmsapproval->approver->approvaltype_id==21)){
+										//if ($Spkltmsapproval->approver->isfinal == 1){
+										if (($Spkltmsapproval->approver->isfinal == 1) || ($Spkltmsapproval->approver->approvaltype_id==21) || ($Spkltmsapproval->approver->approvaltype_id==21 && $Spkl->isexceedplan==false)){
 											$Spkl->tmsreqstatus = 3;
 											$emto=$email;$emname=$Spkl->employee->fullname;
 											$this->mail->Subject = "Online Approval System -> Approval Completed";
@@ -1097,7 +1121,8 @@ Class SpklModule extends Application{
 						$data = $this->post['data'];
 						
 						$Spkldetail = Spkldetail::find($id);
-						$Spkl = Spkl::find($Spkldetail->spkl_id);
+						$spkl_id=$Spkldetail->spkl_id;
+						$Spkl = Spkl::find($spkl_id);
 						$olddata = $Spkldetail->to_array();
 						if (isset($data['actualstartwork']) || isset($data['actualendwork'])){
 							if(!isset($data['actualstartwork']) && ($Spkldetail->actualstartwork== null)){
@@ -1130,14 +1155,17 @@ Class SpklModule extends Application{
 									$Spkldetail->actualovertimehours = ($hours>8)?round($hours,1) - 8 :0;
 								}
 							}
-							if($Spkldetail->isotapproved==false){
+							if($Spkldetail->isapproved==false){
 								$Spkldetail->actualtotalhours=0;
 								$Spkldetail->actualnormalhours=0;
 								$Spkldetail->actualovertimehours =0;
 							}
 						}
 						if (isset($data['actualovertimehours']) && (($Spkldetail->actualnormalhours+$data['actualovertimehours'])>$Spkldetail->actualtotalhours)){
-							$resp = array('status'=>'error','message'=>'Total Overtime hours calculation is not valid, please recheck');
+							$resp = array('status'=>'error','message'=>'Total Overtime hours calculation is not valid, please recheck 
+							<br>Total hours   :'.$Spkldetail->actualtotalhours.
+							'<br>Normal hours :'.$Spkldetail->actualnormalhours.
+							'<br>Overtime hours :'.$data['actualovertimehours'].'<br>Normal hours + overtime hours cannot > Total hours');
 							echo json_encode($resp);
 						}else{
 							if (isset($data['isapproved'])  ){
@@ -1159,8 +1187,57 @@ Class SpklModule extends Application{
 							$logger->SaveData();
 							echo json_encode($Spkldetail);
 						}
-						
-						
+						$AllDetail = Spkldetail::find("all",array('conditions'=>array("spkl_id=?",$spkl_id)));
+						$isexceed = 0;
+						foreach($AllDetail as $data){
+							if($data->actualovertimehours>$data->estimateovertimehours){
+								$isexceed++;
+							}
+						}
+						if ($isexceed>0){
+							$joins   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";					
+							$Spkltmsapproval = Spkltmsapproval::find('all',array('joins'=>$joins,'conditions' => array("spkl_id=? and approvaltype_id='21'",$spkl_id)));	
+							foreach ($Spkltmsapproval as &$result) {
+								$result		= $result->to_array();
+								$result['no']=1;
+							}			
+							if(count($Spkltmsapproval)==0){
+								$joins   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
+								$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username),"include"=>array("location","company","department")));
+								if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="022")){
+									$ApproverHR = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='SPKL' and tbl_approver.isactive='1' and approvaltype_id='21' and tbl_employee.location_id='1'")));
+									if(count($ApproverHR)>0){
+										$Spkltmsapproval = new Spkltmsapproval();
+										$Spkltmsapproval->spkl_id =$spkl_id;
+										$Spkltmsapproval->approver_id = $ApproverHR->id;
+										$Spkltmsapproval->save();
+										$logger = new Datalogger("Spkltmsapproval","add","Add HR Approval for Exceeded actual overtime hours",json_encode($Spkltmsapproval->to_array()));
+										$logger->SaveData();
+									}
+								}else{
+									$ApproverHR = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='SPKL' and tbl_approver.isactive='1' and approvaltype_id='21'  and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
+									if(count($ApproverHR)>0){
+										$Spkltmsapproval = new Spkltmsapproval();
+										$Spkltmsapproval->spkl_id =$spkl_id;
+										$Spkltmsapproval->approver_id = $ApproverHR->id;
+										$Spkltmsapproval->save();
+										$logger = new Datalogger("Spkltmsapproval","add","Add HR Approval for Exceeded actual overtime hours",json_encode($Spkltmsapproval->to_array()));
+										$logger->SaveData();
+									}
+								}
+							}
+						} else {
+							//delete unnecessary approver
+							$joins   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";					
+							$dx = Spkltmsapproval::find('all',array('joins'=>$joins,'conditions' => array("spkl_id=? and tbl_approver.approvaltype_id=21",$spkl_id)));	
+							foreach ($dx as $result) {
+								//delete same type approver
+								$result->delete();
+								$logger = new Datalogger("Spkltmsapproval","delete",json_encode($result->to_array()),"delete HR Approval for non exceeded actual overtime");
+							}
+						}
+						$Spkl->isexceedplan=($isexceed>0);
+						$Spkl->save();
 						break;
 					default:
 						$Spkldetail = Spkldetail::all();
