@@ -1438,7 +1438,7 @@ Class SpklModule extends Application{
 						foreach($data as $key=>$val){
 							$Spkl->$key=$val;
 						}
-						
+						$Spkl->approvalstep = ($data['requeststatus']==1)?1:0;
 						$Spkl->save();
 						
 						if (isset($data['depthead'])){
@@ -1690,6 +1690,7 @@ Class SpklModule extends Application{
 						foreach($data as $key=>$val){
 							$Spkl->$key=$val;
 						}
+						$Spkl->approvalstep = ($data['tmsreqstatus']==1)?1:0;
 						$Spkl->save();
 						$joins   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";					
 						$Spkltmsapproval = Spkltmsapproval::find('all',array('joins'=>$joins,'conditions' => array("spkl_id=? and tbl_approver.employee_id=?",$id,$Spkl->depthead)));	
