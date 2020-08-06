@@ -570,6 +570,7 @@ Class SpklModule extends Application{
 							unset($data['department']);
 							unset($data['datework']);
 							unset($data['approveddoc']);
+							unset($data['isexceedplan']);
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							
 							$join   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";
