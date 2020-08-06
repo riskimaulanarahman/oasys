@@ -791,7 +791,7 @@ Class SpklModule extends Application{
 							if($dx->approver->isfinal==1){
 								$data=array("jml"=>1);
 							}else{
-								if($Spkl->isexceedplan && $dx->approver->approvatype_id=='20'){
+								if($Spkl->isexceedplan && $dx->approver->approvaltype_id=='20'){
 									$join   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";
 									$Spkltmsapproval = Spkltmsapproval::find('all', array('joins'=>$join,'conditions' => array("spkl_id=? and ApprovalStatus<=1 and not tbl_approver.employee_id=?",$query['spkl_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
 									foreach ($Spkltmsapproval as &$result) {
