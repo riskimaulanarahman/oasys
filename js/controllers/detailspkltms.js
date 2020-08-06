@@ -61,7 +61,7 @@ app.register.controller('detailspkltmsCtrl', ['$rootScope','$scope', '$http', '$
 				}),
 				sort: "id"
 			}
-			$scope.AppAction = ($scope.data.approvalstatus==2)?[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Verify"}]:[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
+			$scope.AppAction = ($scope.data.approvalstep==2)?[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Verify"}]:[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
 			$scope.reqStatus = 0;
 			$scope.gridSelectedRowKeys =[];
 			
@@ -433,7 +433,7 @@ app.register.controller('detailspkltmsCtrl', ['$rootScope','$scope', '$http', '$
 			],editing: {
             useIcons:true,
             mode: "cell",
-			allowUpdating:(($scope.mode=='view') ||($scope.mode=='report') || ($scope.data.approvalstatus==2) )?(($rootScope.isAdmin)?true:false):true,
+			allowUpdating:(($scope.mode=='view') ||($scope.mode=='report') || ($scope.data.approvalstep==2) )?(($rootScope.isAdmin)?true:false):true,
 			allowAdding:false,
 			allowDeleting:false,
             //allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing

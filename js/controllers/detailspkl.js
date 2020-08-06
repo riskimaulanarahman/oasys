@@ -67,7 +67,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 				}),
 				sort: "id"
 			}
-			$scope.AppAction = ($scope.data.approvalstatus==2)?[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Verify"}]:[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
+			$scope.AppAction = ($scope.data.approvalstep==2)?[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Verify"}]:[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
 			$scope.reqStatus = 0;
 			$scope.gridSelectedRowKeys =[];
 			
@@ -420,7 +420,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 			],editing: {
 				useIcons:true,
 				mode: "cell",
-				allowUpdating:(($scope.mode=='view') ||($scope.mode=='report') || ($scope.data.approvalstatus==2))?(($rootScope.isAdmin)?true:false):true,
+				allowUpdating:(($scope.mode=='view') ||($scope.mode=='report') || ($scope.data.approvalstep==2))?(($rootScope.isAdmin)?true:false):true,
 				allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 				allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 				//allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
