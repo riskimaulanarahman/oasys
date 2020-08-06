@@ -67,7 +67,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 				}),
 				sort: "id"
 			}
-			$scope.AppAction = [{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
+			$scope.AppAction = ($scope.data.approvalstatus==2)?[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Verify"}]:[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
 			$scope.reqStatus = 0;
 			$scope.gridSelectedRowKeys =[];
 			
@@ -385,7 +385,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 		
 		
 		$scope.showHistory = true;
-		$scope.appText = ["No","Yes"];
+		$scope.appText = ["Yes","No"];
 		$scope.loadPanelVisible = false;
 		$scope.grid1Options = {
 			dataSource: myData,
@@ -395,7 +395,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 			columnMinWidth: 50,
 			columnAutoWidth: true,
 			columns: [
-				{dataField:'isapproved',width:110,caption: "Approved",dataType: "boolean", showEditorAlways: true,formItem: { visible: (($scope.mode=='approve') ||($scope.mode=='view') ||($scope.mode=='report'))?true:false} ,visible: (($scope.mode=='approve') ||($scope.mode=='view') ||($scope.mode=='report'))?true:false },	
+				{dataField:'isapproved',width:110,caption: "Approved",dataType: "boolean", showEditorAlways: true,visible: (($scope.mode=='approve') ||($scope.mode=='view') ||($scope.mode=='report'))?true:false },	
 				{
 						dataField: "employee_id",
 						caption: "Employee",
@@ -420,7 +420,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 			],editing: {
 				useIcons:true,
 				mode: "cell",
-				allowUpdating:(($scope.mode=='view') ||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+				allowUpdating:(($scope.mode=='view') ||($scope.mode=='report') || ($scope.data.approvalstatus==2))?(($rootScope.isAdmin)?true:false):true,
 				allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 				allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 				//allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing

@@ -288,7 +288,7 @@ Class SpklModule extends Application{
 							<th rowspan="2" align="center">No. SAP</th>
 							<th rowspan="2" align="center">Posisi</th>
 							<th colspan="5" align="center">Aktual Lama Bekerja</th>
-							<th rowspan="2" align="center">Kegiatan</th>
+							<th rowspan="2" align="center">Achievement/Remarks </th>
 						</tr>
 						<tr>
 							<th align="center">Jam <br>Mulai</th>
@@ -571,6 +571,7 @@ Class SpklModule extends Application{
 							unset($data['datework']);
 							unset($data['approveddoc']);
 							unset($data['isexceedplan']);
+							unset($data['approvalstep']);
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							
 							$join   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";
@@ -637,6 +638,7 @@ Class SpklModule extends Application{
 								switch ($data['approvalstatus']){
 									case '1':
 										$Spkl->requeststatus = 2;
+										$Spkl->approvalstep = 0;
 										$emto=$email;$emname=$Spkl->employee->fullname;
 										$this->mail->Subject = "Online Approval System -> Need Rework";
 										$red = 'Your SPKL/ Overtime request require some rework :';
@@ -645,6 +647,7 @@ Class SpklModule extends Application{
 									case '2':
 										if ($Spklapproval->approver->isfinal == 1){
 											$Spkl->requeststatus = 3;
+											$Spkl->approvalstep = 0;
 											$emto=$email;$emname=$Spkl->employee->fullname;
 											$this->mail->Subject = "Online Approval System -> Approval Completed";
 											$red = 'Your SPKL/Overtime request has been approved';
@@ -661,6 +664,7 @@ Class SpklModule extends Application{
 										}
 										else{
 											$Spkl->requeststatus = 1;
+											$Spkl->approvalstep += 1;
 											$emto=$adb->email;$emname=$adb->fullname;
 											$this->mail->Subject = "Online Approval System -> New SPKL/Overtime Submission";
 											$red = 'New SPKL/Overtime request awaiting for your approval:';
@@ -669,6 +673,7 @@ Class SpklModule extends Application{
 										break;
 									case '3':
 										$Spkl->requeststatus = 4;
+										$Spkl->approvalstep = 4;
 										$emto=$email;$emname=$Spkl->employee->fullname;
 										$Spklhistory->actiontype = 5;
 										$this->mail->Subject = "Online Approval System -> Request Rejected";
@@ -894,6 +899,7 @@ Class SpklModule extends Application{
 							unset($data['id']);
 							unset($data['datework']);
 							unset($data['isexceedplan']);
+							unset($data['approvalstep']);
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$join   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";
 							if (isset($data['mode'])){
@@ -931,6 +937,7 @@ Class SpklModule extends Application{
 								switch ($data['approvalstatus']){
 									case '1':
 										$Spkl->tmsreqstatus = 2;
+										$Spkl->approvalstep = 0;
 										$emto=$email;$emname=$Spkl->employee->fullname;
 										$this->mail->Subject = "Online Approval System -> Need Rework";
 										$red = 'Your Overtime Timesheet request require some rework :';
@@ -939,6 +946,7 @@ Class SpklModule extends Application{
 									case '2':
 										//if ($Spkltmsapproval->approver->isfinal == 1){
 										if (($Spkltmsapproval->approver->isfinal == 1) || ($Spkltmsapproval->approver->approvaltype_id==21) || ($Spkltmsapproval->approver->approvaltype_id==21 && $Spkl->isexceedplan==false)){
+											$Spkl->approvalstep =0;
 											$Spkl->tmsreqstatus = 3;
 											$emto=$email;$emname=$Spkl->employee->fullname;
 											$this->mail->Subject = "Online Approval System -> Approval Completed";
@@ -954,9 +962,9 @@ Class SpklModule extends Application{
 												}
 											}
 											$complete =true;
-										}
-										else{
+										}else{
 											$Spkl->tmsreqstatus = 1;
+											$Spkl->approvalstep += 1;
 											$emto=$adb->email;$emname=$adb->fullname;
 											$this->mail->Subject = "Online Approval System -> New Overtime Timesheet Submission";
 											$red = 'New Overtime Timesheet request awaiting for your approval:';
@@ -965,6 +973,7 @@ Class SpklModule extends Application{
 										break;
 									case '3':
 										$Spkl->tmsreqstatus = 4;
+										$Spkl->approvalstep = 4;
 										$emto=$email;$emname=$Spkl->employee->fullname;
 										$Spkltmshistory->actiontype = 5;
 										$this->mail->Subject = "Online Approval System -> Request Rejected";
@@ -1005,7 +1014,7 @@ Class SpklModule extends Application{
 												<th rowspan="2"><p class=MsoNormal>Position</p></th>
 												<th colspan="5"><p class=MsoNormal>Actual Time Work</p></th>
 												<th rowspan="2"><p class=MsoNormal>Target Work</p></th>
-												<th rowspan="2"><p class=MsoNormal>Achievement</p></th>
+												<th rowspan="2"><p class=MsoNormal>Achievement/Remarks</p></th>
 												</tr>
 												<th><p class=MsoNormal>Start Work</p></th>
 												<th><p class=MsoNormal>End Work</p></th>
@@ -1478,7 +1487,7 @@ Class SpklModule extends Application{
 							$username = $Spklapproval->approver->employee->loginname;
 							$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
 							$email = $adb->email;
-							
+							$Spkldetail=Spkldetail::find('all',array('conditions'=>array("spkl_id=?",$id),'include'=>array('spkl','employee'=>array('company','department','designation','grade'))));
 							$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$adb->fullname.',</span></p>
 												<p class=MsoNormal><span style="color:#1F497D">New SPKL/Overtime request is awaiting for your approval:</span></p>
 												<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
@@ -1760,7 +1769,7 @@ Class SpklModule extends Application{
 												<th rowspan="2"><p class=MsoNormal>Position</p></th>
 												<th colspan="5"><p class=MsoNormal>Actual Time Work</p></th>
 												<th rowspan="2"><p class=MsoNormal>Target Work</p></th>
-												<th rowspan="2"><p class=MsoNormal>Achievement</p></th>
+												<th rowspan="2"><p class=MsoNormal>Achievement/Remarks</p></th>
 												</tr>
 												<th><p class=MsoNormal>Start Work</p></th>
 												<th><p class=MsoNormal>End Work</p></th>

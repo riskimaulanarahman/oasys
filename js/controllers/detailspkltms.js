@@ -61,7 +61,7 @@ app.register.controller('detailspkltmsCtrl', ['$rootScope','$scope', '$http', '$
 				}),
 				sort: "id"
 			}
-			$scope.AppAction = [{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
+			$scope.AppAction = ($scope.data.approvalstatus==2)?[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Verify"}]:[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
 			$scope.reqStatus = 0;
 			$scope.gridSelectedRowKeys =[];
 			
@@ -388,7 +388,7 @@ app.register.controller('detailspkltmsCtrl', ['$rootScope','$scope', '$http', '$
 		{ id:3, TabName : "History Tracking", title: 'History Tracking', template: "tab3"   },
 	];
 	$scope.showHistory = true;
-	$scope.appText = ["No","Yes"];
+	$scope.appText = ["Yes","No"];
 	$scope.loadPanelVisible = false;
 	$scope.grid1Options = {
 		dataSource: myData,
@@ -398,7 +398,7 @@ app.register.controller('detailspkltmsCtrl', ['$rootScope','$scope', '$http', '$
         columnMinWidth: 50,
         columnAutoWidth: false,
 		columns: [
-		{dataField:'isotapproved',width:110,caption: "Approved",dataType: "boolean", showEditorAlways: true,formItem: { visible: (($scope.mode=='approve') ||($scope.mode=='view') ||($scope.mode=='report'))?true:false} ,visible: (($scope.mode=='approve') ||($scope.mode=='view') ||($scope.mode=='report'))?true:false },	
+		{dataField:'isotapproved',width:110,caption: "Approved",dataType: "boolean", showEditorAlways: true, visible: (($scope.mode=='approve') ||($scope.mode=='view') ||($scope.mode=='report'))?true:false },	
 		{
 					dataField: "employee_id",
 					caption: "Employee",
@@ -433,7 +433,7 @@ app.register.controller('detailspkltmsCtrl', ['$rootScope','$scope', '$http', '$
 			],editing: {
             useIcons:true,
             mode: "cell",
-			allowUpdating:(($scope.mode=='view') ||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowUpdating:(($scope.mode=='view') ||($scope.mode=='report') || ($scope.data.approvalstatus==2) )?(($rootScope.isAdmin)?true:false):true,
 			allowAdding:false,
 			allowDeleting:false,
             //allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
@@ -489,7 +489,7 @@ app.register.controller('detailspkltmsCtrl', ['$rootScope','$scope', '$http', '$
             moveEditColumnToLeft(e.component);
         },
 		onEditingStart: function (info) {
-            if (info.data.isotapproved == 'No' ) {  
+            if (info.data.isapproved == 'No' ) {  
                 info.cancel = true;  
             }  
 		},
