@@ -489,7 +489,7 @@ app.register.controller('detailspkltmsCtrl', ['$rootScope','$scope', '$http', '$
             moveEditColumnToLeft(e.component);
         },
 		onEditingStart: function (info) {
-            if (info.data.isapproved == 'No' ) {  
+            if (info.data.isapproved == 'No' || $scope.data.approvalstep==2) {  
                 info.cancel = true;  
             }  
 		},
