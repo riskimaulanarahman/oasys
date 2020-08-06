@@ -125,11 +125,7 @@ Class SpklModule extends Application{
 						<br>- SPKL wajib dilampirkan pada daftar hadir (timesheet) dan diserahkan kepada departemen SDM dalam waktu 1X24 jam,atau pada hari kerja berikutnya.</small>";
 				
 		$joinx   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";					
-		$Spklapproval = Spklapproval::find('all',array('joins'=>$joinx,'conditions' => array("spkl_id=?",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
-		$pdfContent .= "<br><br><table border=0 cellspacing=4 cellpadding=3>
-						<tr><td align='center'>Diperintahkan Oleh,</td><td width='50'></td><td align='center'>Disetujui Oleh,</td><td width='50'></td><td align='center'>Diperiksa Oleh,</td><td width='50'></td><td align='center'>Disetujui Oleh,</td></tr>
-						<tr><td align='center'>Askep</td><td width='50'></td><td align='center'>Dept. Head / Sector Manager</td><td width='50'></td><td align='center'>HR BU/HO</td><td width='50'></td><td align='center'>BU Head</td></tr>
-						";
+		$Spklapproval = Spklapproval::find('all',array('joins'=>$joinx,'conditions' => array("spkl_id=?",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));
 		foreach ($Spklapproval as $data){
 			if(($data->approver->approvaltype->id==20) || ($data->approver->employee_id==$Spkl->depthead)){
 				$deptheadname = $data->approver->employee->fullname;
@@ -143,21 +139,35 @@ Class SpklModule extends Application{
 				$buheadname = $data->approver->employee->fullname;
 				$buheaddate =$data->approvaldate;
 			}
-		}
+		}		
+		$pdfContent .= "<br><br><table border=0 cellspacing=4 cellpadding=3>
+						<tr><td align='center'>Diperintahkan Oleh,<br>Askep</td><td width='50'></td><td align='center'>Disetujui Oleh,<br>Dept. Head / Sector Manager</td><td width='50'></td><td align='center'>Diperiksa Oleh,<br>HR BU/HO</td>";
+					if(($buheadname!="")){
+						$pdfContent .= "<td width='50'></td><td align='center'>Disetujui Oleh,<br>BU Head</td>";
+					}
+		$pdfContent .= "</tr>
+						";
+		
 		$pdfContent .= '<tr><td align="center" style="padding:2pt 2.4pt 0in 2.4pt;"><img src="images/approved.png" style="height:25pt" alt="Approved from System"></td>
 					<td width="50"></td>
 					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.(($deptheadname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
 					<td width="50"></td>
-					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.(($hrname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
-					<td width="50"></td>
-					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.(($buheadname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td></tr>';
+					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.(($hrname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>';
+					if(($buheadname!="")){
+						$pdfContent .= '<td width="50"></td>
+						<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.(($buheadname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>';
+					}
+					$pdfContent .= '</tr>';
 		$pdfContent .= '<tr><td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$Spkl->employee->fullname.'<br><small>'.date("d/m/Y",strtotime($Spkl->createddate)).'</small></td>
 					<td width="50"></td>
 					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$deptheadname.'<br><small>'.(($deptheadname=="")?"":date("d/m/Y",strtotime($datedepthead))).'</small></td>
 					<td width="50"></td>
-					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$hrname.'<br><small>'.(($hrname=="")?"":date("d/m/Y",strtotime($hrdate))).'</small></td>
-					<td width="50"></td>
-					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$buheadname.'<br><small>'.(($buheadname=="")?"":date("d/m/Y",strtotime($buheaddate))).'</small></td></tr>';
+					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$hrname.'<br><small>'.(($hrname=="")?"":date("d/m/Y",strtotime($hrdate))).'</small></td>';
+					if(($buheadname!="")){
+						$pdfContent .= '<td width="50"></td>
+						<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$buheadname.'<br><small>'.(($buheadname=="")?"":date("d/m/Y",strtotime($buheaddate))).'</small></td>';
+					}
+					$pdfContent .= '</tr>';
 		$pdfContent .= "</table></td></tr></table>";
 		
 		try {
@@ -242,7 +252,11 @@ Class SpklModule extends Application{
 		$joinx   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";					
 		$Spklapproval = Spklapproval::find('all',array('joins'=>$joinx,'conditions' => array("spkl_id=?",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
 		$pdfContent .= "<table border=0 cellspacing=4 cellpadding=3>
-						<tr><td align='center'>Diperintahkan Oleh, <br>Askep</td><td width='50'></td><td align='center'>Disetujui Oleh,<br>Dept. Head / Sector Manager</td><td width='50'></td><td align='center'>Diperiksa Oleh,<br>HR BU/HO</td><td width='50'></td><td align='center'>Disetujui Oleh,<br>BU Head</td></tr>";
+						<tr><td align='center'>Diperintahkan Oleh, <br>Askep</td><td width='50'></td><td align='center'>Disetujui Oleh,<br>Dept. Head / Sector Manager</td><td width='50'></td><td align='center'>Diperiksa Oleh,<br>HR BU/HO</td>";
+					if(($buheadname!="")){		
+						$pdfContent .= "<td width='50'></td><td align='center'>Disetujui Oleh,<br>BU Head</td>";
+					}
+						$pdfContent .= "</tr>";
 		foreach ($Spklapproval as $data){
 			if(($data->approver->approvaltype->id==20) || ($data->approver->employee_id==$Spkl->depthead)){
 				$deptheadname = $data->approver->employee->fullname;
@@ -261,16 +275,22 @@ Class SpklModule extends Application{
 					<td width="50"></td>
 					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.(($deptheadname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
 					<td width="50"></td>
-					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.(($hrname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
-					<td width="50"></td>
-					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.(($buheadname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td></tr>';
+					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.(($hrname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>';
+				if(($buheadname!="")){	
+					$pdfContent .= '<td width="50"></td>
+					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.(($buheadname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>';
+				}
+					$pdfContent .= '</tr>';
 		$pdfContent .= '<tr><td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$Spkl->employee->fullname.'<br><small>'.date("d/m/Y",strtotime($Spkl->createddate)).'</small></td>
 					<td width="50"></td>
 					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$deptheadname.'<br><small>'.(($deptheadname=="")?"":date("d/m/Y",strtotime($datedepthead))).'</small></td>
 					<td width="50"></td>
-					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$hrname.'<br><small>'.(($hrname=="")?"":date("d/m/Y",strtotime($hrdate))).'</small></td>
-					<td width="50"></td>
-					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$buheadname.'<br><small>'.(($buheadname=="")?"":date("d/m/Y",strtotime($buheaddate))).'</small></td></tr>';
+					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$hrname.'<br><small>'.(($hrname=="")?"":date("d/m/Y",strtotime($hrdate))).'</small></td>';
+				if(($buheadname!="")){		
+					$pdfContent .= '<td width="50"></td>
+					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.$buheadname.'<br><small>'.(($buheadname=="")?"":date("d/m/Y",strtotime($buheaddate))).'</small></td>';
+				}
+					$pdfContent .= '</tr>';
 		$pdfContent .= "</table></td></tr></table>";
 		
 		$tmsContent ="<table border=0 cellpadding=2 cellspacing=0 style='width:100%; margin:2px;margin-left:10px;'><tr><td  style='border:0.5px solid #212; width:700px;margin-left:20px;padding-left:15px;'><h5 style='width:100%;text-align:center'><b><u>DAFTAR HADIR KERJA LEMBUR KARYAWAN</u></b>";
