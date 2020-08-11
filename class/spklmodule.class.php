@@ -965,7 +965,7 @@ Class SpklModule extends Application{
 										break;
 									case '2':
 										//if ($Spkltmsapproval->approver->isfinal == 1){
-										if (($Spkltmsapproval->approver->isfinal == 1) || ($Spkltmsapproval->approver->approvaltype_id==21) || ($Spkltmsapproval->approver->approvaltype_id==21 && $Spkl->isexceedplan==false)){
+										if (($Spkltmsapproval->approver->isfinal == 1) || ($Spkltmsapproval->approver->approvaltype_id==21) || ($Spkltmsapproval->approver->approvaltype_id==20 && $Spkl->isexceedplan==false)){
 											$Spkl->approvalstep =0;
 											$Spkl->tmsreqstatus = 3;
 											$emto=$email;$emname=$Spkl->employee->fullname;
