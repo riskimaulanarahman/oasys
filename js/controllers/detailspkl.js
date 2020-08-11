@@ -306,6 +306,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 						DevExpress.ui.dialog.alert(response.message,"Error");
 					}
 					$scope.grid1Component.refresh();
+					$scope.grid2Component.refresh();
 				});
 			},
 			remove: function(key) {
