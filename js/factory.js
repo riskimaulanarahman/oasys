@@ -9,7 +9,7 @@ app.factory('AuthenticationService', function ($http, $localStorage,$window,$roo
 	//service.isLogin = isLogin;
 	return service;
 	function Login(username, password, callback) {
-		$http.post(API+'login', JSON.stringify({ username: username, password: password })).then(function onSuccess(response) {
+		$http.post(API+'login', { username: username, password: password }).then(function onSuccess(response) {
 			resp= response.data;		
 			if (resp.jwt) {
 				$rootScope.$broadcast("loginChanged", true);
