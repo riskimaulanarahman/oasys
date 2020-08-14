@@ -25,6 +25,9 @@ app.factory('AuthenticationService', function ($http, $localStorage,$window,$roo
 				}
 				callback(respon);
 			}			
+		}, function(error){
+			var respon = {message:error.data.message,status:'error'}
+				callback(respon);
 		}).catch(function onError(error) {
 			var respon = {message:error.data.message,status:'error'}
 			callback(respon)	; 		
