@@ -23,6 +23,14 @@ Class DayoffModule extends Application{
 		$this->mail->Host = SMTPSERVER;
 		$this->mail->Port = 465;
 		$this->mail->SMTPSecure = 'tls';
+		$this->mail->SMTPOptions = array(
+			'ssl' => array(
+				'verify_peer' => false,
+				'verify_peer_name' => false,
+				'allow_self_signed' => true
+			)
+		);
+
 		$this->mail->SMTPAuth = true;
 		$this->mail->Username = MAILFROM;
 		$this->mail->Password = SMTPAUTH;

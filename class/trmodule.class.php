@@ -24,6 +24,14 @@ Class TrModule extends Application{
 		$this->mail->Port = 465;
 		$this->mail->SMTPSecure = 'tls';
 		$this->mail->SMTPAuth = true;
+		$this->mail->SMTPOptions = array(
+			'ssl' => array(
+				'verify_peer' => false,
+				'verify_peer_name' => false,
+				'allow_self_signed' => true
+			)
+		);
+
 		$this->mail->Username = MAILFROM;
 		$this->mail->Password = SMTPAUTH;
 		$this->mail->setFrom(MAILFROM,"Online Approval System");

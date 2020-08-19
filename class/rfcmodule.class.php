@@ -23,6 +23,13 @@ Class RfcModule extends Application{
 		$this->mail->SMTPDebug = 0;
 		$this->mail->Host = SMTPSERVER;
 		$this->mail->Port = 465;
+		$this->mail->SMTPOptions = array(
+			'ssl' => array(
+				'verify_peer' => false,
+				'verify_peer_name' => false,
+				'allow_self_signed' => true
+			)
+		);
 		$this->mail->SMTPSecure = 'tls';
 		$this->mail->SMTPAuth = true;
 		$this->mail->Username = MAILFROM;
