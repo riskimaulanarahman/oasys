@@ -494,7 +494,7 @@ Class SpklModule extends Application{
 							$join   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";
 							$dx = Spklapproval::find('first', array('joins'=>$join,'conditions' => array("spkl_id=? and tbl_approver.employee_id = ?",$query['spkl_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
 							$Spkl = Spkl::find($query['spkl_id']);
-							if($dx->approver->isfinal==1){
+							if($dx->approver->isfinal==1 || ($Spkl->ismorethan2hours==0 && $dx->approver->approvaltype_id=='21')){
 								$data=array("jml"=>1);
 							}else{
 								$join   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";
