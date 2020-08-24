@@ -177,7 +177,7 @@ app.register.controller('detailspkltmsCtrl', ['$rootScope','$scope', '$http', '$
 								text: "Back",
 								type: "danger",
 								onClick: function(){
-									var path = ($scope.mode=='report') ? "reportspkl" :"spkltms";
+									var path = ($scope.mode=='report') ? "spklreport" :"spkltms";
 									$location.path( "/"+path );
 								},
 								visible: (($scope.mode=='approve'))  ?false:true,
