@@ -600,6 +600,7 @@ Class SpklModule extends Application{
 							unset($data['approveddoc']);
 							unset($data['isexceedplan']);
 							unset($data['approvalstep']);
+							unset($data['ismorethan2hours']);
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							
 							$join   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";
@@ -928,6 +929,7 @@ Class SpklModule extends Application{
 							unset($data['datework']);
 							unset($data['isexceedplan']);
 							unset($data['approvalstep']);
+							unset($data['ismorethan2hours']);
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$join   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";
 							if (isset($data['mode'])){
