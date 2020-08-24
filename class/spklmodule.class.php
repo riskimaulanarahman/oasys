@@ -261,10 +261,7 @@ Class SpklModule extends Application{
 		$Spklapproval = Spklapproval::find('all',array('joins'=>$joinx,'conditions' => array("spkl_id=?",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
 		$pdfContent .= "<table border=0 cellspacing=4 cellpadding=3>
 						<tr><td align='center'>Diperintahkan Oleh, <br>Askep</td><td width='50'></td><td align='center'>Disetujui Oleh,<br>Dept. Head / Sector Manager</td><td width='50'></td><td align='center'>Diperiksa Oleh,<br>HR BU/HO</td>";
-					if(($buheadname!="")){		
-						$pdfContent .= "<td width='50'></td><td align='center'>Disetujui Oleh,<br>BU Head</td>";
-					}
-						$pdfContent .= "</tr>";
+					
 		foreach ($Spklapproval as $data){
 			if(($data->approver->approvaltype->id==20) || ($data->approver->employee_id==$Spkl->depthead)){
 				$deptheadname = $data->approver->employee->fullname;
@@ -279,6 +276,10 @@ Class SpklModule extends Application{
 				$buheaddate = $data->approvaldate;
 			}
 		}
+		if(($buheadname!="")){		
+						$pdfContent .= "<td width='50'></td><td align='center'>Disetujui Oleh,<br>BU Head</td>";
+					}
+						$pdfContent .= "</tr>";
 		$pdfContent .= '<tr><td align="center" style="padding:2pt 2.4pt 0in 2.4pt;"><img src="images/approved.png" style="height:25pt" alt="Approved from System"></td>
 					<td width="50"></td>
 					<td align="center" style="padding:2pt 2.4pt 0in 2.4pt;">'.(($deptheadname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
