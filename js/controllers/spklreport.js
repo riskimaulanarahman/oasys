@@ -83,15 +83,15 @@ app.register.controller('spklreportCtrl', ['$rootScope','$scope', '$http', '$int
                 },
 				{dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 90},
 				{dataField:'fullname',caption:"Request By",fixed: true, fixedPosition: "left"},
-				{dataField:'spklstatus',caption:"SPKL Status",fixed: true, fixedPosition: "left"},
-				{dataField:'otstatus',caption:"OT Status",fixed: true, fixedPosition: "left"},
-				{dataField:'personholding',caption:"PIC",fixed: true, fixedPosition: "left"},
-				{dataField:'requeststatus',caption:"SPKL Status",encodeHtml: false ,fixed: true, fixedPosition: "left",
+				{dataField:'spklstatus',caption:"SPKL Status", fixedPosition: "left"},
+				{dataField:'otstatus',caption:"OT Status", fixedPosition: "left"},
+				{dataField:'personholding',caption:"PIC", fixedPosition: "left"},
+				{dataField:'requeststatus',caption:"SPKL Status",encodeHtml: false , fixedPosition: "left",
 					customizeText: function (e) {
 						var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Saved as Draft</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
 						return rDesc[e.value];
 					}},
-				{dataField:'tmsreqstatus',caption:"OT Status",encodeHtml: false ,fixed: true, fixedPosition: "left",
+				{dataField:'tmsreqstatus',caption:"OT Status",encodeHtml: false , fixedPosition: "left",
 					customizeText: function (e) {
 						var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Not yet Submitted</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
 						return rDesc[e.value];
