@@ -545,9 +545,17 @@ Class SpklModule extends Application{
 							}
 							$data=array("jml"=>count($Spkl));
 						} else if(isset($query['filter'])){
-							$join = "LEFT JOIN vwspklreport v on tbl_spkl.id=v.id";
+							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+							$join = "LEFT JOIN vwspklreport v on tbl_spkl.id=v.id LEFT JOIN tbl_employee ON (tbl_spkl.employee_id = tbl_employee.id) ";
 							$sel = 'tbl_spkl.*, v.spklstatus,v.otstatus,v.personholding ';
 							$Spkl = Spkl::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
+							
+							if($Employee->location->sapcode=='0200' || $this->currentUser->isadmin){
+								$Spkl = Spkl::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee'=>array('company','department'))));
+							}else{
+								$Spkl = Spkl::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_spkl.RequestStatus=3 and tbl_employee.company_id=?',$Employee->company_id ),'include' => array('employee'=>array('company','department'))));
+							}
+							
 							foreach ($Spkl as &$result) {
 								$fullname	= $result->employee->fullname;		
 								$result		= $result->to_array();

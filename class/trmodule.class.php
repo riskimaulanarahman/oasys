@@ -672,9 +672,15 @@ Class TrModule extends Application{
 							}
 							$data=array("jml"=>count($Tr));
 						} else if(isset($query['filter'])){
-							$join = "LEFT JOIN vwtrreport v on tbl_tr.id=v.id";
+							$join = "LEFT JOIN vwtrreport v on tbl_tr.id=v.id LEFT JOIN tbl_employee ON (tbl_tr.employee_id = tbl_employee.id) ";
 							$sel = 'tbl_tr.*, v.laststatus,v.personholding ';
-							$Tr = Tr::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
+
+							if($Employee->location->sapcode=='0200' || $this->currentUser->isadmin){
+								$Tr = Tr::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee'=>array('company','department'))));
+							}else{
+								$Tr = Tr::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_tr.RequestStatus=3 and tbl_employee.company_id=?',$Employee->company_id ),'include' => array('employee'=>array('company','department'))));
+							}
+							
 							foreach ($Tr as &$result) {
 								$fullname	= $result->employee->fullname;		
 								$result		= $result->to_array();
