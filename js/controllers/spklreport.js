@@ -74,7 +74,7 @@ app.register.controller('spklreportCtrl', ['$rootScope','$scope', '$http', '$int
 								$scope.loadSPKLTMS(options.data,'report',false);
                             })
                             .appendTo(container);
-							if($rootScope.isAdmin && (options.data.requeststatus=='3')){
+							if($rootScope.isAdmin && (options.data.tmsreqstatus=='3')){
 							$('<div style="padding:2px 15px 2px 15px;"/>').addClass('dx-icon-repeat  btn-pill btn-shadow btn btn-success')
 								.text('')
 								.on('dxclick', function () {
