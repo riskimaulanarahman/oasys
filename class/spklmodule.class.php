@@ -674,7 +674,7 @@ Class SpklModule extends Application{
 										$Spklhistory->actiontype = 3;
 										break;
 									case '2':
-										if ($Spklapproval->approver->isfinal == 1){
+										if ($Spklapproval->approver->isfinal == 1 || ($Spklapproval->approver->approvaltype_id=='21' && $Spkl->ismorethan2hours == 0)){
 											$Spkl->requeststatus = 3;
 											$Spkl->approvalstep = 0;
 											$emto=$email;$emname=$Spkl->employee->fullname;
