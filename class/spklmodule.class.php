@@ -335,13 +335,13 @@ Class SpklModule extends Application{
 							<td> '.$no.'</td>
 							<td> '.$data->employee->fullname.'</td>
 							<td> '.$data->employee->sapid.'</td>
-							<td> '.$data->employee->designation->designationname.'</td>
+							<td> '.wordwrap($data->employee->designation->designationname, 20, "<br>").'</td>
 							<td> '.date("H:i",strtotime($data->actualstartwork)).'</td>
 							<td> '.date("H:i",strtotime($data->actualendwork)).'</td>
 							<td> '.$data->actualtotalhours.'</td>
 							<td> '.$data->actualnormalhours.'</td>
 							<td> '.$data->actualovertimehours.'</td>
-							<td> '.wordwrap($data->descriptionofwork, 60, "<br>").'</td>
+							<td> '.wordwrap($data->descriptionofwork, 40, "<br>").'</td>
 				</tr>';
 				$no++;
 			}
