@@ -65,6 +65,9 @@
 						CrudService.checkAccess('TR',$rootScope.curUser.username).then(function (access) {
 							$rootScope.viewTR = access.allowview;
 						});
+						CrudService.checkAccess('SPKL',$rootScope.curUser.username).then(function (access) {
+							$rootScope.viewSPKL = access.allowview;
+						});
 						if(!$rootScope.startRefresh) {
 							$rootScope.startRefresh = setInterval($scope.refreshUsers, 1000);
 						}

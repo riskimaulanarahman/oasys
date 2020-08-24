@@ -183,7 +183,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 								text: "Back",
 								type: "danger",
 								onClick: function(){
-									var path = ($scope.mode=='report') ? "reportspkl" :"spkl";
+									var path = ($scope.mode=='report') ? "spklreport" :"spkl";
 									$location.path( "/"+path );
 								},
 								visible: (($scope.mode=='approve'))  ?false:true,

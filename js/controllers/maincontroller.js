@@ -53,6 +53,9 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 				CrudService.checkAccess('TR',$rootScope.curUser.username).then(function (access) {
 					$rootScope.viewTR = access.allowview;
 				});
+				CrudService.checkAccess('SPKL',$rootScope.curUser.username).then(function (access) {
+					$rootScope.viewSPKL = access.allowview;
+				});
 				if(!$rootScope.startRefresh) {
 					$rootScope.startRefresh = setInterval($scope.refreshUsers, 1000);
 				}
@@ -77,6 +80,10 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.dataTR= function(){	
 		loadModule($rootScope.viewTR,"trreport",false);
 		$rootScope.$broadcast("initTR", "");
+	}
+	$scope.dataSPKL= function(){	
+		loadModule($rootScope.viewSPKL,"spklreport",false);
+		$rootScope.$broadcast("initSPKL", "");
 	}
 	$scope.myDayoff= function(){
 		$location.path( "/dayoff" );

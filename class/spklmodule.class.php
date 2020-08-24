@@ -545,7 +545,7 @@ Class SpklModule extends Application{
 							$data=array("jml"=>count($Spkl));
 						} else if(isset($query['filter'])){
 							$join = "LEFT JOIN vwspklreport v on tbl_spkl.id=v.id";
-							$sel = 'tbl_spkl.*, v.laststatus,v.personholding ';
+							$sel = 'tbl_spkl.*, v.spklstatus,v.otstatus,v.personholding ';
 							$Spkl = Spkl::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
 							foreach ($Spkl as &$result) {
 								$fullname	= $result->employee->fullname;		
