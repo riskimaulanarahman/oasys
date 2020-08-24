@@ -113,7 +113,7 @@ Class SpklModule extends Application{
 						<td> '.$no.'</td>
 						<td> '.$data->employee->fullname.'</td>
 						<td> '.$data->employee->sapid.'</td>
-						<td> '.$data->employee->designation->designationname.'</td>
+						<td> '.wordwrap($data->employee->designation->designationname, 40, "<br>").'</td>
 						<td> '.$data->estimatenormalhours.'</td>
 						<td> '.$data->estimateovertimehours.'</td>
 						<td> '.wordwrap($data->target, 60, "<br>").'</td>';
@@ -238,7 +238,7 @@ Class SpklModule extends Application{
 						<td> '.$no.'</td>
 						<td> '.$data->employee->fullname.'</td>
 						<td> '.$data->employee->sapid.'</td>
-						<td> '.$data->employee->designation->designationname.'</td>
+						<td> '.wordwrap($data->employee->designation->designationname, 40, "<br>").'</td>
 						<td> '.$data->estimatenormalhours.'</td>
 						<td> '.$data->estimateovertimehours.'</td>
 						<td> '.wordwrap($data->target, 60, "<br>").'</td>';
