@@ -59,7 +59,7 @@ app.register.controller('trreportCtrl', ['$rootScope','$scope', '$http', '$inter
         rowAlternationEnabled: true,
         allowColumnResizing: true,
         columnResizingMode: "widget",
-        columnAutoWidth: true,
+        columnAutoWidth: false,
         showBorders: true,
         height: 600,
         headerFilter: {
