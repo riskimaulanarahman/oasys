@@ -672,6 +672,7 @@ Class TrModule extends Application{
 							}
 							$data=array("jml"=>count($Tr));
 						} else if(isset($query['filter'])){
+							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$join = "LEFT JOIN vwtrreport v on tbl_tr.id=v.id LEFT JOIN tbl_employee ON (tbl_tr.employee_id = tbl_employee.id) ";
 							$sel = 'tbl_tr.*, v.laststatus,v.personholding ';
 
