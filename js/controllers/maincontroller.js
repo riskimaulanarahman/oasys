@@ -100,6 +100,25 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.myMMF30= function(){
 		$location.path( "/mmf30" );
 	}
+	$scope.myITEIE= function(){
+		$location.path( "/iteie" );
+	}
+	$scope.myITSHAREFOLDER= function(){
+		$location.path( "/itsharefolder" );
+	}
+	$scope.myITINETACCESS= function(){
+		$location.path( "/itinetaccess" );
+	}
+	$scope.myITRDWEB= function(){
+		$location.path( "/itrdweb" );
+	}
+	$scope.myITMAILSIZE= function(){
+		$location.path( "/itmailsize" );
+	}
+	$scope.myITSTORAGETF= function(){
+		$location.path( "/itstoragetf" );
+	}
+
 	$scope.mySPKL= function(){
 		$location.path( "/spkl" );
 	}

@@ -125,6 +125,12 @@ app.config(function ($routeProvider, $controllerProvider) {
 	.when('/mmf30', route.resolve("mmf30"))
 	.when('/mmf30detail', route.resolve("mmf30detail"))
 	.when('/mmf30approval', route.resolve("mmf30approval"))
+	.when('/iteie', route.resolve("iteie"))
+	.when('/itsharefolder', route.resolve("itsharefolder"))
+	.when('/itinetaccess', route.resolve("itinetaccess"))
+	.when('/itrdweb', route.resolve("itrdweb"))
+	.when('/itmailsize', route.resolve("itmailsize"))
+	.when('/itstoragetf', route.resolve("itstoragetf"))
 	.otherwise({
 		redirectTo: '/'
 	});
