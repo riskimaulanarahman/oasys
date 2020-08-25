@@ -3,7 +3,7 @@ app.register.controller('spklreportCtrl', ['$rootScope','$scope', '$http', '$int
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
-	if ((!$rootScope.isAdmin) &&  (!$rootScope.viewTR)){
+	if ((!$rootScope.isAdmin) &&  (!$rootScope.viewSPKL)){
 		$location.path( "/" );
 	}
 	var myStore = new DevExpress.data.CustomStore({
