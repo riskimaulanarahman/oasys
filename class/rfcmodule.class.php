@@ -1041,7 +1041,7 @@ Class RfcModule extends Application{
 									$Rfcactivity=Rfcactivity::find($Rfc->activity_id);
 									$joins   = "LEFT JOIN tbl_approver ON (tbl_rfcapproval.approver_id = tbl_approver.id) LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id)";
 									$joinx   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";	
-									$companyBU=( ($company=='KPA') )?"KPSI":$company;
+									$companyBU=( ($company=='KPA') || ($company=='IHM'))?"KPSI":$company; //sementara IHM approval BU Head ke pak Guntur
 									if (($Employee->company_id=='6') || ($Employee->company_id=='7')){
 										$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='11' and tbl_employee.company_id=? ",$id,$Employee->company_id)));	
 									}else{
@@ -1470,10 +1470,11 @@ Class RfcModule extends Application{
 									// $Rfcapproval->approver_id = $Approver->id;
 									// $Rfcapproval->save();
 								// }
+								$companyBU=( ($Employee->companycode=='KPA') || ($Employee->companycode=='IHM'))?"KPSI":$Employee->companycode; //sementara IHM approval BU Head ke pak Guntur
 								if (($Employee->company->sapcode=='RND') || ($Employee->company->sapcode=='NKF')){
 									$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='11' and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
 								}else{
-									$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='11' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$Employee->companycode,$Employee->id)));
+									$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='11' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$companyBU,$Employee->id)));
 								}
 								if(count($ApproverBU)>0){
 									$Rfcapproval = new Rfcapproval();

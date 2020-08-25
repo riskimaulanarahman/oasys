@@ -1334,6 +1334,16 @@ Class SpklModule extends Application{
 										$Spklapproval->save();
 										$logger = new Datalogger("Spklapproval","add","Add BUHead Approval for SPKL > 2 hours",json_encode($Spklapproval->to_array()));
 										$logger->SaveData();
+									}else{
+										$ApproverBUHead = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='SPKL' and tbl_approver.isactive='1' and approvaltype_id=22 and tbl_employee.companycode='KPSI' and not(tbl_employee.id=?)",$Employee->id)));
+										if(count($ApproverBUHead)>0){
+											$Spklapproval = new Spklapproval();
+											$Spklapproval->spkl_id = $Spkl->id;
+											$Spklapproval->approver_id = $ApproverBUHead->id;
+											$Spklapproval->save();
+											$logger = new Datalogger("Spklapproval","add","Add BUHead Approval for SPKL > 2 hours",json_encode($Spklapproval->to_array()));
+											$logger->SaveData();
+										}
 									}
 								}
 															}
