@@ -169,7 +169,8 @@ app.register.controller('approverCtrl', ['$rootScope','$scope', '$http', '$inter
 							displayExpr: 'approvaltype'
 						}},
 					{dataField: "sequence",caption: "Sequence",  },  
-					{dataField:'isfinal',dataType: "boolean", showEditorAlways: true }
+					{dataField:'isfinal',dataType: "boolean", showEditorAlways: true },
+					{dataField:'isactive',dataType: "boolean", showEditorAlways: true }
                   
                   ],
         "export": {
@@ -238,7 +239,12 @@ app.register.controller('approverCtrl', ['$rootScope','$scope', '$http', '$inter
                 e.editorName = "dxSwitch";
                 e.editorOptions.switchedOnText = "Yes";
                 e.editorOptions.switchedOffText = "No";
-            }  
+            } 
+			if (e.dataField == "isactive"){
+                e.editorName = "dxSwitch";
+                e.editorOptions.switchedOnText = "Yes";
+                e.editorOptions.switchedOffText = "No";
+            }			
         },
         onInitNewRow: function (e) {
             e.component.columnOption("id", "allowEditing", false);
