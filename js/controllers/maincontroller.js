@@ -91,6 +91,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.detailSPKL= function(){	
 		loadModule($rootScope.viewSPKL,"spkltmsreport");
 		$rootScope.$broadcast("initSPKLTMSReport", "");
+	}
 	$scope.dataMMF= function(){	
 		loadModule($rootScope.viewMMF,"mmfreport",false);
 		$rootScope.$broadcast("initMMF", "");
