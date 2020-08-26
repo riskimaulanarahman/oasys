@@ -1,0 +1,42 @@
+<div  ng-controller="iteiedetailCtrl as iteied">
+    <div class='panel panel-default'>
+      <div class='panel-heading'> <i class="fa fa-user fa-fw"></i> Exchange - Internet Email Request</div>
+      <div class='panel-body' id="maincontainer">
+          <div class="clearfix"></div><br>
+          <form action="your-action" ng-submit="onFormSubmit($event)">
+              <div class="widget-container">
+                  <div id="form" dx-form="detailFormOptions"></div>
+              </div>
+          </form>
+          <div data-options="dxTemplate: { name: 'content' }" ng-show="showHistory">
+              <div id="detailEMP" dx-tab-panel="tabSettings">			
+                  <!-- <div data-options="dxTemplate: { name: 'tab' }" style="padding:10px;">
+                      <div dx-data-grid="gridOptions" style="min-height:400px;max-height:430px"></div>
+                  </div>
+                  <div data-options="dxTemplate: { name: 'tab1' }" style="padding:10px;">
+                     <div dx-data-grid="grid1Options" style="min-height:400px;max-height:430px"></div>
+                  </div> -->
+                  <div data-options="dxTemplate: { name: 'tab' }" style="padding:10px;">
+                     <div dx-data-grid="grid2Options" style="min-height:400px;max-height:430px" dx-item-alias="row" >
+                       <div data-options="dxTemplate:{ name: 'dropDownBoxEditorTemplatex'}">
+                          <div dx-drop-down-box="initDropDownBoxEditorx(row)" dx-item-alias="item">
+                              <div data-options="dxTemplate:{ name: 'contentTemplate'}">
+                                  <div dx-data-grid="initContentx(row, item.component)"></div>
+                              </div>
+                          </div>
+                      </div>
+                     </div>
+                  </div>
+                  <div data-options="dxTemplate: { name: 'tab1' }" style="padding:10px;">
+                     <div dx-data-grid="grid3Options" style="min-height:400px;max-height:430px"></div>
+                  </div>
+                  <!-- <div data-options="dxTemplate: { name: 'tab4' }" style="padding:10px;">
+                     <div dx-data-grid="grid4Options" style="min-height:400px;max-height:430px"></div>
+                  </div> -->
+              </div>
+              <div style="z-index:1000" dx-load-panel="{ bindingOptions: { visible: 'loadPanelVisible' }, message: 'Loading...',showPane:true,shadingColor: 'rgba(0,0,0,0.4)', position: { of: '#detailEMP' }, shading: true}"></div>
+          </div>
+       <div ng-include src="'template/panel.html'"></div>
+      </div>
+    </div>
+  </div>

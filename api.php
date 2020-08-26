@@ -41,7 +41,15 @@ $page = array("login",
 	"rfcmodule",
 	"skratemodule",
 	"spklmodule",
-	"trmodule"
+	"trmodule",
+	"mmfmodule",
+	"mmf30module",
+	"iteiemodule",
+	// "itinetaccessmodule",
+	// "itmailsizemodule",
+	// "itrdwebmodule",
+	// "itsharefoldermodule",
+	// "itstoragetfmodule"
 );
 
 foreach ($page as $class){

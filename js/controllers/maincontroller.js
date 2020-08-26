@@ -56,6 +56,9 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 				CrudService.checkAccess('SPKL',$rootScope.curUser.username).then(function (access) {
 					$rootScope.viewSPKL = access.allowview;
 				});
+				// CrudService.checkAccess('MMF',$rootScope.curUser.username).then(function (access) {
+				// 	$rootScope.viewMMF = access.allowview;
+				// });
 				if(!$rootScope.startRefresh) {
 					$rootScope.startRefresh = setInterval($scope.refreshUsers, 1000);
 				}
@@ -88,6 +91,9 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.detailSPKL= function(){	
 		loadModule($rootScope.viewSPKL,"spkltmsreport");
 		$rootScope.$broadcast("initSPKLTMSReport", "");
+	$scope.dataMMF= function(){	
+		loadModule($rootScope.viewMMF,"mmfreport",false);
+		$rootScope.$broadcast("initMMF", "");
 	}
 	$scope.myDayoff= function(){
 		$location.path( "/dayoff" );
@@ -98,6 +104,31 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.myTR= function(){
 		$location.path( "/tr" );
 	}
+	$scope.myMMF= function(){
+		$location.path( "/mmf" );
+	}
+	$scope.myMMF30= function(){
+		$location.path( "/mmf30" );
+	}
+	$scope.myITEIE= function(){
+		$location.path( "/iteie" );
+	}
+	$scope.myITSHAREFOLDER= function(){
+		$location.path( "/itsharefolder" );
+	}
+	$scope.myITINETACCESS= function(){
+		$location.path( "/itinetaccess" );
+	}
+	$scope.myITRDWEB= function(){
+		$location.path( "/itrdweb" );
+	}
+	$scope.myITMAILSIZE= function(){
+		$location.path( "/itmailsize" );
+	}
+	$scope.myITSTORAGETF= function(){
+		$location.path( "/itstoragetf" );
+	}
+
 	$scope.mySPKL= function(){
 		$location.path( "/spkl" );
 	}
@@ -163,6 +194,9 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.dayoffApproval= function(){ loadModule(true,"doapproval",true);$rootScope.$broadcast("initDO", "");} 
 	$scope.RFCApproval= function(){ loadModule(true,"rfcapproval",true);$rootScope.$broadcast("initRFC", "");} 
 	$scope.TRApproval= function(){ loadModule(true,"trapproval",true);$rootScope.$broadcast("initTR", "");} 
+	$scope.mmfApproval= function(){ loadModule(true,"mmfapproval",true);$rootScope.$broadcast("initMMF", "");} 
+	$scope.mmf30Approval= function(){ loadModule(true,"mmf30approval",true);$rootScope.$broadcast("initMMF30", "");} 
+	$scope.iteieApproval= function(){ loadModule(true,"iteieapproval",true);$rootScope.$broadcast("initITEIE", "");} 
 	$scope.SPKLApproval= function(){ loadModule(true,"spklapproval",true);$rootScope.$broadcast("initSPKL", "");} 
 	$scope.SPKLTMSApproval = function(){ loadModule(true,"spkltmsapproval",true);$rootScope.$broadcast("initSPKLTMS", "");} 
 	function loadModule(access,template,filter){
@@ -274,6 +308,75 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 			$scope.Requestid = data.id;
 			$scope.Employeeid = data.employee_id;
 			$location.path( "/trdetail" );
+		}
+	}
+	$scope.loadMMF= function(data,mode,filter){
+		$scope.Filter=filter;
+		if (mode=='add'){
+			CrudService.Create('mmf',data).then(function (response) {
+				if(response.status=="error"){
+					DevExpress.ui.dialog.alert(response.message,"Error");
+				}else if(response.status=="autherror"){
+					DevExpress.ui.notify(response.message,"error");
+					$scope.logout();
+				}else{
+					$scope.mode = mode;
+					$scope.Requestid = response.id;
+					$scope.Employeeid = response.employee_id;
+					$location.path( "/mmfdetail" );
+				}
+			});
+		}else{
+			$scope.mode = mode;
+			$scope.Requestid = data.id;
+			$scope.Employeeid = data.employee_id;
+			$location.path( "/mmfdetail" );
+		}
+	}
+	$scope.loadMMF30= function(data,mode,filter){
+		$scope.Filter=filter;
+		if (mode=='add'){
+			CrudService.Create('mmf30',data).then(function (response) {
+				if(response.status=="error"){
+					DevExpress.ui.dialog.alert(response.message,"Error");
+				}else if(response.status=="autherror"){
+					DevExpress.ui.notify(response.message,"error");
+					$scope.logout();
+				}else{
+					$scope.mode = mode;
+					$scope.Requestid = response.id;
+					$scope.Employeeid = response.employee_id;
+					$location.path( "/mmf30detail" );
+				}
+			});
+		}else{
+			$scope.mode = mode;
+			$scope.Requestid = data.id;
+			$scope.Employeeid = data.employee_id;
+			$location.path( "/mmf30detail" );
+		}
+	}
+	$scope.loadITEIE= function(data,mode,filter){
+		$scope.Filter=filter;
+		if (mode=='add'){
+			CrudService.Create('iteie',data).then(function (response) {
+				if(response.status=="error"){
+					DevExpress.ui.dialog.alert(response.message,"Error");
+				}else if(response.status=="autherror"){
+					DevExpress.ui.notify(response.message,"error");
+					$scope.logout();
+				}else{
+					$scope.mode = mode;
+					$scope.Requestid = response.id;
+					$scope.Employeeid = response.employee_id;
+					$location.path( "/iteiedetail" );
+				}
+			});
+		}else{
+			$scope.mode = mode;
+			$scope.Requestid = data.id;
+			$scope.Employeeid = data.employee_id;
+			$location.path( "/iteiedetail" );
 		}
 	}
 	$scope.loadSPKL= function(data,mode,filter){
