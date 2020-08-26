@@ -244,7 +244,7 @@
                         onClick: function() {
                             var date = new Date();
                             var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
-                            $scope.loadMMF({createddate:d,username:$rootScope.curUser.username},"add",true);
+                            $scope.loadITEIE({createddate:d,username:$rootScope.curUser.username},"add",true);
                         }
                     }
                 });

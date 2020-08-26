@@ -45,11 +45,11 @@ $page = array("login",
 	"mmfmodule",
 	"mmf30module",
 	"iteiemodule",
-	"itinetaccessmodule",
-	"itmailsizemodule",
-	"itrdwebmodule",
-	"itsharefoldermodule",
-	"itstoragetfmodule"
+	// "itinetaccessmodule",
+	// "itmailsizemodule",
+	// "itrdwebmodule",
+	// "itsharefoldermodule",
+	// "itstoragetfmodule"
 );
 
 foreach ($page as $class){
