@@ -110,7 +110,7 @@ app.register.controller('repdoCtrl', ['$rootScope','$scope', '$http', '$interval
         rowAlternationEnabled: true,
         allowColumnResizing: true,
         columnResizingMode: "widget",
-        columnAutoWidth: true,
+        columnAutoWidth: false,
         showBorders: true,
         height: 600,
         headerFilter: {

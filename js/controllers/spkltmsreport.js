@@ -102,7 +102,7 @@ app.register.controller('spkltmsreportCtrl', ['$rootScope','$scope', '$http', '$
         rowAlternationEnabled: true,
         allowColumnResizing: true,
         columnResizingMode: "widget",
-        columnAutoWidth: true,
+        columnAutoWidth: false,
         showBorders: true,
         height: 600,
         headerFilter: {
