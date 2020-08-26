@@ -85,6 +85,10 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 		loadModule($rootScope.viewSPKL,"spklreport",false);
 		$rootScope.$broadcast("initSPKL", "");
 	}
+	$scope.detailSPKL= function(){	
+		loadModule($rootScope.viewSPKL,"spkltmsreport");
+		$rootScope.$broadcast("initSPKLTMSReport", "");
+	}
 	$scope.myDayoff= function(){
 		$location.path( "/dayoff" );
 	}

@@ -1144,6 +1144,44 @@ Class SpklModule extends Application{
 						if(isset($query['status'])){
 							$Spkldetail = Spkldetail::find('all', array('conditions' => array("spkl_id=?",$query['spkl_id'])));
 							$data=array("jml"=>count($Spkldetail));
+						}else if (isset($query['detail'])){
+							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+							$joinx   = "LEFT JOIN tbl_spkl as r ON (spkl_id = r.id) left join tbl_employee e on r.employee_id=e.id";	
+							if(($Employee->location->sapcode=='0200') || ($this->currentUser->isadmin)){
+								$Spkldetail = Spkldetail::find('all', array('joins'=>$joinx,'include'=>array('employee'=>array("department","location","company","designation","department")),'conditions' => array("isOTApproved='1' and r.TMSReqStatus='3' and r.datework between ? and ?",$query['startDate'],$query['endDate']),'order'=>"datework"));
+							}else{
+								$Spkldetail = Spkldetail::find('all', array('joins'=>$joinx,'include'=>array('employee'=>array("department","location","company","designation","department")),'conditions' => array("isOTApproved='1' and r.TMSReqStatus='3' and e.company_id=?  and r.datework between ? and ?",$Employee->company_id,$query['startDate'],$query['endDate']),'order'=>"datework"));
+							}
+							
+							foreach ($Spkldetail as &$result) {
+								$joine  = "LEFT JOIN tbl_employee d ON (tbl_spkl.depthead = d.id)";	
+								$sel = 'tbl_spkl.*,d.fullname as DeptHead';
+								$Spkl = Spkl::find('first', array('select'=>$sel,'joins'=>$joine,'include'=>array('employee'=>array("department","location","company","designation","department")),'conditions' => array("tbl_spkl.id=?",$result->spkl_id)));
+								$join  = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";	
+								$Spkltmsapproval = Spkltmsapproval::find('first',array('joins'=>$join,'conditions'=>array("spkl_id=?",$result->spkl_id),'order'=>"tbl_approver.sequence desc",'include' => array('approver'=>array('employee'))));
+								$appText = ($result->isapproved==null)?"":(($result->isapproved)?"Yes":"No");
+								
+								$sapid = $result->employee->sapid;
+								$fullname = $result->employee->fullname;
+								$location = $result->employee->location->location;
+								$department = $result->employee->department->departmentname;
+								$position = $result->employee->designation->designationname;
+								$bu = $result->employee->companycode;
+								$result		= $result->to_array();
+								$result['fullapproveddate']= $Spkltmsapproval->approvaldate;
+								$result['datework'] = $Spkl->datework;
+								$result['reqby'] = $Spkl->employee->fullname;
+								$result['sapid']= $sapid;
+								$result['name']=$fullname;
+								$result['location']=$location;
+								$result['department']=$department;
+								$result['position']=$position;
+								$result['bu']=$bu;
+								$result['depthead']=$Spkl->depthead;
+								$result['isapproved'] = $appText;
+								$result['isused'] = $usedText;
+							}
+							$data=$Spkldetail;
 						}else{
 							$data=array();
 						}

@@ -651,6 +651,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 									<li class="nav-item"><a href="" ng-click="dataTR()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> TR Report</a></li>
 									<li class="nav-item"><a href="" ng-click="dataRFC()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> RFC Record</a></li>
 									<li class="nav-item"><a href="" ng-click="dataSPKL()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Data SPKL</a></li>
+									<li class="nav-item"><a href="" ng-click="detailSPKL()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Detail OT Timesheet</a></li>
 								</ul>
 							</li>
 						</ul>
@@ -704,15 +705,15 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 	<script language="JavaScript" src="js/lib/dx.all.js" type="text/javascript"></script>
 	<script language="JavaScript" src="js/lib/FileSaver.min.js" type="text/javascript"></script>
 
-	<script language="JavaScript" src="js/app.js?v=3.56" type="text/javascript"></script>
-	<script language="JavaScript" src="js/directive.js?v=3.56" type="text/javascript"></script>
-	<script language="JavaScript" src="js/services.js?v=3.56" type="text/javascript"></script>
-	<script language="JavaScript" src="js/filter.js?v=3.56" type="text/javascript"></script>
-	<script language="JavaScript" src="js/factory.js?v=3.56" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/maincontroller.js?v=3.56" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/login.js?v=3.56" type="text/javascript"></script>
+	<script language="JavaScript" src="js/app.js?v=4.00" type="text/javascript"></script>
+	<script language="JavaScript" src="js/directive.js?v=4.00" type="text/javascript"></script>
+	<script language="JavaScript" src="js/services.js?v=4.00" type="text/javascript"></script>
+	<script language="JavaScript" src="js/filter.js?v=4.00" type="text/javascript"></script>
+	<script language="JavaScript" src="js/factory.js?v=4.00" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/maincontroller.js?v=4.00" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/login.js?v=4.00" type="text/javascript"></script>
 
-	<script language="JavaScript" src="js/script.js?v=3.56" type="text/javascript"></script>
+	<script language="JavaScript" src="js/script.js?v=4.00" type="text/javascript"></script>
 	<script type="text/javascript" src="assets/scripts/main.js"></script>
 </body>
 </html>
