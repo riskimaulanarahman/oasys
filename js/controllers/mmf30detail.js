@@ -13,6 +13,7 @@
 			$scope.logout();
 		}else{
             $scope.data = response;
+			$scope.lockDetail = ($scope.data.apprstatuscode==3)?false:(($scope.mode=="add") || ($scope.mode=="Edit"))?false:true;
             console.log($scope.data);
 			if(($scope.mode=='approve')){
 				$scope.data.remarks="";
@@ -660,7 +661,9 @@
     var myStore = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;
-			return CrudService.GetById('mmf30detail',$scope.Requestid);         		
+			console.log($scope.data.apprstatuscode);
+			return CrudService.GetById('mmf30detail',$scope.Requestid); 
+			
 		},
 		byKey: function(key) {
             CrudService.GetById('mmf30detail',encodeURIComponent(key)).then(function (response) {
@@ -778,6 +781,7 @@
         }),
         sort: "id"
     }
+	$scope.lockDetail=false;
     $scope.gridOptions = {
 		dataSource: myData,
 		allowColumnResizing: true,
@@ -791,7 +795,7 @@
                 caption: "Material Code",
                 dataType: "string",
                 editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($scope.data.apprstatuscode==3)?false:true):false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }
             },
             {
@@ -799,7 +803,7 @@
                 caption: "Description",
                 dataType: "string",
                 editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($scope.data.apprstatuscode==3)?false:true):false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }
             },
             {
@@ -807,7 +811,7 @@
                 caption: "Part Number",
                 dataType: "string",
                 editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($scope.data.apprstatuscode==3)?false:true):false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }
             },
             {
@@ -815,7 +819,7 @@
                 caption: "Brand/Manufacturer",
                 dataType: "string",
                 editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($scope.data.apprstatuscode==3)?false:true):false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }
             },
             {
@@ -823,7 +827,7 @@
                 caption: "Qty",
                 dataType: "number",
                 editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($scope.data.apprstatuscode==3)?false:true):false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }
             },
             {
@@ -831,7 +835,7 @@
                 caption: "Unit",
                 dataType: "string",
                 editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($scope.data.apprstatuscode==3)?false:true):false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }
             },
             {
@@ -839,7 +843,7 @@
                 caption: "Currency",
                 dataType: "number",
                 editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($scope.data.apprstatuscode==3)?false:true):false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }
             },
             {
@@ -847,7 +851,7 @@
                 caption: "Unit Price",
                 dataType: "number",
                 editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($scope.data.apprstatuscode==3)?false:true):false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }
             },
             {
@@ -855,7 +859,7 @@
                 caption: "Extended Price",
                 dataType: "number",
                 editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($scope.data.apprstatuscode==3)?false:true):false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }
             },
             // {
@@ -870,7 +874,17 @@
 			// {dataField:'phonenumber',caption: "Phone Number",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
 			// {dataField:'gender',caption: "Gender",lookup: {dataSource: [{key:"Male",val:"Male"},{key:"Female",val:"Female"}],valueExpr: "key", displayExpr: "val" },dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
 			// {dataField:'hrremarks',caption: "Remarks / Confirmation from HR (Konfirmasi dari HR)",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') )?false:true}},
-		],editing: {
+		],bindingOptions :{
+            "columns[0].editorOptions.disabled":"lockDetail",
+			"columns[1].editorOptions.disabled":"lockDetail",
+			"columns[2].editorOptions.disabled":"lockDetail",
+			"columns[3].editorOptions.disabled":"lockDetail",
+			"columns[4].editorOptions.disabled":"lockDetail",
+			"columns[5].editorOptions.disabled":"lockDetail",
+			"columns[6].editorOptions.disabled":"lockDetail",
+			"columns[7].editorOptions.disabled":"lockDetail",
+			"columns[8].editorOptions.disabled":"lockDetail"
+        },editing: {
             useIcons:true,
             mode: "cell",
 			allowUpdating:(($scope.mode=='view') ||($scope.mode=='report')||($scope.mode=='reschedule'))?(($rootScope.isAdmin)?true:false):true,
