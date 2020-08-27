@@ -220,11 +220,19 @@
                             //     }
                             // },
                             {
+                                dataField:'mmfnumber',
+                                label: {
+                                    text:"MMF No",
+                                },
+                                disabled: true                            
+                            },
+                            {
                                 dataField:'wonumber',
                                 label: {
                                     text:"Work Order No",
                                 },
-                                disabled: true                            
+                                name:'wonumber',
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                               
                             },
                             {
                                 dataField:'chargecode',
@@ -658,15 +666,16 @@
                                 name:'estimatecost',
                                 visible: (($scope.data.apprstatuscode==3)) ? true:false,
                                 // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
-                            },{
+                            },
+                            {
                                 dataField:'pono',
                                 label: {
                                     text:"PO No",
                                 },
                                 name:'pono',
                                 visible: (($scope.data.apprstatuscode==3)) ? true:false,
-                                // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
-                            },{
+                            },
+                            {
                                 dataField:'materialreturneddate',
                                 visible: (($scope.data.apprstatuscode==3)) ? true:false,
                                 editorType: "dxDateBox",
@@ -1142,6 +1151,7 @@
 				delete data.createddate;
 				delete data.employee_id;
 				delete data.wonumber;
+				delete data.mmfnumber;
 				delete data.requeststatus;
 				delete data.telpno;
 				delete data.chargecode;
@@ -1204,6 +1214,7 @@
 						delete data.createddate;
                         delete data.employee_id;
                         delete data.wonumber;
+                        delete data.mmfnumber;
                         delete data.requeststatus;
                         delete data.telpno;
                         delete data.chargecode;

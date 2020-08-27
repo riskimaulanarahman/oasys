@@ -791,7 +791,7 @@
                 caption: "Material Code",
                 dataType: "string",
                 editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($scope.data.apprstatuscode==3)?false:true):false
                 }
             },
             {
@@ -799,7 +799,7 @@
                 caption: "Description",
                 dataType: "string",
                 editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($scope.data.apprstatuscode==3)?false:true):false
                 }
             },
             {
@@ -807,7 +807,7 @@
                 caption: "Part Number",
                 dataType: "string",
                 editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($scope.data.apprstatuscode==3)?false:true):false
                 }
             },
             {
@@ -815,7 +815,7 @@
                 caption: "Brand/Manufacturer",
                 dataType: "string",
                 editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($scope.data.apprstatuscode==3)?false:true):false
                 }
             },
             {
@@ -823,7 +823,7 @@
                 caption: "Qty",
                 dataType: "number",
                 editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($scope.data.apprstatuscode==3)?false:true):false
                 }
             },
             {
@@ -831,7 +831,7 @@
                 caption: "Unit",
                 dataType: "string",
                 editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($scope.data.apprstatuscode==3)?false:true):false
                 }
             },
             {
@@ -839,7 +839,7 @@
                 caption: "Currency",
                 dataType: "number",
                 editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($scope.data.apprstatuscode==3)?false:true):false
                 }
             },
             {
@@ -847,7 +847,7 @@
                 caption: "Unit Price",
                 dataType: "number",
                 editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($scope.data.apprstatuscode==3)?false:true):false
                 }
             },
             {
@@ -855,7 +855,7 @@
                 caption: "Extended Price",
                 dataType: "number",
                 editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($scope.data.apprstatuscode==3)?false:true):false
                 }
             },
             // {

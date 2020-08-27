@@ -327,8 +327,8 @@ Class Mmfmodule extends Application{
 						// $data['createdby']=$Employee->id;
 						$data['RequestStatus']=0;
 						try{
-							$Rfcnew = Mmf::find('first',array('select' => "CONCAT('MMF28/','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(wonumber,-4,4)) is null then 1 else max(substring(wonumber,-4,4))+1 end,4,'0')) as wonumber","conditions"=>array("substring(wonumber,7,".strlen($Employee->companycode).")=? and substring(wonumber,".(strlen($Employee->companycode)+8).",4)=YEAR(CURDATE())",$Employee->companycode)));
-							$data['wonumber']=$Rfcnew->wonumber;
+							$Rfcnew = Mmf::find('first',array('select' => "CONCAT('MMF28/','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(mmfnumber,-4,4)) is null then 1 else max(substring(mmfnumber,-4,4))+1 end,4,'0')) as mmfnumber","conditions"=>array("substring(mmfnumber,7,".strlen($Employee->companycode).")=? and substring(mmfnumber,".(strlen($Employee->companycode)+8).",4)=YEAR(CURDATE())",$Employee->companycode)));
+							$data['mmfnumber']=$Rfcnew->mmfnumber;
 							$Tr = Mmf::create($data);
 							$data=$Tr->to_array();
 							$joinx   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
@@ -574,7 +574,7 @@ Class Mmfmodule extends Application{
 											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Tr->createddate)).'</p></td>
 											<td><p class=MsoNormal> '.$Tr->employee->fullname.'</p></td>
 											<td><p class=MsoNormal> '.$Tr->telpno.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->wonumber.'</p></td>
+											<td><p class=MsoNormal> '.$Tr->mmfnumber.'</p></td>
 											<td><p class=MsoNormal> '.$Tr->chargecode.'</p></td>
 											<td><p class=MsoNormal> '.$Tr->materialdispatch.'</p></td>
 											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Tr->requireddate)).'</p></td>
@@ -876,8 +876,8 @@ Class Mmfmodule extends Application{
 										$Tr->requeststatus = 3;
 										$emto=$email;$emname=$Tr->employee->fullname;
 										$this->mail->Subject = "Online Approval System -> Approval Completed";
-										$red = '<p>Your MMF 28. request has been approved</p>
-													<p><b><span lang=EN-US style=\'color:#002060\'>Note : Please <u>forward</u> this electronic approval to your respective Human Resource Department.</span></b></p>';
+										$red = '<p>Your MMF 28. request has been approved</p>';
+													// <p><b><span lang=EN-US style=\'color:#002060\'>Note : Please <u>forward</u> this electronic approval to your respective Human Resource Department.</span></b></p>';
 										//delete unnecessary approver
 										$Trapproval = Mmfapproval::find('all', array('joins'=>$join,'conditions' => array("mmf28_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
 										foreach ($Trapproval as $data) {
@@ -954,7 +954,7 @@ Class Mmfmodule extends Application{
 											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Tr->createddate)).'</p></td>
 											<td><p class=MsoNormal> '.$Tr->employee->fullname.'</p></td>
 											<td><p class=MsoNormal> '.$Tr->telpno.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->wonumber.'</p></td>
+											<td><p class=MsoNormal> '.$Tr->mmfnumber.'</p></td>
 											<td><p class=MsoNormal> '.$Tr->chargecode.'</p></td>
 											<td><p class=MsoNormal> '.$Tr->materialdispatch.'</p></td>
 											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Tr->requireddate)).'</p></td>
@@ -1049,7 +1049,7 @@ Class Mmfmodule extends Application{
 							</tr>
 							<tr>
 							<td class="tg-left" colspan="1">Work Order No :</td>
-							<td class="tg-value" colspan="1"><u>'.$Tr->wonumber.'</u></td>
+							<td class="tg-value" colspan="1"><u>'.$Tr->mmfnumber.'</u></td>
 							<td class="">Charge Code :</td>
 							<td class="tg-right tg-value" colspan="4"><u>'.$Tr->chargecode.'</u></td>
 							</tr>
@@ -1260,7 +1260,7 @@ Class Mmfmodule extends Application{
 							</html>';
 											
 							echo $pdfContent;
-											// echo json_encode($Tr->wonumber, JSON_NUMERIC_CHECK);
+											// echo json_encode($Tr->mmfnumber, JSON_NUMERIC_CHECK);
 		
 		try {
 			$html2pdf = new Html2Pdf('P', 'A4', 'en');

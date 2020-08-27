@@ -889,8 +889,8 @@ Class Mmf30module extends Application{
 										$Mmf30->requeststatus = 3;
 										$emto=$email;$emname=$Mmf30->employee->fullname;
 										$this->mail->Subject = "Online Approval System -> Approval Completed";
-										$red = '<p>Your MMF 30. request has been approved</p>
-													<p><b><span lang=EN-US style=\'color:#002060\'>Note : Please <u>forward</u> this electronic approval to your respective Human Resource Department.</span></b></p>';
+										$red = '<p>Your MMF 30. request has been approved</p>';
+													// <p><b><span lang=EN-US style=\'color:#002060\'>Note : Please <u>forward</u> this electronic approval to your respective Human Resource Department.</span></b></p>';
 										//delete unnecessary approver
 										$Mmf30approval = Mmf30approval::find('all', array('joins'=>$join,'conditions' => array("mmf30_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
 										foreach ($Mmf30approval as $data) {
