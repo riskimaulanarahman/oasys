@@ -13,7 +13,8 @@
 			$scope.logout();
 		}else{
             $scope.data = response;
-			$scope.lockDetail = ($scope.data.apprstatuscode==3)?false:(($scope.mode=="add") || ($scope.mode=="Edit"))?false:true;
+			$scope.lockDetail = ($scope.data.apprstatuscode==3)?false:(($scope.mode=="add") || ($scope.mode=="edit"))?false:true;
+			$scope.lockUser = ($scope.data.apprstatuscode==3)?false:true;
             console.log($scope.data);
 			if(($scope.mode=='approve')){
 				$scope.data.remarks="";
@@ -782,6 +783,7 @@
         sort: "id"
     }
 	$scope.lockDetail=false;
+	$scope.lockUser=false;
     $scope.gridOptions = {
 		dataSource: myData,
 		allowColumnResizing: true,
@@ -881,9 +883,9 @@
 			"columns[3].editorOptions.disabled":"lockDetail",
 			"columns[4].editorOptions.disabled":"lockDetail",
 			"columns[5].editorOptions.disabled":"lockDetail",
-			"columns[6].editorOptions.disabled":"lockDetail",
-			"columns[7].editorOptions.disabled":"lockDetail",
-			"columns[8].editorOptions.disabled":"lockDetail"
+			"columns[6].editorOptions.disabled":"lockUser",
+			"columns[7].editorOptions.disabled":"lockUser",
+			"columns[8].editorOptions.disabled":"lockUser"
         },editing: {
             useIcons:true,
             mode: "cell",
