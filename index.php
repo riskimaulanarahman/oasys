@@ -755,8 +755,8 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 									<li class="nav-item"><a href="" ng-click="dataDayoff()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Employee Weekend Cov.</a></li>
 									<li class="nav-item"><a href="" ng-click="detailDayoff()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Detail Approved WPHC</a></li>
 									<li class="nav-item"><a href="" ng-click="dataTR()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> TR Report</a></li>
-									<li class="nav-item"><a href="" ng-click=""  class="nav-link" ><i class='fa fa-calendar-alt'></i> MMF28 Report</a></li>
-									<li class="nav-item"><a href="" ng-click=""  class="nav-link" ><i class='fa fa-calendar-alt'></i> MMF30 Report</a></li>
+									<li class="nav-item"><a href="" ng-click="dataMMF()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> MMF28 Report</a></li>
+									<li class="nav-item"><a href="" ng-click="dataMMF30()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> MMF30 Report</a></li>
 									<li class="nav-item"><a href="" ng-click="dataRFC()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> RFC Record</a></li>
 									<li class="nav-item"><a href="" ng-click="dataSPKL()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Data SPKL</a></li>
 									<li class="nav-item"><a href="" ng-click="detailSPKL()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Detail OT Timesheet</a></li>
