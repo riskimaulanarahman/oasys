@@ -50,6 +50,12 @@ Class Mmfmodule extends Application{
 				case 'apimmfapp':
 					$this->mmfApproval();
 					break;
+				case 'apimmffile':
+					$this->mmfAttachment();
+					break;
+				case 'uploadmmffile':
+					$this->uploadMmfFile();
+					break;
 				case 'apimmfpdf':
 					$id = $this->get['id'];
 					$this->generatePDF($id);
@@ -998,6 +1004,113 @@ Class Mmfmodule extends Application{
 				}
 			}
 		}
+	}
+	function mmfAttachment(){
+		if (count($this->post)==0){
+			http_response_code(405);
+    		echo json_encode(array("message" => "Method not Allowed"));
+		}else{
+			$auth = $this->jwt->checkAuth();
+			if($auth){
+				switch ($this->post['criteria']){
+					case 'byid':
+						$id = $this->post['id'];
+						if ($id!=""){
+							$Mmfattachment = Mmfattachment::find('all', array('conditions' => array("mmf28_id=?",$id)));
+							foreach ($Mmfattachment as &$result) {
+								$result		= $result->to_array();
+							}
+							echo json_encode($Mmfattachment, JSON_NUMERIC_CHECK);
+						}else{
+							$Mmfattachment = new Mmfattachment();
+							echo json_encode($Mmfattachment);
+						}
+						break;
+					case 'find':
+						$query=$this->post['query'];
+						if(isset($query['status'])){
+							$Mmfattachment = Mmfattachment::find('all', array('conditions' => array("mmf28_id=?",$query['mmf28_id'])));
+							$data=array("jml"=>count($Mmfattachment));
+						}else{
+							$data=array();
+						}
+						echo json_encode($data, JSON_NUMERIC_CHECK);
+						break;
+					case 'create':			
+						$data = $this->post['data'];
+						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+						$data['employee_id']=$Employee->id;
+						unset($data['__KEY__']);
+						
+						$Mmfattachment = Mmfattachment::create($data);
+						$logger = new Datalogger("Mmfattachment","create",null,json_encode($data));
+						$logger->SaveData();
+						break;
+					case 'delete':				
+						$id = $this->post['id'];
+						$Mmfattachment = Mmfattachment::find($id);
+						$data=$Mmfattachment->to_array();
+						$Mmfattachment->delete();
+						$logger = new Datalogger("Mmfattachment","delete",json_encode($data),null);
+						$logger->SaveData();
+						echo json_encode($Mmfattachment);
+						break;
+					case 'update':				
+						$id = $this->post['id'];
+						$data = $this->post['data'];
+						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+						$data['employee_id']=$Employee->id;
+						$Mmfattachment = Mmfattachment::find($id);
+						$olddata = $Mmfattachment->to_array();
+						foreach($data as $key=>$val){					
+							$val=($val=='No')?false:(($val=='Yes')?true:$val);
+							$Mmfattachment->$key=$val;
+						}
+						$Mmfattachment->save();
+						$logger = new Datalogger("Mmfattachment","update",json_encode($olddata),json_encode($data));
+						$logger->SaveData();
+						echo json_encode($Mmfattachment);
+						
+						break;
+					default:
+						$Mmfattachment = Mmfattachment::all();
+						foreach ($Mmfattachment as &$result) {
+							$result = $result->to_array();
+						}
+						echo json_encode($Mmfattachment, JSON_NUMERIC_CHECK);
+						break;
+				}
+			}
+		}
+	}
+	public function uploadMmfFile(){
+		$id= $this->get['id'];
+		if(!isset($_FILES['myFile'])) {
+			http_response_code(400);
+			echo "There is no file to upload";
+			exit;
+		}
+		$max_image_size = 5242880;
+		if(!is_uploaded_file($_FILES['myFile']['tmp_name'])) {
+			http_response_code(400);
+			echo "Unable to upload File";
+			exit;
+		}
+		if($_FILES['myFile']['size'] > $max_image_size) {
+			http_response_code(413);
+			echo "File Size too Large, Maximum 5MB";
+			exit;
+		}
+		if((strpos($_FILES['myFile']['type'], "image") === false) && (strpos($_FILES['myFile']['type'], "pdf") === false) && (strpos($_FILES['myFile']['type'], "officedocument") === false)  && (strpos($_FILES['myFile']['type'], "msword") === false) && (strpos($_FILES['myFile']['type'], "excel") === false)){
+			http_response_code(415);
+			echo "Only Accept Image File, pdf or Office Document (Excel & Word) ";
+			exit;
+		}
+		$path_to_file = "upload/mmf28/".$id."_".time()."_".$_FILES['myFile']['name'];
+		$path_to_file = str_replace("%","_",$path_to_file);
+		$path_to_file = str_replace(" ","_",$path_to_file);
+		echo $path_to_file;
+        move_uploaded_file($_FILES['myFile']['tmp_name'], $path_to_file);
 	}
 	function generatePDF($id){
 		$Tr = Mmf::find($id);
