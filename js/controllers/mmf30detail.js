@@ -923,7 +923,13 @@
 			// {dataField:'phonenumber',caption: "Phone Number",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
 			// {dataField:'gender',caption: "Gender",lookup: {dataSource: [{key:"Male",val:"Male"},{key:"Female",val:"Female"}],valueExpr: "key", displayExpr: "val" },dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
 			// {dataField:'hrremarks',caption: "Remarks / Confirmation from HR (Konfirmasi dari HR)",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') )?false:true}},
-		],bindingOptions :{
+		],
+		"export": {
+			enabled: true,
+			fileName: "Export Detail MMF30",
+			allowExportSelectedData: false
+		},
+		bindingOptions :{
             "columns[0].editorOptions.disabled":"lockDetail",
 			"columns[1].editorOptions.disabled":"lockDetail",
 			"columns[2].editorOptions.disabled":"lockDetail",
