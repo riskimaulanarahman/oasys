@@ -59,7 +59,7 @@ var RouteProvider = function () {
 	this.resolve = function (name) {
 		var route = {};
 		route.templateUrl = templatePath + name + ".html?v="+v;
-		route.controller = name + "Ctrl";
+		// route.controller = name + "Ctrl";
 		//route.controllerAs = "vm";
 		route.resolve = {
 			load: ['$q', '$rootScope', function ($q, $rootScope) { return loadController($q, $rootScope, scriptPath + name + ".js?v="+v); }]

@@ -92,21 +92,21 @@
                                     $scope.loadMMF30(options.data,"report",true);
                                 })
                                 .appendTo(container);
-                            if((options.data.requeststatus=='3')){
-                                // if((options.data.requeststatus=='0') || (options.data.requeststatus=='2')){
-                                $('<div style="padding:2px 15px 2px 15px;" title="Edit" />').addClass('dx-icon-edit btn-pill btn-shadow btn btn-success')
-                                .text('')
-                                .on('dxclick', function () {
-                                    // if (!$scope.allowEdit){
-                                    //     DevExpress.ui.notify("You don't have authority to edit data","error");
-                                    // } else{
-                                        $scope.loadMMF30(options.data,"edit",true);
-                                    // }
-                                })
-                                .appendTo(container);
-                            }else{
-                                $('<div style="padding:2px 15px 2px 15px;"/>').text('').appendTo(container);
-                            }
+                            // if((options.data.requeststatus=='3')){
+                            //     // if((options.data.requeststatus=='0') || (options.data.requeststatus=='2')){
+                            //     $('<div style="padding:2px 15px 2px 15px;" title="Edit" />').addClass('dx-icon-edit btn-pill btn-shadow btn btn-success')
+                            //     .text('')
+                            //     .on('dxclick', function () {
+                            //         // if (!$scope.allowEdit){
+                            //         //     DevExpress.ui.notify("You don't have authority to edit data","error");
+                            //         // } else{
+                            //             $scope.loadMMF30(options.data,"edit",true);
+                            //         // }
+                            //     })
+                            //     .appendTo(container);
+                            // }else{
+                            //     $('<div style="padding:2px 15px 2px 15px;"/>').text('').appendTo(container);
+                            // }
                         }
                     }
                     ,{caption: '#',formItem: { visible: false},width: 40,
