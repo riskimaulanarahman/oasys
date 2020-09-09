@@ -309,13 +309,20 @@ Class RfcModule extends Application{
 						break;
 					case 'create':			
 						$data = $this->post['data'];
-						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-						$data['employee_id']=$Employee->id;
+						if($this->currentUser->username=="admin"){
+							$Rfc = Rfc::find($data['rfc_id']);
+							$data['employee_id']= $Rfc->employee_id;
+						}else{
+							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+							$data['employee_id']=$Employee->id;
+						}
+						
 						unset($data['__KEY__']);
 						
 						$Rfcattachment = Rfcattachment::create($data);
 						$logger = new Datalogger("Rfcattachment","create",null,json_encode($data));
 						$logger->SaveData();
+						echo json_encode($data);
 						break;
 					case 'delete':				
 						$id = $this->post['id'];
@@ -1597,13 +1604,11 @@ Class RfcModule extends Application{
 								$err->save();
 								$data = array("status"=>"error","message"=>$e->getMessage());
 							}
-							echo json_encode($data);
-							
+							echo json_encode($data);	
 						} else {
 							$data = array("status"=>"error","message"=>"You can't delete submitted request");
 							echo json_encode($data);
 						}
-						
 						break;
 					case 'update':
 						$id = $this->post['id'];

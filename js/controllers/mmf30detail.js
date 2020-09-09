@@ -837,7 +837,7 @@
             {
                 dataField:'currency',
                 caption: "Currency",
-                dataType: "number",
+                dataType: "string",
                 editorOptions: {
                     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }
