@@ -50,6 +50,12 @@ Class Mmfmodule extends Application{
 				case 'apimmfapp':
 					$this->mmfApproval();
 					break;
+				case 'apimmffile':
+					$this->mmfAttachment();
+					break;
+				case 'uploadmmffile':
+					$this->uploadMmfFile();
+					break;
 				case 'apimmfpdf':
 					$id = $this->get['id'];
 					$this->generatePDF($id);
@@ -327,8 +333,8 @@ Class Mmfmodule extends Application{
 						// $data['createdby']=$Employee->id;
 						$data['RequestStatus']=0;
 						try{
-							$Rfcnew = Mmf::find('first',array('select' => "CONCAT('MMF28/','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(wonumber,-4,4)) is null then 1 else max(substring(wonumber,-4,4))+1 end,4,'0')) as wonumber","conditions"=>array("substring(wonumber,7,".strlen($Employee->companycode).")=? and substring(wonumber,".(strlen($Employee->companycode)+8).",4)=YEAR(CURDATE())",$Employee->companycode)));
-							$data['wonumber']=$Rfcnew->wonumber;
+							$Rfcnew = Mmf::find('first',array('select' => "CONCAT('MMF28/','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(mmfnumber,-4,4)) is null then 1 else max(substring(mmfnumber,-4,4))+1 end,4,'0')) as mmfnumber","conditions"=>array("substring(mmfnumber,7,".strlen($Employee->companycode).")=? and substring(mmfnumber,".(strlen($Employee->companycode)+8).",4)=YEAR(CURDATE())",$Employee->companycode)));
+							$data['mmfnumber']=$Rfcnew->mmfnumber;
 							$Tr = Mmf::create($data);
 							$data=$Tr->to_array();
 							$joinx   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
@@ -574,7 +580,7 @@ Class Mmfmodule extends Application{
 											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Tr->createddate)).'</p></td>
 											<td><p class=MsoNormal> '.$Tr->employee->fullname.'</p></td>
 											<td><p class=MsoNormal> '.$Tr->telpno.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->wonumber.'</p></td>
+											<td><p class=MsoNormal> '.$Tr->mmfnumber.'</p></td>
 											<td><p class=MsoNormal> '.$Tr->chargecode.'</p></td>
 											<td><p class=MsoNormal> '.$Tr->materialdispatch.'</p></td>
 											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Tr->requireddate)).'</p></td>
@@ -765,8 +771,8 @@ Class Mmfmodule extends Application{
 							}
 							$data=array("jml"=>count($Tr));
 						} else if(isset($query['filter'])){
-							$join = "LEFT JOIN vwtrreport v on tbl_tr.id=v.id";
-							$sel = 'tbl_tr.*, v.laststatus,v.personholding ';
+							$join = "LEFT JOIN vwmmf28report v on tbl_mmf28.id=v.id";
+							$sel = 'tbl_mmf28.*, v.laststatus,v.personholding ';
 							$Tr = Mmf::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
 							foreach ($Tr as &$result) {
 								$fullname	= $result->employee->fullname;		
@@ -876,8 +882,8 @@ Class Mmfmodule extends Application{
 										$Tr->requeststatus = 3;
 										$emto=$email;$emname=$Tr->employee->fullname;
 										$this->mail->Subject = "Online Approval System -> Approval Completed";
-										$red = '<p>Your MMF 28. request has been approved</p>
-													<p><b><span lang=EN-US style=\'color:#002060\'>Note : Please <u>forward</u> this electronic approval to your respective Human Resource Department.</span></b></p>';
+										$red = '<p>Your MMF 28. request has been approved</p>';
+													// <p><b><span lang=EN-US style=\'color:#002060\'>Note : Please <u>forward</u> this electronic approval to your respective Human Resource Department.</span></b></p>';
 										//delete unnecessary approver
 										$Trapproval = Mmfapproval::find('all', array('joins'=>$join,'conditions' => array("mmf28_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
 										foreach ($Trapproval as $data) {
@@ -954,7 +960,7 @@ Class Mmfmodule extends Application{
 											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Tr->createddate)).'</p></td>
 											<td><p class=MsoNormal> '.$Tr->employee->fullname.'</p></td>
 											<td><p class=MsoNormal> '.$Tr->telpno.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->wonumber.'</p></td>
+											<td><p class=MsoNormal> '.$Tr->mmfnumber.'</p></td>
 											<td><p class=MsoNormal> '.$Tr->chargecode.'</p></td>
 											<td><p class=MsoNormal> '.$Tr->materialdispatch.'</p></td>
 											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Tr->requireddate)).'</p></td>
@@ -998,6 +1004,113 @@ Class Mmfmodule extends Application{
 				}
 			}
 		}
+	}
+	function mmfAttachment(){
+		if (count($this->post)==0){
+			http_response_code(405);
+    		echo json_encode(array("message" => "Method not Allowed"));
+		}else{
+			$auth = $this->jwt->checkAuth();
+			if($auth){
+				switch ($this->post['criteria']){
+					case 'byid':
+						$id = $this->post['id'];
+						if ($id!=""){
+							$Mmfattachment = Mmfattachment::find('all', array('conditions' => array("mmf28_id=?",$id)));
+							foreach ($Mmfattachment as &$result) {
+								$result		= $result->to_array();
+							}
+							echo json_encode($Mmfattachment, JSON_NUMERIC_CHECK);
+						}else{
+							$Mmfattachment = new Mmfattachment();
+							echo json_encode($Mmfattachment);
+						}
+						break;
+					case 'find':
+						$query=$this->post['query'];
+						if(isset($query['status'])){
+							$Mmfattachment = Mmfattachment::find('all', array('conditions' => array("mmf28_id=?",$query['mmf28_id'])));
+							$data=array("jml"=>count($Mmfattachment));
+						}else{
+							$data=array();
+						}
+						echo json_encode($data, JSON_NUMERIC_CHECK);
+						break;
+					case 'create':			
+						$data = $this->post['data'];
+						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+						$data['employee_id']=$Employee->id;
+						unset($data['__KEY__']);
+						
+						$Mmfattachment = Mmfattachment::create($data);
+						$logger = new Datalogger("Mmfattachment","create",null,json_encode($data));
+						$logger->SaveData();
+						break;
+					case 'delete':				
+						$id = $this->post['id'];
+						$Mmfattachment = Mmfattachment::find($id);
+						$data=$Mmfattachment->to_array();
+						$Mmfattachment->delete();
+						$logger = new Datalogger("Mmfattachment","delete",json_encode($data),null);
+						$logger->SaveData();
+						echo json_encode($Mmfattachment);
+						break;
+					case 'update':				
+						$id = $this->post['id'];
+						$data = $this->post['data'];
+						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+						$data['employee_id']=$Employee->id;
+						$Mmfattachment = Mmfattachment::find($id);
+						$olddata = $Mmfattachment->to_array();
+						foreach($data as $key=>$val){					
+							$val=($val=='No')?false:(($val=='Yes')?true:$val);
+							$Mmfattachment->$key=$val;
+						}
+						$Mmfattachment->save();
+						$logger = new Datalogger("Mmfattachment","update",json_encode($olddata),json_encode($data));
+						$logger->SaveData();
+						echo json_encode($Mmfattachment);
+						
+						break;
+					default:
+						$Mmfattachment = Mmfattachment::all();
+						foreach ($Mmfattachment as &$result) {
+							$result = $result->to_array();
+						}
+						echo json_encode($Mmfattachment, JSON_NUMERIC_CHECK);
+						break;
+				}
+			}
+		}
+	}
+	public function uploadMmfFile(){
+		$id= $this->get['id'];
+		if(!isset($_FILES['myFile'])) {
+			http_response_code(400);
+			echo "There is no file to upload";
+			exit;
+		}
+		$max_image_size = 5242880;
+		if(!is_uploaded_file($_FILES['myFile']['tmp_name'])) {
+			http_response_code(400);
+			echo "Unable to upload File";
+			exit;
+		}
+		if($_FILES['myFile']['size'] > $max_image_size) {
+			http_response_code(413);
+			echo "File Size too Large, Maximum 5MB";
+			exit;
+		}
+		if((strpos($_FILES['myFile']['type'], "image") === false) && (strpos($_FILES['myFile']['type'], "pdf") === false) && (strpos($_FILES['myFile']['type'], "officedocument") === false)  && (strpos($_FILES['myFile']['type'], "msword") === false) && (strpos($_FILES['myFile']['type'], "excel") === false)){
+			http_response_code(415);
+			echo "Only Accept Image File, pdf or Office Document (Excel & Word) ";
+			exit;
+		}
+		$path_to_file = "upload/mmf28/".$id."_".time()."_".$_FILES['myFile']['name'];
+		$path_to_file = str_replace("%","_",$path_to_file);
+		$path_to_file = str_replace(" ","_",$path_to_file);
+		echo $path_to_file;
+        move_uploaded_file($_FILES['myFile']['tmp_name'], $path_to_file);
 	}
 	function generatePDF($id){
 		$Tr = Mmf::find($id);
@@ -1049,7 +1162,7 @@ Class Mmfmodule extends Application{
 							</tr>
 							<tr>
 							<td class="tg-left" colspan="1">Work Order No :</td>
-							<td class="tg-value" colspan="1"><u>'.$Tr->wonumber.'</u></td>
+							<td class="tg-value" colspan="1"><u>'.$Tr->mmfnumber.'</u></td>
 							<td class="">Charge Code :</td>
 							<td class="tg-right tg-value" colspan="4"><u>'.$Tr->chargecode.'</u></td>
 							</tr>
@@ -1260,7 +1373,7 @@ Class Mmfmodule extends Application{
 							</html>';
 											
 							echo $pdfContent;
-											// echo json_encode($Tr->wonumber, JSON_NUMERIC_CHECK);
+											// echo json_encode($Tr->mmfnumber, JSON_NUMERIC_CHECK);
 		
 		try {
 			$html2pdf = new Html2Pdf('P', 'A4', 'en');

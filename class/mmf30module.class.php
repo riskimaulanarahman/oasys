@@ -50,6 +50,12 @@ Class Mmf30module extends Application{
 				case 'apimmf30app':
 					$this->mmfApproval();
 					break;
+				case 'apimmf30file':
+					$this->mmfAttachment();
+					break;
+				case 'uploadmmf30file':
+					$this->uploadMmf30File();
+					break;
 				case 'apimmf30pdf':
 					$id = $this->get['id'];
 					$this->generatePDF($id);
@@ -777,8 +783,8 @@ Class Mmf30module extends Application{
 							}
 							$data=array("jml"=>count($Mmf));
 						} else if(isset($query['filter'])){
-							$join = "LEFT JOIN vwtrreport v on tbl_tr.id=v.id";
-							$sel = 'tbl_tr.*, v.laststatus,v.personholding ';
+							$join = "LEFT JOIN vwmmf30report v on tbl_mmf30.id=v.id";
+							$sel = 'tbl_mmf30.*, v.laststatus,v.personholding ';
 							$Mmf = Mmf30::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
 							foreach ($Mmf as &$result) {
 								$fullname	= $result->employee->fullname;		
@@ -889,8 +895,8 @@ Class Mmf30module extends Application{
 										$Mmf30->requeststatus = 3;
 										$emto=$email;$emname=$Mmf30->employee->fullname;
 										$this->mail->Subject = "Online Approval System -> Approval Completed";
-										$red = '<p>Your MMF 30. request has been approved</p>
-													<p><b><span lang=EN-US style=\'color:#002060\'>Note : Please <u>forward</u> this electronic approval to your respective Human Resource Department.</span></b></p>';
+										$red = '<p>Your MMF 30. request has been approved</p>';
+													// <p><b><span lang=EN-US style=\'color:#002060\'>Note : Please <u>forward</u> this electronic approval to your respective Human Resource Department.</span></b></p>';
 										//delete unnecessary approver
 										$Mmf30approval = Mmf30approval::find('all', array('joins'=>$join,'conditions' => array("mmf30_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
 										foreach ($Mmf30approval as $data) {
@@ -1134,6 +1140,113 @@ Class Mmf30module extends Application{
 			}
 		}
 	}
+	function mmfAttachment(){
+		if (count($this->post)==0){
+			http_response_code(405);
+    		echo json_encode(array("message" => "Method not Allowed"));
+		}else{
+			$auth = $this->jwt->checkAuth();
+			if($auth){
+				switch ($this->post['criteria']){
+					case 'byid':
+						$id = $this->post['id'];
+						if ($id!=""){
+							$Mmf30attachment = Mmf30attachment::find('all', array('conditions' => array("mmf30_id=?",$id)));
+							foreach ($Mmf30attachment as &$result) {
+								$result		= $result->to_array();
+							}
+							echo json_encode($Mmf30attachment, JSON_NUMERIC_CHECK);
+						}else{
+							$Mmf30attachment = new Mmf30attachment();
+							echo json_encode($Mmf30attachment);
+						}
+						break;
+					case 'find':
+						$query=$this->post['query'];
+						if(isset($query['status'])){
+							$Mmf30attachment = Mmf30attachment::find('all', array('conditions' => array("mmf30_id=?",$query['mmf30_id'])));
+							$data=array("jml"=>count($Mmf30attachment));
+						}else{
+							$data=array();
+						}
+						echo json_encode($data, JSON_NUMERIC_CHECK);
+						break;
+					case 'create':			
+						$data = $this->post['data'];
+						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+						$data['employee_id']=$Employee->id;
+						unset($data['__KEY__']);
+						
+						$Mmf30attachment = Mmf30attachment::create($data);
+						$logger = new Datalogger("Mmf30attachment","create",null,json_encode($data));
+						$logger->SaveData();
+						break;
+					case 'delete':				
+						$id = $this->post['id'];
+						$Mmf30attachment = Mmf30attachment::find($id);
+						$data=$Mmf30attachment->to_array();
+						$Mmf30attachment->delete();
+						$logger = new Datalogger("Mmf30attachment","delete",json_encode($data),null);
+						$logger->SaveData();
+						echo json_encode($Mmf30attachment);
+						break;
+					case 'update':				
+						$id = $this->post['id'];
+						$data = $this->post['data'];
+						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+						$data['employee_id']=$Employee->id;
+						$Mmf30attachment = Mmf30attachment::find($id);
+						$olddata = $Mmf30attachment->to_array();
+						foreach($data as $key=>$val){					
+							$val=($val=='No')?false:(($val=='Yes')?true:$val);
+							$Mmf30attachment->$key=$val;
+						}
+						$Mmf30attachment->save();
+						$logger = new Datalogger("Mmf30attachment","update",json_encode($olddata),json_encode($data));
+						$logger->SaveData();
+						echo json_encode($Mmf30attachment);
+						
+						break;
+					default:
+						$Mmf30attachment = Mmf30attachment::all();
+						foreach ($Mmf30attachment as &$result) {
+							$result = $result->to_array();
+						}
+						echo json_encode($Mmf30attachment, JSON_NUMERIC_CHECK);
+						break;
+				}
+			}
+		}
+	}
+	public function uploadMmf30File(){
+		$id= $this->get['id'];
+		if(!isset($_FILES['myFile'])) {
+			http_response_code(400);
+			echo "There is no file to upload";
+			exit;
+		}
+		$max_image_size = 5242880;
+		if(!is_uploaded_file($_FILES['myFile']['tmp_name'])) {
+			http_response_code(400);
+			echo "Unable to upload File";
+			exit;
+		}
+		if($_FILES['myFile']['size'] > $max_image_size) {
+			http_response_code(413);
+			echo "File Size too Large, Maximum 5MB";
+			exit;
+		}
+		if((strpos($_FILES['myFile']['type'], "image") === false) && (strpos($_FILES['myFile']['type'], "pdf") === false) && (strpos($_FILES['myFile']['type'], "officedocument") === false)  && (strpos($_FILES['myFile']['type'], "msword") === false) && (strpos($_FILES['myFile']['type'], "excel") === false)){
+			http_response_code(415);
+			echo "Only Accept Image File, pdf or Office Document (Excel & Word) ";
+			exit;
+		}
+		$path_to_file = "upload/mmf30/".$id."_".time()."_".$_FILES['myFile']['name'];
+		$path_to_file = str_replace("%","_",$path_to_file);
+		$path_to_file = str_replace(" ","_",$path_to_file);
+		echo $path_to_file;
+        move_uploaded_file($_FILES['myFile']['tmp_name'], $path_to_file);
+	}
 	function generatePDF($id){
 		$Mmf30 = Mmf30::find($id);
 		// $Mmf30schedule=Trschedule::find('all',array('conditions'=>array("mmf28_id=?",$doid),'include'=>array('mmf'=>array('employee'=>array('company','department','designation','grade','location')))));
@@ -1305,12 +1418,13 @@ Class Mmf30module extends Application{
 		$pdfContent .= '
 		<tr>
 			<td colspan="5" style="border-top: 1px solid #000000; border-left: 1px solid #000000" >Remarks : </td>
-			<td colspan="3" style="border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle>TOTAL AMOUNT IN<br>(CURRENCY): <u>'.$val_currency.'</u></td>
+			<td colspan="2" style="border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle>TOTAL AMOUNT :</td>
+			<td colspan="1" style="border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle><u>'.$val_qty.'</u></td>
 			<td colspan="2" style="border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle></td>
 		</tr>
 		<tr>
 			<td colspan="5" style="border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="left" valign=middle><u>'.$Mmf30->remarksu.'</u></td>
-			<td colspan="3" style="border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle>TOTAL AMOUNT: <u>'.$val_qty.'</u></td>
+			<td colspan="3" style="border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle></td>
 			<td colspan="2" style="border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle></td>
 		</tr>
 		</table>';

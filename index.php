@@ -755,6 +755,25 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 									<li class="nav-item"><a href="" ng-click="dataDayoff()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Employee Weekend Cov.</a></li>
 									<li class="nav-item"><a href="" ng-click="detailDayoff()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Detail Approved WPHC</a></li>
 									<li class="nav-item"><a href="" ng-click="dataTR()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> TR Report</a></li>
+                                    <li class="">
+                                        <a href="#" aria-expanded="false">
+                                            <i class="metismenu-icon"></i><i class='fa fa-calendar-alt'></i> MMF
+                                            <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                                        </a>
+                                        <ul class="mm-collapse" style="height: 7.04px;">
+                                            <li>
+                                                <a href="" ng-click="dataMMF()">
+                                                    <i class="metismenu-icon"></i>MMF 28 Report
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="" ng-click="dataMMF30()">
+                                                    <i class="metismenu-icon"></i>MMF 30 Report
+                                                </a>
+                                            </li>
+                                            
+                                        </ul>
+                                    </li>
 									<li class="nav-item"><a href="" ng-click="dataRFC()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> RFC Record</a></li>
 									<li class="nav-item"><a href="" ng-click="dataSPKL()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Data SPKL</a></li>
 									<li class="nav-item"><a href="" ng-click="detailSPKL()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Detail OT Timesheet</a></li>

@@ -56,9 +56,12 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 				CrudService.checkAccess('SPKL',$rootScope.curUser.username).then(function (access) {
 					$rootScope.viewSPKL = access.allowview;
 				});
-				// CrudService.checkAccess('MMF',$rootScope.curUser.username).then(function (access) {
-				// 	$rootScope.viewMMF = access.allowview;
-				// });
+				CrudService.checkAccess('MMF',$rootScope.curUser.username).then(function (access) {
+					$rootScope.viewMMF = access.allowview;
+				});
+				CrudService.checkAccess('MMF30',$rootScope.curUser.username).then(function (access) {
+					$rootScope.viewMMF30 = access.allowview;
+				});
 				if(!$rootScope.startRefresh) {
 					$rootScope.startRefresh = setInterval($scope.refreshUsers, 1000);
 				}
@@ -95,6 +98,10 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.dataMMF= function(){	
 		loadModule($rootScope.viewMMF,"mmfreport",false);
 		$rootScope.$broadcast("initMMF", "");
+	}
+	$scope.dataMMF30= function(){	
+		loadModule($rootScope.viewMMF30,"mmf30report",false);
+		$rootScope.$broadcast("initMMF30", "");
 	}
 	$scope.myDayoff= function(){
 		$location.path( "/dayoff" );
