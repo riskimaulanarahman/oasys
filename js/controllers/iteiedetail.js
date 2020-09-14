@@ -79,7 +79,17 @@
 				}),
 				sort: "id"
             }
-            $scope.RequiredType =[{id:0,requiredtype:"- Select -"},{id:1,requiredtype:"Repair"},{id:2,requiredtype:"Servicing"},{id:3,requiredtype:"Calibratior"},{id:4,requiredtype:"Others"}];
+            $scope.AccessRequested =[{id:0,accessrequested:"- Select -"},{id:1,accessrequested:"Exchange (non-Internet) Email"},{id:2,accessrequested:"Internet Email"},{id:3,accessrequested:"Change Domain"}];
+            $scope.AccessType =[{id:0,accesstype:"- Select -"},{id:1,accesstype:"Terminal Server (TS) User Account"},{id:2,accesstype:"Non-TS Account"}];
+            $scope.AccountType =[{id:0,accounttype:"- Select -"},{id:1,accounttype:"Permanent"},{id:2,accounttype:"Temporary"}];
+            $scope.RequestType =[{id:0,requesttype:"- Select -"},{id:1,requesttype:"Grant Access"},{id:2,requesttype:"Revoke Access"}];
+            $scope.EmailQuota =[{id:0,emailquota:"- Select -"},{id:1,emailquota:"250MB"},{id:2,emailquota:"500MB"},{id:3,emailquota:"1000MB"},{id:4,emailquota:"1500MB"},{id:5,emailquota:"2000MB"}];
+            // $scope.EmailDomain = [];
+            // console.log($scope.EmailDomain);
+
+            $scope.EmailDomain =[{id:0,emaildomain:"- Select -"},{id:1,emaildomain:"itci-hutani.com"},{id:2,emaildomain:"kalimantan-prima.com"},{id:3,emaildomain:"balikpapanchip.com"},{id:4,emaildomain:"lajudinamika.com"},{id:5,emaildomain:"ptadindo.com"}];
+            $scope.ListGroup =[{id:0,listgroup:"- Select -"},{id:1,listgroup:"IHM"},{id:2,listgroup:"KPSI"},{id:3,listgroup:"BCL"},{id:4,listgroup:"LDU"},{id:5,listgroup:"Adindo"}];
+            $scope.ListGroupModeration =[{id:0,listgroupmoderation:"- Select -"},{id:1,listgroupmoderation:"Mod-IHM"},{id:2,listgroupmoderation:"Mod-BCL"},{id:3,listgroupmoderation:"Mod-KDU-HRD"},{id:4,listgroupmoderation:"Mod-KF-Head"},{id:5,listgroupmoderation:"Mod-KF-Head2"},{id:6,listgroupmoderation:"Mod-KPSI-Pro"},{id:7,listgroupmoderation:"Mod-KDU-FA"}];
 			$scope.AppAction = [{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
 			$scope.reqStatus = 0;
             $scope.gridSelectedRowKeys =[];
@@ -237,7 +247,8 @@
                                     text:"Department",
                                 },
                                 name:'department',
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+                                disabled: true                            
+                                // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                             
                             },
                             {
                                 dataField:'requeststatus',
@@ -296,360 +307,252 @@
                                 message: "Please select your department head"
                             }]
                         },
-                    //     {label: {
-                    //         text: "Buyer"
-                    //     },
-                    //     dataField:"buyer",
-                    //     editorType: "dxDropDownBox",
-                    //     visible: (($scope.data.apprstatuscode==2)) ?true:false,
-                    //     disabled: (($scope.mode=='edit')|| ($scope.mode=='add') || ($scope.mode=='approve')) ?false:true,
-                    //     editorOptions: { 
-                    //         dataSource:$scope.buyerDataSource,  
-                    //         valueExpr: 'employee_id',
-                    //         displayExpr: 'fullname',
-                    //         onValueChanged: function(e){
-					// 			console.log(e);
-					// 			criteria = {status:'addbuyer',employee_id:e.value,iteie_id:$scope.Requestid};
-					// 			CrudService.FindData('iteie',criteria).then(function (response){
-                    //                 $scope.grid2Component.refresh();
-                    //                 console.log(e.value + ' & ' + $scope.Requestid);
-                    //                 console.log(response);
-					// 			})
-					// 		},
-                    //         searchEnabled: true,
-                    //         contentTemplate: function(e){
-                    //             var $dataGrid = $("<div>").dxDataGrid({
-                    //                 dataSource: e.component.option("dataSource"),
-                    //                 columns: [{
-                    //                     dataField:"fullname",width:150
-                    //                 },
-                    //                 // {
-                    //                 //     dataField:"company",width:100
-                    //                 // }, 
-                    //                 {
-                    //                     dataField:"department",width:100
-                    //                 }],
-                    //                 height: 265,
-                    //                 selection: { mode: "single" },
-                    //                 selectedRowKeys: [e.component.option("value")],
-                    //                 focusedRowEnabled: true,
-                    //                 focusedRowKey: e.component.option("value"),
-                    //                 searchPanel: {
-                    //                     visible: true,
-                    //                     width: 265,
-                    //                     placeholder: "Search..."
-                    //                 },
-                    //                 onSelectionChanged: function(selectedItems){
-                    //                     var keys = selectedItems.selectedRowKeys,
-                    //                         hasSelection = keys.length;
-                    //                         console.log(keys);
-                    //                     if(hasSelection){
-                    //                         e.component.option("value", keys[0]); 
-                    //                         e.component.close();
-                    //                     }
-                    //                 }
-                    //             });
-                    //             return $dataGrid;
-                    //         }
-                    //     },
-                    //     validationRules: [{
-                    //         type: "required",
-                    //         message: "Please select your department head"
-                    //     }]
-                    // }
 
                         ]
                     },
-                    // {
-					// 	itemType: "group",
-                    //     caption: "",
-                    //     name:"group2",
-                    //     colSpan:2,
-					// 	colCount:2,
-					// 	items: [
-                    //         {
-                    //             dataField:'requiredtype',
-                    //             editorType: "dxSelectBox",
-                    //             label:{text:"Required"},
-                    //             disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
-                    //             // validationRules: [{type: "required", message: "Please select RFC Type" }],
-                    //             editorOptions: { 
-                    //                 dataSource:$scope.RequiredType,  
-                    //                 valueExpr: 'id',
-                    //                 displayExpr: 'requiredtype',
-                    //                 onValueChanged: function(e){
-                    //                     var vis =(e.value==4)?true:false;
-                    //                     $scope.formInstance.itemOption('group2.requiredother', 'visible', vis);
-                    //                     $scope.formInstance.itemOption('group2.requiredother', 'visibleIndex', 0);
-                    //                     $scope.formInstance.updateData('requiredother',  "");
+                    {
+						itemType: "group",
+                        caption: "",
+                        name:"group2",
+                        colSpan:2,
+						colCount:3,
+						items: [
+                            {
+                                dataField:'accessrequested',
+                                editorType: "dxSelectBox",
+                                label:{text:"Access Requested"},
+                                disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
+                                editorOptions: { 
+                                    dataSource:$scope.AccessRequested,  
+                                    valueExpr: 'id',
+                                    displayExpr: 'accessrequested',
+                                    onValueChanged: function(e){
+                                        var dis =(e.value==1)?true:false;
+
+                                        $scope.formInstance.itemOption('group5.listgroupmoderation').editorOptions.disabled=dis;
                                         
-                    //                 }
-                    //             },
-                    //         },{
-                    //             dataField:'requiredother',
-                    //             name:'requiredother',
-                    //             disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                    //             // disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
-                    //             label:{
-                    //                 text:"Pls Specify"
-                    //             },
-                    //             visible:($scope.data.requiredtype==4)?true:false,
-                    //             validationRules: [{
-                    //                 type: "required",
-                    //                 message: "please input Specify"
-                    //             }]
-                    //         },{
-                    //             dataField:'instruction',
-                    //             label: {
-                    //                 text:"Instruction",
-                    //             },
-                    //             name:'instruction',
-                    //             disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
-                    //         },
+
+                                        if(e.value == 1) {
+
+                                                    var found = false;
+
+                                                    pos = $scope.EmailDomain.map(function(e){
+
+                                                        if(e.id == 6) {
+                                                            found = true;
+                                                        }
+
+                                                    });
+                                                    if(!found) {
+                                                        $scope.EmailDomain.push({id:6,emaildomain:"D1.LCL"});
+                                                    }
+
+                                        } else {
+                                            var found = false;
+
+                                                    pos = $scope.EmailDomain.map(function(e){
+
+                                                        if(e.id == 6) {
+                                                            $scope.EmailDomain.pop({id:6,emaildomain:"D1.LCL"});
+                                                        }
+
+                                                    });
+                                        }
+
+                                        
+                                        $scope.formInstance.itemOption('group5.emaildomain', 'dataSource', $scope.EmailDomain);
+
+                                        
+                                    }
+                                },
+                            },
+                            {
+                                dataField:'accesstype',
+                                editorType: "dxSelectBox",
+                                label:{text:"Access Type"},
+                                disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
+                                // validationRules: [{type: "required", message: "Please select RFC Type" }],
+                                editorOptions: { 
+                                    dataSource:$scope.AccessType,  
+                                    valueExpr: 'id',
+                                    displayExpr: 'accesstype',
+                                    // onValueChanged: function(e){
+                                    //     var vis =(e.value==4)?true:false;
+                                    //     $scope.formInstance.itemOption('group2.requiredother', 'visible', vis);
+                                    //     $scope.formInstance.itemOption('group2.requiredother', 'visibleIndex', 0);
+                                    //     $scope.formInstance.updateData('requiredother',  "");
+                                        
+                                    // }
+                                },
+                            },
+                            {
+                                dataField:'accounttype',
+                                editorType: "dxSelectBox",
+                                label:{text:"Account Type"},
+                                disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
+                                // validationRules: [{type: "required", message: "Please select RFC Type" }],
+                                editorOptions: { 
+                                    dataSource:$scope.AccountType,  
+                                    valueExpr: 'id',
+                                    displayExpr: 'accounttype',
+                                    // onValueChanged: function(e){
+                                    //     var vis =(e.value==4)?true:false;
+                                    //     $scope.formInstance.itemOption('group2.requiredother', 'visible', vis);
+                                    //     $scope.formInstance.itemOption('group2.requiredother', 'visibleIndex', 0);
+                                    //     $scope.formInstance.updateData('requiredother',  "");
+                                        
+                                    // }
+                                },
+                            },
+                            {
+                                dataField:'requesttype',
+                                editorType: "dxSelectBox",
+                                label:{text:"Request Type"},
+                                disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
+                                // validationRules: [{type: "required", message: "Please select RFC Type" }],
+                                editorOptions: { 
+                                    dataSource:$scope.RequestType,  
+                                    valueExpr: 'id',
+                                    displayExpr: 'requesttype',
+                                    // onValueChanged: function(e){
+                                    //     var vis =(e.value==4)?true:false;
+                                    //     $scope.formInstance.itemOption('group2.requiredother', 'visible', vis);
+                                    //     $scope.formInstance.itemOption('group2.requiredother', 'visibleIndex', 0);
+                                    //     $scope.formInstance.updateData('requiredother',  "");
+                                        
+                                    // }
+                                },
+                            },
+                            {
+                                dataField:'emailquota',
+                                editorType: "dxSelectBox",
+                                label:{text:"Email Quota"},
+                                disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
+                                // validationRules: [{type: "required", message: "Please select RFC Type" }],
+                                editorOptions: { 
+                                    dataSource:$scope.EmailQuota,  
+                                    valueExpr: 'id',
+                                    displayExpr: 'emailquota',
+                                    // onValueChanged: function(e){
+                                    //     var vis =(e.value==4)?true:false;
+                                    //     $scope.formInstance.itemOption('group2.requiredother', 'visible', vis);
+                                    //     $scope.formInstance.itemOption('group2.requiredother', 'visibleIndex', 0);
+                                    //     $scope.formInstance.updateData('requiredother',  "");
+                                        
+                                    // }
+                                },
+                            }
                             
+                        ]
+                    },
+                    {
+						itemType: "group",
+                        caption: "",
+                        name:"group3",
+                        colSpan:2,
+						colCount:2,
+						items: [
+                            {
+                                dataField:'validfrom',
+                                // visible: (($scope.data.apprstatuscode==3)) ? true:false,
+                                editorType: "dxDateBox",
+                                label: {text: "Valid From"},
+                                // max: new Date(date + 1000*60*60*24*3),
+                                editorOptions: {displayFormat:"dd/MM/yyyy",disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true}
+                            },
+                            {
+                                dataField:'validto',
+                                // visible: (($scope.data.apprstatuscode==3)) ? true:false,
+                                editorType: "dxDateBox",
+                                label: {text: "Valid To"},
+                                // max: new Date(date + 1000*60*60*24*3),
+                                editorOptions: {displayFormat:"dd/MM/yyyy",disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true}
+                            }
+                            
+                        ]
+                    },
+                    {
+						itemType: "group",
+                        caption: "Email Domain (select one, if applicable)**:",
+                        name:"group5",
+                        colSpan:2,
+						colCount:3,
+						items: [
+                            {
+                                dataField:'emaildomain',
+                                editorType: "dxSelectBox",
+                                label:{text:"Email Domain"},
+                                disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
+                                // validationRules: [{type: "required", message: "Please select RFC Type" }],
+                                editorOptions: { 
+                                    dataSource:$scope.EmailDomain,  
+                                    valueExpr: 'id',
+                                    displayExpr: 'emaildomain',
+                                    onValueChanged: function(e){
 
-                    //     ]
-                    // },
-                    // {	
-					// 	itemType: "group",
-					// 	caption: "Chemical Content",
-					// 	name:"group3",
-					// 	colSpan:1,
-					// 	colCount : 1,
-					// 	items: [
-					// 		{
-                    //             dataField:'ishazardouschemical',
-                    //             label:{text:"",visible:false},
-                    //             disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                    //             dataType:"boolean",
-                    //             editorType: "dxCheckBox",
-                    //             editorOptions: { 
-                    //                 text:"Hazardous Chemical",
-                    //                 dataSource:$scope.ishazardouschemical,  
-                    //                 valueExpr: 'id',
-                    //                 displayExpr: 'ishazardouschemical',
-                    //                 onValueChanged: function(e){
-                    //                     var vis =(e.value==1)?true:false;
-                    //                     $scope.formInstance.itemOption('group3.group4.hazchemicalname', 'visible', vis);
-                    //                     $scope.formInstance.itemOption('group3.group4.hazchemicalname', 'visibleIndex', 0);
-                    //                     $scope.formInstance.updateData('hazchemicalname',  "");
-                    //                     $scope.formInstance.itemOption('group3.group4.isdecontaminated', 'visible', vis);
-                    //                     $scope.formInstance.itemOption('group3.group4.isdecontaminated', 'visibleIndex', 0);
-                    //                     $scope.formInstance.updateData('isdecontaminated',  "");
-                    //                     $scope.formInstance.itemOption('group3.group4.isnotcontaminated', 'visible', vis);
-                    //                     $scope.formInstance.itemOption('group3.group4.isnotcontaminated', 'visibleIndex', 0);
-                    //                     $scope.formInstance.updateData('isnotcontaminated',  "");
-                    //                     $scope.formInstance.itemOption('group3.group4.isnonhazardous', 'visible', vis);
-                    //                     $scope.formInstance.itemOption('group3.group4.isnonhazardous', 'visibleIndex', 0);
-                    //                     $scope.formInstance.updateData('isnonhazardous',  "");
-                    //                     $scope.formInstance.itemOption('group3.group4.isnonchemical', 'visible', vis);
-                    //                     $scope.formInstance.itemOption('group3.group4.isnonchemical', 'visibleIndex', 0);
-                    //                     $scope.formInstance.updateData('isnonchemical',  "");
-                    //                     if (e.value==0){
-                    //                         $scope.formInstance.itemOption('group3.group4.group5.notcontaminatedreason', 'visible', vis);
-                    //                         $scope.formInstance.itemOption('group3.group4.group5.notcontaminatedreason', 'visibleIndex', 0);
-                    //                         $scope.formInstance.updateData('notcontaminatedreason',  "");
-                    //                         $scope.formInstance.itemOption('group3.group4.group5.nonhazchemicalname', 'visible', vis);
-                    //                         $scope.formInstance.itemOption('group3.group4.group5.nonhazchemicalname', 'visibleIndex', 0);
-                    //                         $scope.formInstance.updateData('nonhazchemicalname',  "");
-                    //                     }
+                                        var dis =(e.value==5)?true:false;
+                                        $scope.formInstance.getEditor('ironportquarantinedetail').option('disabled',dis);
                                         
+                                    }
+                                },
+                            },
+                            {
+                                dataField:'listgroup',
+                                editorType: "dxSelectBox",
+                                label:{text:"List Group"},
+                                disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
+                                // validationRules: [{type: "required", message: "Please select RFC Type" }],
+                                editorOptions: { 
+                                    dataSource:$scope.ListGroup,  
+                                    valueExpr: 'id',
+                                    displayExpr: 'listgroup',
+                                    // onValueChanged: function(e){
+                                    //     var vis =(e.value==4)?true:false;
+                                    //     $scope.formInstance.itemOption('group2.requiredother', 'visible', vis);
+                                    //     $scope.formInstance.itemOption('group2.requiredother', 'visibleIndex', 0);
+                                    //     $scope.formInstance.updateData('requiredother',  "");
                                         
-                    //                 }
-                    //             }
-                    //         },{	
-					// 			itemType: "group",
-					// 			caption: "",
-					// 			name:"group4",
-					// 			colSpan:1,
-					// 			colCount : 1,
-					// 			items: [
-                    //                 {
-                    //                     dataField:'hazchemicalname',
-                    //                     label: {
-                    //                         text:"Chemcial Name",
-                    //                     },
-                    //                     visible:($scope.data.ishazardouschemical==1)?true:false,
-                    //                     name:'hazchemicalname',
-                    //                     disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                    //                     validationRules: [{
-                    //                         type: "required",
-                    //                         message: "Please select your department head"
-                    //                     }]                            
-                    //                 }
-
-                    //             ]
-                                
-					// 		},{	
-					// 			itemType: "group",
-					// 			caption: "",
-					// 			name:"group4",
-					// 			colSpan:1,
-					// 			colCount : 1,
-					// 			items: [
-                    //                 {
-                    //                     dataField:'isdecontaminated',
-                    //                     label:{text:"",visible:false},
-                    //                     disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                    //                     visible:($scope.data.ishazardouschemical==1)?true:false,
-                    //                     dataType:"boolean",
-                    //                     editorType: "dxCheckBox",
-                    //                     editorOptions: { 
-                    //                         text:"Decontaminated",
-                    //                     }
-                    //                 },{
-                    //                     dataField:'isnotcontaminated',
-                    //                     label:{text:"",visible:false},
-                    //                     disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                    //                     visible:($scope.data.ishazardouschemical==1)?true:false,
-                    //                     dataType:"boolean",
-                    //                     editorType: "dxCheckBox",
-                    //                     editorOptions: { 
-                    //                         text:"Not Contaminated",
-                    //                         onValueChanged: function(e){
-					// 							var vis_notcontaminated =(e.value==1)?true:false;
-					// 							$scope.formInstance.itemOption('group3.group4.group5.notcontaminatedreason', 'visible', vis_notcontaminated);
-					// 							$scope.formInstance.itemOption('group3.group4.group5.notcontaminatedreason', 'visibleIndex', 5);
-                    //                             $scope.formInstance.updateData('notcontaminatedreason',  "");
-					// 						}
-                    //                     }
-                    //                 },{
-                    //                     dataField:'isnonhazardous',
-                    //                     label:{text:"",visible:false},
-                    //                     disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                    //                     visible:($scope.data.ishazardouschemical==1)?true:false,
-                    //                     dataType:"boolean",
-                    //                     editorType: "dxCheckBox",
-                    //                     editorOptions: { 
-                    //                         text:"Non-hazardous Chemical",
-                    //                         onValueChanged: function(e){
-					// 							var vis_isnonhazardous =(e.value==1)?true:false;
-					// 							$scope.formInstance.itemOption('group3.group4.group5.nonhazchemicalname', 'visible', vis_isnonhazardous);
-					// 							$scope.formInstance.itemOption('group3.group4.group5.nonhazchemicalname', 'visibleIndex', 5);
-					// 							$scope.formInstance.updateData('nonhazchemicalname',  "");
-					// 						}
-                    //                     }
-                    //                 },{
-                    //                     dataField:'isnonchemical',
-                    //                     label:{text:"",visible:false},
-                    //                     disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                    //                     visible:($scope.data.ishazardouschemical==1)?true:false,
-                    //                     dataType:"boolean",
-                    //                     editorType: "dxCheckBox",
-                    //                     editorOptions: { 
-                    //                         text:"No Chemical Involved",
-                    //                     }
-                    //                 },{	
-                    //                     itemType: "group",
-                    //                     caption: "",
-                    //                     name:"group5",
-                    //                     colSpan:1,
-                    //                     colCount : 1,
-                    //                     items: [
-                    //                         {
-                    //                             dataField:'notcontaminatedreason',
-                    //                             label: {
-                    //                                 text:"Reason (Not Contaminated)",
-                    //                             },
-                    //                             visible:($scope.data.isnotcontaminated==1)?true:false,
-                    //                             name:'notcontaminatedreason',
-                    //                             disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                    //                             validationRules: [{
-                    //                                 type: "required",
-                    //                                 message: "Please select your department head"
-                    //                             }]                         
-                    //                         },{
-                    //                             dataField:'nonhazchemicalname',
-                    //                             label: {
-                    //                                 text:"Chemical Name (Non-hazardous Chemical)",
-                    //                             },
-                    //                             visible:($scope.data.isnonhazardous==1)?true:false,
-                    //                             name:'nonhazchemicalname',
-                    //                             disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                    //                             validationRules: [{
-                    //                                 type: "required",
-                    //                                 message: "Please select your department head"
-                    //                             }]                         
-                    //                         }
-        
-                    //                     ]
+                                    // }
+                                },
+                            },
+                            {
+                                dataField:'listgroupmoderation',
+                                name:'listgroupmoderation',
+                                editorType: "dxSelectBox",
+                                label:{text:"List Group Moderation"},
+                                disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
+                                // validationRules: [{type: "required", message: "Please select RFC Type" }],
+                                editorOptions: { 
+                                    dataSource:$scope.ListGroupModeration,  
+                                    valueExpr: 'id',
+                                    displayExpr: 'listgroupmoderation',
+                                    // onValueChanged: function(e){
+                                    //     var vis =(e.value==4)?true:false;
+                                    //     $scope.formInstance.itemOption('group2.requiredother', 'visible', vis);
+                                    //     $scope.formInstance.itemOption('group2.requiredother', 'visibleIndex', 0);
+                                    //     $scope.formInstance.updateData('requiredother',  "");
                                         
-                    //                 },
-
-                    //             ]
-                                
-					// 		},
-                    //     ]
-                    // },
-                    // {	
-					// 	itemType: "group",
-					// 	caption: "",
-					// 	name:"group6",
-                    //     colSpan:1,
-					// 	colCount : 1,
-					// 	items: [
-                    //         {
-                    //             dataField:'materialdispatchno',
-                    //             label: {
-                    //                 text:"Material Dispatch No",
-                    //             },
-                    //             name:'materialdispatchno',
-                    //             visible: (($scope.data.apprstatuscode==3)) ? true:false,
-                    //             // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
-                    //         },{
-                    //             dataField:'isrepair',
-                    //             label:{text:"",visible:false},
-                    //             visible: (($scope.data.apprstatuscode==3)) ? true:false,
-                    //             // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                    //             dataType:"boolean",
-                    //             editorType: "dxCheckBox",
-                    //             editorOptions: { 
-                    //                 text:"Repair",
-                    //             }
-                    //         },{
-                    //             dataField:'isscrap',
-                    //             label:{text:"",visible:false},
-                    //             visible: (($scope.data.apprstatuscode==3)) ? true:false,
-                    //             // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                    //             dataType:"boolean",
-                    //             editorType: "dxCheckBox",
-                    //             editorOptions: { 
-                    //                 text:"Scrapped",
-                    //             }
-                    //         },{
-                    //             dataField:'estimatecost',
-                    //             label: {
-                    //                 text:"Estimation Cost",
-                    //             },
-                    //             name:'estimatecost',
-                    //             visible: (($scope.data.apprstatuscode==3)) ? true:false,
-                    //             // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
-                    //         },{
-                    //             dataField:'pono',
-                    //             label: {
-                    //                 text:"PO No",
-                    //             },
-                    //             name:'pono',
-                    //             visible: (($scope.data.apprstatuscode==3)) ? true:false,
-                    //             // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
-                    //         },{
-                    //             dataField:'materialreturneddate',
-                    //             visible: (($scope.data.apprstatuscode==3)) ? true:false,
-                    //             editorType: "dxDateBox",
-                    //             label: {text: "Material Returned Date"},
-                    //             editorOptions: {displayFormat:"dd/MM/yyyy",disabled: false}
-                    //         },{
-                    //             dataField:'supplierdodnno',
-                    //             label: {
-                    //                 text:"Supplier DO/DN No",
-                    //             },
-                    //             name:'supplierdodnno',
-                    //             visible: (($scope.data.apprstatuscode==3)) ? true:false,
-                    //             // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
-                    //         }
-
-					// 	]
-                    // },
+                                    // }
+                                },
+                            },
+                            {
+                                dataField:'ironportquarantinedetail',
+                                label: {
+                                    text:"Iron Port Quarantine",
+                                },
+                                name:'ironportquarantinedetail',
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+                            },{
+                                dataField:'reason',
+                                label: {
+                                    text:"Reason for request/Remarks",
+                                },
+                                name:'reason',
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+                            }
+                            
+                        ]
+                    },
                     {	
                             itemType: "group",
                             caption: "",
@@ -1055,11 +958,12 @@
     $scope.saveDraft = function(e){
 		var data = $scope.formInstance.option("formData");
 		delete data.fullname;
-		delete data.department;
+		// delete data.department;
 		delete data.approvalstatus;
 		delete data.apprstatuscode;
-		data.requireddate = $filter("date")(data.requireddate, "yyyy-MM-dd HH:mm");
-		// data.materialreturneddate = $filter("date")(data.materialreturneddate, "yyyy-MM-dd HH:mm");
+		// data.requireddate = $filter("date")(data.requireddate, "yyyy-MM-dd HH:mm");
+		data.validfrom = $filter("date")(data.validfrom, "yyyy-MM-dd HH:mm");
+		data.validto = $filter("date")(data.validto, "yyyy-MM-dd HH:mm");
 		console.log(data);
 		CrudService.Update('iteie',data.id,data).then(function (response) {
 			if(response.status=="error"){
@@ -1102,40 +1006,33 @@
 				var data = $scope.formInstance.option("formData");
 				var date = new Date();
                 var d= $filter("date")(date, "yyyy-MM-dd HH:mm");
-                data.materialreturneddate = $filter("date")(data.materialreturneddate, "yyyy-MM-dd HH:mm");
-				data.approvaldate = d;
+                data.validfrom = $filter("date")(data.validfrom, "yyyy-MM-dd HH:mm");
+		        data.validto = $filter("date")(data.validto, "yyyy-MM-dd HH:mm");
+                data.approvaldate = d;
 				data.mode="approve";
 				delete data.createddate;
 				delete data.employee_id;
-				delete data.wonumber;
+				delete data.designation;
 				delete data.requeststatus;
-				delete data.telpno;
-				delete data.chargecode;
-				delete data.materialdispatch;
-				delete data.requireddate;
-				delete data.materialcode;
-				delete data.materialdescr;
-				delete data.symptomps;
-				delete data.requiredtype;
-				delete data.requiredother;
-				delete data.instruction;
-				delete data.ishazardouschemical;
-				delete data.hazchemicalname;
-				delete data.isdecontaminated;
-				delete data.isnotcontaminated;
-				delete data.notcontaminatedreason;
-				delete data.isnonhazardous;
-				delete data.nonhazchemicalname;
-				delete data.isnonchemical;
-				// delete data.materialdispatchno;
-				// delete data.isrepair;
-				// delete data.isscrap;
-				// delete data.estimatecost;
-				// delete data.pono;
-				// delete data.materialreturneddate;
-				// delete data.supplierdodnno;
+				delete data.grade;
+				delete data.bgbu;
+				delete data.officelocation;
+				delete data.floor;
+				delete data.phoneext;
+				delete data.department;
+				delete data.accessrequested;
+				delete data.accesstype;
+				delete data.accounttype;
+				delete data.requesttype;
+				delete data.emailquota;
+				delete data.validfrom;
+				delete data.validto;
+				delete data.emaildomain;
+				delete data.listgroup;
+				delete data.listgroupmoderation;
+				delete data.ironportquarantinedetail;
+
 				delete data.depthead;
-				// delete data.buyer;
 				delete data.apprstatuscode;
 				CrudService.Update('iteieapp',data.id,data).then(function (response) {
 					if(response.status=="error"){
@@ -1164,40 +1061,33 @@
 						var data = $scope.formInstance.option("formData");
 						var date = new Date();
                         var d= $filter("date")(date, "yyyy-MM-dd HH:mm");
-                        data.materialreturneddate = $filter("date")(data.materialreturneddate, "yyyy-MM-dd HH:mm");
+                        data.validfrom = $filter("date")(data.validfrom, "yyyy-MM-dd HH:mm");
+		                data.validto = $filter("date")(data.validto, "yyyy-MM-dd HH:mm");
 						data.approvaldate = d;
 						data.mode="approve";
 						delete data.createddate;
                         delete data.employee_id;
-                        delete data.wonumber;
+                        delete data.designation;
                         delete data.requeststatus;
-                        delete data.telpno;
-                        delete data.chargecode;
-                        delete data.materialdispatch;
-                        delete data.requireddate;
-                        delete data.materialcode;
-                        delete data.materialdescr;
-                        delete data.symptomps;
-                        delete data.requiredtype;
-                        delete data.requiredother;
-                        delete data.instruction;
-                        delete data.ishazardouschemical;
-                        delete data.hazchemicalname;
-                        delete data.isdecontaminated;
-                        delete data.isnotcontaminated;
-                        delete data.notcontaminatedreason;
-                        delete data.isnonhazardous;
-                        delete data.nonhazchemicalname;
-                        delete data.isnonchemical;
-                        // delete data.materialdispatchno;
-                        // delete data.isrepair;
-                        // delete data.isscrap;
-                        // delete data.estimatecost;
-                        // delete data.pono;
-                        // delete data.materialreturneddate;
-                        // delete data.supplierdodnno;
+                        delete data.grade;
+                        delete data.bgbu;
+                        delete data.officelocation;
+                        delete data.floor;
+                        delete data.phoneext;
+                        delete data.department;
+                        delete data.accessrequested;
+                        delete data.accesstype;
+                        delete data.accounttype;
+                        delete data.requesttype;
+                        delete data.emailquota;
+                        delete data.validfrom;
+                        delete data.validto;
+                        delete data.emaildomain;
+                        delete data.listgroup;
+                        delete data.listgroupmoderation;
+                        delete data.ironportquarantinedetail;
+
                         delete data.depthead;
-                        // delete data.buyer;
 				        delete data.apprstatuscode;
 						CrudService.Update('iteieapp',data.id,data).then(function (response) {
 							if(response.status=="error"){
@@ -1261,7 +1151,7 @@
                         var data = $scope.formInstance.option("formData");
                         data.requeststatus = 1;
                         delete data.fullname;
-                        delete data.department;
+                        // delete data.department;
                         delete data.approvalstatus;
                         delete data.apprstatuscode;
                         data.jobfinishdate= $filter("date")(data.jobfinishdate, "yyyy-MM-dd HH:mm");

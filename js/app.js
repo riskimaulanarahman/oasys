@@ -129,6 +129,7 @@ app.config(function ($routeProvider, $controllerProvider) {
 	.when('/mmf30approval', route.resolve("mmf30approval"))
 	.when('/iteie', route.resolve("iteie"))
 	.when('/iteiedetail', route.resolve("iteiedetail"))
+	.when('/iteieapproval', route.resolve("iteieapproval"))
 	.when('/itsharefolder', route.resolve("itsharefolder"))
 	.when('/itinetaccess', route.resolve("itinetaccess"))
 	.when('/itrdweb', route.resolve("itrdweb"))
