@@ -92,7 +92,7 @@ Class Iteiemodule extends Application{
 						if(isset($query['status'])){
 							switch ($query['status']){
 								case 'waiting':
-									$Iteie = Iteie::find('all', array('conditions' => array("employee_id=? and RequestStatus<3 and id<>?",$query['username'],$query['id']),'include' => array('employee')));
+									$Iteie = Iteie::find('all', array('conditions' => array("employee_id=? and RequestStatus<4 and id<>?",$query['username'],$query['id']),'include' => array('employee')));
 									foreach ($Iteie as &$result) {
 										$fullname	= $result->employee->fullname;		
 										$result		= $result->to_array();
@@ -102,7 +102,7 @@ Class Iteiemodule extends Application{
 									break;
 								default:
 									$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-									$Iteie = Iteie::find('all', array('conditions' => array("employee_id=? and RequestStatus<3",$Employee->id),'include' => array('employee')));
+									$Iteie = Iteie::find('all', array('conditions' => array("employee_id=? and RequestStatus<4",$Employee->id),'include' => array('employee')));
 									foreach ($Iteie as &$result) {
 										$fullname	= $result->employee->fullname;		
 										$result		= $result->to_array();
@@ -207,7 +207,7 @@ Class Iteiemodule extends Application{
 									break;
 								default:
 									$Employee = Employee::find('first', array('conditions' => array("loginName=?",$query['username'])));
-									$Iteie = Iteie::find('all', array('conditions' => array("employee_id=? and RequestStatus<3",$Employee->id),'include' => array('employee')));
+									$Iteie = Iteie::find('all', array('conditions' => array("employee_id=? and RequestStatus<4",$Employee->id),'include' => array('employee')));
 									foreach ($Iteie as &$result) {
 										$fullname	= $result->employee->fullname;		
 										$result		= $result->to_array();
@@ -330,7 +330,7 @@ Class Iteiemodule extends Application{
 							$depthead = $data['depthead'];
 							// $buyer = $data['buyer'];
 							unset($data['fullname']);
-							unset($data['department']);
+							// unset($data['department']);
 							unset($data['approvalstatus']);
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							if($superior==$Employee->id){
@@ -345,7 +345,7 @@ Class Iteiemodule extends Application{
 								
 								if (isset($data['depthead'])){
 									$joins   = "LEFT JOIN tbl_approver ON (tbl_iteieapproval.approver_id = tbl_approver.id) ";					
-									$dx = Iteieapproval::find('all',array('joins'=>$joins,'conditions' => array("iteie_id=? and tbl_approver.approvaltype_id=23 and not(tbl_approver.employee_id=?)",$id,$depthead)));	
+									$dx = Iteieapproval::find('all',array('joins'=>$joins,'conditions' => array("iteie_id=? and tbl_approver.approvaltype_id=29 and not(tbl_approver.employee_id=?)",$id,$depthead)));	
 									foreach ($dx as $result) {
 										//delete same type dept head approver
 										$result->delete();
@@ -358,7 +358,7 @@ Class Iteiemodule extends Application{
 										$result['no']=1;
 									}			
 									if(count($Iteieapproval)==0){ 
-										$Approver = Approver::find('first',array('conditions'=>array("module='ITEIE' and employee_id=? and approvaltype_id=23",$depthead)));
+										$Approver = Approver::find('first',array('conditions'=>array("module='IT' and employee_id=? and approvaltype_id=29",$depthead)));
 										if(count($Approver)>0){
 											$Iteieapproval = new Iteieapproval();
 											$Iteieapproval->iteie_id = $Iteie->id;
@@ -366,10 +366,10 @@ Class Iteiemodule extends Application{
 											$Iteieapproval->save();
 										}else{
 											$approver = new Approver();
-											$approver->module = "ITEIE";
+											$approver->module = "IT";
 											$approver->employee_id=$depthead;
 											$approver->sequence=1;
-											$approver->approvaltype_id = 23;
+											$approver->approvaltype_id = 29;
 											$approver->isfinal = false;
 											$approver->save();
 											$Iteieapproval = new Iteieapproval();
@@ -382,39 +382,123 @@ Class Iteiemodule extends Application{
 								}
 								
 								if($data['requeststatus']==1){
-									$Trapproval = Mmfapproval::find('all', array('conditions' => array("mmf28_id=?",$id)));					
-									foreach($Trapproval as $data){
+									$Iteieapproval = Iteieapproval::find('all', array('conditions' => array("iteie_id=?",$id)));					
+									foreach($Iteieapproval as $data){
 										$data->approvalstatus=0;
 										$data->save();
 									}
-									$joinx   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
-									$Trapproval = Mmfapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and mmf28_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
-									$username = $Trapproval->approver->employee->loginname;
+									$joinx   = "LEFT JOIN tbl_approver ON (tbl_iteieapproval.approver_id = tbl_approver.id) ";					
+									$Iteieapproval = Iteieapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and iteie_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+									$username = $Iteieapproval->approver->employee->loginname;
 									$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
-									$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Tr->employee->loginname)));
+									$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Iteie->employee->loginname)));
 									$email=$usr->email;
-									if($Tr->requiredtype == 1) {
-										$required = 'Repair';
-									}else if($Tr->requiredtype == 2) {
-										$required = 'Servicing';
-									}else if($Tr->requiredtype == 3) {
-										$required = 'Calibration';
-									}else if($Tr->requiredtype == 4) {
-										$required = 'Others';
+
+									if($Iteie->accessrequested == 1) {
+										$accessR = 'Exchange (non-Internet) Email';
+									}else if($Iteie->accessrequested == 2) {
+										$accessR = 'Internet Email';
+									}else if($Iteie->accessrequested == 3) {
+										$accessR = 'Change Domain';
 									}else {
-										$required = '';
+										$accessR = '';
 									}
-									// $Trschedule=Trschedule::find('all',array('conditions'=>array("mmf28_id=?",$id),'include'=>array('tr'=>array('employee'=>array('company','department','designation','grade')))));
-									// $Trticket=Trticket::find('all',array('conditions'=>array("mmf28_id=?",$id),'include'=>array('tr'=>array('employee'=>array('company','department','designation','grade')))));
+
+									if($Iteie->accesstype == 1) {
+										$accessT = 'Terminal Server (TS) User Account';
+									}else if($Iteie->accesstype == 2) {
+										$accessT = 'Non-TS Account';
+									}else {
+										$accessT = '';
+									}
+
+									if($Iteie->accounttype == 1) {
+										$accountT = 'Permanent';
+									}else if($Iteie->accounttype == 2) {
+										$accountT = 'Temporary';
+									}else {
+										$accountT = '';
+									}
+
+									if($Iteie->requesttype == 1) {
+										$requestT = 'Grant Access';
+									}else if($Iteie->requesttype == 2) {
+										$requestT = 'Revoke Access';
+									}else {
+										$requestT = '';
+									}
+
+									if($Iteie->emailquota == 1) {
+										$emailQ = '250 MB';
+									}else if($Iteie->emailquota == 2) {
+										$emailQ = '500 MB';
+									}else if($Iteie->emailquota == 3) {
+										$emailQ = '1000 MB';
+									}else if($Iteie->emailquota == 4) {
+										$emailQ = '1500 MB';
+									}else if($Iteie->emailquota == 5) {
+										$emailQ = '2000 MB';
+									}else {
+										$emailQ = '';
+									}
+
+									if($Iteie->emaildomain == 1) {
+										$emailD = 'itci-hutani.com';
+									}else if($Iteie->emaildomain == 2) {
+										$emailD = 'kalimantan-prima.com';
+									}else if($Iteie->emaildomain == 3) {
+										$emailD = 'balikpapanchip.com';
+									}else if($Iteie->emaildomain == 4) {
+										$emailD = 'lajudinamika.com';
+									}else if($Iteie->emaildomain == 5) {
+										$emailD = 'ptadindo.com';
+									}else if($Iteie->emaildomain == 6) {
+										$emailD = 'D1.LCL';
+									}else {
+										$emailD = '';
+									}
+
+									if($Iteie->listgroup == 1) {
+										$listG = 'IHM';
+									}else if($Iteie->listgroup == 2) {
+										$listG = 'KPSI';
+									}else if($Iteie->listgroup == 3) {
+										$listG = 'BCL';
+									}else if($Iteie->listgroup == 4) {
+										$listG = 'LDU';
+									}else if($Iteie->listgroup == 5) {
+										$listG = 'Adindo';
+									}else {
+										$listG = '';
+									}
+
+									if($Iteie->listgroupmoderation == 1) {
+										$listGM = 'Mod-IHM';
+									}else if($Iteie->listgroupmoderation == 2) {
+										$listGM = 'Mod-BCL';
+									}else if($Iteie->listgroupmoderation == 3) {
+										$listGM = 'Mod-KDU-HRD';
+									}else if($Iteie->listgroupmoderation == 4) {
+										$listGM = 'Mod-KF-Head';
+									}else if($Iteie->listgroupmoderation == 5) {
+										$listGM = 'Mod-KF-Head2';
+									}else if($Iteie->listgroupmoderation == 6) {
+										$listGM = 'Mod-KPSI-Pro';
+									}else if($Iteie->listgroupmoderation == 7) {
+										$listGM = 'Mod-KDU-FA';
+									}else {
+										$listGM = '';
+									}
+
 									$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$adb->fullname.',</span></p>
-										<p class=MsoNormal><span style="color:#1F497D">new MMF 28 Request is awaiting for your approval:</span></p>
+										<p class=MsoNormal><span style="color:#1F497D">new Exchange - Internet Email Request is awaiting for your approval:</span></p>
 										<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
 										<table border=1 cellspacing=0 cellpadding=3 width=683>
-										<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->fullname.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>SAP ID</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->sapid.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>Position</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->designation->designationname.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>Business Group / Business Unit</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->company->companyname.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>Location</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->location->location.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Iteie->employee->fullname.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>SAP ID</p></td><td>:</td><td><p class=MsoNormal><b>'.$Iteie->employee->sapid.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>Position</p></td><td>:</td><td><p class=MsoNormal><b>'.$Iteie->employee->designation->designationname.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>Business Group / Business Unit</p></td><td>:</td><td><p class=MsoNormal><b>'.$Iteie->employee->company->companyname.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>Location</p></td><td>:</td><td><p class=MsoNormal><b>'.$Iteie->employee->location->location.'</b></p></td></tr>
 										<tr><td><p class=MsoNormal>Email</p></td><td>:</td><td><p class=MsoNormal><b>'.$email.'</b></p></td></tr>
 										</table>
 										<p class=MsoNormal><b>Repairable Form</b></p>
@@ -422,74 +506,40 @@ Class Iteiemodule extends Application{
 										
 										<tr><th><p class=MsoNormal>Date</small></p></th>
 											<th><p class=MsoNormal>Requested By</p></th>
-											<th><p class=MsoNormal>Tel No</p></th>
-											<th><p class=MsoNormal>WO No</p></th>
-											<th><p class=MsoNormal>Charger Code</p></th>
-											<th><p class=MsoNormal>Material Dispatch No</p></th>
-											<th><p class=MsoNormal>Required By (Date)</p></th>
-											<th><p class=MsoNormal>Material Code</p></th>
-											<th><p class=MsoNormal>Material Description</p></th>
-											<th><p class=MsoNormal>Symtoms (Problem)</p></th>
-											<th><p class=MsoNormal>Required</p></th>
-											<th><p class=MsoNormal>Instsruction</p></th>
+											<th><p class=MsoNormal>Phone(Ext)</p></th>
+											<th><p class=MsoNormal>Access Requested</p></th>
+											<th><p class=MsoNormal>Access Type</p></th>
+											<th><p class=MsoNormal>Account Type</p></th>
+											<th><p class=MsoNormal>Request Type</p></th>
+											<th><p class=MsoNormal>Email Quota</p></th>
+											<th><p class=MsoNormal>Valid From</p></th>
+											<th><p class=MsoNormal>Valid To</p></th>
+											<th><p class=MsoNormal>Email Domain</p></th>
+											<th><p class=MsoNormal>List Group</p></th>
+											<th><p class=MsoNormal>List Group Moderation</p></th>
+											<th><p class=MsoNormal>Iron Port Quarantine</p></th>
 										</tr>
 										<tr style="height:22.5pt">
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Tr->createddate)).'</p></td>
-											<td><p class=MsoNormal> '.$Tr->employee->fullname.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->telpno.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->wonumber.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->chargecode.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->materialdispatch.'</p></td>
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Tr->requireddate)).'</p></td>
-											<td><p class=MsoNormal> '.$Tr->materialcode.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->materialdescr.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->symptomps.'</p></td>
-											<td><p class=MsoNormal> '.$required.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->instruction.'</p></td>
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Iteie->createddate)).'</p></td>
+											<td><p class=MsoNormal> '.$Iteie->employee->fullname.'</p></td>
+											<td><p class=MsoNormal> '.$Iteie->phoneext.'</p></td>
+											<td><p class=MsoNormal> '.$accessR.'</p></td>
+											<td><p class=MsoNormal> '.$accessT.'</p></td>
+											<td><p class=MsoNormal> '.$accountT.'</p></td>
+											<td><p class=MsoNormal> '.$requestT.'</p></td>
+											<td><p class=MsoNormal> '.$emailQ.'</p></td>
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Iteie->validfrom)).'</p></td>
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Iteie->validto)).'</p></td>
+											<td><p class=MsoNormal> '.$emailD.'</p></td>
+											<td><p class=MsoNormal> '.$listG.'</p></td>
+											<td><p class=MsoNormal> '.$listGM.'</p></td>
+											<td><p class=MsoNormal> '.$Iteie->ironportquarantinedetail.'</p></td>
 										</tr>
 										';
-									// $no=1;					
-									// foreach ($Trschedule as $data){
-									// 	$this->mailbody .='<tr style="height:22.5pt">
-									// 		<td><p class=MsoNormal> '.$no.'</p></td>
-									// 		<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->departdate)).'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->departtime.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->departfrom.'</p></td>
-									// 		<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->arrivingdate)).'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->arrivingtime.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->arrivingto.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->region.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->reason.'</p></td>
-									// 	</tr>';
-									// 	$no++;
-									// }
-									// $this->mailbody .='</table>
-									// 	<table border=1 cellspacing=0 cellpadding=3 width=683>
-									// 	<tr><th><p class=MsoNormal>No</p></th>
-									// 		<th><p class=MsoNormal>Ticket For (Untuk)</p></th>
-									// 		<th><p class=MsoNormal>Name <br>( Nama )</p></th>
-									// 		<th><p class=MsoNormal>Date of Birth <br>( Tgl. Lahir) <br> <small>(dd/mm/yyyy)</small></p></th>
-									// 		<th><p class=MsoNormal>Phone Number</p></th>
-									// 		<th><p class=MsoNormal>Gender</p></th>
-									// 		<th><p class=MsoNormal>Remarks /Confirmation from HR <br> ( Konfirmasi dari HR )</p></th>
-									// 	</tr>
-									// 	';
-									// $no=1;
-									// foreach ($Trticket as $data){
-									// 	$this->mailbody .='<tr style="height:22.5pt">
-									// 		<td><p class=MsoNormal> '.$no.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->ticketfor.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->ticketname.'</p></td>
-									// 		<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->dateofbirth)).'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->phonenumber.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->gender.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->hrremarks.'</p></td>
-									// 		</tr>';
-									// 	$no++;
-									// }
+
 									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 									$this->mail->addAddress($adb->email, $adb->fullname);
-									$this->mail->Subject = "Online Approval System -> new MMF 28 Request Submission";
+									$this->mail->Subject = "Online Approval System -> new Exchange - Internet Email Request";
 									$this->mail->msgHTML($this->mailbody);
 									if (!$this->mail->send()) {
 										$err = new Errorlog();
@@ -503,28 +553,28 @@ Class Iteiemodule extends Application{
 									} else {
 										echo "Message sent!";
 									}
-									$Trhistory = new Mmfhistory();
-									$Trhistory->date = date("Y-m-d h:i:s");
-									$Trhistory->fullname = $Employee->fullname;
-									$Trhistory->mmf28_id = $id;
-									$Trhistory->approvaltype = "Originator";
-									$Trhistory->actiontype = 2;
-									$Trhistory->save();
+									$Iteiehistory = new Iteiehistory();
+									$Iteiehistory->date = date("Y-m-d h:i:s");
+									$Iteiehistory->fullname = $Employee->fullname;
+									$Iteiehistory->iteie_id = $id;
+									$Iteiehistory->approvaltype = "Originator";
+									$Iteiehistory->actiontype = 2;
+									$Iteiehistory->save();
 								}else{
-									$Trhistory = new Mmfhistory();
-									$Trhistory->date = date("Y-m-d h:i:s");
-									$Trhistory->fullname = $Employee->fullname;
-									$Trhistory->mmf28_id = $id;
-									$Trhistory->approvaltype = "Originator";
-									$Trhistory->actiontype = 1;
-									$Trhistory->save();
+									$Iteiehistory = new Iteiehistory();
+									$Iteiehistory->date = date("Y-m-d h:i:s");
+									$Iteiehistory->fullname = $Employee->fullname;
+									$Iteiehistory->iteie_id = $id;
+									$Iteiehistory->approvaltype = "Originator";
+									$Iteiehistory->actiontype = 1;
+									$Iteiehistory->save();
 								}
-								$logger = new Datalogger("MMF","update",json_encode($olddata),json_encode($data));
+								$logger = new Datalogger("ITEIE","update",json_encode($olddata),json_encode($data));
 								$logger->SaveData();
 							}
 						}catch (Exception $e){
 							$err = new Errorlog();
-							$err->errortype = "UpdateMMF";
+							$err->errortype = "UpdateITEIE";
 							$err->errordate = date("Y-m-d h:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
@@ -628,8 +678,8 @@ Class Iteiemodule extends Application{
 							}
 							$data=array("jml"=>count($Tr));
 						} else if(isset($query['filter'])){
-							$join = "LEFT JOIN vwtrreport v on tbl_tr.id=v.id";
-							$sel = 'tbl_tr.*, v.laststatus,v.personholding ';
+							$join = "LEFT JOIN vwtrreport v on tbl_iteie.id=v.id";
+							$sel = 'tbl_iteie.*, v.laststatus,v.personholding ';
 							$Tr = Iteie::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
 							foreach ($Tr as &$result) {
 								$fullname	= $result->employee->fullname;		
@@ -645,16 +695,16 @@ Class Iteiemodule extends Application{
 					case 'create':
 						$data = $this->post['data'];
 						unset($data['__KEY__']);
-						$Trapproval = Mmfapproval::create($data);
-						$logger = new Datalogger("MMfapproval","create",null,json_encode($data));
+						$Trapproval = Iteieapproval::create($data);
+						$logger = new Datalogger("Iteieapproval","create",null,json_encode($data));
 						$logger->SaveData();
 						break;
 					case 'delete':
 						$id = $this->post['id'];
-						$Trapproval = Mmfapproval::find($id);
+						$Trapproval = Iteieapproval::find($id);
 						$data=$Trapproval->to_array();
 						$Trapproval->delete();
-						$logger = new Datalogger("MMfapproval","delete",json_encode($data),null);
+						$logger = new Datalogger("Iteieapproval","delete",json_encode($data),null);
 						$logger->SaveData();
 						echo json_encode($Trapproval);
 						break;
@@ -668,7 +718,7 @@ Class Iteiemodule extends Application{
 						unset($data['department']);
 						unset($data['approveddoc']);
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-						$mmf = Mmf::find($doid);
+						$mmf = Iteie::find($doid);
 						$join   = "LEFT JOIN tbl_approver ON (tbl_iteieapproval.approver_id = tbl_approver.id) ";
 						if (isset($data['mode'])){
 							$Trapproval = Mmfapproval::find('first', array('joins'=>$join,'conditions' => array("iteie_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
@@ -686,14 +736,14 @@ Class Iteiemodule extends Application{
 						}
 						$mmf->save();
 
-						unset($data['materialdispatchno']);
-						unset($data['isrepair']);
-						unset($data['isscrap']);
-						unset($data['estimatecost']);
-						unset($data['pono']);
-						unset($data['materialreturneddate']);
-						unset($data['supplierdodnno']);
-						unset($data['buyer']);
+						// unset($data['materialdispatchno']);
+						// unset($data['isrepair']);
+						// unset($data['isscrap']);
+						// unset($data['estimatecost']);
+						// unset($data['pono']);
+						// unset($data['materialreturneddate']);
+						// unset($data['supplierdodnno']);
+						// unset($data['buyer']);
 						
 						
 						$olddata = $Trapproval->to_array();

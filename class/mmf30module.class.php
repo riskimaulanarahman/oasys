@@ -402,6 +402,10 @@ Class Mmf30module extends Application{
 								foreach ($detail as $delr){
 									$delr->delete();
 								}
+								$att = Mmf30attachment::find("all",array('conditions' => array("mmf30_id=?",$id)));
+								foreach ($att as $delr){
+									$delr->delete();
+								}
 								// $detail = Trticket::find("all",array('conditions' => array("mmf28_id=?",$id)));
 								// foreach ($detail as $delr){
 								// 	$delr->delete();
@@ -566,9 +570,9 @@ Class Mmf30module extends Application{
 										$requisitiontype = '';
 									}
 									$Mmf30detail = Mmf30detail::find('all',array('conditions'=>array("mmf30_id=?",$id),'include'=>array('mmf30'=>array('employee'=>array('company','department','designation','grade')))));
-									$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$adb->fullname.',</span></p>
-										<p class=MsoNormal><span style="color:#1F497D">new MMF 30 Request is awaiting for your approval:</span></p>
-										<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
+									$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span>Dear '.$adb->fullname.',</span></p>
+										<p class=MsoNormal><span >new MMF 30 Request is awaiting for your approval:</span></p>
+										<p class=MsoNormal><span >&nbsp;</span></p>
 										<table border=1 cellspacing=0 cellpadding=3 width=683>
 										<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Mmf30->employee->fullname.'</b></p></td></tr>
 										<tr><td><p class=MsoNormal>SAP ID</p></td><td>:</td><td><p class=MsoNormal><b>'.$Mmf30->employee->sapid.'</b></p></td></tr>
@@ -895,8 +899,8 @@ Class Mmf30module extends Application{
 										$Mmf30->requeststatus = 3;
 										$emto=$email;$emname=$Mmf30->employee->fullname;
 										$this->mail->Subject = "Online Approval System -> Approval Completed";
-										$red = '<p>Your MMF 30. request has been approved</p>';
-													// <p><b><span lang=EN-US style=\'color:#002060\'>Note : Please <u>forward</u> this electronic approval to your respective Human Resource Department.</span></b></p>';
+										$red = '<p>Your MMF 30. request has been approved</p>
+													<p><b><span lang=EN-US style=\'color:#002060\'>Note : Please <u>forward</u> this electronic approval to your respective PR Creator.<br>All prices in the MMF are valid for 14 days</span></b></p>';
 										//delete unnecessary approver
 										$Mmf30approval = Mmf30approval::find('all', array('joins'=>$join,'conditions' => array("mmf30_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
 										foreach ($Mmf30approval as $data) {
@@ -957,9 +961,9 @@ Class Mmf30module extends Application{
 								$requisitiontype = '';
 							}
 							$Mmf30detail = Mmf30detail::find('all',array('conditions'=>array("mmf30_id=?",$doid),'include'=>array('mmf30'=>array('employee'=>array('company','department','designation','grade')))));
-							$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$adb->fullname.',</span></p>
-								<p class=MsoNormal><span style="color:#1F497D">'.$red.'</span></p>
-								<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
+							$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span>Dear '.$adb->fullname.',</span></p>
+								<p class=MsoNormal><span>'.$red.'</span></p>
+								<p class=MsoNormal><span>&nbsp;</span></p>
 								<table border=1 cellspacing=0 cellpadding=3 width=683>
 								<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Mmf30->employee->fullname.'</b></p></td></tr>
 								<tr><td><p class=MsoNormal>SAP ID</p></td><td>:</td><td><p class=MsoNormal><b>'.$Mmf30->employee->sapid.'</b></p></td></tr>
@@ -1019,6 +1023,7 @@ Class Mmf30module extends Application{
 										';
 									$no=1;
 									foreach ($Mmf30detail as $data){
+										$val_tprice += $data->extendedprice;
 										$this->mailbody .='<tr style="height:22.5pt">
 											<td><p class=MsoNormal> '.$no.'</p></td>
 											<td><p class=MsoNormal> '.$data->materialcode.'</p></td>
@@ -1033,7 +1038,10 @@ Class Mmf30module extends Application{
 											</tr>';
 										$no++;
 							}
-							$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+							$this->mailbody .='</table>
+							<p><b><span>Total Price : '.$val_tprice.'</span></b></p><br>
+				
+							<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 							$this->mail->msgHTML($this->mailbody);
 							if ($complete){
 								$fileName = $this->generatePDF($doid);
@@ -1101,6 +1109,8 @@ Class Mmf30module extends Application{
 					case 'create':			
 						$data = $this->post['data'];
 						unset($data['__KEY__']);
+						$exprice = $data['unitprice'] * $data['qty'];
+						$data['extendedprice'] = $exprice;
 						$Mmf30detail = Mmf30detail::create($data);
 						$logger = new Datalogger("Mmf30detail","create",null,json_encode($data));
 						$logger->SaveData();
@@ -1123,6 +1133,8 @@ Class Mmf30module extends Application{
 						foreach($data as $key=>$val){
 							$Mmf30detail->$key=$val;
 						}
+						$exprice = $Mmf30detail->unitprice * $Mmf30detail->qty;
+						$Mmf30detail->extendedprice = $exprice;
 						$Mmf30detail->save();
 						$logger = new Datalogger("Mmf30detail","update",json_encode($olddata),json_encode($data));
 						$logger->SaveData();
@@ -1396,7 +1408,7 @@ Class Mmf30module extends Application{
 		$val_qty = 0;
 		foreach ($Mmf30detail as $data){	
 			$val_currency += $data->currency;
-			$val_qty += $data->qty;
+			$val_tprice += $data->extendedprice;
 			$pdfContent .='
 			<tr>
 				<td style="width:15px;max-width:15px; border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle ><b>'.$no.'</b></td>
@@ -1418,9 +1430,10 @@ Class Mmf30module extends Application{
 		$pdfContent .= '
 		<tr>
 			<td colspan="5" style="border-top: 1px solid #000000; border-left: 1px solid #000000" >Remarks : </td>
-			<td colspan="2" style="border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle>TOTAL AMOUNT :</td>
-			<td colspan="1" style="border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle><u>'.$val_qty.'</u></td>
-			<td colspan="2" style="border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle></td>
+			<td colspan="3" style="border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle></td>
+			<td colspan="1" style="border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle>TOTAL PRICE :</td>
+			<td colspan="1" style="border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle><u>'.$val_tprice.'</u></td>
+
 		</tr>
 		<tr>
 			<td colspan="5" style="border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="left" valign=middle><u>'.$Mmf30->remarksu.'</u></td>

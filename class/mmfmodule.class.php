@@ -394,6 +394,10 @@ Class Mmfmodule extends Application{
 								foreach ($approval as $delr){
 									$delr->delete();
 								}
+								$att = Mmfattachment::find("all",array('conditions' => array("mmf28_id=?",$id)));
+								foreach ($att as $delr){
+									$delr->delete();
+								}
 								// $detail = Trschedule::find("all",array('conditions' => array("mmf28_id=?",$id)));
 								// foreach ($detail as $delr){
 								// 	$delr->delete();
@@ -549,9 +553,9 @@ Class Mmfmodule extends Application{
 									}
 									// $Trschedule=Trschedule::find('all',array('conditions'=>array("mmf28_id=?",$id),'include'=>array('tr'=>array('employee'=>array('company','department','designation','grade')))));
 									// $Trticket=Trticket::find('all',array('conditions'=>array("mmf28_id=?",$id),'include'=>array('tr'=>array('employee'=>array('company','department','designation','grade')))));
-									$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$adb->fullname.',</span></p>
-										<p class=MsoNormal><span style="color:#1F497D">new MMF 28 Request is awaiting for your approval:</span></p>
-										<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
+									$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span>Dear '.$adb->fullname.',</span></p>
+										<p class=MsoNormal><span >new MMF 28 Request is awaiting for your approval:</span></p>
+										<p class=MsoNormal><span >&nbsp;</span></p>
 										<table border=1 cellspacing=0 cellpadding=3 width=683>
 										<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->fullname.'</b></p></td></tr>
 										<tr><td><p class=MsoNormal>SAP ID</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->sapid.'</b></p></td></tr>
@@ -575,6 +579,7 @@ Class Mmfmodule extends Application{
 											<th><p class=MsoNormal>Symtoms (Problem)</p></th>
 											<th><p class=MsoNormal>Required</p></th>
 											<th><p class=MsoNormal>Instsruction</p></th>
+											<th><p class=MsoNormal>Estimation Cost</p></th>
 										</tr>
 										<tr style="height:22.5pt">
 											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Tr->createddate)).'</p></td>
@@ -589,6 +594,7 @@ Class Mmfmodule extends Application{
 											<td><p class=MsoNormal> '.$Tr->symptomps.'</p></td>
 											<td><p class=MsoNormal> '.$required.'</p></td>
 											<td><p class=MsoNormal> '.$Tr->instruction.'</p></td>
+											<td><p class=MsoNormal> '.$Tr->estimatecost.'</p></td>
 										</tr>
 										';
 									// $no=1;					
@@ -882,8 +888,8 @@ Class Mmfmodule extends Application{
 										$Tr->requeststatus = 3;
 										$emto=$email;$emname=$Tr->employee->fullname;
 										$this->mail->Subject = "Online Approval System -> Approval Completed";
-										$red = '<p>Your MMF 28. request has been approved</p>';
-													// <p><b><span lang=EN-US style=\'color:#002060\'>Note : Please <u>forward</u> this electronic approval to your respective Human Resource Department.</span></b></p>';
+										$red = '<p>Your MMF 28. request has been approved</p>
+													<p><b><span lang=EN-US style=\'color:#002060\'>Note : Please <u>forward</u> this electronic approval to your respective PR Creator.<br>All prices in the MMF are valid for 14 days</span></b></p>';
 										//delete unnecessary approver
 										$Trapproval = Mmfapproval::find('all', array('joins'=>$join,'conditions' => array("mmf28_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
 										foreach ($Trapproval as $data) {
@@ -929,9 +935,9 @@ Class Mmfmodule extends Application{
 							}else {
 								$required = '';
 							}
-							$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$emname.',</span></p>
-										<p class=MsoNormal><span style="color:#1F497D">'.$red.'</span></p>
-										<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
+							$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span >Dear '.$emname.',</span></p>
+										<p class=MsoNormal><span >'.$red.'</span></p>
+										<p class=MsoNormal><span >&nbsp;</span></p>
 										<table border=1 cellspacing=0 cellpadding=3 width=683>
 										<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->fullname.'</b></p></td></tr>
 										<tr><td><p class=MsoNormal>SAP ID</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->sapid.'</b></p></td></tr>
@@ -955,6 +961,7 @@ Class Mmfmodule extends Application{
 											<th><p class=MsoNormal>Symtoms (Problem)</p></th>
 											<th><p class=MsoNormal>Required</p></th>
 											<th><p class=MsoNormal>Instsruction</p></th>
+											<th><p class=MsoNormal>Estimation Cost</p></th>
 										</tr>
 										<tr style="height:22.5pt">
 											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Tr->createddate)).'</p></td>
@@ -969,6 +976,7 @@ Class Mmfmodule extends Application{
 											<td><p class=MsoNormal> '.$Tr->symptomps.'</p></td>
 											<td><p class=MsoNormal> '.$required.'</p></td>
 											<td><p class=MsoNormal> '.$Tr->instruction.'</p></td>
+											<td><p class=MsoNormal> '.$Tr->estimatecost.'</p></td>
 										</tr>
 										';
 							$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
@@ -1196,7 +1204,7 @@ Class Mmfmodule extends Application{
 									<td class="p-5">Servicing</td>
 									<td colspan="1" style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle>
 									<b>'.(($Tr->requiredtype == 3)?'X':'').'</b></td>
-									<td class="p-5">Calibrator</td>
+									<td class="p-5">Calibration</td>
 							  	</tr>
 							  	<tr>
 									<td class="tg-0lax"></td>
@@ -1361,7 +1369,7 @@ Class Mmfmodule extends Application{
 							</tr>
 							<tr>
 							<td class="tg-left" colspan="1">Material Returned Date :</td>
-							<td class="" colspan="2"><u>'.$v_mdate.'</u></td>
+							<td class="" colspan="2"><u>'.$Tr->materialreturneddate.'</u></td>
 							<td class="" colspan="1">Supplier DO/DN No :</td>
 							<td class="tg-right" colspan="5"><u>'.$Tr->supplierdodnno.'</u></td>
 							</tr>

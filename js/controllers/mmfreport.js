@@ -33,12 +33,12 @@
                 // });
             },
             update: function(key, values) {
-                // CrudService.Update('mmf',key.id,values).then(function (response) {
-                //     if(response.status=="error"){
-                //          DevExpress.ui.notify(response.message,"error");
-                //     }
-                //     $scope.dataGrid.refresh();
-                // });
+                CrudService.Update('mmf',key.id,values).then(function (response) {
+                    if(response.status=="error"){
+                         DevExpress.ui.notify(response.message,"error");
+                    }
+                    $scope.dataGrid.refresh();
+                });
             },
             remove: function(key) {
                 // CrudService.Delete('mmf',key.id).then(function (response) {
@@ -97,11 +97,11 @@
                             //     $('<div style="padding:2px 15px 2px 15px;" title="Edit" />').addClass('dx-icon-edit btn-pill btn-shadow btn btn-success')
                             //     .text('')
                             //     .on('dxclick', function () {
-                            //         // if (!$scope.allowEdit){
-                            //         //     DevExpress.ui.notify("You don't have authority to edit data","error");
-                            //         // } else{
-                            //             $scope.loadMMF(options.data,"edit",true);
-                            //         // }
+                                    // if (!$scope.allowEdit){
+                                    //     DevExpress.ui.notify("You don't have authority to edit data","error");
+                                    // } else{
+                                        // $scope.loadMMF(options.data,"editb",true);
+                                    // }
                             //     })
                             //     .appendTo(container);
                             // }else{
@@ -114,14 +114,25 @@
                             container.text(options.rowIndex +1);
                         }
                     },
-                    {dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200},
-                    {dataField:'fullname',caption:"Request For Employee",width: 200},
+                    {dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200, editorOptions: { 
+                        disabled: true,
+                    }},
+                    {dataField:'fullname',caption:"Request For Employee",width: 200, editorOptions: { 
+                        disabled: true,
+                    }},
                     {dataField:'requeststatus',encodeHtml: false ,width: 300,
                         customizeText: function (e) {
                             var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Saved as Draft</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
                             return rDesc[e.value];
+                        }, editorOptions: { 
+                            disabled: true,
                         }},
-                    {dataField:'remarks',encodeHtml: false },
+                    {dataField:'pono',caption:"PO Number",width: 200},
+                    {dataField:'materialreturneddate',caption:"Material Returned Date",dataType:"date", format:"dd/MM/yyyy",width: 200,editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",disabled: false}},
+                    {dataField:'supplierdodnno',caption:"Supplier DO/DN No",width: 200},
+                    {dataField:'remarks',encodeHtml: false , editorOptions: { 
+                        disabled: true,
+                    }},
                     {
                                 dataField: "approveddoc",
                                 caption:"Approval Doc",
@@ -151,7 +162,7 @@
                 allowExportSelectedData: false
             },
             bindingOptions :{
-    
+                // "editing.allowUpdating": "allowEdit" ,
             },
             columnChooser: {
                 enabled: true
@@ -172,8 +183,8 @@
             },
             editing: {
                 useIcons:true,
-                mode: "popup",
-                allowUpdating: false,
+                mode: "row",
+                allowUpdating: true,
                 allowAdding:false,
                 allowDeleting:false,
                 form:{colCount: 1,
@@ -206,12 +217,19 @@
             },
             onEditorPreparing: function (e) { 
                 $scope.formComponent = e.component;
-                if(e.parentType === "dataRow" && e.dataField === "division_id") {
-                    e.editorOptions.disabled = (typeof e.row.data.department_id !== "number");
+                if (e.dataField == "isfinal"){
+                    e.editorName = "dxSwitch";
+                    e.editorOptions.switchedOnText = "Yes";
+                    e.editorOptions.switchedOffText = "No";
+                } 
+                if (e.dataField == "isactive"){
+                    e.editorName = "dxSwitch";
+                    e.editorOptions.switchedOnText = "Yes";
+                    e.editorOptions.switchedOffText = "No";
                 }
-                if(e.parentType === "dataRow" && e.dataField === "designation_id") {
-                    e.editorOptions.disabled = (typeof e.row.data.division_id !== "number");
-                }
+                if(e.row&&e.row.data.requeststatus !== 3) {
+                    e.editorOptions.disabled = true;
+                }		
             },
             onEditorPrepared: function(e) {
             },

@@ -97,7 +97,16 @@
 					}
 				}),
 				sort: "id"
-            }
+			}
+			CrudService.GetAll('unit').then(function (unit) {
+				$scope.units=unit;
+				console.log($scope.units);
+			});
+			CrudService.GetAll('currency').then(function (currency) {
+				$scope.currencys=currency;
+				console.log($scope.currencys);
+			});
+
             $scope.PRType =[{id:0,prtype:"- Select -"},{id:1,prtype:"Normal PR"},{id:2,prtype:"Urgent PR"},{id:3,prtype:"Minor Purchase"},{id:4,prtype:"Request For Sourcing (RFS) Only"}];
             $scope.ReqType =[{id:0,requisitiontype:"- Select -"},{id:1,requisitiontype:"Stok Item"},{id:2,requisitiontype:"Services"},{id:3,requisitiontype:"Fixed Asset (Requires CAPEX approval)"},{id:4,requisitiontype:"Raw Material"},{id:5,requisitiontype:"Others"}];
 			$scope.AppAction = [{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
@@ -878,23 +887,31 @@
                 editorOptions: {
                     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }
-            },
-            {
-                dataField:'unit',
-                caption: "Unit",
-                dataType: "string",
-                editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
-                }
-            },
-            {
-                dataField:'currency',
-                caption: "Currency",
-                dataType: "string",
-                editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
-                }
-            },
+			},
+			{dataField: "unit",caption: "unit", lookup: { 
+				displayExpr: 'nama',  
+				valueExpr: 'nama',
+				},setCellValue: function(rowData, value) {
+					rowData.unit = value;
+					rowData.approvaltype_id = null;
+				},
+			},
+			{dataField: "currency",caption: "currency", lookup: { 
+				displayExpr: 'nama',  
+				valueExpr: 'nama',
+				},setCellValue: function(rowData, value) {
+					rowData.currency = value;
+					rowData.approvaltype_id = null;
+				},
+			},  
+            // {
+            //     dataField:'currency',
+            //     caption: "Currency",
+            //     dataType: "string",
+            //     editorOptions: {
+            //         disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+            //     }
+            // },
             {
                 dataField:'unitprice',
                 caption: "Unit Price",
@@ -911,18 +928,6 @@
                     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }
             },
-            // {
-            //     dataField:'remarks',
-            //     caption: "Remarks",
-            //     dataType: "string",
-            //     editorOptions: {
-            //         disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
-            //     }
-            // },
-			// {dataField:'dateofbirth',width:100,caption: "Date of Birth",dataType:"date", format: 'dd/MM/yyyy',editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",max:Date.now(),disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
-			// {dataField:'phonenumber',caption: "Phone Number",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
-			// {dataField:'gender',caption: "Gender",lookup: {dataSource: [{key:"Male",val:"Male"},{key:"Female",val:"Female"}],valueExpr: "key", displayExpr: "val" },dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
-			// {dataField:'hrremarks',caption: "Remarks / Confirmation from HR (Konfirmasi dari HR)",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') )?false:true}},
 		],
 		"export": {
 			enabled: true,
@@ -938,7 +943,9 @@
 			"columns[5].editorOptions.disabled":"lockDetail",
 			"columns[6].editorOptions.disabled":"lockUser",
 			"columns[7].editorOptions.disabled":"lockUser",
-			"columns[8].editorOptions.disabled":"lockUser"
+			"columns[8].editorOptions.disabled":"lockUser",
+			"columns[5].lookup.dataSource":"units",
+			"columns[6].lookup.dataSource":"currencys"
         },editing: {
             useIcons:true,
             mode: "cell",
@@ -1450,20 +1457,20 @@
 		e.preventDefault();
 		criteria = {status:'waiting',username:$scope.formInstance.option("formData").employee_id,id:$scope.Requestid};
 		CrudService.FindData('mmf30byemp',criteria).then(function (response){
-			if(response.jml>0){
-				DevExpress.ui.notify({
-					message: "Cannot add more request, Selected employee still have waiting approval request",
-					type: "warning",
-					displayTime: 5000,
-					height: 80,
-					position: {
-					   my: 'top center', 
-					   at: 'center center', 
-					   of: window, 
-					   offset: '0 0' 
-				   }
-				});
-			}else{
+			// if(response.jml>0){
+			// 	DevExpress.ui.notify({
+			// 		message: "Cannot add more request, Selected employee still have waiting approval request",
+			// 		type: "warning",
+			// 		displayTime: 5000,
+			// 		height: 80,
+			// 		position: {
+			// 		   my: 'top center', 
+			// 		   at: 'center center', 
+			// 		   of: window, 
+			// 		   offset: '0 0' 
+			// 	   }
+			// 	});
+			// }else{
 				criteria = {status:'approver',mmf30_id:$scope.Requestid};
 				CrudService.FindData('mmf30app',criteria).then(function (response){
 					if(response.jml>0){
@@ -1527,7 +1534,7 @@
 						});
 					}			
 				})
-			}
+			// }
 		})
 			 	   
     };
