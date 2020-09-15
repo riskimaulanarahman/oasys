@@ -200,7 +200,7 @@
                             {
                                 dataField:'telpno',
                                 label: {
-                                    text:"Tel No",
+                                    text:"Telp No",
                                 },
                                 name:'telpno',
                                 dataType:"string",
@@ -240,14 +240,22 @@
                                 label: {
                                     text:"Charge Code",
                                 },
-                                name:'chargecode',
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+								name:'chargecode',
+								validationRules: [{
+									type: "required",
+									message: "Action is required"
+								}],
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                       
                             },
                             {
                                 dataField:'materialdispatch',
                                 label: {
                                     text:"Material Dispatch No",
-                                },
+								},
+								validationRules: [{
+									type: "required",
+									message: "Action is required"
+								}],
                                 name:'materialdispatch',
                                 disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
                             },
@@ -255,7 +263,11 @@
                                 dataField:'requireddate',
                                 editorType: "dxDateBox",
                                 label: {text: "Required By (Date)"},
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+								disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+								validationRules: [{
+									type: "required",
+									message: "Action is required"
+								}],
                                 editorOptions: {displayFormat:"dd/MM/yyyy",disabled: false}
                             },
                             {
@@ -271,13 +283,17 @@
                                 label: {
                                     text:"Material Description",
                                 },
-                                name:'materialdescr',
+								name:'materialdescr',
+								validationRules: [{
+									type: "required",
+									message: "Action is required"
+								}],
                                 disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
                             },
                             {
                                 dataField:'symptomps',
                                 label: {
-                                    text:"Symtoms (Problem)",
+                                    text:"Symptoms (Problem)",
                                 },
                                 name:'symptomps',
                                 disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
@@ -415,20 +431,43 @@
                                 editorType: "dxSelectBox",
                                 label:{text:"Required"},
                                 disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
-                                // validationRules: [{type: "required", message: "Please select RFC Type" }],
+								// validationRules: [{type: "required", message: "Please select RFC Type" }],
+								validationRules: [{
+									type: "required",
+									message: "Action is required"
+								}],
                                 editorOptions: { 
                                     dataSource:$scope.RequiredType,  
                                     valueExpr: 'id',
                                     displayExpr: 'requiredtype',
                                     onValueChanged: function(e){
                                         var vis =(e.value==4)?true:false;
-                                        $scope.formInstance.itemOption('group2.requiredother', 'visible', vis);
-                                        $scope.formInstance.itemOption('group2.requiredother', 'visibleIndex', 0);
+                                        $scope.formInstance.itemOption('group2.group7.requiredother', 'visible', vis);
+                                        $scope.formInstance.itemOption('group2.group7.requiredother', 'visibleIndex', 0);
                                         $scope.formInstance.updateData('requiredother',  "");
                                         
                                     }
                                 },
                             },{
+                                dataField:'instruction',
+                                label: {
+                                    text:"Instruction",
+                                },
+                                name:'instruction',
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+                            },
+                            
+
+                        ]
+					},
+                    {
+						itemType: "group",
+                        caption: "",
+                        name:"group7",
+                        colSpan:2,
+						colCount:2,
+						items: [
+                            {
                                 dataField:'requiredother',
                                 name:'requiredother',
                                 disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
@@ -441,13 +480,6 @@
                                     type: "required",
                                     message: "please input Specify"
                                 }]
-                            },{
-                                dataField:'instruction',
-                                label: {
-                                    text:"Instruction",
-                                },
-                                name:'instruction',
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
                             },
                             
 
@@ -632,66 +664,72 @@
 						colCount : 1,
 						items: [
 							{
-                                dataField:'estimatecost',
+								dataField:'estimatecost',
+								editorType: "dxNumberBox",
                                 label: {
-                                    text:"Estimation Cost",
+                                    text:"Estimation Cost (IDR)",
                                 },
-                                name:'estimatecost',
+								name:'estimatecost',
+								editorOptions: {
+									format: "#,##0.##",
+									value: 0,
+									min: 0
+								},
                                 visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
                                 // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
                             },
-                            {
-                                dataField:'pono',
-                                label: {
-                                    text:"PO No",
-                                },
-                                name:'pono',
-                                visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
-                            },
-                            {
-                                dataField:'materialreturneddate',
-                                visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
-                                editorType: "dxDateBox",
-                                label: {text: "Material Returned Date"},
-                                editorOptions: {displayFormat:"dd/MM/yyyy",disabled: false}
-                            },{
-                                dataField:'supplierdodnno',
-                                label: {
-                                    text:"Supplier DO/DN No",
-                                },
-                                name:'supplierdodnno',
-                                visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
-                                // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
-                            },
-                            {
-                                dataField:'materialdispatchno',
-                                label: {
-                                    text:"Material Dispatch No",
-                                },
-                                name:'materialdispatchno',
-                                visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
-                                // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
-                            },{
-                                dataField:'isrepair',
-                                label:{text:"",visible:false},
-                                visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
-                                // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                                dataType:"boolean",
-                                editorType: "dxCheckBox",
-                                editorOptions: { 
-                                    text:"Repair",
-                                }
-                            },{
-                                dataField:'isscrap',
-                                label:{text:"",visible:false},
-                                visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
-                                // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                                dataType:"boolean",
-                                editorType: "dxCheckBox",
-                                editorOptions: { 
-                                    text:"Scrapped",
-                                }
-                            }
+                            // {
+                            //     dataField:'pono',
+                            //     label: {
+                            //         text:"PO No",
+                            //     },
+                            //     name:'pono',
+                            //     // visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
+                            // },
+                            // {
+                            //     dataField:'materialreturneddate',
+                            //     // visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
+                            //     editorType: "dxDateBox",
+                            //     label: {text: "Material Returned Date (From Vendor)"},
+                            //     editorOptions: {displayFormat:"dd/MM/yyyy",disabled: false}
+                            // },{
+                            //     dataField:'supplierdodnno',
+                            //     label: {
+                            //         text:"Supplier DO/DN No",
+                            //     },
+                            //     name:'supplierdodnno',
+                            //     // visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
+                            //     // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+                            // },
+                            // {
+                            //     dataField:'materialdispatchno',
+                            //     label: {
+                            //         text:"Material Dispatch No",
+                            //     },
+                            //     name:'materialdispatchno',
+                            //     // visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
+                            //     // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+                            // },{
+                            //     dataField:'isrepair',
+                            //     label:{text:"",visible:false},
+                            //     // visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
+                            //     // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                            //     dataType:"boolean",
+                            //     editorType: "dxCheckBox",
+                            //     editorOptions: { 
+                            //         text:"Repair",
+                            //     }
+                            // },{
+                            //     dataField:'isscrap',
+                            //     label:{text:"",visible:false},
+                            //     // visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
+                            //     // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                            //     dataType:"boolean",
+                            //     editorType: "dxCheckBox",
+                            //     editorOptions: { 
+                            //         text:"Scrapped",
+                            //     }
+                            // }
 
 						]
                     },
