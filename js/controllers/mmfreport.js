@@ -33,6 +33,7 @@
                 // });
             },
             update: function(key, values) {
+                values.materialreturneddate = $filter("date")(values.materialreturneddate, "yyyy-MM-dd HH:mm");
                 CrudService.Update('mmf',key.id,values).then(function (response) {
                     if(response.status=="error"){
                          DevExpress.ui.notify(response.message,"error");
@@ -130,6 +131,9 @@
                     {dataField:'pono',caption:"PO Number",width: 200},
                     {dataField:'materialreturneddate',caption:"Material Returned Date",dataType:"date", format:"dd/MM/yyyy",width: 200,editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",disabled: false}},
                     {dataField:'supplierdodnno',caption:"Supplier DO/DN No",width: 200},
+                    {dataField:'materialdispatchno',caption:"Material Dispatch No",width: 200},
+                    {dataField:'isrepair',caption:"Repair",dataType: "boolean", showEditorAlways: true },
+                    {dataField:'isscrap',caption:"Scrapped",dataType: "boolean", showEditorAlways: true },
                     {dataField:'remarks',encodeHtml: false , editorOptions: { 
                         disabled: true,
                     }},

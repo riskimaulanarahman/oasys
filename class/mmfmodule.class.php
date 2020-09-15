@@ -576,7 +576,7 @@ Class Mmfmodule extends Application{
 											<th><p class=MsoNormal>Required By (Date)</p></th>
 											<th><p class=MsoNormal>Material Code</p></th>
 											<th><p class=MsoNormal>Material Description</p></th>
-											<th><p class=MsoNormal>Symtoms (Problem)</p></th>
+											<th><p class=MsoNormal>Symptoms (Problem)</p></th>
 											<th><p class=MsoNormal>Required</p></th>
 											<th><p class=MsoNormal>Instsruction</p></th>
 											<th><p class=MsoNormal>Estimation Cost</p></th>
@@ -958,7 +958,7 @@ Class Mmfmodule extends Application{
 											<th><p class=MsoNormal>Required By (Date)</p></th>
 											<th><p class=MsoNormal>Material Code</p></th>
 											<th><p class=MsoNormal>Material Description</p></th>
-											<th><p class=MsoNormal>Symtoms (Problem)</p></th>
+											<th><p class=MsoNormal>Symptoms (Problem)</p></th>
 											<th><p class=MsoNormal>Required</p></th>
 											<th><p class=MsoNormal>Instsruction</p></th>
 											<th><p class=MsoNormal>Estimation Cost</p></th>

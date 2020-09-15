@@ -137,7 +137,7 @@
                             editorType: "dxSelectBox",
                             label:{text:"PR Type"},
                             disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
-                            // validationRules: [{type: "required", message: "Please select RFC Type" }],
+                            validationRules: [{type: "required", message: "Please select PR Type" }],
                             editorOptions: { 
                                 dataSource:$scope.PRType,  
                                 valueExpr: 'id',
@@ -164,7 +164,7 @@
                             editorType: "dxSelectBox",
                             label:{text:"Requisition Material"},
                             disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
-                            // validationRules: [{type: "required", message: "Please select RFC Type" }],
+                            validationRules: [{type: "required", message: "Please select Requisition Type" }],
                             editorOptions: { 
                                 dataSource:$scope.ReqType,  
                                 valueExpr: 'id',
@@ -238,19 +238,23 @@
                             {
                                 dataField:'costcode',
                                 label: {
-                                    text:"Cost Code*",
+                                    text:"Cost Code",
                                 },
-                                name:'costcode',
+								name:'costcode',
+								validationRules: [{
+									type: "required",
+									message: "Action is required"
+								}],
                                 disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
                             },
-                            {
-                                dataField:'costelement',
-                                label: {
-                                    text:"Cost Element*",
-                                },
-                                name:'costelement',
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
-                            },
+                            // {
+                            //     dataField:'costelement',
+                            //     label: {
+                            //         text:"Cost Element*",
+                            //     },
+                            //     name:'costelement',
+                            //     disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+                            // },
                             {
                                 label: {
                                     text: "Required By"
@@ -451,7 +455,11 @@
                         label: {
                             text:"Reason for requisition/purchase",
                         },
-                        name:'reason',
+						name:'reason',
+						validationRules: [{
+							type: "required",
+							message: "Action is required"
+						}],
                         disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
                     },{
                         dataField:'remarksu',
@@ -915,16 +923,20 @@
             {
                 dataField:'unitprice',
                 caption: "Unit Price",
-                dataType: "number",
+				dataType: "number",
+				format: "fixedPoint",
                 editorOptions: {
+					format: "fixedPoint",
                     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }
             },
             {
                 dataField:'extendedprice',
                 caption: "Extended Price",
-                dataType: "number",
+				dataType: "number",
+				format: "fixedPoint",
                 editorOptions: {
+					format: "fixedPoint",
                     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }
             },
