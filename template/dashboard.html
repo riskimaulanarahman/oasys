@@ -114,6 +114,41 @@
 						</div>
 					</div>
 				</div>
+
+				<div class="col-lg-6 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-success border-success">
+					<div class="card no-shadow rm-border bg-deep-blue widget-chart text-center card-btm-border card-shadow-success border-success"  style="min-height:275px;">
+						<div class="icon-wrapper rounded-circle">
+							<div class="icon-wrapper-bg opacity-9 bg-primary"></div>
+							<i class="icon text-white {{ (pendingMMFReq >0  || pendingMMF >0 || pendingMMF30 >0 || pendingMMF30Req >0 )? 'icon-anim-pulse' : ''}}  fas fa-file-signature"></i></div>
+						<div class="widget-chart-content">
+							<div class="widget-heading text-primary"><b>MMF </b></div>
+							<button ng-click="mmfApproval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-primary btn-lg">
+								<span class="mr-2 opacity-7">
+									<i class="icon {{ pendingmmf >0 ? 'icon-anim-pulse' : ''}} fa fa-marker"></i>
+								</span>
+								Pending MMF28 Approval <span class="badge badge-pill badge-light {{ pendingMMF28 >0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingMMF28"></span>
+							</button>
+							<button ng-click="myMMF()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-primary btn-lg">
+								<span class="mr-2 opacity-7">
+									<i class="icon {{ pendingMMF28Req >0 ? 'icon-anim-pulse' : ''}} fa fa-calendar-alt"></i>
+								</span>
+								Pending MMF28 Request <span class="badge badge-pill badge-light {{ pendingMMF28Req >0 ? 'icon-anim-pulse' : ''}}  text-dark" ng-bind="pendingMMF28Req"></span>
+							</button>
+							<button ng-click="mmf30Approval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-primary btn-lg">
+								<span class="mr-2 opacity-7">
+									<i class="icon {{ pendingMMF30 >0 ? 'icon-anim-pulse' : ''}} fa fa-marker"></i>
+								</span>
+								Pending MMF30 Approval <span class="badge badge-pill badge-light {{ pendingMMF30 >0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingMMF30"></span>
+							</button>
+							<button ng-click="myMMF30()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-primary btn-lg">
+								<span class="mr-2 opacity-7">
+									<i class="icon {{ pendingMMF30Req >0 ? 'icon-anim-pulse' : ''}} fa fa-calendar-alt"></i>
+								</span>
+								Pending MMF30 Request <span class="badge badge-pill badge-light {{ pendingMMF30Req >0 ? 'icon-anim-pulse' : ''}}  text-dark" ng-bind="pendingMMF30Req"></span>
+							</button>
+						</div>
+					</div>
+				</div>
 				
 			</div>
 			<!--
