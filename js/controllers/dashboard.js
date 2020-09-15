@@ -16,6 +16,10 @@ app.register.controller('dashboardCtrl', ['$rootScope','$scope', '$http', '$inte
 	$scope.pendingLeaveReq=0;
 	$scope.pendingRFC=0;
 	$scope.pendingRFCReq=0;
+	$scope.pendingMMF28=0;
+	$scope.pendingMMF28Req=0;
+	$scope.pendingMMF30=0;
+	$scope.pendingMMF30Req=0;
 	$scope.pendingTR=0;
 	$scope.pendingTRReq=0;
 	$scope.pendingSPKL=0;
@@ -39,6 +43,22 @@ app.register.controller('dashboardCtrl', ['$rootScope','$scope', '$http', '$inte
 			criteria = {mypending:'true'};
 			CrudService.FindData('rfcapp',criteria).then(function (response){
 				$scope.pendingRFC=response.jml;
+			});
+			criteria = {status:'pending'};
+			CrudService.FindData('mmfbyemp',criteria).then(function (response){
+				$scope.pendingMMF28Req=response.jml;
+			});
+			criteria = {mypending:'true'};
+			CrudService.FindData('mmfapp',criteria).then(function (response){
+				$scope.pendingMMF28=response.jml;
+			});
+			criteria = {status:'pending'};
+			CrudService.FindData('mmf30byemp',criteria).then(function (response){
+				$scope.pendingMMF30Req=response.jml;
+			});
+			criteria = {mypending:'true'};
+			CrudService.FindData('mmf30app',criteria).then(function (response){
+				$scope.pendingMMF30=response.jml;
 			});
 			criteria = {status:'pending'};
 			CrudService.FindData('trbyemp',criteria).then(function (response){
