@@ -309,13 +309,20 @@ Class RfcModule extends Application{
 						break;
 					case 'create':			
 						$data = $this->post['data'];
-						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-						$data['employee_id']=$Employee->id;
+						if($this->currentUser->username=="admin"){
+							$Rfc = Rfc::find($data['rfc_id']);
+							$data['employee_id']= $Rfc->employee_id;
+						}else{
+							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+							$data['employee_id']=$Employee->id;
+						}
+						
 						unset($data['__KEY__']);
 						
 						$Rfcattachment = Rfcattachment::create($data);
 						$logger = new Datalogger("Rfcattachment","create",null,json_encode($data));
 						$logger->SaveData();
+						echo json_encode($data);
 						break;
 					case 'delete':				
 						$id = $this->post['id'];
@@ -655,7 +662,11 @@ Class RfcModule extends Application{
 														<tr><td><p class=MsoNormal>Rate / SK No</p></td><td>:</td><td><p class=MsoNormal><b>'.$RfcJ->skno.$RfcJ->rate.'</b></p></td></tr>
 														<tr><td><p class=MsoNormal>Period of Contract</p></td><td>:</td><td><p class=MsoNormal><b>'.date("d/m/Y",strtotime($RfcJ->periodstart)).' - '.date("d/m/Y",strtotime($RfcJ->periodend)).'</b></p></td></tr>
 														<tr><td><p class=MsoNormal>Payment Term</p></td><td>:</td><td><p class=MsoNormal><b>'.$RfcJ->paymentterm.'</b></p></td></tr>
-														<tr><td><p class=MsoNormal>RFC Type</p></td><td>:</td><td><p class=MsoNormal><b>'.$rfctype[$RfcJ->rfctype].'</b></p></td></tr>';
+														<tr><td><p class=MsoNormal>RFC Type</p></td><td>:</td><td><p class=MsoNormal><b>'.$rfctype[$RfcJ->rfctype].'</b></p></td></tr>
+														<tr><td><p class=MsoNormal>Contractor Recomended</p></td><td>:</td><td><p class=MsoNormal><b>'.$RfcJ->contractorname.'</b></p></td></tr>
+														<tr><td><p class=MsoNormal></p></td><td></td><td><p class=MsoNormal><b>'.$RfcJ->contractorname2.'</b></p></td></tr>
+														';
+														
 														if($RfcJ->rfctype==1){
 															$this->mailbody .='<tr><td><p class=MsoNormal>Old Contract No</td><td>:</td><td><p class=MsoNormal><b>'.$RfcJ->oldcontractno.'</b></p></td></tr>';
 														}
@@ -1597,19 +1608,17 @@ Class RfcModule extends Application{
 								$err->save();
 								$data = array("status"=>"error","message"=>$e->getMessage());
 							}
-							echo json_encode($data);
-							
+							echo json_encode($data);	
 						} else {
 							$data = array("status"=>"error","message"=>"You can't delete submitted request");
 							echo json_encode($data);
 						}
-						
 						break;
 					case 'update':
 						$id = $this->post['id'];
 						$data = $this->post['data'];
-						$joins   = "LEFT JOIN tbl_rfccontractor ON (tbl_rfc.contractor_id = tbl_rfccontractor.id) LEFT JOIN tbl_rfcactivity ON (tbl_rfc.activity_id = tbl_rfcactivity.id) ";
-						$sel = 'tbl_rfc.*, tbl_rfccontractor.contractorname AS contractorname,tbl_rfcactivity.activitydescr as activitydescr ';
+						$joins   = "LEFT JOIN tbl_rfccontractor ON (tbl_rfc.contractor_id = tbl_rfccontractor.id) LEFT JOIN tbl_rfccontractor as c ON (tbl_rfc.contractor_id2 = c.id) LEFT JOIN tbl_rfcactivity ON (tbl_rfc.activity_id = tbl_rfcactivity.id) ";
+						$sel = 'tbl_rfc.*, tbl_rfccontractor.contractorname AS contractorname,c.contractorname as contractorname2, tbl_rfcactivity.activitydescr as activitydescr ';
 						$Rfc = Rfc::find($id,array('joins'=>$joins,'select'=>$sel,'include'=>array('employee'=>array('company','department','designation','grade'))));
 						$olddata = $Rfc->to_array();
 						$depthead = $data['depthead'];
@@ -1683,6 +1692,10 @@ Class RfcModule extends Application{
 								$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
 								$email = $adb->email;
 								$Rfcdetail=Rfcdetail::find('all',array('conditions'=>array("rfc_id=?",$id),'include'=>array('rfc'=>array('employee'=>array('company','department','designation','grade')))));
+								$joins   = "LEFT JOIN tbl_rfccontractor ON (tbl_rfc.contractor_id = tbl_rfccontractor.id) LEFT JOIN tbl_rfccontractor as c ON (tbl_rfc.contractor_id2 = c.id) LEFT JOIN tbl_rfcactivity ON (tbl_rfc.activity_id = tbl_rfcactivity.id) ";
+								$sel = 'tbl_rfc.*, tbl_rfccontractor.contractorname AS contractorname,c.contractorname as contractorname2, tbl_rfcactivity.activitydescr as activitydescr ';
+								$RfcJ = Rfc::find($id,array('joins'=>$joins,'select'=>$sel,'include'=>array('employee'=>array('company','department','designation','grade','location'))));
+								
 								foreach ($Rfcdetail as &$result) {
 									$usr = Addressbook::find('first',array('conditions'=>array("username=?",$result->rfc->employee->loginname)));
 									$email=$usr->email;
@@ -1695,26 +1708,28 @@ Class RfcModule extends Application{
 													<p class=MsoNormal><span style="color:#1F497D">New RFC request is awaiting for your approval:</span></p>
 													<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
 													<table border=1 cellspacing=0 cellpadding=3 width=683>
-														<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Rfc->employee->fullname.'</b></p></td></tr>
-														<tr><td><p class=MsoNormal>Date</p></td><td>:</td><td><p class=MsoNormal><b>'.date("d/m/Y",strtotime($Rfc->createddate)).'</b></p></td></tr>
-														<tr><td><p class=MsoNormal>RFC No</p></td><td>:</td><td><p class=MsoNormal><b>'.$Rfc->rfcno.'</b></p></td></tr>
-														<tr><td><p class=MsoNormal>Kind of Contract</p></td><td>:</td><td><p class=MsoNormal><b>'.$Rfc->activitydescr.'</b></p></td></tr>
-														<tr><td><p class=MsoNormal>Rate Type</p></td><td>:</td><td><p class=MsoNormal><b>'.$Rfc->ratetype.'</b></p></td></tr>
-														<tr><td><p class=MsoNormal>Rate / SK No</p></td><td>:</td><td><p class=MsoNormal><b>'.$Rfc->skno.$Rfc->rate.'</b></p></td></tr>
-														<tr><td><p class=MsoNormal>Period of Contract</p></td><td>:</td><td><p class=MsoNormal><b>'.date("d/m/Y",strtotime($Rfc->periodstart)).' - '.date("d/m/Y",strtotime($Rfc->periodend)).'</b></p></td></tr>
-														<tr><td><p class=MsoNormal>Payment Term</p></td><td>:</td><td><p class=MsoNormal><b>'.$Rfc->paymentterm.'</b></p></td></tr>
-														<tr><td><p class=MsoNormal>RFC Type</p></td><td>:</td><td><p class=MsoNormal><b>'.$rfctype[$Rfc->rfctype].'</b></p></td></tr>';
-														if($Rfc->rfctype==1){
-															$this->mailbody .='<tr><td><p class=MsoNormal>Old Contract No</td><td>:</td><td><p class=MsoNormal><b>'.$Rfc->oldcontractno.'</b></p></td></tr>';
+														<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$RfcJ->employee->fullname.'</b></p></td></tr>
+														<tr><td><p class=MsoNormal>Date</p></td><td>:</td><td><p class=MsoNormal><b>'.date("d/m/Y",strtotime($RfcJ->createddate)).'</b></p></td></tr>
+														<tr><td><p class=MsoNormal>RFC No</p></td><td>:</td><td><p class=MsoNormal><b>'.$RfcJ->rfcno.'</b></p></td></tr>
+														<tr><td><p class=MsoNormal>Kind of Contract</p></td><td>:</td><td><p class=MsoNormal><b>'.$RfcJ->activitydescr.'</b></p></td></tr>
+														<tr><td><p class=MsoNormal>Rate Type</p></td><td>:</td><td><p class=MsoNormal><b>'.$RfcJ->ratetype.'</b></p></td></tr>
+														<tr><td><p class=MsoNormal>Rate / SK No</p></td><td>:</td><td><p class=MsoNormal><b>'.$RfcJ->skno.$RfcJ->rate.'</b></p></td></tr>
+														<tr><td><p class=MsoNormal>Period of Contract</p></td><td>:</td><td><p class=MsoNormal><b>'.date("d/m/Y",strtotime($RfcJ->periodstart)).' - '.date("d/m/Y",strtotime($RfcJ->periodend)).'</b></p></td></tr>
+														<tr><td><p class=MsoNormal>Payment Term</p></td><td>:</td><td><p class=MsoNormal><b>'.$RfcJ->paymentterm.'</b></p></td></tr>
+														<tr><td><p class=MsoNormal>RFC Type</p></td><td>:</td><td><p class=MsoNormal><b>'.$rfctype[$RfcJ->rfctype].'</b></p></td></tr>
+														<tr><td><p class=MsoNormal>Contractor Recomended</p></td><td>:</td><td><p class=MsoNormal><b>'.$RfcJ->contractorname.'</b></p></td></tr>
+														<tr><td><p class=MsoNormal></p></td><td></td><td><p class=MsoNormal><b>'.$RfcJ->contractorname2.'</b></p></td></tr>';
+														if($RfcJ->rfctype==1){
+															$this->mailbody .='<tr><td><p class=MsoNormal>Old Contract No</td><td>:</td><td><p class=MsoNormal><b>'.$RfcJ->oldcontractno.'</b></p></td></tr>';
 														}
-														if($Rfc->rfctype==2){
+														if($RfcJ->rfctype==2){
 															$this->mailbody .='<tr><td colspan=3><p class=MsoNormal><b>Capex Information</b></p></td></tr>
-																<tr><td><p class=MsoNormal>Capex No</p></td><td>:</td><td><p class=MsoNormal><b>'.$Rfc->capexno.'</b></p></td></tr>
-																<tr><td><p class=MsoNormal>Capex Ammount</p></td><td>:</td><td><p class=MsoNormal><b> Rp.'.number_format($Rfc->capexammount).'</b></p></td></tr>
-																<tr><td><p class=MsoNormal>Capex Spent</p></td><td>:</td><td><p class=MsoNormal><b> Rp.'.number_format($Rfc->capexspent).'</b></p></td></tr>
-																<tr><td><p class=MsoNormal>Capex Balance</p></td><td>:</td><td><p class=MsoNormal><b> Rp.'.number_format($Rfc->capexbalance).'</b></p></td></tr>
-																<tr><td><p class=MsoNormal>RFC Ammount</p></td><td>:</td><td><p class=MsoNormal><b> Rp.'.number_format($Rfc->rfcammount).'</b></p></td></tr>
-																<tr><td><p class=MsoNormal>Balance after this RFC</p></td><td>:</td><td><p class=MsoNormal><b> Rp.'.number_format($Rfc->balance).'</b></p></td></tr>';
+																<tr><td><p class=MsoNormal>Capex No</p></td><td>:</td><td><p class=MsoNormal><b>'.$RfcJ->capexno.'</b></p></td></tr>
+																<tr><td><p class=MsoNormal>Capex Ammount</p></td><td>:</td><td><p class=MsoNormal><b> Rp.'.number_format($RfcJ->capexammount).'</b></p></td></tr>
+																<tr><td><p class=MsoNormal>Capex Spent</p></td><td>:</td><td><p class=MsoNormal><b> Rp.'.number_format($RfcJ->capexspent).'</b></p></td></tr>
+																<tr><td><p class=MsoNormal>Capex Balance</p></td><td>:</td><td><p class=MsoNormal><b> Rp.'.number_format($RfcJ->capexbalance).'</b></p></td></tr>
+																<tr><td><p class=MsoNormal>RFC Ammount</p></td><td>:</td><td><p class=MsoNormal><b> Rp.'.number_format($RfcJ->rfcammount).'</b></p></td></tr>
+																<tr><td><p class=MsoNormal>Balance after this RFC</p></td><td>:</td><td><p class=MsoNormal><b> Rp.'.number_format($RfcJ->balance).'</b></p></td></tr>';
 														}
 								$this->mailbody .='</table>
 													<p class=MsoNormal><b>Contract Detail :</b></p>
