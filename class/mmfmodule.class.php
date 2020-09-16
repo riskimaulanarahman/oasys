@@ -660,13 +660,16 @@ Class Mmfmodule extends Application{
 									$Trhistory->actiontype = 2;
 									$Trhistory->save();
 								}else{
-									$Trhistory = new Mmfhistory();
-									$Trhistory->date = date("Y-m-d h:i:s");
-									$Trhistory->fullname = $Employee->fullname;
-									$Trhistory->mmf28_id = $id;
-									$Trhistory->approvaltype = "Originator";
-									$Trhistory->actiontype = 1;
-									$Trhistory->save();
+									if($data['action'] !== 'updatereport') {
+										$Trhistory = new Mmfhistory();
+										$Trhistory->date = date("Y-m-d h:i:s");
+										$Trhistory->fullname = $Employee->fullname;
+										$Trhistory->mmf28_id = $id;
+										$Trhistory->approvaltype = "Originator";
+										$Trhistory->actiontype = 1;
+										$Trhistory->save();
+									}
+									
 								}
 								$logger = new Datalogger("MMF","update",json_encode($olddata),json_encode($data));
 								$logger->SaveData();

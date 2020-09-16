@@ -34,6 +34,7 @@
             },
             update: function(key, values) {
                 values.materialreturneddate = $filter("date")(values.materialreturneddate, "yyyy-MM-dd HH:mm");
+                values.action = 'updatereport';
                 CrudService.Update('mmf',key.id,values).then(function (response) {
                     if(response.status=="error"){
                          DevExpress.ui.notify(response.message,"error");
