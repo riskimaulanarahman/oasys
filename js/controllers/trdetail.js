@@ -147,7 +147,7 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 							visible: true,
 							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							editorOptions: { 
-								dataSource:(($scope.mode=='add')||($scope.mode=='edit'))?$scope.deptEmpDataSource:$scope.allDeptEmpDataSource,    
+								dataSource:$scope.allDeptEmpDataSource,  //(($scope.mode=='add')||($scope.mode=='edit'))?$scope.deptEmpDataSource:$scope.allDeptEmpDataSource,    
 								valueExpr: 'id',
 								displayExpr: 'fullname',
 								searchEnabled: true,
