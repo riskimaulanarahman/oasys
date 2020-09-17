@@ -783,7 +783,7 @@ Class Mmfmodule extends Application{
 							$data=array("jml"=>count($Tr));
 						} else if(isset($query['filter'])){
 							$join = "LEFT JOIN vwmmf28report v on tbl_mmf28.id=v.id";
-							$sel = 'tbl_mmf28.*, v.laststatus,v.personholding ';
+							$sel = 'tbl_mmf28.*, v.laststatus,v.personholding , v.apprbuyername, v.apprprocheaddate';
 							$Tr = Mmf::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
 							foreach ($Tr as &$result) {
 								$fullname	= $result->employee->fullname;		

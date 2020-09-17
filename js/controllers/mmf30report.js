@@ -121,6 +121,15 @@
                             var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Saved as Draft</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
                             return rDesc[e.value];
                         }},
+                    {dataField:'prno',caption:"PR Number", editorOptions: { 
+                        disabled: true,
+                    }},
+                    {dataField:'apprbuyername',caption:"Buyer", editorOptions: { 
+                        disabled: true,
+                    }},
+                    {dataField:'apprprocheaddate',caption:"Appr ProcHead Date", editorOptions: { 
+                        disabled: true,
+                    }},
                     {dataField:'remarks',encodeHtml: false },
                     {
                                 dataField: "approveddoc",

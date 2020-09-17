@@ -129,10 +129,19 @@
                         }, editorOptions: { 
                             disabled: true,
                         }},
-                    {dataField:'pono',caption:"PO Number",width: 200},
-                    {dataField:'materialreturneddate',caption:"Material Returned Date",dataType:"date", format:"dd/MM/yyyy",width: 200,editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",disabled: false}},
-                    {dataField:'supplierdodnno',caption:"Supplier DO/DN No",width: 200},
-                    {dataField:'materialdispatchno',caption:"Material Dispatch No",width: 200},
+                    {dataField:'mmfnumber',caption:"MMF Number", editorOptions: { 
+                        disabled: true,
+                    }},
+                    {dataField:'apprbuyername',caption:"Buyer", editorOptions: { 
+                        disabled: true,
+                    }},
+                    {dataField:'apprprocheaddate',caption:"Appr ProcHead Date", editorOptions: { 
+                        disabled: true,
+                    }},
+                    {dataField:'pono',caption:"PO Number"},
+                    {dataField:'materialreturneddate',caption:"Material Returned Date",dataType:"date", format:"dd/MM/yyyy",editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",disabled: false}},
+                    {dataField:'supplierdodnno',caption:"Supplier DO/DN No"},
+                    {dataField:'materialdispatchno',caption:"Material Dispatch No"},
                     {dataField:'isrepair',caption:"Repair",dataType: "boolean", showEditorAlways: true },
                     {dataField:'isscrap',caption:"Scrapped",dataType: "boolean", showEditorAlways: true },
                     {dataField:'remarks',encodeHtml: false , editorOptions: { 
