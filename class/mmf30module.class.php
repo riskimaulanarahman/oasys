@@ -641,8 +641,8 @@ Class Mmf30module extends Application{
 											<td><p class=MsoNormal> '.$data->qty.'</p></td>
 											<td><p class=MsoNormal> '.$data->unit.'</p></td>
 											<td><p class=MsoNormal> '.$data->currency.'</p></td>
-											<td><p class=MsoNormal> '.$data->unitprice.'</p></td>
-											<td><p class=MsoNormal> '.$data->extendedprice.'</p></td>
+											<td><p class=MsoNormal> '.number_format($data->unitprice).'</p></td>
+											<td><p class=MsoNormal> '.number_format($data->extendedprice).'</p></td>
 											</tr>';
 										$no++;
 									}
@@ -1033,8 +1033,8 @@ Class Mmf30module extends Application{
 											<td><p class=MsoNormal> '.$data->qty.'</p></td>
 											<td><p class=MsoNormal> '.$data->unit.'</p></td>
 											<td><p class=MsoNormal> '.$data->currency.'</p></td>
-											<td><p class=MsoNormal> '.$data->unitprice.'</p></td>
-											<td><p class=MsoNormal> '.$data->extendedprice.'</p></td>
+											<td><p class=MsoNormal> '.number_format($data->unitprice).'</p></td>
+											<td><p class=MsoNormal> '.number_format($data->extendedprice).'</p></td>
 											</tr>';
 										$no++;
 							}
@@ -1419,8 +1419,8 @@ Class Mmf30module extends Application{
 				<td style="width:25px;max-width:25px; border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle><b>'.$data->qty.'</b></td>
 				<td style="width:24px;max-width:24px; border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle><b>'.$data->unit.'</b></td>
 				<td style="width:60px;max-width:60px; border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle><b>'.$data->currency.'</b></td>
-				<td style="width:55px;max-width:55px; border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle ><b>'.$data->unitprice.'</b></td>
-				<td style="width:60px;max-width:60px; border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle><b>'.$data->extendedprice.'</b></td>
+				<td style="width:55px;max-width:55px; border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle ><b>'.number_format($data->unitprice).'</b></td>
+				<td style="width:60px;max-width:60px; border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle><b>'.number_format($data->extendedprice).'</b></td>
 			</tr>
 			
 				';
@@ -1432,7 +1432,7 @@ Class Mmf30module extends Application{
 			<td colspan="5" style="border-top: 1px solid #000000; border-left: 1px solid #000000" >Remarks : </td>
 			<td colspan="3" style="border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle></td>
 			<td colspan="1" style="border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle>TOTAL PRICE :</td>
-			<td colspan="1" style="border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle><u>'.$val_tprice.'</u></td>
+			<td colspan="1" style="border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle><u>'.number_format($val_tprice).'</u></td>
 
 		</tr>
 		<tr>

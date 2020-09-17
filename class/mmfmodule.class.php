@@ -594,7 +594,7 @@ Class Mmfmodule extends Application{
 											<td><p class=MsoNormal> '.$Tr->symptomps.'</p></td>
 											<td><p class=MsoNormal> '.$required.'</p></td>
 											<td><p class=MsoNormal> '.$Tr->instruction.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->estimatecost.'</p></td>
+											<td><p class=MsoNormal> '.number_format($Tr->estimatecost).'</p></td>
 										</tr>
 										';
 									// $no=1;					
@@ -660,13 +660,18 @@ Class Mmfmodule extends Application{
 									$Trhistory->actiontype = 2;
 									$Trhistory->save();
 								}else{
-									$Trhistory = new Mmfhistory();
-									$Trhistory->date = date("Y-m-d h:i:s");
-									$Trhistory->fullname = $Employee->fullname;
-									$Trhistory->mmf28_id = $id;
-									$Trhistory->approvaltype = "Originator";
-									$Trhistory->actiontype = 1;
-									$Trhistory->save();
+									if($data['action'] !== 'updatereport') {
+										$Trhistory = new Mmfhistory();
+										$Trhistory->date = date("Y-m-d h:i:s");
+										$Trhistory->fullname = $Employee->fullname;
+										$Trhistory->mmf28_id = $id;
+										$Trhistory->approvaltype = "Originator";
+										$Trhistory->actiontype = 1;
+										$Trhistory->save();
+									} else {
+										$this->generatePDF($id);
+									}
+									
 								}
 								$logger = new Datalogger("MMF","update",json_encode($olddata),json_encode($data));
 								$logger->SaveData();
@@ -976,7 +981,7 @@ Class Mmfmodule extends Application{
 											<td><p class=MsoNormal> '.$Tr->symptomps.'</p></td>
 											<td><p class=MsoNormal> '.$required.'</p></td>
 											<td><p class=MsoNormal> '.$Tr->instruction.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->estimatecost.'</p></td>
+											<td><p class=MsoNormal> '.number_format($Tr->estimatecost).'</p></td>
 										</tr>
 										';
 							$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
@@ -1362,7 +1367,7 @@ Class Mmfmodule extends Application{
 							</tr></table>';
 							$pdfContent .= '<table style="width: 595pt;" cellspacing="0" border="0"  width="100%">
 							<tr>
-							<td class="tg-left" colspan="7">Estimation Cost : <u>'.$Tr->estimatecost.'</u></td>
+							<td class="tg-left" colspan="7">Estimation Cost : <u>'.number_format($Tr->estimatecost).'</u></td>
 							</tr>
 							<tr>
 							<td class="tg-left" colspan="7">PO No : <u>'.$Tr->pono.'</u></td>
