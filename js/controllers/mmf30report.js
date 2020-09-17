@@ -114,6 +114,9 @@
                             container.text(options.rowIndex +1);
                         }
                     },
+                    {dataField:'prno',caption:"PR Number", editorOptions: { 
+                        disabled: true,
+                    }},
                     {dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200},
                     {dataField:'fullname',caption:"Request For Employee",width: 200},
                     {dataField:'requeststatus',encodeHtml: false ,width: 300,
@@ -121,13 +124,14 @@
                             var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Saved as Draft</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
                             return rDesc[e.value];
                         }},
-                    {dataField:'prno',caption:"PR Number", editorOptions: { 
-                        disabled: true,
-                    }},
-                    {dataField:'apprbuyername',caption:"Buyer", editorOptions: { 
+                    
+                    {dataField:'personholding',caption:"Next Approver", editorOptions: { 
                         disabled: true,
                     }},
                     {dataField:'apprprocheaddate',caption:"Appr ProcHead Date", editorOptions: { 
+                        disabled: true,
+                    }},
+                    {dataField:'apprbuyerdate',caption:"Appr Buyer Date", editorOptions: { 
                         disabled: true,
                     }},
                     {dataField:'remarks',encodeHtml: false },

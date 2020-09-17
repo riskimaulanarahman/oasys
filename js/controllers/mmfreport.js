@@ -116,6 +116,9 @@
                             container.text(options.rowIndex +1);
                         }
                     },
+                    {dataField:'mmfnumber',caption:"MMF Number", editorOptions: { 
+                        disabled: true,
+                    }},
                     {dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200, editorOptions: { 
                         disabled: true,
                     }},
@@ -129,13 +132,14 @@
                         }, editorOptions: { 
                             disabled: true,
                         }},
-                    {dataField:'mmfnumber',caption:"MMF Number", editorOptions: { 
-                        disabled: true,
-                    }},
-                    {dataField:'apprbuyername',caption:"Buyer", editorOptions: { 
+                    
+                    {dataField:'personholding',caption:"Next Approver", editorOptions: { 
                         disabled: true,
                     }},
                     {dataField:'apprprocheaddate',caption:"Appr ProcHead Date", editorOptions: { 
+                        disabled: true,
+                    }},
+                    {dataField:'apprbuyerdate',caption:"Appr Buyer Date", editorOptions: { 
                         disabled: true,
                     }},
                     {dataField:'pono',caption:"PO Number"},
