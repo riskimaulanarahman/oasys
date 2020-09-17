@@ -145,6 +145,9 @@
                                 allowFiltering: false,
                                 allowSorting: false,
                                 formItem: { visible: false},
+                                editorOptions: { 
+                                    disabled: true,
+                                },
                                 cellTemplate: function (container, options) {
                                     if ((options.value!="") && (options.value)){
                                         $("<div />").dxButton({

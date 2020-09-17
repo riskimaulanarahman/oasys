@@ -668,6 +668,8 @@ Class Mmfmodule extends Application{
 										$Trhistory->approvaltype = "Originator";
 										$Trhistory->actiontype = 1;
 										$Trhistory->save();
+									} else {
+										$this->generatePDF($id);
 									}
 									
 								}
