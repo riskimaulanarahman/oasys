@@ -827,6 +827,10 @@ Class RfcModule extends Application{
 										$fileName = str_replace("/","",$fileName);
 										$filePath = SITE_PATH.DS.$fileName;
 										$html2pdf->output($filePath, 'F');
+										$Mailrecipient = Mailrecipient::find('all',array('conditions'=>array("module='RFC' and company_list like ?","%".$RfcJ->companycode."%")));
+										foreach ($Mailrecipient as $data){
+											$this->mail->AddCC($data->email);
+										}
 										$this->mail->addAttachment($filePath);
 										$Rfc->approveddoc=str_replace("\\","/",$fileName);
 										$Rfc->save();
@@ -1084,7 +1088,7 @@ Class RfcModule extends Application{
 											$logger->SaveData();
 										}
 									}
-									$companyFC=(($company=="BCL") ||  ($company=='KPA') ||($company=='KPS') )?"KPSI":$company;
+									$companyFC=(($company=="BCL") ||  ($company=='KPA')  )?"KPSI":(($company=='KPS')?"LDU":$company);
 									$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='10' and tbl_employee.companycode=? ",$id,$companyFC)));	
 									foreach ($Rfcapproval as &$result) {
 										$result		= $result->to_array();
@@ -1495,7 +1499,7 @@ Class RfcModule extends Application{
 									$logger = new Datalogger("Rfcapproval","add","Add initial BU Head Approval ",json_encode($Rfcapproval->to_array()));
 									$logger->SaveData();
 								}
-								$companyFC=(($data['companycode']=='BCL') || ($data['companycode']=='KPA')|| ($data['companycode']=='KPS'))?"KPSI":$Employee->companycode;
+								$companyFC=(($data['companycode']=='BCL') || ($data['companycode']=='KPA'))?"KPSI":(($data['companycode']=='KPS')?"LDU":$Employee->companycode);
 								$ApproverBUFC = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='10' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$companyFC,$Employee->id)));
 								if(count($ApproverBUFC)>0){
 									$Rfcapproval = new Rfcapproval();
