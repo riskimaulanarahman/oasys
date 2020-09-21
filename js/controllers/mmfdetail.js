@@ -1462,7 +1462,7 @@
 					   offset: '0 0' 
 				   }
 				});
-			}else if($scope.formInstance.option("formData").approvalstatus==3){
+			}else if($scope.formInstance.option("formData").approvalstatus==3 || $scope.formInstance.option("formData").approvalstatus==1){
 				var data = $scope.formInstance.option("formData");
 				var date = new Date();
                 var d= $filter("date")(date, "yyyy-MM-dd HH:mm");
