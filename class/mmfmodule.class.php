@@ -529,9 +529,7 @@ Class Mmfmodule extends Application{
 								}
 								
 								if($data['requeststatus']==1){
-									$Trapproval = Mmfapproval::find('all', array('conditions' => array("mmf28_id=?",$id)));	
-									$result = array($Trapproval);
-									echo $result;
+									$Trapproval = Mmfapproval::find('all', array('conditions' => array("mmf28_id=?",$id)));					
 									foreach($Trapproval as $data){
 										$data->approvalstatus=0;
 										$data->save();
@@ -921,8 +919,8 @@ Class Mmfmodule extends Application{
 									$emto=$email;$emname=$Tr->employee->fullname;
 									$Trhistory->actiontype = 5;
 									$this->mail->Subject = "Online Approval System -> Request Rejected";
-									$red = 'Your MMF 28 Request has been rejected :
-											<br>Remarks from Approver : <font color="red">'.$data['remarks']."</font>";
+									$red = 'Your MMF 28 Request has been rejected
+									<br>Remarks from Approver : <font color="red">'.$data['remarks']."</font>";
 									break;
 								default:
 									break;
