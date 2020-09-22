@@ -1496,9 +1496,10 @@
 				// delete data.isrepair;
 				// delete data.isscrap;
 				// delete data.estimatecost;
-				// delete data.pono;
-				// delete data.materialreturneddate;
-				// delete data.supplierdodnno;
+				delete data.pono;
+				delete data.materialreturneddate;
+				delete data.supplierdodnno;
+				delete data.action;
 				delete data.depthead;
 				// delete data.buyer;
 				delete data.apprstatuscode;
@@ -1559,9 +1560,10 @@
                         // delete data.isrepair;
                         // delete data.isscrap;
                         // delete data.estimatecost;
-                        // delete data.pono;
-                        // delete data.materialreturneddate;
-                        // delete data.supplierdodnno;
+                        delete data.pono;
+                        delete data.materialreturneddate;
+                        delete data.supplierdodnno;
+                        delete data.action;
                         delete data.depthead;
                         // delete data.buyer;
 				        delete data.apprstatuscode;

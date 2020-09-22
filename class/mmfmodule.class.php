@@ -435,6 +435,8 @@ Class Mmfmodule extends Application{
 							$id = $this->post['id'];
 							$data = $this->post['data'];
 							$Tr = Mmf::find($id,array('include'=>array('employee'=>array('company','department','designation','grade'))));
+							// print_r($data);
+
 							$olddata = $Tr->to_array();
 							$depthead = $data['depthead'];
 							$buyer = $data['buyer'];
@@ -451,6 +453,116 @@ Class Mmfmodule extends Application{
 									$Tr->$key=$value;
 								}
 								$Tr->save();
+
+								if($data['requeststatus']==1){
+									$Trapproval = Mmfapproval::find('all', array('conditions' => array("mmf28_id=?",$id)));	
+									// print_r($Trapproval);
+
+									foreach($Trapproval as $data){
+										$data->approvalstatus=0;
+										$data->save();
+									}
+
+									$joinx   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
+									$Trapproval = Mmfapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and mmf28_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+									$username = $Trapproval->approver->employee->loginname;
+									$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
+									$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Tr->employee->loginname)));
+									$email=$usr->email;
+									if($Tr->requiredtype == 1) {
+										$required = 'Repair';
+									}else if($Tr->requiredtype == 2) {
+										$required = 'Servicing';
+									}else if($Tr->requiredtype == 3) {
+										$required = 'Calibration';
+									}else if($Tr->requiredtype == 4) {
+										$required = 'Others';
+									}else {
+										$required = '';
+									}
+
+									$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span>Dear '.$adb->fullname.',</span></p>
+										<p class=MsoNormal><span >new MMF 28 Request is awaiting for your approval:</span></p>
+										<p class=MsoNormal><span >&nbsp;</span></p>
+										<table border=1 cellspacing=0 cellpadding=3 width=683>
+										<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->fullname.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>SAP ID</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->sapid.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>Position</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->designation->designationname.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>Business Group / Business Unit</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->company->companyname.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>Location</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->location->location.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>Email</p></td><td>:</td><td><p class=MsoNormal><b>'.$email.'</b></p></td></tr>
+										</table>
+										<p class=MsoNormal><b>Repairable Form</b></p>
+										<table border=1 cellspacing=0 cellpadding=3 width=683>
+										
+										<tr><th><p class=MsoNormal>Date</small></p></th>
+											<th><p class=MsoNormal>Requested By</p></th>
+											<th><p class=MsoNormal>Tel No</p></th>
+											<th><p class=MsoNormal>WO No</p></th>
+											<th><p class=MsoNormal>Charger Code</p></th>
+											<th><p class=MsoNormal>Material Dispatch No</p></th>
+											<th><p class=MsoNormal>Required By (Date)</p></th>
+											<th><p class=MsoNormal>Material Code</p></th>
+											<th><p class=MsoNormal>Material Description</p></th>
+											<th><p class=MsoNormal>Symptoms (Problem)</p></th>
+											<th><p class=MsoNormal>Required</p></th>
+											<th><p class=MsoNormal>Instsruction</p></th>
+											<th><p class=MsoNormal>Estimation Cost</p></th>
+										</tr>
+										<tr style="height:22.5pt">
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Tr->createddate)).'</p></td>
+											<td><p class=MsoNormal> '.$Tr->employee->fullname.'</p></td>
+											<td><p class=MsoNormal> '.$Tr->telpno.'</p></td>
+											<td><p class=MsoNormal> '.$Tr->mmfnumber.'</p></td>
+											<td><p class=MsoNormal> '.$Tr->chargecode.'</p></td>
+											<td><p class=MsoNormal> '.$Tr->materialdispatch.'</p></td>
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Tr->requireddate)).'</p></td>
+											<td><p class=MsoNormal> '.$Tr->materialcode.'</p></td>
+											<td><p class=MsoNormal> '.$Tr->materialdescr.'</p></td>
+											<td><p class=MsoNormal> '.$Tr->symptomps.'</p></td>
+											<td><p class=MsoNormal> '.$required.'</p></td>
+											<td><p class=MsoNormal> '.$Tr->instruction.'</p></td>
+											<td><p class=MsoNormal> '.number_format($Tr->estimatecost).'</p></td>
+										</tr>
+										';
+									
+									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+									$this->mail->addAddress($adb->email, $adb->fullname);
+									$this->mail->Subject = "Online Approval System -> new MMF 28 Request Submission";
+									$this->mail->msgHTML($this->mailbody);
+									if (!$this->mail->send()) {
+										$err = new Errorlog();
+										$err->errortype = "Mail";
+										$err->errordate = date("Y-m-d h:i:s");
+										$err->errormessage = $this->mail->ErrorInfo;
+										$err->user = $this->currentUser->username;
+										$err->ip = $this->ip;
+										$err->save();
+										echo "Mailer Error: " . $this->mail->ErrorInfo;
+									} else {
+										echo "Message sent!";
+									}
+									$Trhistory = new Mmfhistory();
+									$Trhistory->date = date("Y-m-d h:i:s");
+									$Trhistory->fullname = $Employee->fullname;
+									$Trhistory->mmf28_id = $id;
+									$Trhistory->approvaltype = "Originator";
+									$Trhistory->actiontype = 2;
+									$Trhistory->save();
+								}else{
+									if($data['action'] !== 'updatereport') {
+										$Trhistory = new Mmfhistory();
+										$Trhistory->date = date("Y-m-d h:i:s");
+										$Trhistory->fullname = $Employee->fullname;
+										$Trhistory->mmf28_id = $id;
+										$Trhistory->approvaltype = "Originator";
+										$Trhistory->actiontype = 1;
+										$Trhistory->save();
+									} else {
+										$this->generatePDF($id);
+									}
+									
+								}
 								
 								if (isset($data['depthead'])){
 									$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
@@ -528,151 +640,7 @@ Class Mmfmodule extends Application{
 									
 								}
 								
-								if($data['requeststatus']==1){
-									$Trapproval = Mmfapproval::find('all', array('conditions' => array("mmf28_id=?",$id)));					
-									foreach($Trapproval as $data){
-										$data->approvalstatus=0;
-										$data->save();
-									}
-									$joinx   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
-									$Trapproval = Mmfapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and mmf28_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
-									$username = $Trapproval->approver->employee->loginname;
-									$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
-									$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Tr->employee->loginname)));
-									$email=$usr->email;
-									if($Tr->requiredtype == 1) {
-										$required = 'Repair';
-									}else if($Tr->requiredtype == 2) {
-										$required = 'Servicing';
-									}else if($Tr->requiredtype == 3) {
-										$required = 'Calibration';
-									}else if($Tr->requiredtype == 4) {
-										$required = 'Others';
-									}else {
-										$required = '';
-									}
-									// $Trschedule=Trschedule::find('all',array('conditions'=>array("mmf28_id=?",$id),'include'=>array('tr'=>array('employee'=>array('company','department','designation','grade')))));
-									// $Trticket=Trticket::find('all',array('conditions'=>array("mmf28_id=?",$id),'include'=>array('tr'=>array('employee'=>array('company','department','designation','grade')))));
-									$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span>Dear '.$adb->fullname.',</span></p>
-										<p class=MsoNormal><span >new MMF 28 Request is awaiting for your approval:</span></p>
-										<p class=MsoNormal><span >&nbsp;</span></p>
-										<table border=1 cellspacing=0 cellpadding=3 width=683>
-										<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->fullname.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>SAP ID</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->sapid.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>Position</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->designation->designationname.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>Business Group / Business Unit</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->company->companyname.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>Location</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->location->location.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>Email</p></td><td>:</td><td><p class=MsoNormal><b>'.$email.'</b></p></td></tr>
-										</table>
-										<p class=MsoNormal><b>Repairable Form</b></p>
-										<table border=1 cellspacing=0 cellpadding=3 width=683>
-										
-										<tr><th><p class=MsoNormal>Date</small></p></th>
-											<th><p class=MsoNormal>Requested By</p></th>
-											<th><p class=MsoNormal>Tel No</p></th>
-											<th><p class=MsoNormal>WO No</p></th>
-											<th><p class=MsoNormal>Charger Code</p></th>
-											<th><p class=MsoNormal>Material Dispatch No</p></th>
-											<th><p class=MsoNormal>Required By (Date)</p></th>
-											<th><p class=MsoNormal>Material Code</p></th>
-											<th><p class=MsoNormal>Material Description</p></th>
-											<th><p class=MsoNormal>Symptoms (Problem)</p></th>
-											<th><p class=MsoNormal>Required</p></th>
-											<th><p class=MsoNormal>Instsruction</p></th>
-											<th><p class=MsoNormal>Estimation Cost</p></th>
-										</tr>
-										<tr style="height:22.5pt">
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Tr->createddate)).'</p></td>
-											<td><p class=MsoNormal> '.$Tr->employee->fullname.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->telpno.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->mmfnumber.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->chargecode.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->materialdispatch.'</p></td>
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Tr->requireddate)).'</p></td>
-											<td><p class=MsoNormal> '.$Tr->materialcode.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->materialdescr.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->symptomps.'</p></td>
-											<td><p class=MsoNormal> '.$required.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->instruction.'</p></td>
-											<td><p class=MsoNormal> '.number_format($Tr->estimatecost).'</p></td>
-										</tr>
-										';
-									// $no=1;					
-									// foreach ($Trschedule as $data){
-									// 	$this->mailbody .='<tr style="height:22.5pt">
-									// 		<td><p class=MsoNormal> '.$no.'</p></td>
-									// 		<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->departdate)).'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->departtime.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->departfrom.'</p></td>
-									// 		<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->arrivingdate)).'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->arrivingtime.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->arrivingto.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->region.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->reason.'</p></td>
-									// 	</tr>';
-									// 	$no++;
-									// }
-									// $this->mailbody .='</table>
-									// 	<table border=1 cellspacing=0 cellpadding=3 width=683>
-									// 	<tr><th><p class=MsoNormal>No</p></th>
-									// 		<th><p class=MsoNormal>Ticket For (Untuk)</p></th>
-									// 		<th><p class=MsoNormal>Name <br>( Nama )</p></th>
-									// 		<th><p class=MsoNormal>Date of Birth <br>( Tgl. Lahir) <br> <small>(dd/mm/yyyy)</small></p></th>
-									// 		<th><p class=MsoNormal>Phone Number</p></th>
-									// 		<th><p class=MsoNormal>Gender</p></th>
-									// 		<th><p class=MsoNormal>Remarks /Confirmation from HR <br> ( Konfirmasi dari HR )</p></th>
-									// 	</tr>
-									// 	';
-									// $no=1;
-									// foreach ($Trticket as $data){
-									// 	$this->mailbody .='<tr style="height:22.5pt">
-									// 		<td><p class=MsoNormal> '.$no.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->ticketfor.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->ticketname.'</p></td>
-									// 		<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->dateofbirth)).'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->phonenumber.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->gender.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->hrremarks.'</p></td>
-									// 		</tr>';
-									// 	$no++;
-									// }
-									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
-									$this->mail->addAddress($adb->email, $adb->fullname);
-									$this->mail->Subject = "Online Approval System -> new MMF 28 Request Submission";
-									$this->mail->msgHTML($this->mailbody);
-									if (!$this->mail->send()) {
-										$err = new Errorlog();
-										$err->errortype = "Mail";
-										$err->errordate = date("Y-m-d h:i:s");
-										$err->errormessage = $this->mail->ErrorInfo;
-										$err->user = $this->currentUser->username;
-										$err->ip = $this->ip;
-										$err->save();
-										echo "Mailer Error: " . $this->mail->ErrorInfo;
-									} else {
-										echo "Message sent!";
-									}
-									$Trhistory = new Mmfhistory();
-									$Trhistory->date = date("Y-m-d h:i:s");
-									$Trhistory->fullname = $Employee->fullname;
-									$Trhistory->mmf28_id = $id;
-									$Trhistory->approvaltype = "Originator";
-									$Trhistory->actiontype = 2;
-									$Trhistory->save();
-								}else{
-									if($data['action'] !== 'updatereport') {
-										$Trhistory = new Mmfhistory();
-										$Trhistory->date = date("Y-m-d h:i:s");
-										$Trhistory->fullname = $Employee->fullname;
-										$Trhistory->mmf28_id = $id;
-										$Trhistory->approvaltype = "Originator";
-										$Trhistory->actiontype = 1;
-										$Trhistory->save();
-									} else {
-										$this->generatePDF($id);
-									}
-									
-								}
+								
 								$logger = new Datalogger("MMF","update",json_encode($olddata),json_encode($data));
 								$logger->SaveData();
 							}
