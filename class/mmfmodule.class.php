@@ -454,6 +454,44 @@ Class Mmfmodule extends Application{
 								}
 								$Tr->save();
 
+								if (isset($data['depthead'])){
+									$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
+									$dx = Mmfapproval::find('all',array('joins'=>$joins,'conditions' => array("mmf28_id=? and tbl_approver.approvaltype_id=23 and not(tbl_approver.employee_id=?)",$id,$depthead)));	
+									foreach ($dx as $result) {
+										//delete same type dept head approver
+										$result->delete();
+										$logger = new Datalogger("MMfapproval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
+									}
+									$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
+									$Trapproval = Mmfapproval::find('all',array('joins'=>$joins,'conditions' => array("mmf28_id=? and tbl_approver.employee_id=?",$id,$depthead)));	
+									foreach ($Trapproval as &$result) {
+										$result		= $result->to_array();
+										$result['no']=1;
+									}			
+									if(count($Trapproval)==0){ 
+										$Approver = Approver::find('first',array('conditions'=>array("module='MMF' and employee_id=? and approvaltype_id=23",$depthead)));
+										if(count($Approver)>0){
+											$Trapproval = new Mmfapproval();
+											$Trapproval->mmf28_id = $Tr->id;
+											$Trapproval->approver_id = $Approver->id;
+											$Trapproval->save();
+										}else{
+											$approver = new Approver();
+											$approver->module = "MMF";
+											$approver->employee_id=$depthead;
+											$approver->sequence=1;
+											$approver->approvaltype_id = 23;
+											$approver->isfinal = false;
+											$approver->save();
+											$Trapproval = new Mmfapproval();
+											$Trapproval->mmf28_id = $Tr->id;
+											$Trapproval->approver_id = $approver->id;
+											$Trapproval->save();
+										}
+									}
+									
+								}
+
 								if($data['requeststatus']==1){
 									$Trapproval = Mmfapproval::find('all', array('conditions' => array("mmf28_id=?",$id)));	
 									// print_r($Trapproval);
@@ -564,43 +602,7 @@ Class Mmfmodule extends Application{
 									
 								}
 								
-								if (isset($data['depthead'])){
-									$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
-									$dx = Mmfapproval::find('all',array('joins'=>$joins,'conditions' => array("mmf28_id=? and tbl_approver.approvaltype_id=23 and not(tbl_approver.employee_id=?)",$id,$depthead)));	
-									foreach ($dx as $result) {
-										//delete same type dept head approver
-										$result->delete();
-										$logger = new Datalogger("MMfapproval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
-									}
-									$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
-									$Trapproval = Mmfapproval::find('all',array('joins'=>$joins,'conditions' => array("mmf28_id=? and tbl_approver.employee_id=?",$id,$depthead)));	
-									foreach ($Trapproval as &$result) {
-										$result		= $result->to_array();
-										$result['no']=1;
-									}			
-									if(count($Trapproval)==0){ 
-										$Approver = Approver::find('first',array('conditions'=>array("module='MMF' and employee_id=? and approvaltype_id=23",$depthead)));
-										if(count($Approver)>0){
-											$Trapproval = new Mmfapproval();
-											$Trapproval->mmf28_id = $Tr->id;
-											$Trapproval->approver_id = $Approver->id;
-											$Trapproval->save();
-										}else{
-											$approver = new Approver();
-											$approver->module = "MMF";
-											$approver->employee_id=$depthead;
-											$approver->sequence=1;
-											$approver->approvaltype_id = 23;
-											$approver->isfinal = false;
-											$approver->save();
-											$Trapproval = new Mmfapproval();
-											$Trapproval->mmf28_id = $Tr->id;
-											$Trapproval->approver_id = $approver->id;
-											$Trapproval->save();
-										}
-									}
-									
-								}
+								
 
 								if (isset($data['buyer'])){
 									$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
