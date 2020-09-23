@@ -925,7 +925,8 @@ Class Mmf30module extends Application{
 									$emto=$email;$emname=$Mmf30->employee->fullname;
 									$Mmf30history->actiontype = 5;
 									$this->mail->Subject = "Online Approval System -> Request Rejected";
-									$red = 'Your MMF 30 Request has been rejected';
+									$red = 'Your MMF 30 Request has been rejected
+									<br>Remarks from Approver : <font color="red">'.$data['remarks']."</font>";
 									break;
 								default:
 									break;

@@ -435,6 +435,8 @@ Class Mmfmodule extends Application{
 							$id = $this->post['id'];
 							$data = $this->post['data'];
 							$Tr = Mmf::find($id,array('include'=>array('employee'=>array('company','department','designation','grade'))));
+							// print_r($data);
+
 							$olddata = $Tr->to_array();
 							$depthead = $data['depthead'];
 							$buyer = $data['buyer'];
@@ -451,7 +453,7 @@ Class Mmfmodule extends Application{
 									$Tr->$key=$value;
 								}
 								$Tr->save();
-								
+
 								if (isset($data['depthead'])){
 									$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
 									$dx = Mmfapproval::find('all',array('joins'=>$joins,'conditions' => array("mmf28_id=? and tbl_approver.approvaltype_id=23 and not(tbl_approver.employee_id=?)",$id,$depthead)));	
@@ -490,50 +492,15 @@ Class Mmfmodule extends Application{
 									
 								}
 
-								if (isset($data['buyer'])){
-									$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
-									$dx = Mmfapproval::find('all',array('joins'=>$joins,'conditions' => array("mmf28_id=? and tbl_approver.approvaltype_id=25 and not(tbl_approver.employee_id=?)",$id,$buyer)));	
-									foreach ($dx as $result) {
-										//delete same type dept head approver
-										$result->delete();
-										$logger = new Datalogger("MMfapproval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
-									}
-									$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
-									$Trapproval = Mmfapproval::find('all',array('joins'=>$joins,'conditions' => array("mmf28_id=? and tbl_approver.employee_id=?",$id,$buyer)));	
-									foreach ($Trapproval as &$result) {
-										$result		= $result->to_array();
-										$result['no']=1;
-									}			
-									if(count($Trapproval)==0){ 
-										$Approver = Approver::find('first',array('conditions'=>array("module='MMF' and employee_id=? and approvaltype_id=25",$buyer)));
-										if(count($Approver)>0){
-											$Trapproval = new Mmfapproval();
-											$Trapproval->mmf28_id = $Tr->id;
-											$Trapproval->approver_id = $Approver->id;
-											$Trapproval->save();
-										}else{
-											$approver = new Approver();
-											$approver->module = "MMF";
-											$approver->employee_id=$buyer;
-											$approver->sequence=3;
-											$approver->approvaltype_id = 25;
-											$approver->isfinal = true;
-											$approver->save();
-											$Trapproval = new Mmfapproval();
-											$Trapproval->mmf28_id = $Tr->id;
-											$Trapproval->approver_id = $approver->id;
-											$Trapproval->save();
-										}
-									}
-									
-								}
-								
 								if($data['requeststatus']==1){
-									$Trapproval = Mmfapproval::find('all', array('conditions' => array("mmf28_id=?",$id)));					
+									$Trapproval = Mmfapproval::find('all', array('conditions' => array("mmf28_id=?",$id)));	
+									// print_r($Trapproval);
+
 									foreach($Trapproval as $data){
 										$data->approvalstatus=0;
 										$data->save();
 									}
+
 									$joinx   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
 									$Trapproval = Mmfapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and mmf28_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 									$username = $Trapproval->approver->employee->loginname;
@@ -551,8 +518,7 @@ Class Mmfmodule extends Application{
 									}else {
 										$required = '';
 									}
-									// $Trschedule=Trschedule::find('all',array('conditions'=>array("mmf28_id=?",$id),'include'=>array('tr'=>array('employee'=>array('company','department','designation','grade')))));
-									// $Trticket=Trticket::find('all',array('conditions'=>array("mmf28_id=?",$id),'include'=>array('tr'=>array('employee'=>array('company','department','designation','grade')))));
+
 									$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span>Dear '.$adb->fullname.',</span></p>
 										<p class=MsoNormal><span >new MMF 28 Request is awaiting for your approval:</span></p>
 										<p class=MsoNormal><span >&nbsp;</span></p>
@@ -597,45 +563,7 @@ Class Mmfmodule extends Application{
 											<td><p class=MsoNormal> '.number_format($Tr->estimatecost).'</p></td>
 										</tr>
 										';
-									// $no=1;					
-									// foreach ($Trschedule as $data){
-									// 	$this->mailbody .='<tr style="height:22.5pt">
-									// 		<td><p class=MsoNormal> '.$no.'</p></td>
-									// 		<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->departdate)).'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->departtime.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->departfrom.'</p></td>
-									// 		<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->arrivingdate)).'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->arrivingtime.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->arrivingto.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->region.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->reason.'</p></td>
-									// 	</tr>';
-									// 	$no++;
-									// }
-									// $this->mailbody .='</table>
-									// 	<table border=1 cellspacing=0 cellpadding=3 width=683>
-									// 	<tr><th><p class=MsoNormal>No</p></th>
-									// 		<th><p class=MsoNormal>Ticket For (Untuk)</p></th>
-									// 		<th><p class=MsoNormal>Name <br>( Nama )</p></th>
-									// 		<th><p class=MsoNormal>Date of Birth <br>( Tgl. Lahir) <br> <small>(dd/mm/yyyy)</small></p></th>
-									// 		<th><p class=MsoNormal>Phone Number</p></th>
-									// 		<th><p class=MsoNormal>Gender</p></th>
-									// 		<th><p class=MsoNormal>Remarks /Confirmation from HR <br> ( Konfirmasi dari HR )</p></th>
-									// 	</tr>
-									// 	';
-									// $no=1;
-									// foreach ($Trticket as $data){
-									// 	$this->mailbody .='<tr style="height:22.5pt">
-									// 		<td><p class=MsoNormal> '.$no.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->ticketfor.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->ticketname.'</p></td>
-									// 		<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->dateofbirth)).'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->phonenumber.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->gender.'</p></td>
-									// 		<td><p class=MsoNormal> '.$data->hrremarks.'</p></td>
-									// 		</tr>';
-									// 	$no++;
-									// }
+									
 									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 									$this->mail->addAddress($adb->email, $adb->fullname);
 									$this->mail->Subject = "Online Approval System -> new MMF 28 Request Submission";
@@ -673,6 +601,48 @@ Class Mmfmodule extends Application{
 									}
 									
 								}
+								
+								
+
+								if (isset($data['buyer'])){
+									$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
+									$dx = Mmfapproval::find('all',array('joins'=>$joins,'conditions' => array("mmf28_id=? and tbl_approver.approvaltype_id=25 and not(tbl_approver.employee_id=?)",$id,$buyer)));	
+									foreach ($dx as $result) {
+										//delete same type dept head approver
+										$result->delete();
+										$logger = new Datalogger("MMfapproval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
+									}
+									$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
+									$Trapproval = Mmfapproval::find('all',array('joins'=>$joins,'conditions' => array("mmf28_id=? and tbl_approver.employee_id=?",$id,$buyer)));	
+									foreach ($Trapproval as &$result) {
+										$result		= $result->to_array();
+										$result['no']=1;
+									}			
+									if(count($Trapproval)==0){ 
+										$Approver = Approver::find('first',array('conditions'=>array("module='MMF' and employee_id=? and approvaltype_id=25",$buyer)));
+										if(count($Approver)>0){
+											$Trapproval = new Mmfapproval();
+											$Trapproval->mmf28_id = $Tr->id;
+											$Trapproval->approver_id = $Approver->id;
+											$Trapproval->save();
+										}else{
+											$approver = new Approver();
+											$approver->module = "MMF";
+											$approver->employee_id=$buyer;
+											$approver->sequence=3;
+											$approver->approvaltype_id = 25;
+											$approver->isfinal = true;
+											$approver->save();
+											$Trapproval = new Mmfapproval();
+											$Trapproval->mmf28_id = $Tr->id;
+											$Trapproval->approver_id = $approver->id;
+											$Trapproval->save();
+										}
+									}
+									
+								}
+								
+								
 								$logger = new Datalogger("MMF","update",json_encode($olddata),json_encode($data));
 								$logger->SaveData();
 							}
@@ -919,7 +889,8 @@ Class Mmfmodule extends Application{
 									$emto=$email;$emname=$Tr->employee->fullname;
 									$Trhistory->actiontype = 5;
 									$this->mail->Subject = "Online Approval System -> Request Rejected";
-									$red = 'Your MMF 28 Request has been rejected';
+									$red = 'Your MMF 28 Request has been rejected
+									<br>Remarks from Approver : <font color="red">'.$data['remarks']."</font>";
 									break;
 								default:
 									break;
