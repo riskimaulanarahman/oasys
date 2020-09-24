@@ -1271,7 +1271,7 @@ Class RfcModule extends Application{
 											$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete CPU Approval for non SK RFC");
 											$logger->SaveData();
 										}
-										if(($Rfc->companycode=='IHM') || ($Rfc->companycode=='AHL') || ($Rfc->companycode=='KPS')){
+										if(($Rfc->companycode=='IHM') || ($Rfc->companycode=='AHL') ){
 											$dx = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id=8",$id)));	
 											foreach ($dx as $result) {
 												//delete CAD KF for non SK
