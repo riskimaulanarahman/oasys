@@ -126,7 +126,7 @@ Class TrModule extends Application{
 					default:
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 						if ($Employee){
-							$Tr = Tr::find('all', array('conditions' => array("employee_id=?",$Employee->id),'include' => array('employee')));
+							$Tr = Tr::find('all', array('conditions' => array("employee_id=? or createdby=?",$Employee->id,$Employee->id),'include' => array('employee')));
 							foreach ($Tr as &$result) {
 								$fullname=$result->employee->fullname;
 								$result = $result->to_array();
