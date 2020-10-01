@@ -75,10 +75,41 @@ Class SpklModule extends Application{
 				case 'apispkltms':
 					$this->SPKLTms();
 					break;
+				case 'apitestxl2pdf':
+					$this->testExcel();
+					break;
 				default:
 					break;
 			}
 		}
+	}
+	function testExcel(){
+		$spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load('doc/template/template.xlsx');
+		$worksheet = $spreadsheet->getActiveSheet();
+		$pageSetup = $worksheet->getPageSetup();
+		$margin = $worksheet->getPageMargins();
+		$pageSetup->setFitToPage(false);
+		$pageSetup->setScale(150);
+		$pageSetup->setFitToWidth(0);
+		$pageSetup->setFitToHeight(0);
+		$margin->setTop(0.75);
+		$margin->setRight(0.25);
+		$margin->setLeft(0.5);
+		$margin->setBottom(0.25);
+		//$pageSetup->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+		$pageSetup->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
+		
+		for ($a=6;$a<15;$a++){
+			$worksheet->insertNewRowBefore($a+1, 1);
+			$cellValues = $worksheet->rangeToArray('C6:H6');
+			$worksheet->fromArray($cellValues, null, 'C'.$a);
+			$worksheet->getCell('D'.$a)->setValue('Nama '.($a-5));
+			$worksheet->getCell('E'.$a)->setValue('Alamat '.($a-5));
+		}
+		$worksheet->getRowDimension('3')->setRowHeight(1);
+		$pageSetup->setPrintArea('D1:M12');
+		$writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Mpdf');
+		$writer->save('doc/test.pdf');
 	}
 	function generatePDF($doid){
 		$Spkl = Spkl::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
