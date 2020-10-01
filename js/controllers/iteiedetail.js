@@ -12,7 +12,8 @@
 		if(response.status=="autherror"){
 			$scope.logout();
 		}else{
-			$scope.data = response;
+            $scope.data = response;
+            // $scope.data.department = "";
 			if(($scope.mode=='approve')){
 				$scope.data.remarks="";
 			}
@@ -79,6 +80,9 @@
 				}),
 				sort: "id"
             }
+
+            console.log($scope.data);
+
             $scope.AccessRequested =[{id:0,accessrequested:"- Select -"},{id:1,accessrequested:"Exchange (non-Internet) Email"},{id:2,accessrequested:"Internet Email"},{id:3,accessrequested:"Change Domain"}];
             $scope.AccessType =[{id:0,accesstype:"- Select -"},{id:1,accesstype:"Terminal Server (TS) User Account"},{id:2,accesstype:"Non-TS Account"}];
             $scope.AccountType =[{id:0,accounttype:"- Select -"},{id:1,accounttype:"Permanent"},{id:2,accounttype:"Temporary"}];
@@ -109,7 +113,8 @@
                 items: [{	
 						itemType: "group",
 						name:"group1",
-						caption: "Request by : "+$scope.data.fullname+" / Dept : "+$scope.data.department,
+						caption: "",
+						// caption: "Request by : "+$scope.data.fullname+" / Dept : "+$scope.data.department,
 						colCount : 3,
 						colSpan :2,
                         items: 
@@ -192,6 +197,24 @@
                                 }]
                             },
                             {
+                                dataField:'name',
+                                label: {
+                                    text:"Name",
+                                },
+                                name:'name',
+                                dataType:"string",
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+                            },
+                            {
+                                dataField:'employeeid',
+                                label: {
+                                    text:"Employee ID",
+                                },
+                                name:'employeeid',
+                                dataType:"string",
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+                            },
+                            {
                                 dataField:'designation',
                                 label: {
                                     text:"Designation",
@@ -247,8 +270,8 @@
                                     text:"Department",
                                 },
                                 name:'department',
-                                disabled: true                            
-                                // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                             
+                                // disabled: true                            
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                             
                             },
                             {
                                 dataField:'requeststatus',
@@ -932,7 +955,7 @@
         return {
             dataSource: $scope.empDataSource,
             remoteOperations: true,
-            columns: ["fullname",'approvaltype', "department"],
+            columns: ["fullname",'approvaltype','department'],
             hoverStateEnabled: true,
             scrolling: { mode: "virtual" },
             height: 250,
@@ -1012,6 +1035,8 @@
 				data.mode="approve";
 				delete data.createddate;
 				delete data.employee_id;
+				delete data.name;
+				delete data.employeeid;
 				delete data.designation;
 				delete data.requeststatus;
 				delete data.grade;
@@ -1029,8 +1054,10 @@
 				delete data.validto;
 				delete data.emaildomain;
 				delete data.listgroup;
-				delete data.listgroupmoderation;
+                delete data.listgroupmoderation;
+                delete data.ironportquarantine;
 				delete data.ironportquarantinedetail;
+				delete data.reason;
 
 				delete data.depthead;
 				delete data.apprstatuscode;
@@ -1067,6 +1094,8 @@
 						data.mode="approve";
 						delete data.createddate;
                         delete data.employee_id;
+                        delete data.name;
+				        delete data.employeeid;
                         delete data.designation;
                         delete data.requeststatus;
                         delete data.grade;
@@ -1085,7 +1114,9 @@
                         delete data.emaildomain;
                         delete data.listgroup;
                         delete data.listgroupmoderation;
+                        delete data.ironportquarantine;
                         delete data.ironportquarantinedetail;
+                        delete data.reason;
 
                         delete data.depthead;
 				        delete data.apprstatuscode;
@@ -1154,7 +1185,8 @@
                         // delete data.department;
                         delete data.approvalstatus;
                         delete data.apprstatuscode;
-                        data.jobfinishdate= $filter("date")(data.jobfinishdate, "yyyy-MM-dd HH:mm");
+                        data.validfrom = $filter("date")(data.validfrom, "yyyy-MM-dd HH:mm");
+		                data.validto = $filter("date")(data.validto, "yyyy-MM-dd HH:mm");
                         CrudService.Update('iteie',data.id,data).then(function (response) {
                             if(response.status=="error"){
                                     DevExpress.ui.notify(response.message,"error");

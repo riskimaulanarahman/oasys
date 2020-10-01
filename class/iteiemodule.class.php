@@ -52,7 +52,8 @@ Class Iteiemodule extends Application{
 					break;
 				case 'apiiteiepdf':
 					$id = $this->get['id'];
-					$this->generatePDF($id);
+					// $this->generatePDF($id);
+					$this->generatePDFi($id);
 					break;
 				case 'apiiteiehist':
 					$this->iteieHistory();
@@ -92,7 +93,7 @@ Class Iteiemodule extends Application{
 						if(isset($query['status'])){
 							switch ($query['status']){
 								case 'waiting':
-									$Iteie = Iteie::find('all', array('conditions' => array("employee_id=? and RequestStatus<4 and id<>?",$query['username'],$query['id']),'include' => array('employee')));
+									$Iteie = Iteie::find('all', array('conditions' => array("employee_id=? and RequestStatus<3 and id<>?",$query['username'],$query['id']),'include' => array('employee')));
 									foreach ($Iteie as &$result) {
 										$fullname	= $result->employee->fullname;		
 										$result		= $result->to_array();
@@ -102,7 +103,7 @@ Class Iteiemodule extends Application{
 									break;
 								default:
 									$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-									$Iteie = Iteie::find('all', array('conditions' => array("employee_id=? and RequestStatus<4",$Employee->id),'include' => array('employee')));
+									$Iteie = Iteie::find('all', array('conditions' => array("employee_id=? and RequestStatus<3",$Employee->id),'include' => array('employee')));
 									foreach ($Iteie as &$result) {
 										$fullname	= $result->employee->fullname;		
 										$result		= $result->to_array();
@@ -144,16 +145,16 @@ Class Iteiemodule extends Application{
 				switch ($this->post['criteria']){
 					case 'byid':
 						$id = $this->post['id'];
-						// $join = "LEFT JOIN vwmmf28report ON tbl_mmf28.id = vwmmf28report.id";
-						// $select = "tbl_mmf28.*,vwmmf28report.apprstatuscode";
+						// $join = "LEFT JOIN vwiteiereport ON tbl_iteie.id = vwiteiereport.id";
+						// $select = "tbl_iteie.*,vwiteiereport.apprstatuscode";
 						$Iteie = Iteie::find($id, array('include' => array('employee'=>array('company','department','designation'))));
-						// $Tr = Mmf::find($id, array('joins'=>$join,'select'=>$select,'include' => array('employee'=>array('company','department','designation'))));
+						// $Iteie = Iteie::find($id, array('joins'=>$join,'select'=>$select,'include' => array('employee'=>array('company','department','designation'))));
 						if ($Iteie){
 							$fullname = $Iteie->employee->fullname;
 							$department = $Iteie->employee->department->departmentname;
 							$data=$Iteie->to_array();
 							$data['fullname']=$fullname;
-							$data['department']=$department;
+							// $data['department']=$department;
 							echo json_encode($data, JSON_NUMERIC_CHECK);
 						}else{
 							$Iteie = new Iteie();
@@ -207,7 +208,7 @@ Class Iteiemodule extends Application{
 									break;
 								default:
 									$Employee = Employee::find('first', array('conditions' => array("loginName=?",$query['username'])));
-									$Iteie = Iteie::find('all', array('conditions' => array("employee_id=? and RequestStatus<4",$Employee->id),'include' => array('employee')));
+									$Iteie = Iteie::find('all', array('conditions' => array("employee_id=? and RequestStatus<3",$Employee->id),'include' => array('employee')));
 									foreach ($Iteie as &$result) {
 										$fullname	= $result->employee->fullname;		
 										$result		= $result->to_array();
@@ -230,7 +231,7 @@ Class Iteiemodule extends Application{
 						// $data['createdby']=$Employee->id;
 						$data['RequestStatus']=0;
 						try{
-							// $Iteienew = Iteie::find('first',array('select' => "CONCAT('MMF28/','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(wonumber,-4,4)) is null then 1 else max(substring(wonumber,-4,4))+1 end,4,'0')) as wonumber","conditions"=>array("substring(wonumber,7,".strlen($Employee->companycode).")=? and substring(wonumber,".(strlen($Employee->companycode)+8).",4)=YEAR(CURDATE())",$Employee->companycode)));
+							// $Iteienew = Iteie::find('first',array('select' => "CONCAT('Iteie/','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(wonumber,-4,4)) is null then 1 else max(substring(wonumber,-4,4))+1 end,4,'0')) as wonumber","conditions"=>array("substring(wonumber,7,".strlen($Employee->companycode).")=? and substring(wonumber,".(strlen($Employee->companycode)+8).",4)=YEAR(CURDATE())",$Employee->companycode)));
 							// $data['wonumber']=$Iteienew->wonumber;
 							$Iteie = Iteie::create($data);
 							$data=$Iteie->to_array();
@@ -289,11 +290,11 @@ Class Iteiemodule extends Application{
 								foreach ($approval as $delr){
 									$delr->delete();
 								}
-								// $detail = Trschedule::find("all",array('conditions' => array("mmf28_id=?",$id)));
+								// $detail = Trschedule::find("all",array('conditions' => array("iteie_id=?",$id)));
 								// foreach ($detail as $delr){
 								// 	$delr->delete();
 								// }
-								// $detail = Trticket::find("all",array('conditions' => array("mmf28_id=?",$id)));
+								// $detail = Trticket::find("all",array('conditions' => array("iteie_id=?",$id)));
 								// foreach ($detail as $delr){
 								// 	$delr->delete();
 								// }
@@ -501,12 +502,35 @@ Class Iteiemodule extends Application{
 										<tr><td><p class=MsoNormal>Location</p></td><td>:</td><td><p class=MsoNormal><b>'.$Iteie->employee->location->location.'</b></p></td></tr>
 										<tr><td><p class=MsoNormal>Email</p></td><td>:</td><td><p class=MsoNormal><b>'.$email.'</b></p></td></tr>
 										</table>
-										<p class=MsoNormal><b>Repairable Form</b></p>
+										<p class=MsoNormal><b>Exchange/Internet Email Request Form</b></p>
 										<table border=1 cellspacing=0 cellpadding=3 width=683>
 										
 										<tr><th><p class=MsoNormal>Date</small></p></th>
-											<th><p class=MsoNormal>Requested By</p></th>
+											<th><p class=MsoNormal>Name</p></th>
+											<th><p class=MsoNormal>Employee ID</p></th>
+											<th><p class=MsoNormal>Designation</p></th>
+											<th><p class=MsoNormal>Grade</p></th>
+											<th><p class=MsoNormal>BG/BU</p></th>
+											<th><p class=MsoNormal>Office/Location</p></th>
+											<th><p class=MsoNormal>Floor</p></th>
 											<th><p class=MsoNormal>Phone(Ext)</p></th>
+											<th><p class=MsoNormal>Department</p></th>
+										</tr>
+										<tr style="height:22.5pt">
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Iteie->createddate)).'</p></td>
+											<td><p class=MsoNormal> '.$Iteie->name.'</p></td>
+											<td><p class=MsoNormal> '.$Iteie->employeeid.'</p></td>
+											<td><p class=MsoNormal> '.$Iteie->designation.'</p></td>
+											<td><p class=MsoNormal> '.$Iteie->grade.'</p></td>
+											<td><p class=MsoNormal> '.$Iteie->bgbu.'</p></td>
+											<td><p class=MsoNormal> '.$Iteie->officelocation.'</p></td>
+											<td><p class=MsoNormal> '.$Iteie->floor.'</p></td>
+											<td><p class=MsoNormal> '.$Iteie->phoneext.'</p></td>
+											<td><p class=MsoNormal> '.$Iteie->department.'</p></td>
+										</tr>
+										</table>
+										<table border=1 cellspacing=0 cellpadding=3 width=683>
+										<tr>
 											<th><p class=MsoNormal>Access Requested</p></th>
 											<th><p class=MsoNormal>Access Type</p></th>
 											<th><p class=MsoNormal>Account Type</p></th>
@@ -520,9 +544,6 @@ Class Iteiemodule extends Application{
 											<th><p class=MsoNormal>Iron Port Quarantine</p></th>
 										</tr>
 										<tr style="height:22.5pt">
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Iteie->createddate)).'</p></td>
-											<td><p class=MsoNormal> '.$Iteie->employee->fullname.'</p></td>
-											<td><p class=MsoNormal> '.$Iteie->phoneext.'</p></td>
 											<td><p class=MsoNormal> '.$accessR.'</p></td>
 											<td><p class=MsoNormal> '.$accessT.'</p></td>
 											<td><p class=MsoNormal> '.$accountT.'</p></td>
@@ -624,69 +645,69 @@ Class Iteiemodule extends Application{
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$join   = "LEFT JOIN tbl_approver ON (tbl_iteieapproval.approver_id = tbl_approver.id) ";
 							$dx = Iteieapproval::find('first', array('joins'=>$join,'conditions' => array("iteie_id=? and tbl_approver.employee_id = ?",$query['iteie_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
-							$Tr = Iteie::find($query['iteie_id']);
+							$Iteie = Iteie::find($query['iteie_id']);
+							// print_r($dx);
 							if($dx->approver->isfinal==1){
 								$data=array("jml"=>1);
 							}else{
 								$join   = "LEFT JOIN tbl_approver ON (tbl_iteieapproval.approver_id = tbl_approver.id) ";
-								$Trapproval = Iteieapproval::find('all', array('joins'=>$join,'conditions' => array("iteie_id=? and ApprovalStatus<=1 and not tbl_approver.employee_id=?",$query['iteie_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
-								// $Trapproval = Iteieapproval::find('all', array('joins'=>$join,'conditions' => array("iteie_id=? and ApprovalStatus<=1 and tbl_approver.employee_id=?",$query['iteie_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
-								foreach ($Trapproval as &$result) {
+								$Iteieapproval = Iteieapproval::find('all', array('joins'=>$join,'conditions' => array("iteie_id=? and ApprovalStatus<=1 and not tbl_approver.employee_id=?",$query['iteie_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
+								foreach ($Iteieapproval as &$result) {
 									$fullname	= $result->approver->employee->fullname;
 									$result		= $result->to_array();
 									$result['fullname']=$fullname;
 								}
-								$data=array("jml"=>count($Trapproval));
+								$data=array("jml"=>count($Iteieapproval));
 							}						
 						} else if(isset($query['pending'])){						
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$emp_id = $Employee->id;
-							$Tr = Iteie::find('all', array('conditions' => array("RequestStatus =1"),'include' => array('employee')));
-							foreach ($Tr as $result) {
+							$Iteie = Iteie::find('all', array('conditions' => array("RequestStatus =1"),'include' => array('employee')));
+							foreach ($Iteie as $result) {
 								$joinx   = "LEFT JOIN tbl_approver ON (tbl_iteieapproval.approver_id = tbl_approver.id) ";					
-								$Trapproval = Iteieapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and iteie_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
-								if($Trapproval->approver->employee_id==$emp_id){
+								$Iteieapproval = Iteieapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and iteie_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+								if($Iteieapproval->approver->employee_id==$emp_id){
 									$request[]=$result->id;
 								}
 							}
-							$Tr = Iteie::find('all', array('conditions' => array("id in (?)",$request),'include' => array('employee')));
-							foreach ($Tr as &$result) {
+							$Iteie = Iteie::find('all', array('conditions' => array("id in (?)",$request),'include' => array('employee')));
+							foreach ($Iteie as &$result) {
 								$fullname	= $result->employee->fullname;
 								$department	= $result->employee->department->departmentname;
 								$result		= $result->to_array();
 								$result['fullname']=$fullname;
 								$result['department']=$department;
 							}
-							$data=$Tr;
+							$data=$Iteie;
 						} else if(isset($query['mypending'])){						
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$emp_id = $Employee->id;
-							$Tr = Iteie::find('all', array('conditions' => array("RequestStatus =1"),'include' => array('employee')));
+							$Iteie = Iteie::find('all', array('conditions' => array("RequestStatus =1"),'include' => array('employee')));
 							$jml=0;
-							foreach ($Tr as $result) {
+							foreach ($Iteie as $result) {
 								$joinx   = "LEFT JOIN tbl_approver ON (tbl_iteieapproval.approver_id = tbl_approver.id) ";					
-								$Trapproval = Iteieapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and iteie_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
-								if($Trapproval->approver->employee_id==$emp_id){
+								$Iteieapproval = Iteieapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and iteie_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+								if($Iteieapproval->approver->employee_id==$emp_id){
 									$request[]=$result->id;
 								}
 							}
-							$Tr = Iteie::find('all', array('conditions' => array("id in (?)",$request),'include' => array('employee')));
-							foreach ($Tr as &$result) {
+							$Iteie = Iteie::find('all', array('conditions' => array("id in (?)",$request),'include' => array('employee')));
+							foreach ($Iteie as &$result) {
 								$fullname	= $result->employee->fullname;		
 								$result		= $result->to_array();
 								$result['fullname']=$fullname;
 							}
-							$data=array("jml"=>count($Tr));
+							$data=array("jml"=>count($Iteie));
 						} else if(isset($query['filter'])){
-							$join = "LEFT JOIN vwtrreport v on tbl_iteie.id=v.id";
+							$join = "LEFT JOIN vwiteiereport v on tbl_iteie.id=v.id";
 							$sel = 'tbl_iteie.*, v.laststatus,v.personholding ';
-							$Tr = Iteie::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
-							foreach ($Tr as &$result) {
+							$Iteie = Iteie::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
+							foreach ($Iteie as &$result) {
 								$fullname	= $result->employee->fullname;		
 								$result		= $result->to_array();
 								$result['fullname']=$fullname;
 							}
-							$data=$Tr;
+							$data=$Iteie;
 						} else{
 							$data=array();
 						}
@@ -695,18 +716,18 @@ Class Iteiemodule extends Application{
 					case 'create':
 						$data = $this->post['data'];
 						unset($data['__KEY__']);
-						$Trapproval = Iteieapproval::create($data);
+						$Iteieapproval = Iteieapproval::create($data);
 						$logger = new Datalogger("Iteieapproval","create",null,json_encode($data));
 						$logger->SaveData();
 						break;
 					case 'delete':
 						$id = $this->post['id'];
-						$Trapproval = Iteieapproval::find($id);
-						$data=$Trapproval->to_array();
-						$Trapproval->delete();
+						$Iteieapproval = Iteieapproval::find($id);
+						$data=$Iteieapproval->to_array();
+						$Iteieapproval->delete();
 						$logger = new Datalogger("Iteieapproval","delete",json_encode($data),null);
 						$logger->SaveData();
-						echo json_encode($Trapproval);
+						echo json_encode($Iteieapproval);
 						break;
 					case 'update':
 						$doid = $this->post['id'];
@@ -718,23 +739,23 @@ Class Iteiemodule extends Application{
 						unset($data['department']);
 						unset($data['approveddoc']);
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-						$mmf = Iteie::find($doid);
+						$Iteie = Iteie::find($doid);
 						$join   = "LEFT JOIN tbl_approver ON (tbl_iteieapproval.approver_id = tbl_approver.id) ";
 						if (isset($data['mode'])){
-							$Trapproval = Mmfapproval::find('first', array('joins'=>$join,'conditions' => array("iteie_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
+							$Iteieapproval = Iteieapproval::find('first', array('joins'=>$join,'conditions' => array("iteie_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
 							unset($data['mode']);
 						}else{
-							$Trapproval = Mmfapproval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
+							$Iteieapproval = Iteieapproval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
 						}
 						foreach($data as $key=>$val) {
 							if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks')) {
 								// if(($key == 'isrepair') || ($key == 'isscrap')) {
 									$value=(($val===0) || ($val==='0') || ($val==='false'))?false:((($val===1) || ($val==='1') || ($val==='true'))?true:$val);
 								// }
-								$mmf->$key=$value;
+								$Iteie->$key=$value;
 							}
 						}
-						$mmf->save();
+						$Iteie->save();
 
 						// unset($data['materialdispatchno']);
 						// unset($data['isrepair']);
@@ -746,56 +767,56 @@ Class Iteiemodule extends Application{
 						// unset($data['buyer']);
 						
 						
-						$olddata = $Trapproval->to_array();
+						$olddata = $Iteieapproval->to_array();
 						foreach($data as $key=>$val){
 							$val=($val=='false')?false:(($val=='true')?true:$val);
-							$Trapproval->$key=$val;
+							$Iteieapproval->$key=$val;
 						}
-						$Trapproval->save();
-						$logger = new Datalogger("Mmfapproval","update",json_encode($olddata),json_encode($data));
+						$Iteieapproval->save();
+						$logger = new Datalogger("Iteieapproval","update",json_encode($olddata),json_encode($data));
 						$logger->SaveData();
 						if (isset($mode) && ($mode=='approve')){
-							$Tr = Mmf::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
+							$Iteie = Iteie::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
 							$joinx   = "LEFT JOIN tbl_approver ON (tbl_iteieapproval.approver_id = tbl_approver.id) ";					
-							$nTrapproval = Mmfapproval::find('first',array('joins'=>$joinx,'conditions' => array("iteie_id=? and ApprovalStatus=0",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+							$nTrapproval = Iteieapproval::find('first',array('joins'=>$joinx,'conditions' => array("iteie_id=? and ApprovalStatus=0",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 							$username = $nTrapproval->approver->employee->loginname;
 							$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
-							// $Trschedule=Trschedule::find('all',array('conditions'=>array("iteie_id=?",$doid),'include'=>array('mmf'=>array('employee'=>array('company','department','designation','grade','location')))));
-							// $Trticket=Trticket::find('all',array('conditions'=>array("iteie_id=?",$doid),'include'=>array('mmf'=>array('employee'=>array('company','department','designation','grade','location')))));
-							$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Tr->employee->loginname)));
+							// $Iteieschedule=Trschedule::find('all',array('conditions'=>array("iteie_id=?",$doid),'include'=>array('iteie'=>array('employee'=>array('company','department','designation','grade','location')))));
+							// $Iteieticket=Trticket::find('all',array('conditions'=>array("iteie_id=?",$doid),'include'=>array('iteie'=>array('employee'=>array('company','department','designation','grade','location')))));
+							$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Iteie->employee->loginname)));
 							$email=$usr->email;
-							$superiorId=$Tr->depthead;
+							$superiorId=$Iteie->depthead;
 							$Superior = Employee::find($superiorId);
 							$supAdb = Addressbook::find('first',array('conditions'=>array("username=?",$Superior->loginname)));
 							$complete = false;
-							$Trhistory = new Mmfhistory();
-							$Trhistory->date = date("Y-m-d h:i:s");
-							$Trhistory->fullname = $Employee->fullname;
-							$Trhistory->approvaltype = $Trapproval->approver->approvaltype->approvaltype;
-							$Trhistory->remarks = $data['remarks'];
-							$Trhistory->iteie_id = $doid;
+							$Iteiehistory = new Iteiehistory();
+							$Iteiehistory->date = date("Y-m-d h:i:s");
+							$Iteiehistory->fullname = $Employee->fullname;
+							$Iteiehistory->approvaltype = $Iteieapproval->approver->approvaltype->approvaltype;
+							$Iteiehistory->remarks = $data['remarks'];
+							$Iteiehistory->iteie_id = $doid;
 							
 							switch ($data['approvalstatus']){
 								case '1':
-									$Tr->requeststatus = 2;
-									$emto=$email;$emname=$Tr->employee->fullname;
+									$Iteie->requeststatus = 2;
+									$emto=$email;$emname=$Iteie->employee->fullname;
 									$this->mail->Subject = "Online Approval System -> Need Rework";
-									$red = 'Your MMF 28 require some rework :
+									$red = 'Your Exchange-Internet Email require some rework :
 											<br>Remarks from Approver : <font color="red">'.$data['remarks']."</font>";
-									$Trhistory->actiontype = 3;
+									$Iteiehistory->actiontype = 3;
 									break;
 								case '2':
-									if ($Trapproval->approver->isfinal == 1){
-										$Tr->requeststatus = 3;
-										$emto=$email;$emname=$Tr->employee->fullname;
+									if ($Iteieapproval->approver->isfinal == 1){
+										$Iteie->requeststatus = 3;
+										$emto=$email;$emname=$Iteie->employee->fullname;
 										$this->mail->Subject = "Online Approval System -> Approval Completed";
-										$red = '<p>Your MMF 28. request has been approved</p>
-													<p><b><span lang=EN-US style=\'color:#002060\'>Note : Please <u>forward</u> this electronic approval to your respective Human Resource Department.</span></b></p>';
+										$red = '<p>Your Exchange-Internet Email. request has been approved</p>';
+													// '<p><b><span lang=EN-US style=\'color:#002060\'>Note : Please <u>forward</u> this electronic approval to your respective Human Resource Department.</span></b></p>';
 										//delete unnecessary approver
-										$Trapproval = Mmfapproval::find('all', array('joins'=>$join,'conditions' => array("iteie_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
-										foreach ($Trapproval as $data) {
+										$Iteieapproval = Iteieapproval::find('all', array('joins'=>$join,'conditions' => array("iteie_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
+										foreach ($Iteieapproval as $data) {
 											if($data->approvalstatus==0){
-												$logger = new Datalogger("Mmfapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
+												$logger = new Datalogger("Iteieapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
 												$logger->SaveData();
 												$data->delete();
 											}
@@ -803,79 +824,188 @@ Class Iteiemodule extends Application{
 										$complete =true;
 									}
 									else{
-										$Tr->requeststatus = 1;
+										$Iteie->requeststatus = 1;
 										$emto=$adb->email;$emname=$adb->fullname;
-										$this->mail->Subject = "Online Approval System -> new Mmf 28 Request";
-										$red = 'new MMF 28 Request awaiting for your approval:';
+										$this->mail->Subject = "Online Approval System -> new Exchange-Internet Email Request";
+										$red = 'new Exchange-Internet Email Request awaiting for your approval:';
 									}
-									$Trhistory->actiontype = 4;							
+									$Iteiehistory->actiontype = 4;							
 									break;
 								case '3':
-									$Tr->requeststatus = 4;
-									$emto=$email;$emname=$Tr->employee->fullname;
-									$Trhistory->actiontype = 5;
+									$Iteie->requeststatus = 4;
+									$emto=$email;$emname=$Iteie->employee->fullname;
+									$Iteiehistory->actiontype = 5;
 									$this->mail->Subject = "Online Approval System -> Request Rejected";
-									$red = 'Your MMF 28 Request has been rejected';
+									$red = 'Your Exchange-Internet Email Request has been rejected
+											<br>Remarks from Approver : <font color="red">'.$data['remarks']."</font>";
 									break;
 								default:
 									break;
 							}
-							$Tr->save();
-							$Trhistory->save();
+							$Iteie->save();
+							$Iteiehistory->save();
 							echo "email to :".$emto." ->".$emname;
 							$this->mail->addAddress($emto, $emname);
-							$TrJ = Mmf::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
-							if($Tr->requiredtype == 1) {
-								$required = 'Repair';
-							}else if($Tr->requiredtype == 2) {
-								$required = 'Servicing';
-							}else if($Tr->requiredtype == 3) {
-								$required = 'Calibration';
-							}else if($Tr->requiredtype == 4) {
-								$required = 'Others';
+							$IteieJ = Iteie::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
+							if($Iteie->accessrequested == 1) {
+								$accessR = 'Exchange (non-Internet) Email';
+							}else if($Iteie->accessrequested == 2) {
+								$accessR = 'Internet Email';
+							}else if($Iteie->accessrequested == 3) {
+								$accessR = 'Change Domain';
 							}else {
-								$required = '';
+								$accessR = '';
+							}
+
+							if($Iteie->accesstype == 1) {
+								$accessT = 'Terminal Server (TS) User Account';
+							}else if($Iteie->accesstype == 2) {
+								$accessT = 'Non-TS Account';
+							}else {
+								$accessT = '';
+							}
+
+							if($Iteie->accounttype == 1) {
+								$accountT = 'Permanent';
+							}else if($Iteie->accounttype == 2) {
+								$accountT = 'Temporary';
+							}else {
+								$accountT = '';
+							}
+
+							if($Iteie->requesttype == 1) {
+								$requestT = 'Grant Access';
+							}else if($Iteie->requesttype == 2) {
+								$requestT = 'Revoke Access';
+							}else {
+								$requestT = '';
+							}
+
+							if($Iteie->emailquota == 1) {
+								$emailQ = '250 MB';
+							}else if($Iteie->emailquota == 2) {
+								$emailQ = '500 MB';
+							}else if($Iteie->emailquota == 3) {
+								$emailQ = '1000 MB';
+							}else if($Iteie->emailquota == 4) {
+								$emailQ = '1500 MB';
+							}else if($Iteie->emailquota == 5) {
+								$emailQ = '2000 MB';
+							}else {
+								$emailQ = '';
+							}
+
+							if($Iteie->emaildomain == 1) {
+								$emailD = 'itci-hutani.com';
+							}else if($Iteie->emaildomain == 2) {
+								$emailD = 'kalimantan-prima.com';
+							}else if($Iteie->emaildomain == 3) {
+								$emailD = 'balikpapanchip.com';
+							}else if($Iteie->emaildomain == 4) {
+								$emailD = 'lajudinamika.com';
+							}else if($Iteie->emaildomain == 5) {
+								$emailD = 'ptadindo.com';
+							}else if($Iteie->emaildomain == 6) {
+								$emailD = 'D1.LCL';
+							}else {
+								$emailD = '';
+							}
+
+							if($Iteie->listgroup == 1) {
+								$listG = 'IHM';
+							}else if($Iteie->listgroup == 2) {
+								$listG = 'KPSI';
+							}else if($Iteie->listgroup == 3) {
+								$listG = 'BCL';
+							}else if($Iteie->listgroup == 4) {
+								$listG = 'LDU';
+							}else if($Iteie->listgroup == 5) {
+								$listG = 'Adindo';
+							}else {
+								$listG = '';
+							}
+
+							if($Iteie->listgroupmoderation == 1) {
+								$listGM = 'Mod-IHM';
+							}else if($Iteie->listgroupmoderation == 2) {
+								$listGM = 'Mod-BCL';
+							}else if($Iteie->listgroupmoderation == 3) {
+								$listGM = 'Mod-KDU-HRD';
+							}else if($Iteie->listgroupmoderation == 4) {
+								$listGM = 'Mod-KF-Head';
+							}else if($Iteie->listgroupmoderation == 5) {
+								$listGM = 'Mod-KF-Head2';
+							}else if($Iteie->listgroupmoderation == 6) {
+								$listGM = 'Mod-KPSI-Pro';
+							}else if($Iteie->listgroupmoderation == 7) {
+								$listGM = 'Mod-KDU-FA';
+							}else {
+								$listGM = '';
 							}
 							$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$emname.',</span></p>
 										<p class=MsoNormal><span style="color:#1F497D">'.$red.'</span></p>
 										<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
 										<table border=1 cellspacing=0 cellpadding=3 width=683>
-										<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->fullname.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>SAP ID</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->sapid.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>Position</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->designation->designationname.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>Business Group / Business Unit</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->company->companyname.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>Location</p></td><td>:</td><td><p class=MsoNormal><b>'.$Tr->employee->location->location.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Iteie->employee->fullname.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>SAP ID</p></td><td>:</td><td><p class=MsoNormal><b>'.$Iteie->employee->sapid.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>Position</p></td><td>:</td><td><p class=MsoNormal><b>'.$Iteie->employee->designation->designationname.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>Business Group / Business Unit</p></td><td>:</td><td><p class=MsoNormal><b>'.$Iteie->employee->company->companyname.'</b></p></td></tr>
+										<tr><td><p class=MsoNormal>Location</p></td><td>:</td><td><p class=MsoNormal><b>'.$Iteie->employee->location->location.'</b></p></td></tr>
 										<tr><td><p class=MsoNormal>Email</p></td><td>:</td><td><p class=MsoNormal><b>'.$email.'</b></p></td></tr>
 										</table>
-										<p class=MsoNormal><b>Repairable Form</b></p>
+										<p class=MsoNormal><b>Exchange/Internet Email Request Form</b></p>
 										<table border=1 cellspacing=0 cellpadding=3 width=683>
 										
 										<tr><th><p class=MsoNormal>Date</small></p></th>
-											<th><p class=MsoNormal>Requested By</p></th>
-											<th><p class=MsoNormal>Tel No</p></th>
-											<th><p class=MsoNormal>WO No</p></th>
-											<th><p class=MsoNormal>Charger Code</p></th>
-											<th><p class=MsoNormal>Material Dispatch No</p></th>
-											<th><p class=MsoNormal>Required By (Date)</p></th>
-											<th><p class=MsoNormal>Material Code</p></th>
-											<th><p class=MsoNormal>Material Description</p></th>
-											<th><p class=MsoNormal>Symtoms (Problem)</p></th>
-											<th><p class=MsoNormal>Required</p></th>
-											<th><p class=MsoNormal>Instsruction</p></th>
+											<th><p class=MsoNormal>Name</p></th>
+											<th><p class=MsoNormal>Employee ID</p></th>
+											<th><p class=MsoNormal>Designation</p></th>
+											<th><p class=MsoNormal>Grade</p></th>
+											<th><p class=MsoNormal>BG/BU</p></th>
+											<th><p class=MsoNormal>Office/Location</p></th>
+											<th><p class=MsoNormal>Floor</p></th>
+											<th><p class=MsoNormal>Phone(Ext)</p></th>
+											<th><p class=MsoNormal>Department</p></th>
 										</tr>
 										<tr style="height:22.5pt">
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Tr->createddate)).'</p></td>
-											<td><p class=MsoNormal> '.$Tr->employee->fullname.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->telpno.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->wonumber.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->chargecode.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->materialdispatch.'</p></td>
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Tr->requireddate)).'</p></td>
-											<td><p class=MsoNormal> '.$Tr->materialcode.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->materialdescr.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->symptomps.'</p></td>
-											<td><p class=MsoNormal> '.$required.'</p></td>
-											<td><p class=MsoNormal> '.$Tr->instruction.'</p></td>
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Iteie->createddate)).'</p></td>
+											<td><p class=MsoNormal> '.$Iteie->name.'</p></td>
+											<td><p class=MsoNormal> '.$Iteie->employeeid.'</p></td>
+											<td><p class=MsoNormal> '.$Iteie->designation.'</p></td>
+											<td><p class=MsoNormal> '.$Iteie->grade.'</p></td>
+											<td><p class=MsoNormal> '.$Iteie->bgbu.'</p></td>
+											<td><p class=MsoNormal> '.$Iteie->officelocation.'</p></td>
+											<td><p class=MsoNormal> '.$Iteie->floor.'</p></td>
+											<td><p class=MsoNormal> '.$Iteie->phoneext.'</p></td>
+											<td><p class=MsoNormal> '.$Iteie->department.'</p></td>
+										</tr>
+										</table>
+										<table border=1 cellspacing=0 cellpadding=3 width=683>
+										<tr>
+											<th><p class=MsoNormal>Access Requested</p></th>
+											<th><p class=MsoNormal>Access Type</p></th>
+											<th><p class=MsoNormal>Account Type</p></th>
+											<th><p class=MsoNormal>Request Type</p></th>
+											<th><p class=MsoNormal>Email Quota</p></th>
+											<th><p class=MsoNormal>Valid From</p></th>
+											<th><p class=MsoNormal>Valid To</p></th>
+											<th><p class=MsoNormal>Email Domain</p></th>
+											<th><p class=MsoNormal>List Group</p></th>
+											<th><p class=MsoNormal>List Group Moderation</p></th>
+											<th><p class=MsoNormal>Iron Port Quarantine</p></th>
+										</tr>
+										<tr style="height:22.5pt">
+											<td><p class=MsoNormal> '.$accessR.'</p></td>
+											<td><p class=MsoNormal> '.$accessT.'</p></td>
+											<td><p class=MsoNormal> '.$accountT.'</p></td>
+											<td><p class=MsoNormal> '.$requestT.'</p></td>
+											<td><p class=MsoNormal> '.$emailQ.'</p></td>
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Iteie->validfrom)).'</p></td>
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Iteie->validto)).'</p></td>
+											<td><p class=MsoNormal> '.$emailD.'</p></td>
+											<td><p class=MsoNormal> '.$listG.'</p></td>
+											<td><p class=MsoNormal> '.$listGM.'</p></td>
+											<td><p class=MsoNormal> '.$Iteie->ironportquarantinedetail.'</p></td>
 										</tr>
 										';
 							$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
@@ -887,7 +1017,7 @@ Class Iteiemodule extends Application{
 							}
 							if (!$this->mail->send()) {
 								$err = new Errorlog();
-								$err->errortype = "MMF Mail";
+								$err->errortype = "ITEIE Mail";
 								$err->errordate = date("Y-m-d h:i:s");
 								$err->errormessage = $this->mail->ErrorInfo;
 								$err->user = $this->currentUser->username;
@@ -902,304 +1032,1581 @@ Class Iteiemodule extends Application{
 						echo json_encode($Spklapproval);
 						break;
 					default:
-						$Trapproval = Mmfapproval::all();
-						foreach ($Trapproval as $result) {
+						$Iteieapproval = Iteieapproval::all();
+						foreach ($Iteieapproval as $result) {
 							$result = $result->to_array();
 						}
-						echo json_encode($Trapproval, JSON_NUMERIC_CHECK);
+						echo json_encode($Iteieapproval, JSON_NUMERIC_CHECK);
 						break;
 				}
 			}
 		}
 	}
 	function generatePDF($id){
-		$Tr = Mmf::find($id);
-		// $Trschedule=Trschedule::find('all',array('conditions'=>array("mmf28_id=?",$doid),'include'=>array('mmf'=>array('employee'=>array('company','department','designation','grade','location')))));
-		// $Trticket=Trticket::find('all',array('conditions'=>array("mmf28_id=?",$doid),'include'=>array('mmf'=>array('employee'=>array('company','department','designation','grade','location')))));					
-		$superiorId=$Tr->depthead;
+		$Iteie = Iteie::find($id);
+		$superiorId=$Iteie->depthead;
 		$Superior = Employee::find($superiorId);
 		$supAdb = Addressbook::find('first',array('conditions'=>array("username=?",$Superior->loginname)));
-		$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Tr->employee->loginname)));
+		$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Iteie->employee->loginname)));
 		$email=$usr->email;
-		$v_date = date("d/m/Y",strtotime($Tr->createddate));
-		$v_reqdate = date("d/m/Y",strtotime($Tr->requireddate));
-		$v_mdate = date("d/m/Y",strtotime($Tr->materialreturneddate));
+
+		$datefrom = date("d/m/Y",strtotime($Iteie->validfrom));
+		$dateto = date("d/m/Y",strtotime($Iteie->validto));
+
+		$joinx   = "LEFT JOIN tbl_approver ON (tbl_iteieapproval.approver_id = tbl_approver.id) ";					
+		$Iteieapproval = Iteieapproval::find('all',array('joins'=>$joinx,'conditions' => array("iteie_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
+		foreach ($Iteieapproval as $data){
+			if(($data->approver->approvaltype->id==29) || ($data->approver->employee_id==$Mmf30->depthead)){
+				$deptheadname = $data->approver->employee->fullname;
+				$deptheaddate = date("d/m/Y",strtotime($data->approvaldate));
+			}
+			if($data->approver->approvaltype->id==30) {
+				$hrdname = $data->approver->employee->fullname;
+				$hrddate = date("d/m/Y",strtotime($data->approvaldate));
+			}
+			if($data->approver->approvaltype->id==31) {
+				$buheadname = $data->approver->employee->fullname;
+				$buheaddate = date("d/m/Y",strtotime($data->approvaldate));
+			}
+			if($data->approver->approvaltype->id==32) {
+				$itheadname = $data->approver->employee->fullname;
+				$itheaddate = date("d/m/Y",strtotime($data->approvaldate));
+			}
+		}
+
+		if($Iteie->accessrequested == 1) {
+			$accessR = 'Exchange (non-Internet) Email';
+			}else if($Iteie->accessrequested == 2) {
+				$accessR = 'Internet Email';
+			}else if($Iteie->accessrequested == 3) {
+				$accessR = 'Change Domain';
+			}else {
+				$accessR = '';
+		}
+
+		if($Iteie->accesstype == 1) {
+			$accessT = 'Terminal Server (TS) User Account';
+			}else if($Iteie->accesstype == 2) {
+				$accessT = 'Non-TS Account';
+			}else {
+				$accessT = '';
+		}
+
+		if($Iteie->accounttype == 1) {
+			$accountT = 'Permanent';
+			}else if($Iteie->accounttype == 2) {
+				$accountT = 'Temporary';
+			}else {
+				$accountT = '';
+		}
+
+		if($Iteie->requesttype == 1) {
+			$requestT = 'Grant Access';
+			}else if($Iteie->requesttype == 2) {
+				$requestT = 'Revoke Access';
+			}else {
+				$requestT = '';
+		}
+
+		if($Iteie->emailquota == 1) {
+			$emailQ = '250 MB';
+			}else if($Iteie->emailquota == 2) {
+				$emailQ = '500 MB';
+			}else if($Iteie->emailquota == 3) {
+				$emailQ = '1000 MB';
+			}else if($Iteie->emailquota == 4) {
+				$emailQ = '1500 MB';
+			}else if($Iteie->emailquota == 5) {
+				$emailQ = '2000 MB';
+			}else {
+				$emailQ = '';
+		}
+
+		if($Iteie->emaildomain == 1) {
+			$emailD = 'itci-hutani.com';
+			}else if($Iteie->emaildomain == 2) {
+				$emailD = 'kalimantan-prima.com';
+			}else if($Iteie->emaildomain == 3) {
+				$emailD = 'balikpapanchip.com';
+			}else if($Iteie->emaildomain == 4) {
+				$emailD = 'lajudinamika.com';
+			}else if($Iteie->emaildomain == 5) {
+				$emailD = 'ptadindo.com';
+			}else if($Iteie->emaildomain == 6) {
+				$emailD = 'D1.LCL';
+			}else {
+				$emailD = '';
+		}
+
+		if($Iteie->listgroup == 1) {
+			$listG = 'IHM';
+			}else if($Iteie->listgroup == 2) {
+				$listG = 'KPSI';
+			}else if($Iteie->listgroup == 3) {
+				$listG = 'BCL';
+			}else if($Iteie->listgroup == 4) {
+				$listG = 'LDU';
+			}else if($Iteie->listgroup == 5) {
+				$listG = 'Adindo';
+			}else {
+				$listG = '';
+		}
+
+		if($Iteie->listgroupmoderation == 1) {
+			$listGM = 'Mod-IHM';
+			}else if($Iteie->listgroupmoderation == 2) {
+				$listGM = 'Mod-BCL';
+			}else if($Iteie->listgroupmoderation == 3) {
+				$listGM = 'Mod-KDU-HRD';
+			}else if($Iteie->listgroupmoderation == 4) {
+				$listGM = 'Mod-KF-Head';
+			}else if($Iteie->listgroupmoderation == 5) {
+				$listGM = 'Mod-KF-Head2';
+			}else if($Iteie->listgroupmoderation == 6) {
+				$listGM = 'Mod-KPSI-Pro';
+			}else if($Iteie->listgroupmoderation == 7) {
+				$listGM = 'Mod-KDU-FA';
+			}else {
+				$listGM = '';
+		}
+		
 		$pdfContent = '
-			<!DOCTYPE html>
+			<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
 			<html>
 			<head>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<link rel="stylesheet" type="text/css" href="responsive.css"/>
-			<style type="text/css">
-			table tr td { font-size:10px;font-family: arial; padding:5px;}
-			
-			.red {color: red;}
-			.blue {color: blue;}
-			.p-5 {padding: 5px;}
-			.tg-bi {font: italic bold 10px/30px Arial;}
-			img {height: 25pt;}
-			</style>
+				<style type="text/css">
+				.tbl{
+					width: 655pt;
+					border: 1px solid #000;
+					font-size:10px;
+					font-family: freeserif; 
+					padding:2px;
+				}
+				.tbl2{
+					border: 1px solid #000;
+					// font-size:10px;
+					font-family: freeserif; 
+					padding:2px;
+				}
+				</style>
+				
 			</head>
+
 			<body>
+			<table class="tbl" CELLSPACING="0" cellpadding="2">
+				<colgroup width="35"></colgroup>
+				<colgroup span="6" width="27"></colgroup>
+				<colgroup width="32"></colgroup>
+				<colgroup span="6" width="27"></colgroup>
+				<colgroup width="32"></colgroup>
+				<colgroup span="10" width="27"></colgroup>
+				<colgroup span="2" width="29"></colgroup>
+				<tr>
+					<td colspan=3 height="25" align="center" valign=middle bgcolor="#008000"><b><font face="Calibri" size=4 color="#FFFFFF">D1</font></b></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td colspan=17 align="right" valign=bottom><b>Exchange/Internet Email Request Form</b></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
 
-			<h2 class="tg-7btt" style=" text-align:center;"><b>REPAIRABLE FORM</b></h2>
+				<tr>
+					<td colspan=10 height="22" align="center" valign=bottom><i><font face="Arial Narrow">* Please have this form duly signed and returned to  IT</font></i></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+
+				<tr>
+					<td height="10" align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="18" align="left" valign=bottom><b>Name:</b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=10 align="left" valign=middle>'.$Iteie->name.'</td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="6" align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="18" align="left" valign=bottom><b>Employee ID:</b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=10 align="left" valign=middle>'.$Iteie->employeeid.'</td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="6" align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="18" align="left" valign=bottom><b>Designation:</b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=10 align="left" valign=middle>'.$Iteie->designation.'</td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><b>Grade:</b></td>
+					<td align="left" valign=bottom><br></td>
+					<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=2 align="center" valign=bottom>'.$Iteie->grade.'</td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="5" align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="18" align="left" valign=bottom><b>BG/BU:</b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=10 align="left" valign=middle>'.$Iteie->bgbu.'</td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="5" align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="18" align="left" valign=bottom><b>Office/Location:</b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=10 align="left" valign=bottom>'.$Iteie->officelocation.'</td>
+					<td align="center" valign=middle><br></td>
+					<td align="left" valign=bottom><b>Floor:</b></td>
+					<td align="left" valign=bottom><br></td>
+					<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=2 align="center" valign=bottom>'.$Iteie->floor.'</td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="5" align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="18" align="left" valign=bottom><b>Phone(Ext):</b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=10 align="left" valign=middle>'.$Iteie->phoneext.'</td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="5" align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><font size=4><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="18" align="left" valign=bottom><b>Department</b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=10 align="left" valign=middle>'.$Iteie->department.'</td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="11" align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="center" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="center" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="center" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="center" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="center" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="17" align="left" valign=bottom bgcolor="#FFFFFF"><b>Access Requested:</b></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><b><br></b></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><b><br></b></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom><td colspan="1" style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle>
+										<b>'.(($Iteie->accessrequested == 1)?'x':'&nbsp;&nbsp;').'</b></td></td>
+					<td colspan=6 align="left" valign=bottom><i><font face="Arial Narrow">Exchange (non-Internet) Email</font></i></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><td colspan="1" style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle>
+										<b>'.(($Iteie->accessrequested == 2)?'x':'&nbsp;&nbsp;').'</b></td></td>
+					<td colspan=4 align="left" valign=bottom bgcolor="#FFFFFF"><font face="Arial Narrow">Internet Email</font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><td colspan="1" style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle>
+										<b>'.(($Iteie->accessrequested == 3)?'x':'&nbsp;&nbsp;').'</b></td></td>
+					<td colspan=3 align="left" valign=bottom bgcolor="#FFFFFF"><font face="Arial Narrow">Change Domain</font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><i><font face="Arial Narrow"><br></font></i></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="11" align="left" valign=bottom bgcolor="#FFFFFF"><b><br></b></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><b><br></b></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><b><br></b></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font size=4><br></font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><i><font face="Arial Narrow"><br></font></i></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font size=4><br></font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><i><font face="Arial Narrow"><br></font></i></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><i><font face="Arial Narrow"><br></font></i></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font size=4><br></font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><i><font face="Arial Narrow"><br></font></i></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="17" align="left" valign=bottom bgcolor="#FFFFFF"><b>Access Type:</b></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><b><br></b></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><b><br></b></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><td colspan="1" style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle>
+										<b>'.(($Iteie->accesstype == 1)?'x':'&nbsp;&nbsp;').'</b></td></td>
+					<td colspan=6 align="left" valign=bottom bgcolor="#FFFFFF"><i><font face="Arial Narrow">Terminal Server (TS) User Account</font></i></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><td colspan="1" style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle>
+										<b>'.(($Iteie->accesstype == 2)?'x':'&nbsp;&nbsp;').'</b></td></td>
+					<td colspan=3 align="left" valign=bottom bgcolor="#FFFFFF"><i><font face="Arial Narrow">Non-TS Account</font></i></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font size=4><br></font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><i><font face="Arial Narrow"><br></font></i></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font size=4><br></font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><i><font face="Arial Narrow"><br></font></i></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="11" align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="center" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="center" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="center" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="center" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="center" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="17" align="left" valign=bottom bgcolor="#FFFFFF"><b>Account Type:</b></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><b><br></b></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><b><br></b></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><td colspan="1" style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle>
+										<b>'.(($Iteie->accounttype == 1)?'x':'&nbsp;&nbsp;').'</b></td></td>
+					<td colspan=2 align="left" valign=bottom bgcolor="#FFFFFF"><i><font face="Arial Narrow">Permanent </font></i></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font size=4><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><td colspan="1" style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle>
+										<b>'.(($Iteie->accounttype == 2)?'x':'&nbsp;&nbsp;').'</b></td></td>
+					<td colspan=2 align="left" valign=bottom bgcolor="#FFFFFF"><i><font face="Arial Narrow">Temporary</font></i></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font size=4><br></font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><i><font face="Arial Narrow"><br></font></i></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font size=4><br></font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><i><font face="Arial Narrow"><br></font></i></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="17" align="left" valign=bottom bgcolor="#FFFFFF"><b>Request Type:</b></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><b><br></b></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><b><br></b></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><td colspan="1" style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle>
+										<b>'.(($Iteie->requesttype == 1)?'x':'&nbsp;&nbsp;').'</b></td></td>
+					<td colspan=3 align="left" valign=bottom bgcolor="#FFFFFF"><i><font face="Arial Narrow">Grant Access</font></i></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><td colspan="1" style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle>
+										<b>'.(($Iteie->requesttype == 2)?'x':'&nbsp;&nbsp;').'</b></td></td>
+					<td colspan=3 align="left" valign=bottom><font face="Arial Narrow">Revoke Access</font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><i><font face="Arial Narrow"><br></font></i></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font size=4><br></font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><i><font face="Arial Narrow"><br></font></i></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font size=4><br></font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><i><font face="Arial Narrow"><br></font></i></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="11" align="left" valign=bottom bgcolor="#FFFFFF"><b><br></b></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><b><br></b></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><b><br></b></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font size=4><br></font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><i><font face="Arial Narrow"><br></font></i></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font size=4><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><i><font face="Arial Narrow"><br></font></i></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><i><font face="Arial Narrow"><br></font></i></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font size=4><br></font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><i><font face="Arial Narrow"><br></font></i></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font size=4><br></font></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><i><font face="Arial Narrow"><br></font></i></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="17" align="left" valign=bottom><b>Email Quota:</b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><td colspan="1" style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle>
+										<b>'.(($Iteie->emailquota == 1)?'x':'&nbsp;&nbsp;').'</b></td></td>
+					<td colspan=2 align="left" valign=bottom>250MB</td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><td colspan="1" style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle>
+										<b>'.(($Iteie->emailquota == 2)?'x':'&nbsp;&nbsp;').'</b></td></td>
+					<td colspan=2 align="left" valign=bottom>500MB</td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><td colspan="1" style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle>
+										<b>'.(($Iteie->emailquota == 3)?'x':'&nbsp;&nbsp;').'</b></td></td>
+					<td colspan=2 align="left" valign=bottom>1000MB</td>
+					<td align="center" valign=bottom><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><td colspan="1" style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle>
+										<b>'.(($Iteie->emailquota == 4)?'x':'&nbsp;&nbsp;').'</b></td></td>
+					<td colspan=2 align="left" valign=bottom>1500MB</td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><td colspan="1" style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle>
+										<b>'.(($Iteie->emailquota == 5)?'x':'&nbsp;&nbsp;').'</b></td></td>
+					<td colspan=2 align="left" valign=bottom>2000MB</td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="11" align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font size=4><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="center" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font size=4><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font size=4><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="center" valign=bottom><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font size=4><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="center" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom bgcolor="#FFFFFF"><font size=4><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="18" align="left" valign=bottom><b>Valid From:</b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=6 align="left" valign=middle>'.$datefrom.'</td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><b>To:</b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=6 align="left" valign=middle>'.$dateto.'</td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="18" align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="center" valign=bottom><font face="Arial Narrow">dd</font></td>
+					<td align="center" valign=bottom><font face="Arial Narrow">dd</font></td>
+					<td align="center" valign=bottom><font face="Arial Narrow">mm</font></td>
+					<td align="center" valign=bottom><font face="Arial Narrow">mm</font></td>
+					<td align="center" valign=bottom><font face="Arial Narrow">yy</font></td>
+					<td align="center" valign=bottom><font face="Arial Narrow">yy</font></td>
+					<td align="center" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="center" valign=bottom><b><font face="Arial Narrow"><br></font></b></td>
+					<td align="center" valign=bottom><b><font face="Arial Narrow"><br></font></b></td>
+					<td align="center" valign=bottom><font face="Arial Narrow">dd</font></td>
+					<td align="center" valign=bottom><font face="Arial Narrow">dd</font></td>
+					<td align="center" valign=bottom><font face="Arial Narrow">mm</font></td>
+					<td align="center" valign=bottom><font face="Arial Narrow">mm</font></td>
+					<td align="center" valign=bottom><font face="Arial Narrow">yy</font></td>
+					<td align="center" valign=bottom><font face="Arial Narrow">yy</font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td colspan=10 height="17" align="center" valign=bottom><b>Email Domain (select one, if applicable)**:</b></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><b><u><font face="Arial Narrow"><br></font></u></b></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><b><u><font face="Arial Narrow"><br></font></u></b></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><b><u><font face="Arial Narrow"><br></font></u></b></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="11" align="left" valign=bottom><b><u><font face="Arial Narrow"><br></font></u></b></td>
+					<td align="left" valign=bottom><b><u><font face="Arial Narrow"><br></font></u></b></td>
+					<td align="left" valign=bottom><b><u><font face="Arial Narrow"><br></font></u></b></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><b><u><font face="Arial Narrow"><br></font></u></b></td>
+					<td align="left" valign=bottom><b><u><font face="Arial Narrow"><br></font></u></b></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><b><u><font face="Arial Narrow"><br></font></u></b></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><b><u><font face="Arial Narrow"><br></font></u></b></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><b><u><font face="Arial Narrow"><br></font></u></b></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=6 height="19" align="center" valign=middle><b>Email Domain</b></td>
+					<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=6 align="center" valign=middle><b>List Group</b></td>
+					<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000" colspan=8 align="center" valign=middle><b>List Group Moderation</b></td>
+					<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=7 align="center" valign=middle><b>Iron Port Quarantine</b></td>
+					</tr>
+				<tr>
+					<td style="border-left: 1px solid #000000" height="19" align="center" valign=middle>'.(($Iteie->emaildomain == 1)?'✓':'<font face="Arial Narrow" size=4>&#9633;</font>').'</td>
+					<td align="left" valign=bottom><font face="Arial Narrow">itci-hutani.com</font></td>
+					<td align="left" valign=bottom><font size=4><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><b><i><font face="Arial Narrow"><br></font></i></b></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><br></td>
+					<td style="border-left: 1px solid #000000" align="center" valign=middle>'.(($Iteie->listgroup == 1)?'✓':'<font face="Arial Narrow" size=4>&#9633;</font>').'</td>
+					<td align="left" valign=bottom><font face="Arial Narrow" color="#000000">IHM</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="center" valign=middle>'.(($Iteie->listgroupmoderation == 1)?'✓':'<font face="Arial Narrow" size=4>&#9633;</font>').'</td>
+					<td align="left" valign=bottom><font face="Arial Narrow" color="#000000">Mod-IHM</font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><b><font face="Arial Narrow"><br></font></b></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><b><font face="Arial Narrow"><br></font></b></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><b><font face="Arial Narrow"><br></font></b></td>
+					<td style="border-left: 1px solid #000000" align="center" valign=middle><font face="Arial Narrow" size=4>&#9633;</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow" color="#000000"><br></font></td>
+					<td align="left" valign=bottom><b><font face="Arial Narrow"><br></font></b></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><b><font face="Arial Narrow"><br></font></b></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td style="border-left: 1px solid #000000" height="19" align="center" valign=middle>'.(($Iteie->emaildomain == 2)?'✓':'<font face="Arial Narrow" size=4>&#9633;</font>').'</td>
+					<td colspan="2" align="left" valign=bottom><font face="Arial Narrow">kalimantan-prima.com</font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><i><font face="Arial Narrow"><br></font></i></td>
+					<td style="border-left: 1px solid #000000" align="center" valign=middle>'.(($Iteie->listgroup == 2)?'✓':'<font face="Arial Narrow" size=4>&#9633;</font>').'</td>
+					<td align="left" valign=bottom><font face="Arial Narrow" color="#000000">KPSI</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="center" valign=middle>'.(($Iteie->listgroupmoderation == 2)?'✓':'<font face="Arial Narrow" size=4>&#9633;</font>').'</td>
+					<td align="left" valign=bottom><font face="Arial Narrow" color="#000000">Mod-BCL</font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><b><font face="Arial Narrow"><br></font></b></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><b><font face="Arial Narrow"><br></font></b></td>
+					<td style="border-left: 1px solid #000000" align="center" valign=middle><font face="Arial Narrow" size=4>&#9633;</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow">&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><i><font face="Arial Narrow"><br></font></i></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td style="border-left: 1px solid #000000" height="19" align="center" valign=middle>'.(($Iteie->emaildomain == 3)?'✓':'<font face="Arial Narrow" size=4>&#9633;</font>').'</td>
+					<td align="left" valign=bottom><font face="Arial Narrow">balikpapanchip.com</font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><br></td>
+					<td style="border-left: 1px solid #000000" align="center" valign=middle>'.(($Iteie->listgroup == 3)?'✓':'<font face="Arial Narrow" size=4>&#9633;</font>').'</td>
+					<td align="left" valign=bottom><font face="Arial Narrow" color="#000000">BCL</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="center" valign=middle>'.(($Iteie->listgroupmoderation == 3)?'✓':'<font face="Arial Narrow" size=4>&#9633;</font>').'</td>
+					<td colspan="2" align="left" valign=bottom><font face="Arial Narrow" color="#000000">Mod-KDU-HRD</font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<!-- <td align="left" valign=bottom><font face="Arial Narrow"><br></font></td> -->
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-left: 1px solid #000000" align="center" valign=middle><font face="Arial Narrow" size=4>&#9633;</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow">&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td style="border-left: 1px solid #000000" height="19" align="center" valign=middle>'.(($Iteie->emaildomain == 4)?'✓':'<font face="Arial Narrow" size=4>&#9633;</font>').'</td>
+					<td align="left" valign=bottom><font face="Arial Narrow">lajudinamika.com</font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><br></td>
+					<td style="border-left: 1px solid #000000" align="center" valign=middle>'.(($Iteie->listgroup == 4)?'✓':'<font face="Arial Narrow" size=4>&#9633;</font>').'</td>
+					<td align="left" valign=bottom><font face="Arial Narrow" color="#000000">LDU</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="center" valign=middle>'.(($Iteie->listgroupmoderation == 4)?'✓':'<font face="Arial Narrow" size=4>&#9633;</font>').'</td>
+					<td align="left" valign=bottom><font face="Arial Narrow" color="#000000">Mod-KF-Head</font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-left: 1px solid #000000" align="center" valign=middle><font face="Arial Narrow" size=4>&#9633;</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow">&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td style="border-left: 1px solid #000000" height="19" align="center" valign=middle>'.(($Iteie->emaildomain == 5)?'✓':'<font face="Arial Narrow" size=4>&#9633;</font>').'</td>
+					<td align="left" valign=bottom><font face="Arial Narrow">ptadindo.com</font></td>
+					<td align="left" valign=middle><b><br></b></td>
+					<td align="left" valign=middle><b><br></b></td>
+					<td align="left" valign=middle><b><br></b></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><br></td>
+					<td style="border-left: 1px solid #000000" align="center" valign=middle>'.(($Iteie->listgroup == 5)?'✓':'<font face="Arial Narrow" size=4>&#9633;</font>').'</td>
+					<td align="left" valign=bottom><font face="Arial Narrow" color="#000000">Adindo</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="center" valign=middle>'.(($Iteie->listgroupmoderation == 5)?'✓':'<font face="Arial Narrow" size=4>&#9633;</font>').'</td>
+					<td colspan="2" align="left" valign=bottom><font face="Arial Narrow" color="#000000">Mod-KF-Head2</font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-left: 1px solid #000000" align="center" valign=middle><font face="Arial Narrow" size=4>&#9633;</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow">&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td style="border-left: 1px solid #000000" height="19" align="center" valign=middle>'.(($Iteie->emaildomain == 6)?'✓':'<font face="Arial Narrow" size=4>&#9633;</font>').'</td>
+					<td align="left" valign=bottom><font face="Arial Narrow">D1.LCL</font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><br></td>
+					<td style="border-left: 1px solid #000000" align="center" valign=middle><font face="Arial Narrow" size=4>&#9633;</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow">&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="center" valign=middle>'.(($Iteie->listgroupmoderation == 6)?'✓':'<font face="Arial Narrow" size=4>&#9633;</font>').'</td>
+					<td colspan="2" align="left" valign=bottom><font face="Arial Narrow" color="#000000">Mod-KPSI-Pro</font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<!-- <td align="left" valign=bottom><font face="Arial Narrow"><br></font></td> -->
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-left: 1px solid #000000" align="center" valign=middle><font face="Arial Narrow" size=4>&#9633;</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow">&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td style="border-left: 1px solid #000000" height="19" align="center" valign=middle><font face="Arial Narrow" size=4>&#9633;</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow">&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><br></td>
+					<td style="border-left: 1px solid #000000" align="center" valign=middle><font face="Arial Narrow" size=4>&#9633;</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow">&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="center" valign=middle>'.(($Iteie->listgroupmoderation == 7)?'✓':'<font face="Arial Narrow" size=4>&#9633;</font>').'</td>
+					<td align="left" valign=bottom><font face="Arial Narrow" color="#000000">Mod-KDU-FA</font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-left: 1px solid #000000" align="center" valign=middle><font face="Arial Narrow" size=4>&#9633;</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow">&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><br></td>
+				</tr>
+			
+				<tr>
+					<td style="border-left: 1px solid #000000" height="19" align="center" valign=middle><font face="Arial Narrow" size=4>&#9633;</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow">&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td style="border-right: 1px solid #000000" align="left" valign=bottom><br></td>
+					<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle><font face="Arial Narrow" size=4>&#9633;</font></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow">&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</font></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle><font face="Arial Narrow" size=4>&#9633;</font></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow">&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</font></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><br></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle><font face="Arial Narrow" size=4>&#9633;</font></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow">&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</font></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><br></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><br></td>
+					<td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td style="border-top: 1px solid #000000" height="11" align="left" valign=bottom><br></td>
+					<td style="border-top: 1px solid #000000" align="left" valign=bottom><br></td>
+					<td style="border-top: 1px solid #000000" align="left" valign=bottom><br></td>
+					<td style="border-top: 1px solid #000000" align="left" valign=bottom><br></td>
+					<td style="border-top: 1px solid #000000" align="left" valign=bottom><br></td>
+					<td style="border-top: 1px solid #000000" align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="11" align="center" valign=middle><b><font face="Arial Narrow" size=4><br></font></b></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="center" valign=middle><b><font face="Arial Narrow" size=4><br></font></b></td>
+					<td align="left" valign=bottom><font face="Arial Narrow" color="#000000"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="center" valign=middle><b><font face="Arial Narrow" size=4><br></font></b></td>
+					<td align="left" valign=bottom><font face="Arial Narrow" color="#000000"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="center" valign=middle><b><font face="Arial Narrow" size=4><br></font></b></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="18" align="left" valign=bottom><b>Reason for request</b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=10 rowspan=2 align="left" valign=top>'.$Iteie->reason.'</td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="18" align="left" valign=bottom><b>/ Remarks</b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><b><br></b></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="18" align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr></table>';
+
+				$pdfContent .= '<table class="tbl2" CELLSPACING="0" cellpadding="2">
+				<tr>
+					<td colspan=3 height="17" align="left" valign=bottom><b><u><font face="Arial Narrow">Approved by:</font></u></b></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td colspan=3 align="left" valign=bottom><b><u><font face="Arial Narrow">Approved by:</font></u></b></td>
+					<td align="left" valign=bottom><b><u><font face="Arial Narrow"><br></font></u></b></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td colspan=3 align="left" valign=bottom><b><u><font face="Arial Narrow">Approved by:</font></u></b></td>
+					<td align="left" valign=bottom><b><u><font face="Arial Narrow"><br></font></u></b></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td colspan=3 align="left" valign=bottom><b><u><font face="Arial Narrow">Approved by:</font></u></b></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td colspan=2 height="18" align="left" valign=bottom><font face="Arial Narrow">Dept Head</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><b><font face="Arial Narrow"><br></font></b></td>
+					<td align="left" valign=bottom><br></td>
+					<td colspan=2 align="left" valign=bottom><font face="Arial Narrow">HRD Head </font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><b><font face="Arial Narrow"><br></font></b></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td colspan=5 align="left" valign=bottom><font face="Arial Narrow">BU/BG Head Project Director</font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td colspan=5 align="left" valign=bottom><font face="Arial Narrow">Site IT Service Delivery Lead</font></td>
+					<td align="left" valign=bottom><b><font face="Arial Narrow"><br></font></b></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="13" align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td colspan=5 height="17" align="center" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td colspan=5 align="center" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td colspan=5 align="center" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td colspan=6 align="center" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td height="17" align="left" valign=bottom><img src="images/approved.png" width="60"></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><img src="images/approved.png" width="60"></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><br></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><br></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><br></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><img src="images/approved.png" width="60"></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><br></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><br></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><br></td>
+					<td style="border-bottom: 1px solid #000000" align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><img src="images/approved.png" width="60"></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+				<tr>
+					<td style="border-top: 1px solid #000000" colspan=5 height="23" align="center" valign=middle><font face="Arial Narrow">(Signature)</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td colspan=5 align="center" valign=middle><font face="Arial Narrow">(Signature)</font></td>
+					<td align="left" valign=middle><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=middle><font face="Arial Narrow"><br></font></td>
+					<td colspan=5 align="center" valign=middle><font face="Arial Narrow">(Signature)</font></td>
+					<td align="left" valign=top><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td style="border-top: 1px solid #000000" colspan=6 align="center" valign=middle><font face="Arial Narrow">(Signature)</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+				</tr>
+				<tr>
+					<td height="17" align="left" valign=bottom><font face="Arial Narrow">Name: '.$deptheadname.'</font></td>
+					<td colspan=4 align="left" valign=bottom><font face="Arial Narrow">&nbsp;</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow">Name: '.$hrdname.'</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td colspan=3 align="left" valign=bottom><font face="Arial Narrow">&nbsp;</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow">Name: '.$buheadname.'</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td colspan=3 align="left" valign=bottom><font face="Arial Narrow">&nbsp;</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow">Name: '.$itheadname.'</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td colspan=4 align="left" valign=bottom><font face="Arial Narrow">&nbsp;</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+				</tr>
+				<tr>
+					<td height="15" align="left" valign=bottom><font face="Arial Narrow">Date: '.$deptheaddate.'</font></td>
+					<td colspan=4 align="left" valign=bottom>&nbsp;</td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><font face="Arial Narrow">Date: '.$hrddate.'</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td colspan=3 align="left" valign=bottom><font face="Arial Narrow">&nbsp;</font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><font face="Arial Narrow">Date: '.$buheaddate.'</font></td>
+					<td align="left" valign=bottom><font face="Arial Narrow"><br></font></td>
+					<td colspan=3 align="left" valign=bottom><font face="Arial Narrow">&nbsp;</font></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><br></td>
+					<td align="left" valign=bottom><font face="Arial Narrow">Date: '.$itheaddate.'</font></td>
+					<td align="left" valign=bottom><br></td>
+					<td colspan=4 align="left" valign=bottom><font face="Arial Narrow">&nbsp;</font></td>
+					<td align="left" valign=bottom><br></td>
+				</tr>
+			</table>
+			<!-- ************************************************************************** -->
+			</body>
+
+			</html>
+
+
+		';
 		
-			<div style="border : 1px solid black; padding: 5px;">
-	  
-						<table style="width: 595pt;" cellspacing="0" border="0"  width="100%">
-
-							
-							<tr>
-							<td class="tg-border" colspan="7"><b><i>To be completed by End-User</i></b></td>
-							</tr>
-							<tr>
-							<td class="tg-left">Date :</td>
-							<td class="tg-value"><u>'.$v_date.'</u></td>
-							<td class="">Requested by :</td>
-							<td class="tg-value" colspan="1"><u>'.$usr->fullname.'</u></td>
-							<td class="">Tel No :</td>
-							<td class="tg-right tg-value" colspan="1"><u>'.$Tr->telpno.'</u></td>
-							</tr>
-							<tr>
-							<td class="tg-left" colspan="1">Work Order No :</td>
-							<td class="tg-value" colspan="1"><u>'.$Tr->wonumber.'</u></td>
-							<td class="">Charge Code :</td>
-							<td class="tg-right tg-value" colspan="4"><u>'.$Tr->chargecode.'</u></td>
-							</tr>
-							<tr>
-							<td class="tg-left" colspan="1">Material Dispatch No :</td>
-							<td class="tg-value" colspan="1"><u>'.$Tr->materialdispatch.'</u></td>
-							<td class="">Required By (Date) :</td>
-							<td class="tg-right tg-value" colspan="4"><u>'.$v_reqdate.'</u></td>
-							</tr>
-							<tr>
-							<td class="tg-left" colspan="1">Material Code :</td>
-							<td class="tg-right tg-value" colspan="6"><u>'.$Tr->materialcode.'</u></td>
-							</tr>
-							<tr>
-							<td class="tg-left">Material Description :</td>
-							<td class="tg-right tg-value" colspan="6"><u>'.$Tr->materialdescr.'</u></td>
-							</tr>
-							<tr>
-							<td class="tg-left">Symptoms (problem) :</td>
-							<td class="tg-right tg-value" colspan="6"><u>'.$Tr->symptomps.'</u></td>
-							</tr></table>';
-
-							$pdfContent .= '<table style="width: 595pt;" cellspacing="0" border="0"  width="100%">
-							  	<tr>
-									<td class="tg-left">Required :</td>
-									<td colspan="1" style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle>
-									<b>'.(($Tr->requiredtype == 1)?'X':'').'</b></td>
-									<td class="p-5">Repair</td>
-									<td colspan="1" style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle>
-									<b>'.(($Tr->requiredtype == 2)?'X':'').'</b></td>
-									<td class="p-5">Servicing</td>
-									<td colspan="1" style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle>
-									<b>'.(($Tr->requiredtype == 3)?'X':'').'</b></td>
-									<td class="p-5">Calibrator</td>
-							  	</tr>
-							  	<tr>
-									<td class="tg-0lax"></td>
-									<td colspan="1" style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle>
-									<b>'.(($Tr->requiredtype == 4)?'X':'').'</b></td>
-									<td class="p-5">Others,Pls Specify <u>'.$Tr->requiredother.'</u></td>
-									<td class="tg-0lax"></td>
-									<td class="tg-0lax"></td>
-									<td class="tg-0lax"></td>
-									<td class=""></td>
-								</tr>
-								<tr>
-									<td class="tg-left">Instruction :</td>
-									<td class="tg-0lax tg-value" colspan="6"><u>'.$Tr->instruction.'</u></td>
-								</tr>
-							</table>';
-
-							$pdfContent .= '<table style="width: 595pt;" cellspacing="0" border="0"  width="100%">
-							  <tr>
-								<td class="tg-0pky">Chemical Content :</td>
-								<td style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle  >
-								<b>'.(($Tr->ishazardouschemical == 1)?'X':'').'</b></td>
-								<td class="tg-0pky">Hazardous Chemical, Chemical Name : <u>'.$Tr->hazchemicalname.'</u></td>
-								<td class="tg-0pky"></td>
-								<td class="tg-0pky"></td>
-								<td class="tg-0pky"></td>
-								<td class="tg-0pky"></td>
-							  </tr>
-							  <tr>
-								<td class="tg-0pky"></td>
-								<td class="tg-0pky" colspan="6"><b><i>Must ensure material has been decontaminated</i></b></td>
-							  </tr>
-							  <tr>
-								<td class="tg-0pky"></td>
-								<td style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle  >
-								<b>'.(($Tr->isdecontaminated == 1)?'X':'').'</b></td>
-								<td class="tg-0pky">Decontaminated</td>
-								<td class="tg-0pky"></td>
-								<td class="tg-0pky"></td>
-								<td class="tg-0pky"></td>
-								<td class="tg-0pky"></td>
-							  </tr>
-							  <tr>
-								<td class="tg-0pky"></td>
-								<td style="width:5px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle  >
-								<b>'.(($Tr->isnotcontaminated == 1)?'X':'').'</b></td>
-								<td class="tg-0pky">Not Contaminated. Reason :  <u>'.$Tr->notcontaminatedreason.'</u></td>
-								<td class="tg-0pky"></td>
-								<td class="tg-0pky"></td>
-								<td class="tg-0pky"></td>
-								<td class="tg-0pky"></td>
-							  </tr>
-							  <tr>
-								<td class="tg-0pky"></td>
-								<td style="width:5px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle  >
-								<b>'.(($Tr->isnonhazardous == 1)?'X':'').'</b></td>
-								<td class="tg-0pky">Non-hazardous Chemical. Chemical Name :  <u>'.$Tr->nonhazchemicalname.'</u></td>
-								<td class="tg-0pky"></td>
-								<td class="tg-0pky"></td>
-								<td class="tg-0pky"></td>
-								<td class="tg-0pky"></td>
-							  </tr>
-							  <tr>
-								<td class="tg-0pky"></td>
-								<td style="width:5px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle  >
-								<b>'.(($Tr->isnonchemical == 1)?'X':'').'</b></td>
-								<td class="tg-0pky">No Chemical Involved</td>
-								<td class="tg-0pky"></td>
-								<td class="tg-0pky"></td>
-								<td class="tg-0pky"></td>
-								<td class="tg-0pky"></td>
-							  </tr>
-							  </table>';
-
-							$joinx   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";					
-							$Mmfapproval = Mmfapproval::find('all',array('joins'=>$joinx,'conditions' => array("mmf28_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
-							foreach ($Mmfapproval as $data){
-								if(($data->approver->approvaltype->id==23) || ($data->approver->employee_id==$Tr->depthead)){
-									$deptheadname = $data->approver->employee->fullname;
-									$datedepthead = date("d/m/Y",strtotime($data->approvaldate));
-								}
-								if($data->approver->approvaltype->id==24) {
-									$procname = $data->approver->employee->fullname;
-									$procdate = date("d/m/Y",strtotime($data->approvaldate));
-								}
-								if($data->approver->approvaltype->id==25) {
-									$buyername = $data->approver->employee->fullname;
-									$buyerdate = date("d/m/Y",strtotime($data->approvaldate));
-								}
-							}
-
-							$pdfContent .= '<table style="width: 595pt;" cellspacing="0" border="0"  width="100%">
-							<tr>
-							<td class="tg-left tg-right" colspan="7"></td>
-							</tr>
-							<tr>
-							<td class="tg-left" colspan="1">Requested by:</td>
-							<td colspan="1"></td>
-							<td class="tg-right" colspan="4">Approved by:</td>
-							</tr>
-							<tr>
-							<td class="tg-left" colspan="1"><img src="images/approved.png" alt="Approved from System"></td>
-							<td colspan="1"></td>
-							<td class="tg-right" colspan="4">'.(($deptheadname=="")?"":'<img src="images/approved.png" alt="Approved from System">').'</td>
-							</tr>
-							<tr>
-							<td class="tg-left tg-right" colspan="7"></td>
-							</tr>
-							<tr>
-							<td class="tg-left" colspan="1">('.$usr->fullname.' &amp; '.$v_date.')</td>
-							<td colspan="1"></td>
-							<td class="tg-right" colspan="4">('.$deptheadname.' &amp; '.$datedepthead.')</td>
-							</tr>
-							</table></div>';
-							
-
-							$pdfContent .= '<div class="opt2" style="border : 1px solid black; padding: 5px;">
-							<table style="width: 595pt;" cellspacing="0" border="0"  width="100%">
-							<tr>
-							<td class="tg-bi tg-border" colspan="9"><b><i>To be completed by Procurement</i></b></td>
-							</tr>
-							
-							<tr>
-							<td class="tg-left tg-right" colspan="9">Received by:</td>
-							</tr>
-							<tr>
-							<td class="tg-left" colspan="2"><img src="images/approved.png"></td>
-							<td class="tg-right" colspan="7"><img src="images/approved.png"></td>
-							</tr>
-							<tr>
-							<td class="tg-left" colspan="2">Procurement Head</td>
-							<td class="tg-right" colspan="7">Buyer</td>
-							</tr>
-							<tr>
-							<td class="tg-left" colspan="2">('.$procname.' &amp; '.$procdate.')</td>
-							<td class="tg-right" colspan="7">('.$buyername.' &amp; '.$buyerdate.')</td>
-							</tr>
-							<tr>
-							<td class="tg-left" colspan="1">Material Dispatch No :</td>
-							<td class="tg-right" colspan="8"><u>'.$Tr->materialdispatchno.'</u></td>
-							</tr>
-							</table>';
-							$pdfContent .= '<table style="width: 595pt;" cellspacing="0" border="0"  width="100%">
-							<tr>
-							<td class="tg-left" colspan="1">Repair :</td>
-							<td style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle  >
-								<b>'.(($Tr->isrepair == 1)?'X':'').'</b></td>
-							<td class="p-5">Yes</td>
-							<td style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle  >
-								<b>'.(($Tr->isrepair == 0)?'X':'').'</b></td>
-							<td class="p-5">No</td>
-							<td style="width:15px;max-width:15px;border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"  align="center" valign=midle  >
-								<b>'.(($Tr->isscrap == 1)?'X':'').'</b></td>
-							<td class="tg-right p-5" colspan="3">Scrapped</td>
-							</tr></table>';
-							$pdfContent .= '<table style="width: 595pt;" cellspacing="0" border="0"  width="100%">
-							<tr>
-							<td class="tg-left" colspan="7">Estimation Cost : <u>'.$Tr->estimatecost.'</u></td>
-							</tr>
-							<tr>
-							<td class="tg-left" colspan="7">PO No : <u>'.$Tr->pono.'</u></td>
-							</tr>
-							<tr>
-							<td class="tg-left" colspan="1">Material Returned Date :</td>
-							<td class="" colspan="2"><u>'.$v_mdate.'</u></td>
-							<td class="" colspan="1">Supplier DO/DN No :</td>
-							<td class="tg-right" colspan="5"><u>'.$Tr->supplierdodnno.'</u></td>
-							</tr>
-							<tr>
-							<td class="tg-left tg-right tg-bottom" colspan="9"></td>
-							</tr></table>';
-
-							$pdfContent .= '</div></body>
-							</html>';
 											
 							echo $pdfContent;
-											// echo json_encode($Tr->wonumber, JSON_NUMERIC_CHECK);
+											// echo json_encode($Iteie->wonumber, JSON_NUMERIC_CHECK);
 		
 		try {
-			$html2pdf = new Html2Pdf('P', 'A4', 'en');
+			$html2pdf = new Html2Pdf('P', 'A4', 'en','true','UTF-8');
+			// $html2pdf->setDefaultFont('freeserif');
 			$html2pdf->pdf->SetDisplayMode('fullpage');
 			$html2pdf->writeHTML( $pdfContent);
 			ob_clean();
-			$fileName ='doc'.DS.'mmf'.DS.'pdf'.DS.'MMF28'.$Tr->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$fileName ='doc'.DS.'it'.DS.'pdf'.DS.'ITEIE'.$Iteie->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$fileName = str_replace("/","",$fileName);
 			$filePath = SITE_PATH.DS.$fileName;
 			$html2pdf->output($filePath, 'F');
-			$Tr->approveddoc=str_replace("\\","/",$fileName);
-			$Tr->save();
+			$Iteie->approveddoc=str_replace("\\","/",$fileName);
+			$Iteie->save();
 			return $fileName;
 		} catch (Html2PdfException $e) {
 			$html2pdf->clean();
 			$formatter = new ExceptionFormatter($e);
 			$err = new Errorlog();
-			$err->errortype = "MMFPDFGenerator";
+			$err->errortype = "IteiePDFGenerator";
 			$err->errordate = date("Y-m-d h:i:s");
 			$err->errormessage = $formatter->getHtmlMessage();
 			$err->user = $this->currentUser->username;
-			// $err->user = 'userR';
 			$err->ip = $this->ip;
 			$err->save();
 			echo $formatter->getHtmlMessage();
 		}
+		
+	}
+	function generatePDFi($id){
+		$Iteie = Iteie::find($id);
+		$superiorId=$Iteie->depthead;
+		$Superior = Employee::find($superiorId);
+		$supAdb = Addressbook::find('first',array('conditions'=>array("username=?",$Superior->loginname)));
+		$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Iteie->employee->loginname)));
+		$email=$usr->email;
+
+		$datefrom = date("d/m/Y",strtotime($Iteie->validfrom));
+		$dateto = date("d/m/Y",strtotime($Iteie->validto));
+
+		$joinx   = "LEFT JOIN tbl_approver ON (tbl_iteieapproval.approver_id = tbl_approver.id) ";					
+		$Iteieapproval = Iteieapproval::find('all',array('joins'=>$joinx,'conditions' => array("iteie_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
+		
+		//condition
+			foreach ($Iteieapproval as $data){
+				if(($data->approver->approvaltype->id==29) || ($data->approver->employee_id==$Mmf30->depthead)){
+					$deptheadname = $data->approver->employee->fullname;
+					$deptheaddate = date("d/m/Y",strtotime($data->approvaldate));
+				}
+				if($data->approver->approvaltype->id==30) {
+					$hrdname = $data->approver->employee->fullname;
+					$hrddate = date("d/m/Y",strtotime($data->approvaldate));
+				}
+				if($data->approver->approvaltype->id==31) {
+					$buheadname = $data->approver->employee->fullname;
+					$buheaddate = date("d/m/Y",strtotime($data->approvaldate));
+				}
+				if($data->approver->approvaltype->id==32) {
+					$itheadname = $data->approver->employee->fullname;
+					$itheaddate = date("d/m/Y",strtotime($data->approvaldate));
+				}
+			}
+		//end condition
+
+		try {
+			$excel = new COM("Excel.Application") or die ("ERROR: Unable to instantaniate COM!\r\n");
+			$excel->Visible = false;
+			$file="D:/xampp/htdocs/oasys_gogs/doc/it/exchange_email_template.xlsx";
+			$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
+			$Worksheet = $Workbook->Worksheets(1);
+			$Worksheet->Activate;
+			// $xlShiftDown=-4121;
+			// for ($a=6;$a<15;$a++){
+			// 	$Worksheet->Rows($a+1)->Insert($xlShiftDown);
+			// 	$Worksheet->Range("C".$a)->Value = 'Nama '.($a-5);
+			// 	$Worksheet->Range("D".$a)->Value = 'Alamat '.($a-5);
+			// 	$Worksheet->Range("K".$a)->Value = rand(5,15);
+			// }
+			// $Worksheet->Range("F7")->Value = 'Riski';
+			$Worksheet->Range("F7")->Value = $Iteie->name;
+			$Worksheet->Range("F9")->Value = $Iteie->employeeid;
+			$Worksheet->Range("F11")->Value = $Iteie->designation;
+			$Worksheet->Range("Y11")->Value = $Iteie->grade;
+			$Worksheet->Range("F13")->Value = $Iteie->bgbu;
+			$Worksheet->Range("F15")->Value = $Iteie->officelocation;
+			$Worksheet->Range("Y15")->Value = $Iteie->floor;
+			$Worksheet->Range("F17")->Value = $Iteie->phoneext;
+			$Worksheet->Range("F19")->Value = $Iteie->department;
+			//condition
+				if($Iteie->accessrequested == 1) {
+					$Worksheet->Range("F21")->Value = 'x';
+				}else if($Iteie->accessrequested == 2) {
+					$Worksheet->Range("N21")->Value = 'x';
+				}else if($Iteie->accessrequested == 3) {
+					$Worksheet->Range("T21")->Value = 'x';
+				}else {
+					$accessR = '';
+				}
+
+				if($Iteie->accesstype == 1) {
+					$Worksheet->Range("F23")->Value = 'x';
+				}else if($Iteie->accesstype == 2) {
+					$Worksheet->Range("P23")->Value = 'x';
+				}else {
+					$accessT = '';
+				}
+	
+				if($Iteie->accounttype == 1) {
+					$Worksheet->Range("F25")->Value = 'x';
+				}else if($Iteie->accounttype == 2) {
+					$Worksheet->Range("P25")->Value = 'x';
+				}else {
+					$accountT = '';
+				}
+	
+				if($Iteie->requesttype == 1) {
+					$Worksheet->Range("F27")->Value = 'x';
+				}else if($Iteie->requesttype == 2) {
+					$Worksheet->Range("N27")->Value = 'x';
+				}else {
+					$requestT = '';
+				}
+	
+				if($Iteie->emailquota == 1) {
+					$Worksheet->Range("F29")->Value = 'x';
+				}else if($Iteie->emailquota == 2) {
+					$Worksheet->Range("J29")->Value = 'x';
+				}else if($Iteie->emailquota == 3) {
+					$Worksheet->Range("N29")->Value = 'x';
+				}else if($Iteie->emailquota == 4) {
+					$Worksheet->Range("R29")->Value = 'x';
+				}else if($Iteie->emailquota == 5) {
+					$Worksheet->Range("V29")->Value = 'x';
+				}else {
+					$emailQ = '';
+				}
+	
+				if($Iteie->emaildomain == 1) {
+					$Worksheet->Range("A37")->Value = 'x';
+				}else if($Iteie->emaildomain == 2) {
+					$Worksheet->Range("A38")->Value = 'x';
+				}else if($Iteie->emaildomain == 3) {
+					$Worksheet->Range("A39")->Value = 'x';
+				}else if($Iteie->emaildomain == 4) {
+					$Worksheet->Range("A40")->Value = 'x';
+				}else if($Iteie->emaildomain == 5) {
+					$Worksheet->Range("A41")->Value = 'x';
+				}else if($Iteie->emaildomain == 6) {
+					$Worksheet->Range("A42")->Value = 'x';
+				}else {
+					$emailD = '';
+				}
+	
+				if($Iteie->listgroup == 1) {
+					$Worksheet->Range("G37")->Value = 'x';
+				}else if($Iteie->listgroup == 2) {
+					$Worksheet->Range("G38")->Value = 'x';
+				}else if($Iteie->listgroup == 3) {
+					$Worksheet->Range("G39")->Value = 'x';
+				}else if($Iteie->listgroup == 4) {
+					$Worksheet->Range("G40")->Value = 'x';
+				}else if($Iteie->listgroup == 5) {
+					$Worksheet->Range("G41")->Value = 'x';
+				}else {
+					$listG = '';
+				}
+	
+				if($Iteie->listgroupmoderation == 1) {
+					$Worksheet->Range("M37")->Value = 'x';
+				}else if($Iteie->listgroupmoderation == 2) {
+					$Worksheet->Range("M38")->Value = 'x';
+				}else if($Iteie->listgroupmoderation == 3) {
+					$Worksheet->Range("M39")->Value = 'x';
+				}else if($Iteie->listgroupmoderation == 4) {
+					$Worksheet->Range("M40")->Value = 'x';
+				}else if($Iteie->listgroupmoderation == 5) {
+					$Worksheet->Range("M41")->Value = 'x';
+				}else if($Iteie->listgroupmoderation == 6) {
+					$Worksheet->Range("M42")->Value = 'x';
+				}else if($Iteie->listgroupmoderation == 7) {
+					$Worksheet->Range("M43")->Value = 'x';
+				}else {
+					$listGM = '';
+				}
+
+			//end condition
+			$Worksheet->Range("F31")->Value = $datefrom;
+			$Worksheet->Range("R31")->Value = $dateto;
+			$Worksheet->Range("V37")->Value = $Iteie->ironportquarantinedetail;
+			$Worksheet->Range("F46")->Value = $Iteie->reason;
+			$Worksheet->Range("B57")->Value = $deptheadname;
+			$Worksheet->Range("B58")->Value = $deptheaddate;
+			$Worksheet->Range("I57")->Value = $hrdname;
+			$Worksheet->Range("I58")->Value = $hrddate;
+			$Worksheet->Range("P57")->Value = $buheadname;
+			$Worksheet->Range("P58")->Value = $buheaddate;
+			$Worksheet->Range("W57")->Value = $itheadname;
+			$Worksheet->Range("W58")->Value = $itheaddate;
+
+			$xlTypePDF = 0;
+			$xlQualityStandard = 0;
+			// $path="D:/xampp/htdocs/oasys_gogs/doc/it/pdf/output.pdf";
+			$fileName ='doc'.DS.'it'.DS.'pdf'.DS.'ITEIE'.$Iteie->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$fileName = str_replace("/","",$fileName);
+			$path='D:/xampp/htdocs/oasys_gogs/doc'.DS.'it'.DS.'pdf'.DS.'ITEIE'.$Iteie->employee->sapid.'_'.date("YmdHis").'.pdf';
+			if (file_exists($path)) {
+			   unlink($path);
+			}
+			$Worksheet->ExportAsFixedFormat($xlTypePDF, $path, $xlQualityStandard);
+			$Iteie->approveddoc=str_replace("\\","/",$fileName);
+			$Iteie->save();
+			return $fileName;
+		} catch(com_exception $e) {  
+			$err = new Errorlog();
+			$err->errortype = "IteiePDFGenerator";
+			$err->errordate = date("Y-m-d h:i:s");
+			$err->errormessage = $e->getMessage();
+			$err->user = $this->currentUser->username;
+			$err->ip = $this->ip;
+			$err->save();
+			// echo $formatter->getHtmlMessage();
+			echo $e->getMessage()."\n";
+			// exit;
+		
+		}
+		$Workbook->Close(true);
+		unset($Worksheet);
+		unset($Workbook);
+		$excel->Workbooks->Close();
+		$excel->Quit();
+		unset($excel);
 		
 	}
 	function iteieHistory(){
@@ -1213,11 +2620,11 @@ Class Iteiemodule extends Application{
 					case 'byid':
 						$id = $this->post['id'];
 						if ($id!=""){
-							$Trhistory = Mmfhistory::find('all', array('conditions' => array("mmf28_id=?",$id)));
-							foreach ($Trhistory as &$result) {
+							$Iteiehistory = Iteiehistory::find('all', array('conditions' => array("iteie_id=?",$id)));
+							foreach ($Iteiehistory as &$result) {
 								$result		= $result->to_array();
 							}
-							echo json_encode($Trhistory, JSON_NUMERIC_CHECK);
+							echo json_encode($Iteiehistory, JSON_NUMERIC_CHECK);
 						}
 						break;
 					default:
