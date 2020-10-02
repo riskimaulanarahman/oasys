@@ -81,44 +81,7 @@
 				sort: "id"
             }
 
-            $scope.compDatasource = {
-                store: new DevExpress.data.CustomStore({
-                    key: "companycode",
-                    loadMode: "raw",
-                    load: function() {
-                        return CrudService.GetAll('company').then(function (response) {
-                            if(response.status=="error"){
-                                DevExpress.ui.notify(response.message,"error");
-                            }else{
-                                return response;
-                            }
-                        });
-                    },
-                }),
-                filter:['isused','1'],
-                sort: "companycode"
-            }
-
-            $scope.deptDatasource = {
-                store: new DevExpress.data.CustomStore({
-                    key: "departmentname",
-                    loadMode: "raw",
-                    load: function() {
-                        return CrudService.GetAll('dept').then(function (response) {
-                            console.log(response);
-                            if(response.status=="error"){
-                                DevExpress.ui.notify(response.message,"error");
-                            }else{
-                                return response;
-                            }
-                        });
-                    },
-                }),
-                filter:['isused','1'],
-                sort: "departmentname"
-            }
-
-            // console.log($scope.data);
+            console.log($scope.data);
 
             $scope.AccessRequested =[{id:0,accessrequested:"- Select -"},{id:1,accessrequested:"Exchange (non-Internet) Email"},{id:2,accessrequested:"Internet Email"},{id:3,accessrequested:"Change Domain"}];
             $scope.AccessType =[{id:0,accesstype:"- Select -"},{id:1,accesstype:"Terminal Server (TS) User Account"},{id:2,accesstype:"Non-TS Account"}];
@@ -234,21 +197,12 @@
                                 }]
                             },
                             {
-                                dataField:'department',
-                                label: {
-                                    text:"Requested Department",
-                                },
-                                name:'department',
-                                disabled: true,                                                    
-                            },
-                            {
                                 dataField:'name',
                                 label: {
                                     text:"Name",
                                 },
                                 name:'name',
                                 dataType:"string",
-                                validationRules: [{type: "required",message: "Action is required"}],
                                 disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
                             },
                             {
@@ -260,35 +214,6 @@
                                 dataType:"string",
                                 disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
                             },
-                            // {
-                            //     dataField:'department2',
-                            //     label: {
-                            //         text:"Department",
-                            //     },
-                            //     name:'department',
-                            //     disabled: false,                                                    
-                            // },
-                            {dataField:'departmentuser',label:{text:"Department"},disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                                editorType: "dxSelectBox",
-                                editorOptions: {
-                                    dataSource: $scope.deptDatasource,
-                                    displayExpr: "departmentname",
-                                    valueExpr: "departmentname",
-                                    searchEnabled: true,
-                                    // onValueChanged: function(e){
-                                    //     console.log(e);
-                                    //     criteria = {status:'last',companycode:e.value,rfc_id:$scope.Requestid};
-                                    //     CrudService.FindData('rfc',criteria).then(function (response){
-                                    //         $scope.formInstance.updateData('rfcno',  response.rfcno);
-                                    //         $scope.grid3Component.refresh();
-                                    //     })
-                                    // }
-                                },validationRules: [{
-                                        type: "required",
-                                        message: "Action is required"
-                                    }]
-                                
-                            },
                             {
                                 dataField:'designation',
                                 label: {
@@ -298,35 +223,22 @@
                                 dataType:"string",
                                 disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
                             },
-                            // {
-                            //     dataField:'bgbu',
-                            //     label: {
-                            //         text:"BG/BU",
-                            //     },
-                            //     name:'bgbu',
-                            //     validationRules: [{type: "required",message: "Action is required"}],
-                            //     disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
-                            // },
-                            {dataField:'bgbu',label:{text:"BG/BU"},disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                                editorType: "dxSelectBox",
-                                editorOptions: {
-                                    
-                                    dataSource: $scope.compDatasource,
-                                    displayExpr: "companycode",
-                                    valueExpr: "companycode",
-                                    // onValueChanged: function(e){
-                                    //     console.log(e);
-                                    //     criteria = {status:'last',companycode:e.value,rfc_id:$scope.Requestid};
-                                    //     CrudService.FindData('rfc',criteria).then(function (response){
-                                    //         $scope.formInstance.updateData('rfcno',  response.rfcno);
-                                    //         $scope.grid3Component.refresh();
-                                    //     })
-                                    // }
-                                },validationRules: [{
-                                        type: "required",
-                                        message: "Action is required"
-                                    }]
-                                
+                            {
+                                dataField:'grade',
+                                label: {
+                                    text:"Grade",
+                                },
+                                name:'grade',
+                                dataType:"string",
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+                            },
+                            {
+                                dataField:'bgbu',
+                                label: {
+                                    text:"BG/BU",
+                                },
+                                name:'bgbu',
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
                             },
                             {
                                 dataField:'officelocation',
@@ -351,6 +263,15 @@
                                 },
                                 name:'phoneext',
                                 disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+                            },
+                            {
+                                dataField:'department',
+                                label: {
+                                    text:"Department",
+                                },
+                                name:'department',
+                                // disabled: true                            
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                             
                             },
                             {
                                 dataField:'requeststatus',
@@ -420,11 +341,60 @@
 						colCount:3,
 						items: [
                             {
+                                dataField:'accessrequested',
+                                editorType: "dxSelectBox",
+                                label:{text:"Access Requested"},
+                                disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
+                                editorOptions: { 
+                                    dataSource:$scope.AccessRequested,  
+                                    valueExpr: 'id',
+                                    displayExpr: 'accessrequested',
+                                    onValueChanged: function(e){
+                                        var dis =(e.value==1)?true:false;
+
+                                        $scope.formInstance.itemOption('group5.listgroupmoderation').editorOptions.disabled=dis;
+                                        
+
+                                        if(e.value == 1) {
+
+                                                    var found = false;
+
+                                                    pos = $scope.EmailDomain.map(function(e){
+
+                                                        if(e.id == 6) {
+                                                            found = true;
+                                                        }
+
+                                                    });
+                                                    if(!found) {
+                                                        $scope.EmailDomain.push({id:6,emaildomain:"D1.LCL"});
+                                                    }
+
+                                        } else {
+                                            var found = false;
+
+                                                    pos = $scope.EmailDomain.map(function(e){
+
+                                                        if(e.id == 6) {
+                                                            $scope.EmailDomain.pop({id:6,emaildomain:"D1.LCL"});
+                                                        }
+
+                                                    });
+                                        }
+
+                                        
+                                        $scope.formInstance.itemOption('group5.emaildomain', 'dataSource', $scope.EmailDomain);
+
+                                        
+                                    }
+                                },
+                            },
+                            {
                                 dataField:'accesstype',
                                 editorType: "dxSelectBox",
                                 label:{text:"Access Type"},
                                 disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
-                                validationRules: [{type: "required",message: "Action is required"}],
+                                // validationRules: [{type: "required", message: "Please select RFC Type" }],
                                 editorOptions: { 
                                     dataSource:$scope.AccessType,  
                                     valueExpr: 'id',
@@ -443,7 +413,7 @@
                                 editorType: "dxSelectBox",
                                 label:{text:"Account Type"},
                                 disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
-                                validationRules: [{type: "required",message: "Action is required"}],
+                                // validationRules: [{type: "required", message: "Please select RFC Type" }],
                                 editorOptions: { 
                                     dataSource:$scope.AccountType,  
                                     valueExpr: 'id',
@@ -457,6 +427,44 @@
                                     // }
                                 },
                             },
+                            {
+                                dataField:'requesttype',
+                                editorType: "dxSelectBox",
+                                label:{text:"Request Type"},
+                                disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
+                                // validationRules: [{type: "required", message: "Please select RFC Type" }],
+                                editorOptions: { 
+                                    dataSource:$scope.RequestType,  
+                                    valueExpr: 'id',
+                                    displayExpr: 'requesttype',
+                                    // onValueChanged: function(e){
+                                    //     var vis =(e.value==4)?true:false;
+                                    //     $scope.formInstance.itemOption('group2.requiredother', 'visible', vis);
+                                    //     $scope.formInstance.itemOption('group2.requiredother', 'visibleIndex', 0);
+                                    //     $scope.formInstance.updateData('requiredother',  "");
+                                        
+                                    // }
+                                },
+                            },
+                            {
+                                dataField:'emailquota',
+                                editorType: "dxSelectBox",
+                                label:{text:"Email Quota"},
+                                disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
+                                // validationRules: [{type: "required", message: "Please select RFC Type" }],
+                                editorOptions: { 
+                                    dataSource:$scope.EmailQuota,  
+                                    valueExpr: 'id',
+                                    displayExpr: 'emailquota',
+                                    // onValueChanged: function(e){
+                                    //     var vis =(e.value==4)?true:false;
+                                    //     $scope.formInstance.itemOption('group2.requiredother', 'visible', vis);
+                                    //     $scope.formInstance.itemOption('group2.requiredother', 'visibleIndex', 0);
+                                    //     $scope.formInstance.updateData('requiredother',  "");
+                                        
+                                    // }
+                                },
+                            }
                             
                         ]
                     },
@@ -493,53 +501,77 @@
                         colSpan:2,
 						colCount:3,
 						items: [
-                            // {
-                            //     dataField:'listgroup',
-                            //     editorType: "dxSelectBox",
-                            //     label:{text:"List Group"},
-                            //     disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
-                            //     // validationRules: [{type: "required", message: "Please select RFC Type" }],
-                            //     editorOptions: { 
-                            //         dataSource:$scope.ListGroup,  
-                            //         valueExpr: 'id',
-                            //         displayExpr: 'listgroup',
-                            //         // onValueChanged: function(e){
-                            //         //     var vis =(e.value==4)?true:false;
-                            //         //     $scope.formInstance.itemOption('group2.requiredother', 'visible', vis);
-                            //         //     $scope.formInstance.itemOption('group2.requiredother', 'visibleIndex', 0);
-                            //         //     $scope.formInstance.updateData('requiredother',  "");
-                                        
-                            //         // }
-                            //     },
-                            // },
                             {
-                                dataField:'listgroup',
-                                label: {
-                                    text:"List Group",
+                                dataField:'emaildomain',
+                                editorType: "dxSelectBox",
+                                label:{text:"Email Domain"},
+                                disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
+                                // validationRules: [{type: "required", message: "Please select RFC Type" }],
+                                editorOptions: { 
+                                    dataSource:$scope.EmailDomain,  
+                                    valueExpr: 'id',
+                                    displayExpr: 'emaildomain',
+                                    onValueChanged: function(e){
+
+                                        var dis =(e.value==5)?true:false;
+                                        $scope.formInstance.getEditor('ironportquarantinedetail').option('disabled',dis);
+                                        
+                                    }
                                 },
-                                name:'listgroup',
-                                dataType:"string",
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
                             },
                             {
+                                dataField:'listgroup',
+                                editorType: "dxSelectBox",
+                                label:{text:"List Group"},
+                                disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
+                                // validationRules: [{type: "required", message: "Please select RFC Type" }],
+                                editorOptions: { 
+                                    dataSource:$scope.ListGroup,  
+                                    valueExpr: 'id',
+                                    displayExpr: 'listgroup',
+                                    // onValueChanged: function(e){
+                                    //     var vis =(e.value==4)?true:false;
+                                    //     $scope.formInstance.itemOption('group2.requiredother', 'visible', vis);
+                                    //     $scope.formInstance.itemOption('group2.requiredother', 'visibleIndex', 0);
+                                    //     $scope.formInstance.updateData('requiredother',  "");
+                                        
+                                    // }
+                                },
+                            },
+                            {
+                                dataField:'listgroupmoderation',
+                                name:'listgroupmoderation',
+                                editorType: "dxSelectBox",
+                                label:{text:"List Group Moderation"},
+                                disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
+                                // validationRules: [{type: "required", message: "Please select RFC Type" }],
+                                editorOptions: { 
+                                    dataSource:$scope.ListGroupModeration,  
+                                    valueExpr: 'id',
+                                    displayExpr: 'listgroupmoderation',
+                                    // onValueChanged: function(e){
+                                    //     var vis =(e.value==4)?true:false;
+                                    //     $scope.formInstance.itemOption('group2.requiredother', 'visible', vis);
+                                    //     $scope.formInstance.itemOption('group2.requiredother', 'visibleIndex', 0);
+                                    //     $scope.formInstance.updateData('requiredother',  "");
+                                        
+                                    // }
+                                },
+                            },
+                            {
+                                dataField:'ironportquarantinedetail',
+                                label: {
+                                    text:"Iron Port Quarantine",
+                                },
+                                name:'ironportquarantinedetail',
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+                            },{
                                 dataField:'reason',
                                 label: {
                                     text:"Reason for request/Remarks",
                                 },
                                 name:'reason',
                                 disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
-                            },
-                            {
-                                dataField:'isdeclaration',
-                                label:{text:"Declaration"},
-                                // visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
-                                // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                                dataType:"boolean",
-                                editorType: "dxCheckBox",
-                                validationRules: [{type: "required",message: "Action is required"}],
-                                editorOptions: { 
-                                    text:"I wish to apply for the services and agree to be bound by the IT Corporate Policies for these services. I also confirm that the information as given above is true and correct",
-                                }
                             }
                             
                         ]
@@ -1007,18 +1039,24 @@
 				delete data.employeeid;
 				delete data.designation;
 				delete data.requeststatus;
+				delete data.grade;
 				delete data.bgbu;
 				delete data.officelocation;
 				delete data.floor;
 				delete data.phoneext;
-                delete data.department;
-                delete data.departmentuser;
-                delete data.declaration;
+				delete data.department;
+				delete data.accessrequested;
 				delete data.accesstype;
 				delete data.accounttype;
+				delete data.requesttype;
+				delete data.emailquota;
 				delete data.validfrom;
 				delete data.validto;
+				delete data.emaildomain;
 				delete data.listgroup;
+                delete data.listgroupmoderation;
+                delete data.ironportquarantine;
+				delete data.ironportquarantinedetail;
 				delete data.reason;
 
 				delete data.depthead;
@@ -1060,18 +1098,24 @@
 				        delete data.employeeid;
                         delete data.designation;
                         delete data.requeststatus;
+                        delete data.grade;
                         delete data.bgbu;
                         delete data.officelocation;
                         delete data.floor;
                         delete data.phoneext;
                         delete data.department;
-                        delete data.departmentuser;
-                        delete data.declaration;
+                        delete data.accessrequested;
                         delete data.accesstype;
                         delete data.accounttype;
+                        delete data.requesttype;
+                        delete data.emailquota;
                         delete data.validfrom;
                         delete data.validto;
+                        delete data.emaildomain;
                         delete data.listgroup;
+                        delete data.listgroupmoderation;
+                        delete data.ironportquarantine;
+                        delete data.ironportquarantinedetail;
                         delete data.reason;
 
                         delete data.depthead;

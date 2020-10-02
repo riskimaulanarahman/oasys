@@ -128,6 +128,9 @@
                     {dataField:'personholding',caption:"Next Approver", editorOptions: { 
                         disabled: true,
                     }},
+                    {dataField:'apprbuyername',caption:"Buyer Name", editorOptions: { 
+                        disabled: true,
+                    }},
                     {dataField:'apprprocheaddate',caption:"Appr ProcHead Date", editorOptions: { 
                         disabled: true,
                     }},

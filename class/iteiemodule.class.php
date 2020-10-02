@@ -154,7 +154,7 @@ Class Iteiemodule extends Application{
 							$department = $Iteie->employee->department->departmentname;
 							$data=$Iteie->to_array();
 							$data['fullname']=$fullname;
-							// $data['department']=$department;
+							$data['department']=$department;
 							echo json_encode($data, JSON_NUMERIC_CHECK);
 						}else{
 							$Iteie = new Iteie();
