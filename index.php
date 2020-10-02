@@ -639,11 +639,9 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 								</ul>
                             </li>
                             
-                            <!-- <li ng-class="{'mm-active': (isActive('/mmf') || isActive('/mmf30') || isActive('/mmfdetail') || isActive('/mmfapproval') || isActive('/mmf30approval'))}"> -->
-                            <li ng-class="">
+                            <!-- <li ng-class="">
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>IT Approval<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul ng-class="">
-								<!-- <ul ng-class="{'mm-show': (isActive('/mmf') || isActive('/mmf30') || isActive('/mmfapproval') || isActive('/mmf30approval'))}"> -->
                                     <li class="">
                                         <a href="#" aria-expanded="false">
                                             <i class="metismenu-icon"></i><i class='fa fa-calendar-alt'></i> My Request
@@ -652,7 +650,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                         <ul class="mm-collapse" style="height: 7.04px;">
                                             <li>
                                                 <a href="" ng-click="myITEIE()">
-                                                    <i class="metismenu-icon"></i>Exc. Internet Email
+                                                    <i class="metismenu-icon"></i>Access Directory
                                                 </a>
                                             </li>
                                             <li>
@@ -691,7 +689,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                         <ul class="mm-collapse" style="height: 7.04px;">
                                         <li>
                                                 <a href="" ng-click="iteieApproval()">
-                                                    <i class="metismenu-icon"></i>Exc. Internet Email
+                                                    <i class="metismenu-icon"></i>Access Directory
                                                 </a>
                                             </li>
                                             <li>
@@ -723,7 +721,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                         </ul>
                                     </li>
 								</ul>
-							</li>
+							</li> -->
 							<li ng-class="{'mm-active': (isActive('/rfc') || isActive('/rfcapproval'))}" >
 								<a href="#"  ><i class='metismenu-icon fas fa-marker'></i>RFC<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul ng-class="{'mm-show': (isActive('/rfc') || isActive('/rfcapproval'))}">
