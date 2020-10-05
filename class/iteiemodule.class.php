@@ -174,7 +174,7 @@ Class Iteiemodule extends Application{
 									$email=$usr->email;
 									
 									$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$usr->fullname.',</span></p>
-										<p class=MsoNormal><span style="color:#1F497D">Your Travel Request has been rescheduled by HR to match with your actual travel schedule:</span></p>
+										<p class=MsoNormal><span style="color:#1F497D">Your Access Directory has been rescheduled by HR to match with your actual travel schedule:</span></p>
 										<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
 										<table border=1 cellspacing=0 cellpadding=3 width=683>
 										<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Iteie->employee->fullname.'</b></p></td></tr>
@@ -186,7 +186,7 @@ Class Iteiemodule extends Application{
 										';
 									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 									$this->mail->addAddress($usr->email, $usr->fullname);
-									$this->mail->Subject = "Online Approval System -> Exchange - Internet Email Request Reschedule";
+									$this->mail->Subject = "Online Approval System -> Access Directory Email Request Reschedule";
 									$fileName = $this->generatePDF($id);
 									$filePath = SITE_PATH.DS.$fileName;
 									$this->mail->addAttachment($filePath);
@@ -395,16 +395,6 @@ Class Iteiemodule extends Application{
 									$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Iteie->employee->loginname)));
 									$email=$usr->email;
 
-									if($Iteie->accessrequested == 1) {
-										$accessR = 'Exchange (non-Internet) Email';
-									}else if($Iteie->accessrequested == 2) {
-										$accessR = 'Internet Email';
-									}else if($Iteie->accessrequested == 3) {
-										$accessR = 'Change Domain';
-									}else {
-										$accessR = '';
-									}
-
 									if($Iteie->accesstype == 1) {
 										$accessT = 'Terminal Server (TS) User Account';
 									}else if($Iteie->accesstype == 2) {
@@ -421,78 +411,8 @@ Class Iteiemodule extends Application{
 										$accountT = '';
 									}
 
-									if($Iteie->requesttype == 1) {
-										$requestT = 'Grant Access';
-									}else if($Iteie->requesttype == 2) {
-										$requestT = 'Revoke Access';
-									}else {
-										$requestT = '';
-									}
-
-									if($Iteie->emailquota == 1) {
-										$emailQ = '250 MB';
-									}else if($Iteie->emailquota == 2) {
-										$emailQ = '500 MB';
-									}else if($Iteie->emailquota == 3) {
-										$emailQ = '1000 MB';
-									}else if($Iteie->emailquota == 4) {
-										$emailQ = '1500 MB';
-									}else if($Iteie->emailquota == 5) {
-										$emailQ = '2000 MB';
-									}else {
-										$emailQ = '';
-									}
-
-									if($Iteie->emaildomain == 1) {
-										$emailD = 'itci-hutani.com';
-									}else if($Iteie->emaildomain == 2) {
-										$emailD = 'kalimantan-prima.com';
-									}else if($Iteie->emaildomain == 3) {
-										$emailD = 'balikpapanchip.com';
-									}else if($Iteie->emaildomain == 4) {
-										$emailD = 'lajudinamika.com';
-									}else if($Iteie->emaildomain == 5) {
-										$emailD = 'ptadindo.com';
-									}else if($Iteie->emaildomain == 6) {
-										$emailD = 'D1.LCL';
-									}else {
-										$emailD = '';
-									}
-
-									if($Iteie->listgroup == 1) {
-										$listG = 'IHM';
-									}else if($Iteie->listgroup == 2) {
-										$listG = 'KPSI';
-									}else if($Iteie->listgroup == 3) {
-										$listG = 'BCL';
-									}else if($Iteie->listgroup == 4) {
-										$listG = 'LDU';
-									}else if($Iteie->listgroup == 5) {
-										$listG = 'Adindo';
-									}else {
-										$listG = '';
-									}
-
-									if($Iteie->listgroupmoderation == 1) {
-										$listGM = 'Mod-IHM';
-									}else if($Iteie->listgroupmoderation == 2) {
-										$listGM = 'Mod-BCL';
-									}else if($Iteie->listgroupmoderation == 3) {
-										$listGM = 'Mod-KDU-HRD';
-									}else if($Iteie->listgroupmoderation == 4) {
-										$listGM = 'Mod-KF-Head';
-									}else if($Iteie->listgroupmoderation == 5) {
-										$listGM = 'Mod-KF-Head2';
-									}else if($Iteie->listgroupmoderation == 6) {
-										$listGM = 'Mod-KPSI-Pro';
-									}else if($Iteie->listgroupmoderation == 7) {
-										$listGM = 'Mod-KDU-FA';
-									}else {
-										$listGM = '';
-									}
-
 									$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$adb->fullname.',</span></p>
-										<p class=MsoNormal><span style="color:#1F497D">new Exchange - Internet Email Request is awaiting for your approval:</span></p>
+										<p class=MsoNormal><span style="color:#1F497D">new Access Directory Request is awaiting for your approval:</span></p>
 										<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
 										<table border=1 cellspacing=0 cellpadding=3 width=683>
 										<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Iteie->employee->fullname.'</b></p></td></tr>
@@ -502,14 +422,13 @@ Class Iteiemodule extends Application{
 										<tr><td><p class=MsoNormal>Location</p></td><td>:</td><td><p class=MsoNormal><b>'.$Iteie->employee->location->location.'</b></p></td></tr>
 										<tr><td><p class=MsoNormal>Email</p></td><td>:</td><td><p class=MsoNormal><b>'.$email.'</b></p></td></tr>
 										</table>
-										<p class=MsoNormal><b>Exchange/Internet Email Request Form</b></p>
+										<p class=MsoNormal><b>Access Directory</b></p>
 										<table border=1 cellspacing=0 cellpadding=3 width=683>
 										
 										<tr><th><p class=MsoNormal>Date</small></p></th>
 											<th><p class=MsoNormal>Name</p></th>
 											<th><p class=MsoNormal>Employee ID</p></th>
 											<th><p class=MsoNormal>Designation</p></th>
-											<th><p class=MsoNormal>Grade</p></th>
 											<th><p class=MsoNormal>BG/BU</p></th>
 											<th><p class=MsoNormal>Office/Location</p></th>
 											<th><p class=MsoNormal>Floor</p></th>
@@ -521,7 +440,6 @@ Class Iteiemodule extends Application{
 											<td><p class=MsoNormal> '.$Iteie->name.'</p></td>
 											<td><p class=MsoNormal> '.$Iteie->employeeid.'</p></td>
 											<td><p class=MsoNormal> '.$Iteie->designation.'</p></td>
-											<td><p class=MsoNormal> '.$Iteie->grade.'</p></td>
 											<td><p class=MsoNormal> '.$Iteie->bgbu.'</p></td>
 											<td><p class=MsoNormal> '.$Iteie->officelocation.'</p></td>
 											<td><p class=MsoNormal> '.$Iteie->floor.'</p></td>
@@ -531,36 +449,24 @@ Class Iteiemodule extends Application{
 										</table>
 										<table border=1 cellspacing=0 cellpadding=3 width=683>
 										<tr>
-											<th><p class=MsoNormal>Access Requested</p></th>
 											<th><p class=MsoNormal>Access Type</p></th>
 											<th><p class=MsoNormal>Account Type</p></th>
-											<th><p class=MsoNormal>Request Type</p></th>
-											<th><p class=MsoNormal>Email Quota</p></th>
 											<th><p class=MsoNormal>Valid From</p></th>
 											<th><p class=MsoNormal>Valid To</p></th>
-											<th><p class=MsoNormal>Email Domain</p></th>
 											<th><p class=MsoNormal>List Group</p></th>
-											<th><p class=MsoNormal>List Group Moderation</p></th>
-											<th><p class=MsoNormal>Iron Port Quarantine</p></th>
 										</tr>
 										<tr style="height:22.5pt">
-											<td><p class=MsoNormal> '.$accessR.'</p></td>
 											<td><p class=MsoNormal> '.$accessT.'</p></td>
 											<td><p class=MsoNormal> '.$accountT.'</p></td>
-											<td><p class=MsoNormal> '.$requestT.'</p></td>
-											<td><p class=MsoNormal> '.$emailQ.'</p></td>
 											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Iteie->validfrom)).'</p></td>
 											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Iteie->validto)).'</p></td>
-											<td><p class=MsoNormal> '.$emailD.'</p></td>
-											<td><p class=MsoNormal> '.$listG.'</p></td>
-											<td><p class=MsoNormal> '.$listGM.'</p></td>
-											<td><p class=MsoNormal> '.$Iteie->ironportquarantinedetail.'</p></td>
+											<td><p class=MsoNormal> '.$Iteie->listgroup.'</p></td>
 										</tr>
 										';
 
 									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 									$this->mail->addAddress($adb->email, $adb->fullname);
-									$this->mail->Subject = "Online Approval System -> new Exchange - Internet Email Request";
+									$this->mail->Subject = "Online Approval System -> new Access Directory Request";
 									$this->mail->msgHTML($this->mailbody);
 									if (!$this->mail->send()) {
 										$err = new Errorlog();
@@ -801,7 +707,7 @@ Class Iteiemodule extends Application{
 									$Iteie->requeststatus = 2;
 									$emto=$email;$emname=$Iteie->employee->fullname;
 									$this->mail->Subject = "Online Approval System -> Need Rework";
-									$red = 'Your Exchange-Internet Email require some rework :
+									$red = 'Your Access Directory require some rework :
 											<br>Remarks from Approver : <font color="red">'.$data['remarks']."</font>";
 									$Iteiehistory->actiontype = 3;
 									break;
@@ -810,7 +716,7 @@ Class Iteiemodule extends Application{
 										$Iteie->requeststatus = 3;
 										$emto=$email;$emname=$Iteie->employee->fullname;
 										$this->mail->Subject = "Online Approval System -> Approval Completed";
-										$red = '<p>Your Exchange-Internet Email. request has been approved</p>';
+										$red = '<p>Your Access Directory. request has been approved</p>';
 													// '<p><b><span lang=EN-US style=\'color:#002060\'>Note : Please <u>forward</u> this electronic approval to your respective Human Resource Department.</span></b></p>';
 										//delete unnecessary approver
 										$Iteieapproval = Iteieapproval::find('all', array('joins'=>$join,'conditions' => array("iteie_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
@@ -826,8 +732,8 @@ Class Iteiemodule extends Application{
 									else{
 										$Iteie->requeststatus = 1;
 										$emto=$adb->email;$emname=$adb->fullname;
-										$this->mail->Subject = "Online Approval System -> new Exchange-Internet Email Request";
-										$red = 'new Exchange-Internet Email Request awaiting for your approval:';
+										$this->mail->Subject = "Online Approval System -> new Access Directory Request";
+										$red = 'new Access Directory Request awaiting for your approval:';
 									}
 									$Iteiehistory->actiontype = 4;							
 									break;
@@ -836,7 +742,7 @@ Class Iteiemodule extends Application{
 									$emto=$email;$emname=$Iteie->employee->fullname;
 									$Iteiehistory->actiontype = 5;
 									$this->mail->Subject = "Online Approval System -> Request Rejected";
-									$red = 'Your Exchange-Internet Email Request has been rejected
+									$red = 'Your Access Directory Request has been rejected
 											<br>Remarks from Approver : <font color="red">'.$data['remarks']."</font>";
 									break;
 								default:
@@ -847,15 +753,6 @@ Class Iteiemodule extends Application{
 							echo "email to :".$emto." ->".$emname;
 							$this->mail->addAddress($emto, $emname);
 							$IteieJ = Iteie::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
-							if($Iteie->accessrequested == 1) {
-								$accessR = 'Exchange (non-Internet) Email';
-							}else if($Iteie->accessrequested == 2) {
-								$accessR = 'Internet Email';
-							}else if($Iteie->accessrequested == 3) {
-								$accessR = 'Change Domain';
-							}else {
-								$accessR = '';
-							}
 
 							if($Iteie->accesstype == 1) {
 								$accessT = 'Terminal Server (TS) User Account';
@@ -873,145 +770,62 @@ Class Iteiemodule extends Application{
 								$accountT = '';
 							}
 
-							if($Iteie->requesttype == 1) {
-								$requestT = 'Grant Access';
-							}else if($Iteie->requesttype == 2) {
-								$requestT = 'Revoke Access';
-							}else {
-								$requestT = '';
-							}
-
-							if($Iteie->emailquota == 1) {
-								$emailQ = '250 MB';
-							}else if($Iteie->emailquota == 2) {
-								$emailQ = '500 MB';
-							}else if($Iteie->emailquota == 3) {
-								$emailQ = '1000 MB';
-							}else if($Iteie->emailquota == 4) {
-								$emailQ = '1500 MB';
-							}else if($Iteie->emailquota == 5) {
-								$emailQ = '2000 MB';
-							}else {
-								$emailQ = '';
-							}
-
-							if($Iteie->emaildomain == 1) {
-								$emailD = 'itci-hutani.com';
-							}else if($Iteie->emaildomain == 2) {
-								$emailD = 'kalimantan-prima.com';
-							}else if($Iteie->emaildomain == 3) {
-								$emailD = 'balikpapanchip.com';
-							}else if($Iteie->emaildomain == 4) {
-								$emailD = 'lajudinamika.com';
-							}else if($Iteie->emaildomain == 5) {
-								$emailD = 'ptadindo.com';
-							}else if($Iteie->emaildomain == 6) {
-								$emailD = 'D1.LCL';
-							}else {
-								$emailD = '';
-							}
-
-							if($Iteie->listgroup == 1) {
-								$listG = 'IHM';
-							}else if($Iteie->listgroup == 2) {
-								$listG = 'KPSI';
-							}else if($Iteie->listgroup == 3) {
-								$listG = 'BCL';
-							}else if($Iteie->listgroup == 4) {
-								$listG = 'LDU';
-							}else if($Iteie->listgroup == 5) {
-								$listG = 'Adindo';
-							}else {
-								$listG = '';
-							}
-
-							if($Iteie->listgroupmoderation == 1) {
-								$listGM = 'Mod-IHM';
-							}else if($Iteie->listgroupmoderation == 2) {
-								$listGM = 'Mod-BCL';
-							}else if($Iteie->listgroupmoderation == 3) {
-								$listGM = 'Mod-KDU-HRD';
-							}else if($Iteie->listgroupmoderation == 4) {
-								$listGM = 'Mod-KF-Head';
-							}else if($Iteie->listgroupmoderation == 5) {
-								$listGM = 'Mod-KF-Head2';
-							}else if($Iteie->listgroupmoderation == 6) {
-								$listGM = 'Mod-KPSI-Pro';
-							}else if($Iteie->listgroupmoderation == 7) {
-								$listGM = 'Mod-KDU-FA';
-							}else {
-								$listGM = '';
-							}
 							$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$emname.',</span></p>
-										<p class=MsoNormal><span style="color:#1F497D">'.$red.'</span></p>
-										<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
-										<table border=1 cellspacing=0 cellpadding=3 width=683>
-										<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Iteie->employee->fullname.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>SAP ID</p></td><td>:</td><td><p class=MsoNormal><b>'.$Iteie->employee->sapid.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>Position</p></td><td>:</td><td><p class=MsoNormal><b>'.$Iteie->employee->designation->designationname.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>Business Group / Business Unit</p></td><td>:</td><td><p class=MsoNormal><b>'.$Iteie->employee->company->companyname.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>Location</p></td><td>:</td><td><p class=MsoNormal><b>'.$Iteie->employee->location->location.'</b></p></td></tr>
-										<tr><td><p class=MsoNormal>Email</p></td><td>:</td><td><p class=MsoNormal><b>'.$email.'</b></p></td></tr>
-										</table>
-										<p class=MsoNormal><b>Exchange/Internet Email Request Form</b></p>
-										<table border=1 cellspacing=0 cellpadding=3 width=683>
-										
-										<tr><th><p class=MsoNormal>Date</small></p></th>
-											<th><p class=MsoNormal>Name</p></th>
-											<th><p class=MsoNormal>Employee ID</p></th>
-											<th><p class=MsoNormal>Designation</p></th>
-											<th><p class=MsoNormal>Grade</p></th>
-											<th><p class=MsoNormal>BG/BU</p></th>
-											<th><p class=MsoNormal>Office/Location</p></th>
-											<th><p class=MsoNormal>Floor</p></th>
-											<th><p class=MsoNormal>Phone(Ext)</p></th>
-											<th><p class=MsoNormal>Department</p></th>
-										</tr>
-										<tr style="height:22.5pt">
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Iteie->createddate)).'</p></td>
-											<td><p class=MsoNormal> '.$Iteie->name.'</p></td>
-											<td><p class=MsoNormal> '.$Iteie->employeeid.'</p></td>
-											<td><p class=MsoNormal> '.$Iteie->designation.'</p></td>
-											<td><p class=MsoNormal> '.$Iteie->grade.'</p></td>
-											<td><p class=MsoNormal> '.$Iteie->bgbu.'</p></td>
-											<td><p class=MsoNormal> '.$Iteie->officelocation.'</p></td>
-											<td><p class=MsoNormal> '.$Iteie->floor.'</p></td>
-											<td><p class=MsoNormal> '.$Iteie->phoneext.'</p></td>
-											<td><p class=MsoNormal> '.$Iteie->department.'</p></td>
-										</tr>
-										</table>
-										<table border=1 cellspacing=0 cellpadding=3 width=683>
-										<tr>
-											<th><p class=MsoNormal>Access Requested</p></th>
-											<th><p class=MsoNormal>Access Type</p></th>
-											<th><p class=MsoNormal>Account Type</p></th>
-											<th><p class=MsoNormal>Request Type</p></th>
-											<th><p class=MsoNormal>Email Quota</p></th>
-											<th><p class=MsoNormal>Valid From</p></th>
-											<th><p class=MsoNormal>Valid To</p></th>
-											<th><p class=MsoNormal>Email Domain</p></th>
-											<th><p class=MsoNormal>List Group</p></th>
-											<th><p class=MsoNormal>List Group Moderation</p></th>
-											<th><p class=MsoNormal>Iron Port Quarantine</p></th>
-										</tr>
-										<tr style="height:22.5pt">
-											<td><p class=MsoNormal> '.$accessR.'</p></td>
-											<td><p class=MsoNormal> '.$accessT.'</p></td>
-											<td><p class=MsoNormal> '.$accountT.'</p></td>
-											<td><p class=MsoNormal> '.$requestT.'</p></td>
-											<td><p class=MsoNormal> '.$emailQ.'</p></td>
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Iteie->validfrom)).'</p></td>
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Iteie->validto)).'</p></td>
-											<td><p class=MsoNormal> '.$emailD.'</p></td>
-											<td><p class=MsoNormal> '.$listG.'</p></td>
-											<td><p class=MsoNormal> '.$listGM.'</p></td>
-											<td><p class=MsoNormal> '.$Iteie->ironportquarantinedetail.'</p></td>
-										</tr>
-										';
+								<p class=MsoNormal><span style="color:#1F497D">'.$red.'</span></p>
+								<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
+								<table border=1 cellspacing=0 cellpadding=3 width=683>
+								<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Iteie->employee->fullname.'</b></p></td></tr>
+								<tr><td><p class=MsoNormal>SAP ID</p></td><td>:</td><td><p class=MsoNormal><b>'.$Iteie->employee->sapid.'</b></p></td></tr>
+								<tr><td><p class=MsoNormal>Position</p></td><td>:</td><td><p class=MsoNormal><b>'.$Iteie->employee->designation->designationname.'</b></p></td></tr>
+								<tr><td><p class=MsoNormal>Business Group / Business Unit</p></td><td>:</td><td><p class=MsoNormal><b>'.$Iteie->employee->company->companyname.'</b></p></td></tr>
+								<tr><td><p class=MsoNormal>Location</p></td><td>:</td><td><p class=MsoNormal><b>'.$Iteie->employee->location->location.'</b></p></td></tr>
+								<tr><td><p class=MsoNormal>Email</p></td><td>:</td><td><p class=MsoNormal><b>'.$email.'</b></p></td></tr>
+								</table>
+								<p class=MsoNormal><b>Access Directory</b></p>
+								<table border=1 cellspacing=0 cellpadding=3 width=683>
+								
+								<tr><th><p class=MsoNormal>Date</small></p></th>
+									<th><p class=MsoNormal>Name</p></th>
+									<th><p class=MsoNormal>Employee ID</p></th>
+									<th><p class=MsoNormal>Designation</p></th>
+									<th><p class=MsoNormal>BG/BU</p></th>
+									<th><p class=MsoNormal>Office/Location</p></th>
+									<th><p class=MsoNormal>Floor</p></th>
+									<th><p class=MsoNormal>Phone(Ext)</p></th>
+									<th><p class=MsoNormal>Department</p></th>
+								</tr>
+								<tr style="height:22.5pt">
+									<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Iteie->createddate)).'</p></td>
+									<td><p class=MsoNormal> '.$Iteie->name.'</p></td>
+									<td><p class=MsoNormal> '.$Iteie->employeeid.'</p></td>
+									<td><p class=MsoNormal> '.$Iteie->designation.'</p></td>
+									<td><p class=MsoNormal> '.$Iteie->bgbu.'</p></td>
+									<td><p class=MsoNormal> '.$Iteie->officelocation.'</p></td>
+									<td><p class=MsoNormal> '.$Iteie->floor.'</p></td>
+									<td><p class=MsoNormal> '.$Iteie->phoneext.'</p></td>
+									<td><p class=MsoNormal> '.$Iteie->department.'</p></td>
+								</tr>
+								</table>
+								<table border=1 cellspacing=0 cellpadding=3 width=683>
+								<tr>
+									<th><p class=MsoNormal>Access Type</p></th>
+									<th><p class=MsoNormal>Account Type</p></th>
+									<th><p class=MsoNormal>Valid From</p></th>
+									<th><p class=MsoNormal>Valid To</p></th>
+									<th><p class=MsoNormal>List Group</p></th>
+								</tr>
+								<tr style="height:22.5pt">
+									<td><p class=MsoNormal> '.$accessT.'</p></td>
+									<td><p class=MsoNormal> '.$accountT.'</p></td>
+									<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Iteie->validfrom)).'</p></td>
+									<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Iteie->validto)).'</p></td>
+									<td><p class=MsoNormal> '.$Iteie->listgroup.'</p></td>
+								</tr>
+								';
 							$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 							$this->mail->msgHTML($this->mailbody);
 							if ($complete){
-								$fileName = $this->generatePDF($doid);
+								$fileName = $this->generatePDFi($doid);
 								$filePath = SITE_PATH.DS.$fileName;
 								$this->mail->addAttachment($filePath);
 							}
@@ -1211,7 +1025,7 @@ Class Iteiemodule extends Application{
 					<td align="left" valign=bottom><b><br></b></td>
 					<td align="left" valign=bottom><br></td>
 					<td align="left" valign=bottom><br></td>
-					<td colspan=17 align="right" valign=bottom><b>Exchange/Internet Email Request Form</b></td>
+					<td colspan=17 align="right" valign=bottom><b>Access Directory</b></td>
 					<td align="left" valign=bottom><br></td>
 				</tr>
 
@@ -1540,7 +1354,7 @@ Class Iteiemodule extends Application{
 					<td align="left" valign=bottom><br></td>
 				</tr>
 				<tr>
-					<td height="17" align="left" valign=bottom bgcolor="#FFFFFF"><b>Access Requested:</b></td>
+					<td height="17" align="left" valign=bottom bgcolor="#FFFFFF"><b>Access Directoryed:</b></td>
 					<td align="left" valign=bottom bgcolor="#FFFFFF"><b><br></b></td>
 					<td align="left" valign=bottom bgcolor="#FFFFFF"><b><br></b></td>
 					<td align="left" valign=bottom bgcolor="#FFFFFF"><br></td>
@@ -2443,7 +2257,8 @@ Class Iteiemodule extends Application{
 		try {
 			$excel = new COM("Excel.Application") or die ("ERROR: Unable to instantaniate COM!\r\n");
 			$excel->Visible = false;
-			$file="D:/xampp/htdocs/oasys_gogs/doc/it/exchange_email_template.xlsx";
+			$file="D:/xampp/htdocs/oasys_gogs/doc/it/ad_template.xlsx";
+			// $file="D:/xampp/htdocs/oasys_gogs/doc/it/ad_template.xlsx";
 			$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
 			$Worksheet = $Workbook->Worksheets(1);
 			$Worksheet->Activate;
@@ -2458,122 +2273,49 @@ Class Iteiemodule extends Application{
 			$Worksheet->Range("F7")->Value = $Iteie->name;
 			$Worksheet->Range("F9")->Value = $Iteie->employeeid;
 			$Worksheet->Range("F11")->Value = $Iteie->designation;
-			$Worksheet->Range("Y11")->Value = $Iteie->grade;
 			$Worksheet->Range("F13")->Value = $Iteie->bgbu;
 			$Worksheet->Range("F15")->Value = $Iteie->officelocation;
 			$Worksheet->Range("Y15")->Value = $Iteie->floor;
 			$Worksheet->Range("F17")->Value = $Iteie->phoneext;
 			$Worksheet->Range("F19")->Value = $Iteie->department;
 			//condition
-				if($Iteie->accessrequested == 1) {
-					$Worksheet->Range("F21")->Value = 'x';
-				}else if($Iteie->accessrequested == 2) {
-					$Worksheet->Range("N21")->Value = 'x';
-				}else if($Iteie->accessrequested == 3) {
-					$Worksheet->Range("T21")->Value = 'x';
-				}else {
-					$accessR = '';
-				}
 
 				if($Iteie->accesstype == 1) {
-					$Worksheet->Range("F23")->Value = 'x';
+					$Worksheet->Range("F26")->Value = 'x';
 				}else if($Iteie->accesstype == 2) {
-					$Worksheet->Range("P23")->Value = 'x';
+					$Worksheet->Range("P26")->Value = 'x';
 				}else {
 					$accessT = '';
 				}
 	
 				if($Iteie->accounttype == 1) {
-					$Worksheet->Range("F25")->Value = 'x';
+					$Worksheet->Range("F28")->Value = 'x';
 				}else if($Iteie->accounttype == 2) {
-					$Worksheet->Range("P25")->Value = 'x';
+					$Worksheet->Range("P28")->Value = 'x';
 				}else {
 					$accountT = '';
 				}
-	
-				if($Iteie->requesttype == 1) {
-					$Worksheet->Range("F27")->Value = 'x';
-				}else if($Iteie->requesttype == 2) {
-					$Worksheet->Range("N27")->Value = 'x';
+
+				if($Iteie->isvip == 1) {
+					$Worksheet->Range("F24")->Value = 'x';
 				}else {
-					$requestT = '';
+					$Worksheet->Range("P24")->Value = 'x';
 				}
 	
-				if($Iteie->emailquota == 1) {
-					$Worksheet->Range("F29")->Value = 'x';
-				}else if($Iteie->emailquota == 2) {
-					$Worksheet->Range("J29")->Value = 'x';
-				}else if($Iteie->emailquota == 3) {
-					$Worksheet->Range("N29")->Value = 'x';
-				}else if($Iteie->emailquota == 4) {
-					$Worksheet->Range("R29")->Value = 'x';
-				}else if($Iteie->emailquota == 5) {
-					$Worksheet->Range("V29")->Value = 'x';
-				}else {
-					$emailQ = '';
-				}
-	
-				if($Iteie->emaildomain == 1) {
-					$Worksheet->Range("A37")->Value = 'x';
-				}else if($Iteie->emaildomain == 2) {
-					$Worksheet->Range("A38")->Value = 'x';
-				}else if($Iteie->emaildomain == 3) {
-					$Worksheet->Range("A39")->Value = 'x';
-				}else if($Iteie->emaildomain == 4) {
-					$Worksheet->Range("A40")->Value = 'x';
-				}else if($Iteie->emaildomain == 5) {
-					$Worksheet->Range("A41")->Value = 'x';
-				}else if($Iteie->emaildomain == 6) {
-					$Worksheet->Range("A42")->Value = 'x';
-				}else {
-					$emailD = '';
-				}
-	
-				if($Iteie->listgroup == 1) {
-					$Worksheet->Range("G37")->Value = 'x';
-				}else if($Iteie->listgroup == 2) {
-					$Worksheet->Range("G38")->Value = 'x';
-				}else if($Iteie->listgroup == 3) {
-					$Worksheet->Range("G39")->Value = 'x';
-				}else if($Iteie->listgroup == 4) {
-					$Worksheet->Range("G40")->Value = 'x';
-				}else if($Iteie->listgroup == 5) {
-					$Worksheet->Range("G41")->Value = 'x';
-				}else {
-					$listG = '';
-				}
-	
-				if($Iteie->listgroupmoderation == 1) {
-					$Worksheet->Range("M37")->Value = 'x';
-				}else if($Iteie->listgroupmoderation == 2) {
-					$Worksheet->Range("M38")->Value = 'x';
-				}else if($Iteie->listgroupmoderation == 3) {
-					$Worksheet->Range("M39")->Value = 'x';
-				}else if($Iteie->listgroupmoderation == 4) {
-					$Worksheet->Range("M40")->Value = 'x';
-				}else if($Iteie->listgroupmoderation == 5) {
-					$Worksheet->Range("M41")->Value = 'x';
-				}else if($Iteie->listgroupmoderation == 6) {
-					$Worksheet->Range("M42")->Value = 'x';
-				}else if($Iteie->listgroupmoderation == 7) {
-					$Worksheet->Range("M43")->Value = 'x';
-				}else {
-					$listGM = '';
-				}
 
 			//end condition
 			$Worksheet->Range("F31")->Value = $datefrom;
 			$Worksheet->Range("R31")->Value = $dateto;
-			$Worksheet->Range("V37")->Value = $Iteie->ironportquarantinedetail;
-			$Worksheet->Range("F46")->Value = $Iteie->reason;
-			$Worksheet->Range("B57")->Value = $deptheadname;
-			$Worksheet->Range("B58")->Value = $deptheaddate;
-			$Worksheet->Range("I57")->Value = $hrdname;
-			$Worksheet->Range("I58")->Value = $hrddate;
-			$Worksheet->Range("P57")->Value = $buheadname;
-			$Worksheet->Range("P58")->Value = $buheaddate;
-			$Worksheet->Range("W57")->Value = $itheadname;
-			$Worksheet->Range("W58")->Value = $itheaddate;
+			$Worksheet->Range("K37")->Value = $Iteie->listgroup;
+			$Worksheet->Range("F39")->Value = $Iteie->reason;
+			$Worksheet->Range("B50")->Value = $deptheadname;
+			$Worksheet->Range("B51")->Value = $deptheaddate;
+			$Worksheet->Range("I50")->Value = $hrdname;
+			$Worksheet->Range("I51")->Value = $hrddate;
+			$Worksheet->Range("P50")->Value = $buheadname;
+			$Worksheet->Range("P51")->Value = $buheaddate;
+			$Worksheet->Range("W50")->Value = $itheadname;
+			$Worksheet->Range("W51")->Value = $itheaddate;
 
 			$xlTypePDF = 0;
 			$xlQualityStandard = 0;

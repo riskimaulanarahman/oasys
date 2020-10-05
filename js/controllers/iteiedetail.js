@@ -105,7 +105,6 @@
                     loadMode: "raw",
                     load: function() {
                         return CrudService.GetAll('dept').then(function (response) {
-                            console.log(response);
                             if(response.status=="error"){
                                 DevExpress.ui.notify(response.message,"error");
                             }else{
@@ -118,7 +117,7 @@
                 sort: "departmentname"
             }
 
-            // console.log($scope.data);
+            console.log($scope.data);
 
             $scope.AccessRequested =[{id:0,accessrequested:"- Select -"},{id:1,accessrequested:"Exchange (non-Internet) Email"},{id:2,accessrequested:"Internet Email"},{id:3,accessrequested:"Change Domain"}];
             $scope.AccessType =[{id:0,accesstype:"- Select -"},{id:1,accesstype:"Terminal Server (TS) User Account"},{id:2,accesstype:"Non-TS Account"}];
@@ -310,18 +309,15 @@
                             {dataField:'bgbu',label:{text:"BG/BU"},disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
                                 editorType: "dxSelectBox",
                                 editorOptions: {
-                                    
                                     dataSource: $scope.compDatasource,
                                     displayExpr: "companycode",
                                     valueExpr: "companycode",
-                                    // onValueChanged: function(e){
-                                    //     console.log(e);
-                                    //     criteria = {status:'last',companycode:e.value,rfc_id:$scope.Requestid};
-                                    //     CrudService.FindData('rfc',criteria).then(function (response){
-                                    //         $scope.formInstance.updateData('rfcno',  response.rfcno);
-                                    //         $scope.grid3Component.refresh();
-                                    //     })
-                                    // }
+                                    onValueChanged: function(e){
+                                        // var vis =(e.value==4)?true:false;
+                                        var val =(e.value);
+                                        $scope.formInstance.updateData('listgroup',  val);
+                                        
+                                    }
                                 },validationRules: [{
                                         type: "required",
                                         message: "Action is required"
@@ -420,6 +416,18 @@
 						colCount:3,
 						items: [
                             {
+                                dataField:'isvip',
+                                label:{text:"VIP ?"},
+                                // visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                dataType:"boolean",
+                                editorType: "dxCheckBox",
+                                // validationRules: [{type: "required",message: "Declaration is required"}],
+                                editorOptions: { 
+                                    text:"Yes",
+                                }
+                            },
+                            {
                                 dataField:'accesstype',
                                 editorType: "dxSelectBox",
                                 label:{text:"Access Type"},
@@ -448,13 +456,21 @@
                                     dataSource:$scope.AccountType,  
                                     valueExpr: 'id',
                                     displayExpr: 'accounttype',
-                                    // onValueChanged: function(e){
-                                    //     var vis =(e.value==4)?true:false;
-                                    //     $scope.formInstance.itemOption('group2.requiredother', 'visible', vis);
-                                    //     $scope.formInstance.itemOption('group2.requiredother', 'visibleIndex', 0);
-                                    //     $scope.formInstance.updateData('requiredother',  "");
+                                    onValueChanged: function(e){
+                                        var dis =(e.value==1)?true:false;
+                                        // $scope.formInstance.itemOption('group3.validfrom').editorOptions.disabled=dis;
+                                        // $scope.formInstance.itemOption('group3.validto').editorOptions.disabled=dis;
+                                        $scope.formInstance.getEditor('validfrom').option('disabled',dis);
+                                        $scope.formInstance.getEditor('validto').option('disabled',dis);
+                                        if(dis) {
+                                            $scope.formInstance.updateData('validfrom',  "9999-12-31");
+                                            $scope.formInstance.updateData('validto',  "9999-12-31");
+                                        } else {
+                                            $scope.formInstance.updateData('validfrom',  "");
+                                            $scope.formInstance.updateData('validto',  "");
+                                        }
                                         
-                                    // }
+                                    }
                                 },
                             },
                             
@@ -473,7 +489,10 @@
                                 editorType: "dxDateBox",
                                 label: {text: "Valid From"},
                                 // max: new Date(date + 1000*60*60*24*3),
-                                editorOptions: {displayFormat:"dd/MM/yyyy",disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true}
+                                editorOptions: {
+                                    displayFormat:"dd/MM/yyyy",
+                                    disabled: (($scope.mode=='add' ) || ($scope.data.accounttype!==1)) ?false:true,
+                                }
                             },
                             {
                                 dataField:'validto',
@@ -481,7 +500,7 @@
                                 editorType: "dxDateBox",
                                 label: {text: "Valid To"},
                                 // max: new Date(date + 1000*60*60*24*3),
-                                editorOptions: {displayFormat:"dd/MM/yyyy",disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true}
+                                editorOptions: {displayFormat:"dd/MM/yyyy",disabled: (($scope.data.accounttype!==1)|| ($scope.mode=='add' )) ?false:true}
                             }
                             
                         ]
@@ -519,7 +538,7 @@
                                 },
                                 name:'listgroup',
                                 dataType:"string",
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+                                disabled: true                           
                             },
                             {
                                 dataField:'reason',
@@ -529,18 +548,18 @@
                                 name:'reason',
                                 disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
                             },
-                            {
-                                dataField:'isdeclaration',
-                                label:{text:"Declaration"},
-                                // visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
-                                // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                                dataType:"boolean",
-                                editorType: "dxCheckBox",
-                                validationRules: [{type: "required",message: "Action is required"}],
-                                editorOptions: { 
-                                    text:"I wish to apply for the services and agree to be bound by the IT Corporate Policies for these services. I also confirm that the information as given above is true and correct",
-                                }
-                            }
+                            // {
+                            //     dataField:'isdeclaration',
+                            //     label:{text:"Declaration"},
+                            //     // visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
+                            //     disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                            //     dataType:"boolean",
+                            //     editorType: "dxCheckBox",
+                            //     validationRules: [{type: "required",message: "Declaration is required"}],
+                            //     editorOptions: { 
+                            //         text:"I wish to apply for the services and agree to be bound by the IT Corporate Policies for these services. I also confirm that the information as given above is true and correct",
+                            //     }
+                            // }
                             
                         ]
                     },
@@ -1013,7 +1032,7 @@
 				delete data.phoneext;
                 delete data.department;
                 delete data.departmentuser;
-                delete data.declaration;
+				delete data.isvip;
 				delete data.accesstype;
 				delete data.accounttype;
 				delete data.validfrom;
@@ -1066,7 +1085,7 @@
                         delete data.phoneext;
                         delete data.department;
                         delete data.departmentuser;
-                        delete data.declaration;
+                        delete data.isvip;
                         delete data.accesstype;
                         delete data.accounttype;
                         delete data.validfrom;
