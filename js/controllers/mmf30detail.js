@@ -528,24 +528,55 @@
                         items: [
                             {label:{text:"Comments"},dataField:'proccomments',colSpan:2,editorType:"dxHtmlEditor",visible: (($scope.data.apprstatuscode==3)) ?true:false,editorOptions: {height: 90,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}},
                             {label:{text:"Remarks"},dataField:'remarks',colSpan:2,editorType:"dxHtmlEditor",visible: (($scope.data.apprstatuscode==1)) || (($scope.data.apprstatuscode==2)) ?true:false,editorOptions: {height: 90,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}},
-                            {label: {
-                                    text: "Approval Action"
-                                },
-                                dataField:"approvalstatus",
-                                editorType: "dxSelectBox",
-                                visible: ($scope.mode=='approve') ?true:false,
-                                editorOptions: { 
-                                    dataSource:$scope.AppAction,  
-                                    valueExpr: 'id',
-                                    displayExpr: 'appaction',
-                                    searchEnabled: true,
-                                    value: ""
-                                },
-                                validationRules: [{
-                                    type: "required",
-                                    message: "Action is required"
-                                }]
-                            },
+                            // {label: {
+                            //         text: "Approval Action"
+                            //     },
+                            //     dataField:"approvalstatus",
+                            //     editorType: "dxSelectBox",
+                            //     visible: ($scope.mode=='approve') ?true:false,
+                            //     editorOptions: { 
+                            //         dataSource:$scope.AppAction,  
+                            //         valueExpr: 'id',
+                            //         displayExpr: 'appaction',
+                            //         searchEnabled: true,
+                            //         value: ""
+                            //     },
+                            //     validationRules: [{
+                            //         type: "required",
+                            //         message: "Action is required"
+                            //     }]
+							// },
+							{label: {
+								text: "Approval Action"
+							},
+							dataField:"approvalstatus",
+							editorType: "dxSelectBox",
+							visible: ($scope.mode=='approve') ?true:false,
+							editorOptions: { 
+								dataSource:$scope.AppAction,  
+								valueExpr: 'id',
+								displayExpr: 'appaction',
+								searchEnabled: true,
+								value: "",
+								onValueChanged: function(e){
+									var vis =(e.value==2 && $scope.data.apprstatuscode==2)?true:false;
+									$scope.formInstance.itemOption('group4.group1.buyer', 'visible', vis);
+
+									if(e.value!==2 || $scope.data.apprstatuscode==2){
+										// $scope.formInstance.itemOption('buyer').editorOptions.disabled=dis;
+										$scope.formInstance.updateData('buyer',  "");
+									}
+									// $scope.formInstance.itemOption('group4.group9.buyer', 'disabled', dis);
+									// $scope.formInstance.itemOption('group5.listgroupmoderation').editorOptions.disabled=dis;
+									// $scope.formInstance.updateData('buyer',  "");
+									
+								}
+							},
+							validationRules: [{
+								type: "required",
+								message: "Action is required"
+							}]
+						},
                         ]
                     },
                     {
