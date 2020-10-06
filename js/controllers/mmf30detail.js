@@ -390,67 +390,8 @@
                                 message: "Please select your department head"
                             }]
                         },
-                        {label: {
-                            text: "Buyer"
-                        },
-                        dataField:"buyer",
-                        editorType: "dxDropDownBox",
-                        visible: (($scope.data.apprstatuscode==2)) ?true:false,
-                        disabled: (($scope.mode=='edit')|| ($scope.mode=='add') || ($scope.mode=='approve')) ?false:true,
-                        editorOptions: { 
-                            dataSource:$scope.buyerDataSource,  
-                            valueExpr: 'employee_id',
-                            displayExpr: 'fullname',
-                            onValueChanged: function(e){
-								console.log(e);
-								criteria = {status:'addbuyer',employee_id:e.value,mmf30_id:$scope.Requestid};
-								CrudService.FindData('mmf30',criteria).then(function (response){
-                                    $scope.grid2Component.refresh();
-                                    console.log(e.value + ' & ' + $scope.Requestid);
-                                    console.log(response);
-								})
-							},
-                            searchEnabled: true,
-                            contentTemplate: function(e){
-                                var $dataGrid = $("<div>").dxDataGrid({
-                                    dataSource: e.component.option("dataSource"),
-                                    columns: [{
-                                        dataField:"fullname",width:150
-                                    },
-                                    // {
-                                    //     dataField:"company",width:100
-                                    // }, 
-                                    {
-                                        dataField:"department",width:100
-                                    }],
-                                    height: 265,
-                                    selection: { mode: "single" },
-                                    selectedRowKeys: [e.component.option("value")],
-                                    focusedRowEnabled: true,
-                                    focusedRowKey: e.component.option("value"),
-                                    searchPanel: {
-                                        visible: true,
-                                        width: 265,
-                                        placeholder: "Search..."
-                                    },
-                                    onSelectionChanged: function(selectedItems){
-                                        var keys = selectedItems.selectedRowKeys,
-                                            hasSelection = keys.length;
-                                            console.log(keys);
-                                        if(hasSelection){
-                                            e.component.option("value", keys[0]); 
-                                            e.component.close();
-                                        }
-                                    }
-                                });
-                                return $dataGrid;
-                            }
-                        },
-                        validationRules: [{
-                            type: "required",
-                            message: "Please select your department head"
-                        }]
-                    },{
+                   
+					{
                         dataField:'reason',
                         label: {
                             text:"Reason for requisition/purchase",
@@ -523,7 +464,7 @@
                         itemType: "group",
                         caption: "",
                         name:" group4",
-                        // colSpan:2,
+                        colSpan:2,
                         colCount : 2,
                         items: [
                             {label:{text:"Comments"},dataField:'proccomments',colSpan:2,editorType:"dxHtmlEditor",visible: (($scope.data.apprstatuscode==3)) ?true:false,editorOptions: {height: 90,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}},
@@ -560,7 +501,7 @@
 								value: "",
 								onValueChanged: function(e){
 									var vis =(e.value==2 && $scope.data.apprstatuscode==2)?true:false;
-									$scope.formInstance.itemOption('group4.group1.buyer', 'visible', vis);
+									$scope.formInstance.itemOption('group4.group9.buyer', 'visible', vis);
 
 									if(e.value!==2 || $scope.data.apprstatuscode==2){
 										// $scope.formInstance.itemOption('buyer').editorOptions.disabled=dis;
@@ -578,7 +519,77 @@
 							}]
 						},
                         ]
-                    },
+					},
+					{	
+						itemType: "group",
+						caption: "",
+						name:"group9",
+						colSpan:2,
+						colCount : 2,
+						items: [
+							{label: {
+								text: "Buyer"
+							},
+							dataField:"buyer",
+							editorType: "dxDropDownBox",
+							visible: (($scope.data.apprstatuscode==2) && $scope.data.approvalstatus==2) ?true:false,
+							disabled: (($scope.mode=='edit')|| ($scope.mode=='add') || ($scope.mode=='approve')) ?false:true,
+							editorOptions: { 
+								dataSource:$scope.buyerDataSource,  
+								valueExpr: 'employee_id',
+								displayExpr: 'fullname',
+								onValueChanged: function(e){
+									console.log(e);
+									criteria = {status:'addbuyer',employee_id:e.value,mmf30_id:$scope.Requestid};
+									CrudService.FindData('mmf30',criteria).then(function (response){
+										$scope.grid2Component.refresh();
+										console.log(e.value + ' & ' + $scope.Requestid);
+										console.log(response);
+									})
+								},
+								searchEnabled: true,
+								contentTemplate: function(e){
+									var $dataGrid = $("<div>").dxDataGrid({
+										dataSource: e.component.option("dataSource"),
+										columns: [{
+											dataField:"fullname",width:150
+										},
+										// {
+										//     dataField:"company",width:100
+										// }, 
+										{
+											dataField:"department",width:100
+										}],
+										height: 265,
+										selection: { mode: "single" },
+										selectedRowKeys: [e.component.option("value")],
+										focusedRowEnabled: true,
+										focusedRowKey: e.component.option("value"),
+										searchPanel: {
+											visible: true,
+											width: 265,
+											placeholder: "Search..."
+										},
+										onSelectionChanged: function(selectedItems){
+											var keys = selectedItems.selectedRowKeys,
+												hasSelection = keys.length;
+												console.log(keys);
+											if(hasSelection){
+												e.component.option("value", keys[0]); 
+												e.component.close();
+											}
+										}
+									});
+									return $dataGrid;
+								}
+							},
+							// validationRules: [{
+							// 	type: "required",
+							// 	message: "Please select your department head"
+							// }]
+						},
+						]
+					},
                     {
 						itemType: "group",
 						caption: "Action",
@@ -1379,7 +1390,7 @@
 					   offset: '0 0' 
 				   }
 				});
-			}else if($scope.formInstance.option("formData").approvalstatus==3){
+			}else if($scope.formInstance.option("formData").approvalstatus==3 || $scope.formInstance.option("formData").approvalstatus==1){
 				var data = $scope.formInstance.option("formData");
 				var date = new Date();
                 var d= $filter("date")(date, "yyyy-MM-dd HH:mm");
