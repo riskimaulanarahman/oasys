@@ -1312,7 +1312,7 @@ Class SpklModule extends Application{
 								$isexceed++;
 							}
 						}
-						$isMoreThan2hours = 0;
+						$isMoreThan2hours = 1;
 						foreach($AllDetail as $data){
 							if($data->estimateovertimehours>2){
 								$isMoreThan2hours++;
@@ -1371,7 +1371,7 @@ Class SpklModule extends Application{
 							if(count($Spklapproval)==0){
 								$joins   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
 								$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username),"include"=>array("location","company","department")));
-								if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="022")){
+								if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="022") || ($Employee->company->companycode=="KPS")){
 									if(($Employee->company->sapcode!="NKF") && ($Employee->company->sapcode!="RND")  && ($Employee->company->companycode!="BCL")  && ($Employee->company->companycode!="LDU")){	
 										$ApproverBUHead = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='SPKL' and tbl_approver.isactive='1' and approvaltype_id=22 and tbl_employee.companycode='KPSI' and not(tbl_employee.id=?)",$Employee->id)));
 										if(count($ApproverBUHead)>0){
@@ -1381,6 +1381,16 @@ Class SpklModule extends Application{
 											$Spklapproval->save();
 											$logger = new Datalogger("Spklapproval","add","Add BUHead Approval for SPKL > 2 hours",json_encode($Spklapproval->to_array()));
 											$logger->SaveData();
+										}else{
+											$ApproverBUHead = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='SPKL' and tbl_approver.isactive='1' and approvaltype_id=22 and tbl_employee.companycode='KPSI' and not(tbl_employee.id=?)",$Employee->id)));
+											if(count($ApproverBUHead)>0){
+												$Spklapproval = new Spklapproval();
+												$Spklapproval->spkl_id = $Spkl->id;
+												$Spklapproval->approver_id = $ApproverBUHead->id;
+												$Spklapproval->save();
+												$logger = new Datalogger("Spklapproval","add","Add BUHead Approval for SPKL > 2 hours",json_encode($Spklapproval->to_array()));
+												$logger->SaveData();
+											}
 										}
 									}else{
 										$ApproverBUHead = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='SPKL' and tbl_approver.isactive='1' and approvaltype_id=22 and tbl_employee.company_id=? and not tbl_employee.companycode='KPSI'  and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
@@ -1391,6 +1401,16 @@ Class SpklModule extends Application{
 											$Spklapproval->save();
 											$logger = new Datalogger("Spklapproval","add","Add BUHead Approval for SPKL > 2 hours",json_encode($Spklapproval->to_array()));
 											$logger->SaveData();
+										}else{
+											$ApproverBUHead = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='SPKL' and tbl_approver.isactive='1' and approvaltype_id=22 and tbl_employee.companycode='KPSI' and not(tbl_employee.id=?)",$Employee->id)));
+											if(count($ApproverBUHead)>0){
+												$Spklapproval = new Spklapproval();
+												$Spklapproval->spkl_id = $Spkl->id;
+												$Spklapproval->approver_id = $ApproverBUHead->id;
+												$Spklapproval->save();
+												$logger = new Datalogger("Spklapproval","add","Add BUHead Approval for SPKL > 2 hours",json_encode($Spklapproval->to_array()));
+												$logger->SaveData();
+											}
 										}
 									}
 
