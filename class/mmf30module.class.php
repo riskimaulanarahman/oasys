@@ -1473,7 +1473,7 @@ Class Mmf30module extends Application{
 		  <tr>
 			<td class="tg-left tg-top tg-right tg-value red" colspan="5"><b>Requested by:</b></td>
 			<td class="tg-left tg-top tg-right tg-value red" colspan="4"><b>Reason for requisition/purchase:</b></td>
-			<td class="tg-left tg-top tg-right tg-value blue" colspan="3"><b>ost Controller Endorsement:*</b></td>
+			<td class="tg-left tg-top tg-right tg-value blue" colspan="3"><b>Cost Controller Endorsement:*</b></td>
 		  </tr>
 		  <tr>
 			<td class="tg-left tg-bottom red" colspan="2" rowspan="2" valign=top>(End-User)</td>

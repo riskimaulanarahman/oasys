@@ -654,28 +654,8 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="" ng-click="myITSHAREFOLDER()">
-                                                    <i class="metismenu-icon"></i>Shared Folder
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="" ng-click="myITINETACCESS()">
-                                                    <i class="metismenu-icon"></i>Internet Access
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="" ng-click="myITRDWEB()">
-                                                    <i class="metismenu-icon"></i>RD Web Access
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="" ng-click="myITMAILSIZE()">
-                                                    <i class="metismenu-icon"></i>Increase Mailbox Size
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="" ng-click="myITSTORAGETF()">
-                                                    <i class="metismenu-icon"></i>Transfer To Ext.Storage
+                                                <a href="" ng-click="myITIMAIL()">
+                                                    <i class="metismenu-icon"></i>Internet Mail
                                                 </a>
                                             </li>
                                             
@@ -694,27 +674,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                             </li>
                                             <li>
                                                 <a href="" ng-click="#">
-                                                    <i class="metismenu-icon"></i>Shared Folder
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="" ng-click="#">
-                                                    <i class="metismenu-icon"></i>Internet Access
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="" ng-click="#">
-                                                    <i class="metismenu-icon"></i>RD Web Access
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="" ng-click="#">
-                                                    <i class="metismenu-icon"></i>Increase Mailbox Size
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="" ng-click="#">
-                                                    <i class="metismenu-icon"></i>Transfer To Ext.Storage
+                                                    <i class="metismenu-icon"></i>Internet Mail
                                                 </a>
                                             </li>
                                             
