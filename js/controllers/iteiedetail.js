@@ -463,7 +463,7 @@
                                         $scope.formInstance.getEditor('validfrom').option('disabled',dis);
                                         $scope.formInstance.getEditor('validto').option('disabled',dis);
                                         if(dis) {
-                                            $scope.formInstance.updateData('validfrom',  "9999-12-31");
+                                            $scope.formInstance.updateData('validfrom',  $scope.data.createddate);
                                             $scope.formInstance.updateData('validto',  "9999-12-31");
                                         } else {
                                             $scope.formInstance.updateData('validfrom',  "");

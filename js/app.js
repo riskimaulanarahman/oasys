@@ -130,11 +130,14 @@ app.config(function ($routeProvider, $controllerProvider) {
 	.when('/iteie', route.resolve("iteie"))
 	.when('/iteiedetail', route.resolve("iteiedetail"))
 	.when('/iteieapproval', route.resolve("iteieapproval"))
-	.when('/itsharefolder', route.resolve("itsharefolder"))
-	.when('/itinetaccess', route.resolve("itinetaccess"))
-	.when('/itrdweb', route.resolve("itrdweb"))
-	.when('/itmailsize', route.resolve("itmailsize"))
-	.when('/itstoragetf', route.resolve("itstoragetf"))
+	.when('/itimail', route.resolve("itimail"))
+	.when('/itimaildetail', route.resolve("itimaildetail"))
+	.when('/itimailapproval', route.resolve("itimailapproval"))
+	// .when('/itsharefolder', route.resolve("itsharefolder"))
+	// .when('/itinetaccess', route.resolve("itinetaccess"))
+	// .when('/itrdweb', route.resolve("itrdweb"))
+	// .when('/itmailsize', route.resolve("itmailsize"))
+	// .when('/itstoragetf', route.resolve("itstoragetf"))
 	.otherwise({
 		redirectTo: '/'
 	});

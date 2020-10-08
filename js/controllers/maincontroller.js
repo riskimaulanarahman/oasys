@@ -121,6 +121,9 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.myITEIE= function(){
 		$location.path( "/iteie" );
 	}
+	$scope.myITIMAIL= function(){
+		$location.path( "/itimail" );
+	}
 	$scope.myITSHAREFOLDER= function(){
 		$location.path( "/itsharefolder" );
 	}
@@ -205,6 +208,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.mmfApproval= function(){ loadModule(true,"mmfapproval",true);$rootScope.$broadcast("initMMF", "");} 
 	$scope.mmf30Approval= function(){ loadModule(true,"mmf30approval",true);$rootScope.$broadcast("initMMF30", "");} 
 	$scope.iteieApproval= function(){ loadModule(true,"iteieapproval",true);$rootScope.$broadcast("initITEIE", "");} 
+	$scope.itimailApproval= function(){ loadModule(true,"itimailapproval",true);$rootScope.$broadcast("initITIMAIL", "");} 
 	$scope.SPKLApproval= function(){ loadModule(true,"spklapproval",true);$rootScope.$broadcast("initSPKL", "");} 
 	$scope.SPKLTMSApproval = function(){ loadModule(true,"spkltmsapproval",true);$rootScope.$broadcast("initSPKLTMS", "");} 
 	function loadModule(access,template,filter){
@@ -378,6 +382,29 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 					$scope.Requestid = response.id;
 					$scope.Employeeid = response.employee_id;
 					$location.path( "/iteiedetail" );
+				}
+			});
+		}else{
+			$scope.mode = mode;
+			$scope.Requestid = data.id;
+			$scope.Employeeid = data.employee_id;
+			$location.path( "/iteiedetail" );
+		}
+	}
+	$scope.loadITIMAIL= function(data,mode,filter){
+		$scope.Filter=filter;
+		if (mode=='add'){
+			CrudService.Create('itimail',data).then(function (response) {
+				if(response.status=="error"){
+					DevExpress.ui.dialog.alert(response.message,"Error");
+				}else if(response.status=="autherror"){
+					DevExpress.ui.notify(response.message,"error");
+					$scope.logout();
+				}else{
+					$scope.mode = mode;
+					$scope.Requestid = response.id;
+					$scope.Employeeid = response.employee_id;
+					$location.path( "/itimaildetail" );
 				}
 			});
 		}else{
