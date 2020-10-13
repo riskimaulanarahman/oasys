@@ -74,7 +74,7 @@ app.register.controller('spklreportCtrl', ['$rootScope','$scope', '$http', '$int
 								if ((options.data.tmsreqstatus==0)|| (options.data.tmsreqstatus=='0')){
 									$scope.loadSPKL(options.data,'report',false);
 								}else{
-									$scope.loadSPKLTKMS(options.data,'report',false);
+									$scope.loadSPKLTMS(options.data,'report',false);
 								}
                             })
                             .appendTo(container);
