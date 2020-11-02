@@ -1127,10 +1127,17 @@ Class DayoffModule extends Application{
 									}else{
 										$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
 										if(count($Approver)>0){
-											$Dayoffapproval = new Dayoffapproval();
-											$Dayoffapproval->dayoff_id = $Dayoff->id;
-											$Dayoffapproval->approver_id = $Approver->id;
-											$Dayoffapproval->save();
+											$Dayoffapproval = Dayoffapproval::find('all',array('joins'=>$joins,'conditions' => array("dayoff_id=? and tbl_approver.employee_id=?",$id,$Approver->employee_id)));	
+											foreach ($Dayoffapproval as &$result) {
+												$result		= $result->to_array();
+												$result['no']=1;
+											}			
+											if(count($Dayoffapproval)==0){ 
+												$Dayoffapproval = new Dayoffapproval();
+												$Dayoffapproval->dayoff_id = $Dayoff->id;
+												$Dayoffapproval->approver_id = $Approver->id;
+												$Dayoffapproval->save();
+											}
 										}
 									}
 								}	
@@ -1144,10 +1151,17 @@ Class DayoffModule extends Application{
 								}else{
 									$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
 									if(count($Approver)>0){
-										$Dayoffapproval = new Dayoffapproval();
-										$Dayoffapproval->dayoff_id = $Dayoff->id;
-										$Dayoffapproval->approver_id = $Approver->id;
-										$Dayoffapproval->save();
+										$Dayoffapproval = Dayoffapproval::find('all',array('joins'=>$joins,'conditions' => array("dayoff_id=? and tbl_approver.employee_id=?",$id,$Approver->employee_id)));	
+										foreach ($Dayoffapproval as &$result) {
+											$result		= $result->to_array();
+											$result['no']=1;
+										}			
+										if(count($Dayoffapproval)==0){ 
+											$Dayoffapproval = new Dayoffapproval();
+											$Dayoffapproval->dayoff_id = $Dayoff->id;
+											$Dayoffapproval->approver_id = $Approver->id;
+											$Dayoffapproval->save();
+										}
 									}
 								}
 								$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=4 and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
