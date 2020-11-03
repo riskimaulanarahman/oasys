@@ -158,6 +158,7 @@ Class RfcModule extends Application{
 						";
 		$pdfContent .= '<tr><td></td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.$RfcJ->contractorname.'</td></tr>';
 		$pdfContent .= '<tr><td></td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.$RfcJ->contractorname2.'</td></tr>';
+		$pdfContent .= '<tr><td style="padding:0in 5.4pt 0in 5.4pt;">Remarks</td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.wordwrap($RfcJ->remarks, 60, "<br>").'</td></tr>';
 		
 		$pdfContent .= "</table>";
 		$joinx   = "LEFT JOIN tbl_approver ON (tbl_rfcapproval.approver_id = tbl_approver.id) ";					
