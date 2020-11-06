@@ -1083,6 +1083,7 @@ Class DayoffModule extends Application{
 							$Dayoff = Dayoff::create($data);
 							$data=$Dayoff->to_array();
 							$joinx   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
+							$joins   = "LEFT JOIN tbl_approver ON (tbl_dayoffapproval.approver_id = tbl_approver.id) ";	
 							// $Approverx = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=1 and tbl_employee.company_id=? and tbl_employee.department_id=? and tbl_employee.location_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->department_id,$Employee->location_id,$Employee->id)));
 							// if(count($Approverx)>0){
 								// $Dayoffapproval = new Dayoffapproval();
@@ -1127,7 +1128,7 @@ Class DayoffModule extends Application{
 									}else{
 										$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
 										if(count($Approver)>0){
-											$Dayoffapproval = Dayoffapproval::find('all',array('joins'=>$joinx,'conditions' => array("dayoff_id=? and tbl_approver.employee_id=?",$Dayoff->id,$Approver->employee_id)));	
+											$Dayoffapproval = Dayoffapproval::find('all',array('joins'=>$joins,'conditions' => array("dayoff_id=? and tbl_approver.employee_id=?",$Dayoff->id,$Approver->employee_id)));	
 											foreach ($Dayoffapproval as &$result) {
 												$result		= $result->to_array();
 												$result['no']=1;
@@ -1151,7 +1152,7 @@ Class DayoffModule extends Application{
 								}else{
 									$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
 									if(count($Approver)>0){
-										$Dayoffapproval = Dayoffapproval::find('all',array('joins'=>$joinx,'conditions' => array("dayoff_id=? and tbl_approver.employee_id=?",$Dayoff->id,$Approver->employee_id)));	
+										$Dayoffapproval = Dayoffapproval::find('all',array('joins'=>$joins,'conditions' => array("dayoff_id=? and tbl_approver.employee_id=?",$Dayoff->id,$Approver->employee_id)));	
 										foreach ($Dayoffapproval as &$result) {
 											$result		= $result->to_array();
 											$result['no']=1;
