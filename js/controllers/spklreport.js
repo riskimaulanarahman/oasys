@@ -71,7 +71,11 @@ app.register.controller('spklreportCtrl', ['$rootScope','$scope', '$http', '$int
                         $('<div style="padding:2px 15px 2px 15px;"/>').addClass('dx-icon-detailslayout  btn-pill btn-shadow btn btn-primary')
                             .text('')
                             .on('dxclick', function () {
-								$scope.loadSPKLTMS(options.data,'report',false);
+								if ((options.data.tmsreqstatus==0)|| (options.data.tmsreqstatus=='0')){
+									$scope.loadSPKL(options.data,'report',false);
+								}else{
+									$scope.loadSPKLTMS(options.data,'report',false);
+								}
                             })
                             .appendTo(container);
 							if($rootScope.isAdmin && (options.data.tmsreqstatus=='3')){
