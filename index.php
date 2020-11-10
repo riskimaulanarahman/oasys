@@ -639,7 +639,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 								</ul>
                             </li>
                             
-                            <!-- <li ng-class="">
+                            <li ng-class="">
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>IT Approval<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul ng-class="">
                                     <li class="">
@@ -673,7 +673,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="" ng-click="#">
+                                                <a href="" ng-click="itimailApproval()">
                                                     <i class="metismenu-icon"></i>Internet Mail
                                                 </a>
                                             </li>
@@ -681,7 +681,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                         </ul>
                                     </li>
 								</ul>
-							</li> -->
+							</li>
 							<li ng-class="{'mm-active': (isActive('/rfc') || isActive('/rfcapproval'))}" >
 								<a href="#"  ><i class='metismenu-icon fas fa-marker'></i>RFC<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul ng-class="{'mm-show': (isActive('/rfc') || isActive('/rfcapproval'))}">

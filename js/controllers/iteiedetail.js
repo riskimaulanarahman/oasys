@@ -338,6 +338,8 @@
                                     text:"Floor",
                                 },
                                 name:'floor',
+                                dataType:"number",
+                                editorType:"dxNumberBox",
                                 disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
                             },
                             {
@@ -507,7 +509,7 @@
                     },
                     {
 						itemType: "group",
-                        caption: "Email Domain (select one, if applicable)**:",
+                        caption: "",
                         name:"group5",
                         colSpan:2,
 						colCount:3,

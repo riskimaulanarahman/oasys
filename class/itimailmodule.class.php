@@ -145,19 +145,26 @@ Class Itimailmodule extends Application{
 				switch ($this->post['criteria']){
 					case 'byid':
 						$id = $this->post['id'];
-						// $join = "LEFT JOIN vwiteiereport ON tbl_iteie.id = vwiteiereport.id";
-						// $select = "tbl_iteie.*,vwiteiereport.apprstatuscode";
-						$Itimail = Itimail::find($id, array('include' => array('employee'=>array('company','department','designation'))));
-						// $Itimail = Itimail::find($id, array('joins'=>$join,'select'=>$select,'include' => array('employee'=>array('company','department','designation'))));
+						$join = "LEFT JOIN vwitimailreport ON tbl_itimail.id = vwitimailreport.id";
+						$select = "tbl_itimail.*,vwitimailreport.apprstatuscode";
+						// $Itimail = Itimail::find($id, array('include' => array('employee'=>array('company','department','designation','location'))));
+						$Itimail = Itimail::find($id, array('joins'=>$join,'select'=>$select,'include' => array('employee'=>array('company','department','designation'))));
 						if ($Itimail){
 							$fullname = $Itimail->employee->fullname;
+							$bgbu = $Itimail->employee->companycode;
+							$location = $Itimail->employee->location->location;
+							$designation = $Itimail->employee->designation->designationname;
 							$department = $Itimail->employee->department->departmentname;
 							$data=$Itimail->to_array();
 							$data['fullname']=$fullname;
+							$data['bgbu']=$bgbu;
+							$data['listgroup']=$bgbu;
 							$data['department']=$department;
+							$data['officelocation']=$location;
+							$data['designation']=$designation;
 							echo json_encode($data, JSON_NUMERIC_CHECK);
 						}else{
-							$Itimail = new Iteie();
+							$Itimail = new Itimail();
 							echo json_encode($Itimail);
 						}
 						break;
@@ -167,6 +174,114 @@ Class Itimailmodule extends Application{
 							switch ($query['status']){
 								case 'chemp':
 									break;
+								case 'appcon':
+										$formtype = $query['formtype'];
+										$employee_id = $query['employee_id'];
+										$id= $query['itimail_id'];
+
+										$Itimail = Itimail::find($id);
+
+										$Employee = Employee::find('first', array('conditions' => array("id=?",$employee_id),"include"=>array("location","department","company")));
+
+										print_r($Employee);
+
+										$joins   = "LEFT JOIN tbl_approver ON (tbl_itimailapproval.approver_id = tbl_approver.id) LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id)";
+										$joinx   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";	
+										// if (($formtype=='2') || ($formtype=='3')){
+										$Itimailapproval = Itimailapproval::find('all',array('joins'=>$joins,'conditions' => array("itimail_id=? and tbl_approver.approvaltype_id='30' ",$id)));	
+										foreach ($Itimailapproval as &$result) {
+											$result		= $result->to_array();
+											$result['no']=1;
+
+										}
+										$Itimailapprovalmd = Itimailapproval::find('all',array('joins'=>$joins,'conditions' => array("itimail_id=? and tbl_approver.approvaltype_id='33' ",$id)));	
+										foreach ($Itimailapprovalmd as &$result) {
+											$result		= $result->to_array();
+											$result['no']=1;
+
+										}
+										
+
+										if (($formtype=='1')){
+
+												if(count($Itimailapproval)==0){
+
+													if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="022") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
+														// print_r($Employee);
+														$ApproverCADKF = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id='30' and tbl_employee.location_id='1'")));
+														print_r($ApproverCADKF);
+														if(count($ApproverCADKF)>0){
+																$Itimailapproval = new Itimailapproval();
+																$Itimailapproval->itimail_id = $Itimail->id;
+																$Itimailapproval->approver_id = $ApproverCADKF->id;
+																$Itimailapproval->save();
+																$logger = new Datalogger("Itimailapproval","add","Add Approval",json_encode($Itimailapproval->to_array()));
+																$logger->SaveData();
+														}
+													} else {
+														$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=30 and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
+														if(count($Approver2)>0){
+															$Itimailapproval = new Itimailapproval();
+															$Itimailapproval->itimail_id = $Itimail->id;
+															$Itimailapproval->approver_id = $Approver2->id;
+															$Itimailapproval->save();
+														}
+													}
+
+
+													if(count($Itimailapprovalmd)>0){
+														$dx = Itimailapproval::find('all',array('joins'=>$joins,'conditions' => array("itimail_id=? and tbl_approver.approvaltype_id=33",$id)));	
+														foreach ($dx as $result) {
+															$result->delete();
+															$logger = new Datalogger("Itimailapproval","delete",json_encode($result->to_array()),"delete Approval");
+															$logger->SaveData();
+														}
+													}
+												}
+													
+										} else if(($formtype=='4')) {
+											if(count($Itimailapproval)>0){
+												$dx = Itimailapproval::find('all',array('joins'=>$joins,'conditions' => array("itimail_id=? and tbl_approver.approvaltype_id=30",$id)));	
+												foreach ($dx as $result) {
+													$result->delete();
+													$logger = new Datalogger("Itimailapproval","delete",json_encode($result->to_array()),"delete Approval");
+													$logger->SaveData();
+												}
+											}
+
+											if(count($Itimailapprovalmd)==0){
+												$ApproverCADKF = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id='33'")));
+												if(count($ApproverCADKF)>0){
+														$Itimailapproval = new Itimailapproval();
+														$Itimailapproval->itimail_id = $id;
+														$Itimailapproval->approver_id = $ApproverCADKF->id;
+														$Itimailapproval->save();
+														$logger = new Datalogger("Itimailapproval","add","Add Approval",json_encode($Itimailapproval->to_array()));
+														$logger->SaveData();
+												}
+												
+											}
+										} else {
+											if(count($Itimailapproval)>0){
+												$dx = Itimailapproval::find('all',array('joins'=>$joins,'conditions' => array("itimail_id=? and tbl_approver.approvaltype_id=30",$id)));	
+												foreach ($dx as $result) {
+													$result->delete();
+													$logger = new Datalogger("Itimailapproval","delete",json_encode($result->to_array()),"delete Approval");
+													$logger->SaveData();
+												}
+											}
+
+											if(count($Itimailapprovalmd)>0){
+												$dx = Itimailapproval::find('all',array('joins'=>$joins,'conditions' => array("itimail_id=? and tbl_approver.approvaltype_id=33",$id)));	
+												foreach ($dx as $result) {
+													$result->delete();
+													$logger = new Datalogger("Itimailapproval","delete",json_encode($result->to_array()),"delete Approval");
+													$logger->SaveData();
+												}
+											}
+										}
+										
+								break;
 								case "reschedule":
 									$id = $query['itimail_id'];
 									$Itimail = Itimail::find($id,array('include'=>array('employee'=>array('company','department','designation','grade'))));
@@ -237,39 +352,101 @@ Class Itimailmodule extends Application{
 							$data=$Itimail->to_array();
 							$joinx   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
 
-								$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=30")));
-								if(count($Approver)>0){
-									$Itimailapproval = new Iteieapproval();
-									$Itimailapproval->iteie_id = $Itimail->id;
-									$Itimailapproval->approver_id = $Approver->id;
-									$Itimailapproval->save();
-								}
-								$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31")));
-								if(count($Approver2)>0){
-									$Itimailapproval = new Iteieapproval();
-									$Itimailapproval->iteie_id = $Itimail->id;
-									$Itimailapproval->approver_id = $Approver2->id;
-									$Itimailapproval->save();
-								}
+								// $Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=30")));
+								// if(count($Approver)>0){
+								// 	$Itimailapproval = new Itimailapproval();
+								// 	$Itimailapproval->itimail_id = $Itimail->id;
+								// 	$Itimailapproval->approver_id = $Approver->id;
+								// 	$Itimailapproval->save();
+								// }
+								// $Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31")));
+								// if(count($Approver2)>0){
+								// 	$Itimailapproval = new Itimailapproval();
+								// 	$Itimailapproval->itimail_id = $Itimail->id;
+								// 	$Itimailapproval->approver_id = $Approver2->id;
+								// 	$Itimailapproval->save();
+								// }
 								$Approver3 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=32")));
 								if(count($Approver3)>0){
-									$Itimailapproval = new Iteieapproval();
-									$Itimailapproval->iteie_id = $Itimail->id;
+									$Itimailapproval = new Itimailapproval();
+									$Itimailapproval->itimail_id = $Itimail->id;
 									$Itimailapproval->approver_id = $Approver3->id;
 									$Itimailapproval->save();
 								}
 
-							$Iteihistory = new Iteiehistory();
+								if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="022") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
+									// $Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=30 and tbl_employee.location_id='1'")));
+									// if(count($Approver2)>0){
+									// 	$Itimailapproval = new Itimailapproval();
+									// 	$Itimailapproval->itimail_id = $Itimail->id;
+									// 	$Itimailapproval->approver_id = $Approver2->id;
+									// 	$Itimailapproval->save();
+									// }
+									
+									if(($Employee->department->sapcode!="13000090") && ($Employee->department->sapcode!="13000121") && ($Employee->company->sapcode!="NKF") && ($Employee->company->sapcode!="RND")  && ($Employee->company->companycode!="BCL")  && ($Employee->company->companycode!="LDU")){
+										if(($Employee->level_id!=4) && ($Employee->level_id!=6) ){
+											$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and tbl_employee.companycode='KPSI' and not(tbl_employee.id=?)",$Employee->id)));
+											if(count($Approver)>0){
+												$Itimailapproval = new Itimailapproval();
+												$Itimailapproval->itimail_id = $Itimail->id;
+												$Itimailapproval->approver_id = $Approver->id;
+												$Itimailapproval->save();
+											}
+										}
+									}else{
+										$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and tbl_employee.company_id=? and not tbl_employee.companycode='KPSI'  and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+										if(count($Approver)>0){
+											$Itimailapproval = new Itimailapproval();
+											$Itimailapproval->itimail_id = $Itimail->id;
+											$Itimailapproval->approver_id = $Approver->id;
+											$Itimailapproval->save();
+										}else{
+											$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+											if(count($Approver)>0){
+												$Itimailapproval = new Itimailapproval();
+												$Itimailapproval->itimail_id = $Itimail->id;
+												$Itimailapproval->approver_id = $Approver->id;
+												$Itimailapproval->save();
+											}
+										}
+									}	
+								}else{
+									$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and not tbl_employee.companycode='KPSI' and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+									if(count($Approver)>0){
+										$Itimailapproval = new Itimailapproval();
+										$Itimailapproval->itimail_id = $Itimail->id;
+										$Itimailapproval->approver_id = $Approver->id;
+										$Itimailapproval->save();
+									}else{
+										$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+										if(count($Approver)>0){
+											$Itimailapproval = new Itimailapproval();
+											$Itimailapproval->itimail_id = $Itimail->id;
+											$Itimailapproval->approver_id = $Approver->id;
+											$Itimailapproval->save();
+										}
+									}
+
+									// $Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=30 and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
+									// if(count($Approver2)>0){
+									// 	$Itimailapproval = new Itimailapproval();
+									// 	$Itimailapproval->itimail_id = $Itimail->id;
+									// 	$Itimailapproval->approver_id = $Approver2->id;
+									// 	$Itimailapproval->save();
+									// }
+								}
+
+							$Iteihistory = new Itimailhistory();
 							$Iteihistory->date = date("Y-m-d h:i:s");
 							$Iteihistory->fullname = $Employee->fullname;
 							$Iteihistory->approvaltype = "Originator";
-							$Iteihistory->iteie_id = $Itimail->id;
+							$Iteihistory->itimail_id = $Itimail->id;
 							$Iteihistory->actiontype = 0;
 							$Iteihistory->save();
 							
 						}catch (Exception $e){
 							$err = new Errorlog();
-							$err->errortype = "CreateITEIE";
+							$err->errortype = "CreateITIMAIL";
 							$err->errordate = date("Y-m-d h:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
@@ -277,7 +454,7 @@ Class Itimailmodule extends Application{
 							$err->save();
 							$data = array("status"=>"error","message"=>$e->getMessage());
 						}
-						$logger = new Datalogger("ITEIE","create",null,json_encode($data));
+						$logger = new Datalogger("ITIMAIL","create",null,json_encode($data));
 						$logger->SaveData();
 						echo json_encode($data);									
 						break;
@@ -286,25 +463,25 @@ Class Itimailmodule extends Application{
 							$id = $this->post['id'];
 							$Itimail = Itimail::find($id);
 							if ($Itimail->requeststatus==0){
-								$approval = Iteieapproval::find("all",array('conditions' => array("iteie_id=?",$id)));
+								$approval = Itimailapproval::find("all",array('conditions' => array("itimail_id=?",$id)));
 								foreach ($approval as $delr){
 									$delr->delete();
 								}
-								// $detail = Trschedule::find("all",array('conditions' => array("iteie_id=?",$id)));
+								// $detail = Trschedule::find("all",array('conditions' => array("itimail_id=?",$id)));
 								// foreach ($detail as $delr){
 								// 	$delr->delete();
 								// }
-								// $detail = Trticket::find("all",array('conditions' => array("iteie_id=?",$id)));
+								// $detail = Trticket::find("all",array('conditions' => array("itimail_id=?",$id)));
 								// foreach ($detail as $delr){
 								// 	$delr->delete();
 								// }
-								$hist = Iteiehistory::find("all",array('conditions' => array("iteie_id=?",$id)));
+								$hist = Itimailhistory::find("all",array('conditions' => array("itimail_id=?",$id)));
 								foreach ($hist as $delr){
 									$delr->delete();
 								}
 								$data = $Itimail->to_array();
 								$Itimail->delete();
-								$logger = new Datalogger("ITEIE","delete",json_encode($data),null);
+								$logger = new Datalogger("ITIMAIL","delete",json_encode($data),null);
 								$logger->SaveData();
 								echo json_encode($Itimail);
 							} else {
@@ -345,15 +522,15 @@ Class Itimailmodule extends Application{
 								$Itimail->save();
 								
 								if (isset($data['depthead'])){
-									$joins   = "LEFT JOIN tbl_approver ON (tbl_iteieapproval.approver_id = tbl_approver.id) ";					
-									$dx = Iteieapproval::find('all',array('joins'=>$joins,'conditions' => array("iteie_id=? and tbl_approver.approvaltype_id=29 and not(tbl_approver.employee_id=?)",$id,$depthead)));	
+									$joins   = "LEFT JOIN tbl_approver ON (tbl_itimailapproval.approver_id = tbl_approver.id) ";					
+									$dx = Itimailapproval::find('all',array('joins'=>$joins,'conditions' => array("itimail_id=? and tbl_approver.approvaltype_id=29 and not(tbl_approver.employee_id=?)",$id,$depthead)));	
 									foreach ($dx as $result) {
 										//delete same type dept head approver
 										$result->delete();
-										$logger = new Datalogger("Iteieapproval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
+										$logger = new Datalogger("Itimailapproval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
 									}
-									$joins   = "LEFT JOIN tbl_approver ON (tbl_iteieapproval.approver_id = tbl_approver.id) ";					
-									$Itimailapproval = Iteieapproval::find('all',array('joins'=>$joins,'conditions' => array("iteie_id=? and tbl_approver.employee_id=?",$id,$depthead)));	
+									$joins   = "LEFT JOIN tbl_approver ON (tbl_itimailapproval.approver_id = tbl_approver.id) ";					
+									$Itimailapproval = Itimailapproval::find('all',array('joins'=>$joins,'conditions' => array("itimail_id=? and tbl_approver.employee_id=?",$id,$depthead)));	
 									foreach ($Itimailapproval as &$result) {
 										$result		= $result->to_array();
 										$result['no']=1;
@@ -361,8 +538,8 @@ Class Itimailmodule extends Application{
 									if(count($Itimailapproval)==0){ 
 										$Approver = Approver::find('first',array('conditions'=>array("module='IT' and employee_id=? and approvaltype_id=29",$depthead)));
 										if(count($Approver)>0){
-											$Itimailapproval = new Iteieapproval();
-											$Itimailapproval->iteie_id = $Itimail->id;
+											$Itimailapproval = new Itimailapproval();
+											$Itimailapproval->itimail_id = $Itimail->id;
 											$Itimailapproval->approver_id = $Approver->id;
 											$Itimailapproval->save();
 										}else{
@@ -373,8 +550,8 @@ Class Itimailmodule extends Application{
 											$approver->approvaltype_id = 29;
 											$approver->isfinal = false;
 											$approver->save();
-											$Itimailapproval = new Iteieapproval();
-											$Itimailapproval->iteie_id = $Itimail->id;
+											$Itimailapproval = new Itimailapproval();
+											$Itimailapproval->itimail_id = $Itimail->id;
 											$Itimailapproval->approver_id = $approver->id;
 											$Itimailapproval->save();
 										}
@@ -383,36 +560,32 @@ Class Itimailmodule extends Application{
 								}
 								
 								if($data['requeststatus']==1){
-									$Itimailapproval = Iteieapproval::find('all', array('conditions' => array("iteie_id=?",$id)));					
+									$Itimailapproval = Itimailapproval::find('all', array('conditions' => array("itimail_id=?",$id)));					
 									foreach($Itimailapproval as $data){
 										$data->approvalstatus=0;
 										$data->save();
 									}
-									$joinx   = "LEFT JOIN tbl_approver ON (tbl_iteieapproval.approver_id = tbl_approver.id) ";					
-									$Itimailapproval = Iteieapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and iteie_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+									$joinx   = "LEFT JOIN tbl_approver ON (tbl_itimailapproval.approver_id = tbl_approver.id) ";					
+									$Itimailapproval = Itimailapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and itimail_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 									$username = $Itimailapproval->approver->employee->loginname;
 									$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
 									$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Itimail->employee->loginname)));
 									$email=$usr->email;
 
-									if($Itimail->accesstype == 1) {
-										$accessT = 'Terminal Server (TS) User Account';
-									}else if($Itimail->accesstype == 2) {
-										$accessT = 'Non-TS Account';
-									}else {
-										$accessT = '';
-									}
-
-									if($Itimail->accounttype == 1) {
-										$accountT = 'Permanent';
-									}else if($Itimail->accounttype == 2) {
-										$accountT = 'Temporary';
-									}else {
-										$accountT = '';
+									if($Itimail->formtype == 1) {
+										$title = 'Exchange - Internet Email';
+									}else if($Itimail->formtype == 2) {
+										$title = 'Internet Access';
+									}else if($Itimail->formtype == 3) {
+										$title = 'Increase Mailbox Size';
+									}else if($Itimail->formtype == 4) {
+										$title = 'RD Web Access';
+									}else if($Itimail->formtype == 5) {
+										$title = 'Email Group';
 									}
 
 									$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$adb->fullname.',</span></p>
-										<p class=MsoNormal><span style="color:#1F497D">new Access Directory Request is awaiting for your approval:</span></p>
+										<p class=MsoNormal><span style="color:#1F497D">new '.$title.' Request is awaiting for your approval:</span></p>
 										<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
 										<table border=1 cellspacing=0 cellpadding=3 width=683>
 										<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Itimail->employee->fullname.'</b></p></td></tr>
@@ -422,51 +595,327 @@ Class Itimailmodule extends Application{
 										<tr><td><p class=MsoNormal>Location</p></td><td>:</td><td><p class=MsoNormal><b>'.$Itimail->employee->location->location.'</b></p></td></tr>
 										<tr><td><p class=MsoNormal>Email</p></td><td>:</td><td><p class=MsoNormal><b>'.$email.'</b></p></td></tr>
 										</table>
-										<p class=MsoNormal><b>Access Directory</b></p>
-										<table border=1 cellspacing=0 cellpadding=3 width=683>
-										
-										<tr><th><p class=MsoNormal>Date</small></p></th>
-											<th><p class=MsoNormal>Name</p></th>
-											<th><p class=MsoNormal>Employee ID</p></th>
-											<th><p class=MsoNormal>Designation</p></th>
-											<th><p class=MsoNormal>BG/BU</p></th>
-											<th><p class=MsoNormal>Office/Location</p></th>
-											<th><p class=MsoNormal>Floor</p></th>
-											<th><p class=MsoNormal>Phone(Ext)</p></th>
-											<th><p class=MsoNormal>Department</p></th>
-										</tr>
-										<tr style="height:22.5pt">
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->createddate)).'</p></td>
-											<td><p class=MsoNormal> '.$Itimail->name.'</p></td>
-											<td><p class=MsoNormal> '.$Itimail->employeeid.'</p></td>
-											<td><p class=MsoNormal> '.$Itimail->designation.'</p></td>
-											<td><p class=MsoNormal> '.$Itimail->bgbu.'</p></td>
-											<td><p class=MsoNormal> '.$Itimail->officelocation.'</p></td>
-											<td><p class=MsoNormal> '.$Itimail->floor.'</p></td>
-											<td><p class=MsoNormal> '.$Itimail->phoneext.'</p></td>
-											<td><p class=MsoNormal> '.$Itimail->department.'</p></td>
-										</tr>
-										</table>
-										<table border=1 cellspacing=0 cellpadding=3 width=683>
-										<tr>
-											<th><p class=MsoNormal>Access Type</p></th>
-											<th><p class=MsoNormal>Account Type</p></th>
-											<th><p class=MsoNormal>Valid From</p></th>
-											<th><p class=MsoNormal>Valid To</p></th>
-											<th><p class=MsoNormal>List Group</p></th>
-										</tr>
-										<tr style="height:22.5pt">
-											<td><p class=MsoNormal> '.$accessT.'</p></td>
-											<td><p class=MsoNormal> '.$accountT.'</p></td>
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validfrom)).'</p></td>
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validto)).'</p></td>
-											<td><p class=MsoNormal> '.$Itimail->listgroup.'</p></td>
-										</tr>
-										';
+										<br>
 
-									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+										';
+									
+									if($Itimail->formtype == 1) {
+
+										if($Itimail->accessrequested == 1) {
+											$accessR = 'Exchange (non-Internet) Email';
+										}else if($Itimail->accessrequested == 2) {
+											$accessR = 'Internet Email';
+										}else if($Itimail->accessrequested == 3) {
+											$accessR = 'Change Domain';
+										}else {
+											$accessR = '';
+										}
+
+										if($Itimail->accesstype == 1) {
+											$accessT = 'Terminal Server (TS) User Account';
+										}else if($Itimail->accesstype == 2) {
+											$accessT = 'Non-TS Account';
+										}else {
+											$accessT = '';
+										}
+	
+										if($Itimail->accounttype == 1) {
+											$accountT = 'Permanent';
+										}else if($Itimail->accounttype == 2) {
+											$accountT = 'Temporary';
+										}else {
+											$accountT = '';
+										}
+
+										if($Itimail->emailquota == 1) {
+											$emailQ = '250MB';
+										}else if($Itimail->emailquota == 2) {
+											$emailQ = '500MB';
+										}else if($Itimail->emailquota == 3) {
+											$emailQ = '1000MB';
+										}else if($Itimail->emailquota == 4) {
+											$emailQ = '1500MB';
+										}else if($Itimail->emailquota == 5) {
+											$emailQ = '2000MB';
+										}else {
+											$emailQ = '';
+										}
+
+										if($Itimail->emaildomain == 1) {
+											$emailD = 'itci-hutani.com';
+										}else if($Itimail->emaildomain == 2) {
+											$emailD = 'kalimantan-prima.com';
+										}else if($Itimail->emaildomain == 3) {
+											$emailD = 'balikpapanchip.com';
+										}else if($Itimail->emaildomain == 4) {
+											$emailD = 'lajudinamika.com';
+										}else if($Itimail->emaildomain == 5) {
+											$emailD = 'ptadindo.com';
+										}else if($Itimail->emaildomain == 6) {
+											$emailD = 'D1.LCL';
+										}else {
+											$emailD = '';
+										}
+
+										$listmod = Listmod::find('first',array('conditions'=>array("id=?",$Itimail->listgroupmoderation)));
+
+										$this->mailbody .='	
+											
+											<table border=1 cellspacing=0 cellpadding=3 width=683>
+											<tr>
+												<th><p class=MsoNormal>Access Requested</p></th>
+												<th><p class=MsoNormal>Access Type</p></th>
+												<th><p class=MsoNormal>Account Type</p></th>
+												<th><p class=MsoNormal>Email Quota </p></th>
+												<th><p class=MsoNormal>Email Domain </p></th>
+												<th><p class=MsoNormal>List Group</p></th>
+												<th><p class=MsoNormal>List Group Moderation</p></th>
+												<th><p class=MsoNormal>Valid From</p></th>
+												<th><p class=MsoNormal>Valid To</p></th>
+											</tr>
+											<tr style="height:22.5pt">
+												<td><p class=MsoNormal> '.$accessR.'</p></td>
+												<td><p class=MsoNormal> '.$accessT.'</p></td>
+												<td><p class=MsoNormal> '.$accountT.'</p></td>
+												<td><p class=MsoNormal> '.$emailQ.'</p></td>
+												<td><p class=MsoNormal> '.$emailD.'</p></td>
+												<td><p class=MsoNormal> '.$Itimail->listgroup.'</p></td>
+												<td><p class=MsoNormal> '.$listmod->mod.'</p></td>
+												<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validfrom)).'</p></td>
+												<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validto)).'</p></td>
+											</tr>
+											';
+
+										$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+										
+									} else if($Itimail->formtype == 2) {
+										$this->mailbody .='	
+											
+											<table border=1 cellspacing=0 cellpadding=3 width=683>
+											<tr>
+												<th><p class=MsoNormal>http:// (A)</p></th>
+												<th><p class=MsoNormal>http:// (B)</p></th>
+												<th><p class=MsoNormal>Valid From</p></th>
+												<th><p class=MsoNormal>Valid To</p></th>
+											</tr>
+											<tr style="height:22.5pt">
+												<td><p class=MsoNormal> '.$Itimail->web1.'</p></td>
+												<td><p class=MsoNormal> '.$Itimail->web2.'</p></td>
+												<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validfrom)).'</p></td>
+												<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validto)).'</p></td>
+											</tr>
+											';
+
+										$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+										
+									} else if($Itimail->formtype == 3) {
+										
+										if($Itimail->newmailboxsize == 1) {
+											$newmailbox = '256MB';
+										}else if($Itimail->newmailboxsize == 2) {
+											$newmailbox = '512MB';
+										}else if($Itimail->newmailboxsize == 3) {
+											$newmailbox = '1GB';
+										}else if($Itimail->newmailboxsize == 4) {
+											$newmailbox = '1.5GB';
+										}else if($Itimail->newmailboxsize == 5) {
+											$newmailbox = '2GB';
+										}else if($Itimail->newmailboxsize == 6) {
+											$newmailbox = '3GB';
+										}else if($Itimail->newmailboxsize == 7) {
+											$newmailbox = '4GB';
+										}else if($Itimail->newmailboxsize == 8) {
+											$newmailbox = '5GB';
+										}else if($Itimail->newmailboxsize == 9) {
+											$newmailbox = '6GB';
+										}else if($Itimail->newmailboxsize == 10) {
+											$newmailbox = '7GB';
+										}else if($Itimail->newmailboxsize == 11) {
+											$newmailbox = '8GB';
+										}else if($Itimail->newmailboxsize == 12) {
+											$newmailbox = '9GB';
+										}else if($Itimail->newmailboxsize == 13) {
+											$newmailbox = '10GB';
+										}else {
+											$newmailbox = '';
+										}
+
+										if($Itimail->incomingsize == 1) {
+											$incoming = '5MB';
+										}else if($Itimail->incomingsize == 2) {
+											$incoming = '10MB';
+										}else if($Itimail->incomingsize == 3) {
+											$incoming = '15MB';
+										}else if($Itimail->incomingsize == 4) {
+											$incoming = '20MB';
+										}else if($Itimail->incomingsize == 5) {
+											$incoming = '25MB';
+										}else if($Itimail->incomingsize == 6) {
+											$incoming = '30MB';
+										}else if($Itimail->incomingsize == 7) {
+											$incoming = '35MB';
+										}else if($Itimail->incomingsize == 8) {
+											$incoming = '40MB';
+										}else if($Itimail->incomingsize == 9) {
+											$incoming = '45MB';
+										}else if($Itimail->incomingsize == 10) {
+											$incoming = '50MB';
+										}else if($Itimail->incomingsize == 11) {
+											$incoming = '55MB';
+										}else if($Itimail->incomingsize == 12) {
+											$incoming = '60MB';
+										}else if($Itimail->incomingsize == 13) {
+											$incoming = '65MB';
+										}else if($Itimail->incomingsize == 14) {
+											$incoming = '70MB';
+										}else if($Itimail->incomingsize == 15) {
+											$incoming = '75MB';
+										}else if($Itimail->incomingsize == 16) {
+											$incoming = '80MB';
+										}else if($Itimail->incomingsize == 17) {
+											$incoming = '85MB';
+										}else if($Itimail->incomingsize == 18) {
+											$incoming = '90MB';
+										}else if($Itimail->incomingsize == 19) {
+											$incoming = '95MB';
+										}else if($Itimail->incomingsize == 20) {
+											$incoming = '100MB';
+										}else {
+											$incoming = '';
+										}
+
+										if($Itimail->outgoingsize == 1) {
+											$outgoing = '5MB';
+										}else if($Itimail->outgoingsize == 2) {
+											$outgoing = '10MB';
+										}else if($Itimail->outgoingsize == 3) {
+											$outgoing = '15MB';
+										}else if($Itimail->outgoingsize == 4) {
+											$outgoing = '20MB';
+										}else if($Itimail->outgoingsize == 5) {
+											$outgoing = '25MB';
+										}else if($Itimail->outgoingsize == 6) {
+											$outgoing = '30MB';
+										}else if($Itimail->outgoingsize == 7) {
+											$outgoing = '35MB';
+										}else if($Itimail->outgoingsize == 8) {
+											$outgoing = '40MB';
+										}else if($Itimail->outgoingsize == 9) {
+											$outgoing = '45MB';
+										}else if($Itimail->outgoingsize == 10) {
+											$outgoing = '50MB';
+										}else if($Itimail->outgoingsize == 11) {
+											$outgoing = '55MB';
+										}else if($Itimail->outgoingsize == 12) {
+											$outgoing = '60MB';
+										}else if($Itimail->outgoingsize == 13) {
+											$outgoing = '65MB';
+										}else if($Itimail->outgoingsize == 14) {
+											$outgoing = '70MB';
+										}else if($Itimail->outgoingsize == 15) {
+											$outgoing = '75MB';
+										}else if($Itimail->outgoingsize == 16) {
+											$outgoing = '80MB';
+										}else if($Itimail->outgoingsize == 17) {
+											$outgoing = '85MB';
+										}else if($Itimail->outgoingsize == 18) {
+											$outgoing = '90MB';
+										}else if($Itimail->outgoingsize == 19) {
+											$outgoing = '95MB';
+										}else if($Itimail->outgoingsize == 20) {
+											$outgoing = '100MB';
+										}else {
+											$outgoing = '';
+										}
+
+										$this->mailbody .='	
+											
+											<table border=1 cellspacing=0 cellpadding=3 width=683>
+											<tr>
+												<th><p class=MsoNormal>New Mailbox Size</p></th>
+												<th><p class=MsoNormal>Outgoing Size</p></th>
+												<th><p class=MsoNormal>Incoming Size</p></th>
+												<th><p class=MsoNormal>Valid From</p></th>
+												<th><p class=MsoNormal>Valid To</p></th>
+											</tr>
+											<tr style="height:22.5pt">
+												<td><p class=MsoNormal> '.$newmailbox.'</p></td>
+												<td><p class=MsoNormal> '.$incoming.'</p></td>
+												<td><p class=MsoNormal> '.$outgoing.'</p></td>
+												<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validfrom)).'</p></td>
+												<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validto)).'</p></td>
+											</tr>
+											';
+
+										$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+										
+									} else if($Itimail->formtype == 4) {
+										$this->mailbody .='	
+											
+											<table border=1 cellspacing=0 cellpadding=3 width=683>
+											<tr>
+												<th><p class=MsoNormal>RDP to TS</p></th>
+												<th><p class=MsoNormal>Example of usage</p></th>
+												<th><p class=MsoNormal>Valid From</p></th>
+												<th><p class=MsoNormal>Valid To</p></th>
+											</tr>
+											<tr style="height:22.5pt">
+												<td><p class=MsoNormal> '.$Itimail->typeofaccess.'</p></td>
+												<td><p class=MsoNormal> access email, open & edit attachments/ documents, department shared folders, corporate portals, SAP GUI</p></td>
+												<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validfrom)).'</p></td>
+												<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validto)).'</p></td>
+											</tr>
+											';
+
+										$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+										
+									} else if($Itimail->formtype == 5) {
+
+										$string = $Itimail->membername;
+
+										$expstring = explode(',',$string);
+										// $countstring = count($expstring)+29;
+
+										$getname = [];
+										foreach($expstring as $p => $key) {
+											$dataname = Employee::find($key);
+											array_push($getname,$dataname->loginname);
+										}
+
+										$getemailname = [];
+										foreach($getname as $p => $key) {
+
+											$datamail = Addressbook::find('first',array('select'=> "CONCAT(fullname,' (',email,')' ) as name",'conditions' => array("username=?",$key)));
+
+											array_push($getemailname,$datamail->name);
+
+										}
+
+										$ss = implode(' | ',$getemailname);
+
+										$this->mailbody .='	
+											
+											<table border=1 cellspacing=0 cellpadding=3 width=683>
+											<tr>
+												<th><p class=MsoNormal>Email Group Name</p></th>
+												<th><p class=MsoNormal>Member Name</p></th>
+												<th><p class=MsoNormal>Valid From</p></th>
+												<th><p class=MsoNormal>Valid To</p></th>
+											</tr>
+											<tr style="height:22.5pt">
+												<td><p class=MsoNormal> '.$Itimail->emailgroupname.'</p></td>
+												<td><p class=MsoNormal> '.$ss.'</p></td>
+												<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validfrom)).'</p></td>
+												<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validto)).'</p></td>
+											</tr>
+											';
+
+										$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+										
+									}
+									
 									$this->mail->addAddress($adb->email, $adb->fullname);
-									$this->mail->Subject = "Online Approval System -> new Access Directory Request";
+									$this->mail->Subject = "Online Approval System -> ".$title;
 									$this->mail->msgHTML($this->mailbody);
 									if (!$this->mail->send()) {
 										$err = new Errorlog();
@@ -480,23 +929,23 @@ Class Itimailmodule extends Application{
 									} else {
 										echo "Message sent!";
 									}
-									$Itimailhistory = new Iteiehistory();
+									$Itimailhistory = new Itimailhistory();
 									$Itimailhistory->date = date("Y-m-d h:i:s");
 									$Itimailhistory->fullname = $Employee->fullname;
-									$Itimailhistory->iteie_id = $id;
+									$Itimailhistory->itimail_id = $id;
 									$Itimailhistory->approvaltype = "Originator";
 									$Itimailhistory->actiontype = 2;
 									$Itimailhistory->save();
 								}else{
-									$Itimailhistory = new Iteiehistory();
+									$Itimailhistory = new Itimailhistory();
 									$Itimailhistory->date = date("Y-m-d h:i:s");
 									$Itimailhistory->fullname = $Employee->fullname;
-									$Itimailhistory->iteie_id = $id;
+									$Itimailhistory->itimail_id = $id;
 									$Itimailhistory->approvaltype = "Originator";
 									$Itimailhistory->actiontype = 1;
 									$Itimailhistory->save();
 								}
-								$logger = new Datalogger("ITEIE","update",json_encode($olddata),json_encode($data));
+								$logger = new Datalogger("ITIMAIL","update",json_encode($olddata),json_encode($data));
 								$logger->SaveData();
 							}
 						}catch (Exception $e){
@@ -532,8 +981,8 @@ Class Itimailmodule extends Application{
 					case 'byid':
 						$id = $this->post['id'];
 						if ($id!=""){
-							$join   = "LEFT JOIN tbl_approver ON (tbl_iteieapproval.approver_id = tbl_approver.id) ";
-							$Itimailapproval = Iteieapproval::find('all', array('joins'=>$join,'conditions' => array("iteie_id=?",$id),'include' => array('approver'=>array('approvaltype')),"order"=>"tbl_approver.sequence"));
+							$join   = "LEFT JOIN tbl_approver ON (tbl_itimailapproval.approver_id = tbl_approver.id) ";
+							$Itimailapproval = Itimailapproval::find('all', array('joins'=>$join,'conditions' => array("itimail_id=?",$id),'include' => array('approver'=>array('approvaltype')),"order"=>"tbl_approver.sequence"));
 							foreach ($Itimailapproval as &$result) {
 								$approvaltype = $result->approver->approvaltype_id;
 								$result		= $result->to_array();
@@ -541,7 +990,7 @@ Class Itimailmodule extends Application{
 							}
 							echo json_encode($Itimailapproval, JSON_NUMERIC_CHECK);
 						}else{
-							$Itimailapproval = new Iteieapproval();
+							$Itimailapproval = new Itimailapproval();
 							echo json_encode($Itimailapproval);
 						}
 						break;
@@ -549,15 +998,15 @@ Class Itimailmodule extends Application{
 						$query=$this->post['query'];		
 						if(isset($query['status'])){
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-							$join   = "LEFT JOIN tbl_approver ON (tbl_iteieapproval.approver_id = tbl_approver.id) ";
-							$dx = Iteieapproval::find('first', array('joins'=>$join,'conditions' => array("iteie_id=? and tbl_approver.employee_id = ?",$query['itimail_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
+							$join   = "LEFT JOIN tbl_approver ON (tbl_itimailapproval.approver_id = tbl_approver.id) ";
+							$dx = Itimailapproval::find('first', array('joins'=>$join,'conditions' => array("itimail_id=? and tbl_approver.employee_id = ?",$query['itimail_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
 							$Itimail = Itimail::find($query['itimail_id']);
 							// print_r($dx);
 							if($dx->approver->isfinal==1){
 								$data=array("jml"=>1);
 							}else{
-								$join   = "LEFT JOIN tbl_approver ON (tbl_iteieapproval.approver_id = tbl_approver.id) ";
-								$Itimailapproval = Iteieapproval::find('all', array('joins'=>$join,'conditions' => array("iteie_id=? and ApprovalStatus<=1 and not tbl_approver.employee_id=?",$query['itimail_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
+								$join   = "LEFT JOIN tbl_approver ON (tbl_itimailapproval.approver_id = tbl_approver.id) ";
+								$Itimailapproval = Itimailapproval::find('all', array('joins'=>$join,'conditions' => array("itimail_id=? and ApprovalStatus<=1 and not tbl_approver.employee_id=?",$query['itimail_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
 								foreach ($Itimailapproval as &$result) {
 									$fullname	= $result->approver->employee->fullname;
 									$result		= $result->to_array();
@@ -570,8 +1019,8 @@ Class Itimailmodule extends Application{
 							$emp_id = $Employee->id;
 							$Itimail = Itimail::find('all', array('conditions' => array("RequestStatus =1"),'include' => array('employee')));
 							foreach ($Itimail as $result) {
-								$joinx   = "LEFT JOIN tbl_approver ON (tbl_iteieapproval.approver_id = tbl_approver.id) ";					
-								$Itimailapproval = Iteieapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and iteie_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+								$joinx   = "LEFT JOIN tbl_approver ON (tbl_itimailapproval.approver_id = tbl_approver.id) ";					
+								$Itimailapproval = Itimailapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and itimail_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 								if($Itimailapproval->approver->employee_id==$emp_id){
 									$request[]=$result->id;
 								}
@@ -591,8 +1040,8 @@ Class Itimailmodule extends Application{
 							$Itimail = Itimail::find('all', array('conditions' => array("RequestStatus =1"),'include' => array('employee')));
 							$jml=0;
 							foreach ($Itimail as $result) {
-								$joinx   = "LEFT JOIN tbl_approver ON (tbl_iteieapproval.approver_id = tbl_approver.id) ";					
-								$Itimailapproval = Iteieapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and iteie_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+								$joinx   = "LEFT JOIN tbl_approver ON (tbl_itimailapproval.approver_id = tbl_approver.id) ";					
+								$Itimailapproval = Itimailapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and itimail_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 								if($Itimailapproval->approver->employee_id==$emp_id){
 									$request[]=$result->id;
 								}
@@ -622,16 +1071,16 @@ Class Itimailmodule extends Application{
 					case 'create':
 						$data = $this->post['data'];
 						unset($data['__KEY__']);
-						$Itimailapproval = Iteieapproval::create($data);
-						$logger = new Datalogger("Iteieapproval","create",null,json_encode($data));
+						$Itimailapproval = Itimailapproval::create($data);
+						$logger = new Datalogger("Itimailapproval","create",null,json_encode($data));
 						$logger->SaveData();
 						break;
 					case 'delete':
 						$id = $this->post['id'];
-						$Itimailapproval = Iteieapproval::find($id);
+						$Itimailapproval = Itimailapproval::find($id);
 						$data=$Itimailapproval->to_array();
 						$Itimailapproval->delete();
-						$logger = new Datalogger("Iteieapproval","delete",json_encode($data),null);
+						$logger = new Datalogger("Itimailapproval","delete",json_encode($data),null);
 						$logger->SaveData();
 						echo json_encode($Itimailapproval);
 						break;
@@ -646,15 +1095,15 @@ Class Itimailmodule extends Application{
 						unset($data['approveddoc']);
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 						$Itimail = Itimail::find($doid);
-						$join   = "LEFT JOIN tbl_approver ON (tbl_iteieapproval.approver_id = tbl_approver.id) ";
+						$join   = "LEFT JOIN tbl_approver ON (tbl_itimailapproval.approver_id = tbl_approver.id) ";
 						if (isset($data['mode'])){
-							$Itimailapproval = Iteieapproval::find('first', array('joins'=>$join,'conditions' => array("iteie_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
+							$Itimailapproval = Itimailapproval::find('first', array('joins'=>$join,'conditions' => array("itimail_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
 							unset($data['mode']);
 						}else{
-							$Itimailapproval = Iteieapproval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
+							$Itimailapproval = Itimailapproval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
 						}
 						foreach($data as $key=>$val) {
-							if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks')) {
+							if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks') ) {
 								// if(($key == 'isrepair') || ($key == 'isscrap')) {
 									$value=(($val===0) || ($val==='0') || ($val==='false'))?false:((($val===1) || ($val==='1') || ($val==='true'))?true:$val);
 								// }
@@ -663,14 +1112,25 @@ Class Itimailmodule extends Application{
 						}
 						$Itimail->save();
 
-						// unset($data['materialdispatchno']);
-						// unset($data['isrepair']);
-						// unset($data['isscrap']);
-						// unset($data['estimatecost']);
-						// unset($data['pono']);
-						// unset($data['materialreturneddate']);
-						// unset($data['supplierdodnno']);
-						// unset($data['buyer']);
+						unset($data['accessrequested']);
+						unset($data['accesstype']);
+						unset($data['emailquota']);
+						unset($data['emaildomain']);
+						unset($data['listgroupmoderation']);
+						
+						unset($data['web1']);
+						unset($data['web2']);
+
+						unset($data['newmailboxsize']);
+						unset($data['incomingsize']);
+						unset($data['outgoingsize']);
+
+						unset($data['typeofaccess']);
+
+						unset($data['emailgroupname']);
+						unset($data['membername']);
+
+						unset($data['reason']);
 						
 						
 						$olddata = $Itimailapproval->to_array();
@@ -679,35 +1139,47 @@ Class Itimailmodule extends Application{
 							$Itimailapproval->$key=$val;
 						}
 						$Itimailapproval->save();
-						$logger = new Datalogger("Iteieapproval","update",json_encode($olddata),json_encode($data));
+						$logger = new Datalogger("Itimailapproval","update",json_encode($olddata),json_encode($data));
 						$logger->SaveData();
 						if (isset($mode) && ($mode=='approve')){
 							$Itimail = Itimail::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
-							$joinx   = "LEFT JOIN tbl_approver ON (tbl_iteieapproval.approver_id = tbl_approver.id) ";					
-							$nTrapproval = Iteieapproval::find('first',array('joins'=>$joinx,'conditions' => array("iteie_id=? and ApprovalStatus=0",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+							$joinx   = "LEFT JOIN tbl_approver ON (tbl_itimailapproval.approver_id = tbl_approver.id) ";					
+							$nTrapproval = Itimailapproval::find('first',array('joins'=>$joinx,'conditions' => array("itimail_id=? and ApprovalStatus=0",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 							$username = $nTrapproval->approver->employee->loginname;
 							$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
-							// $Itimailschedule=Trschedule::find('all',array('conditions'=>array("iteie_id=?",$doid),'include'=>array('itimail'=>array('employee'=>array('company','department','designation','grade','location')))));
-							// $Itimailticket=Trticket::find('all',array('conditions'=>array("iteie_id=?",$doid),'include'=>array('itimail'=>array('employee'=>array('company','department','designation','grade','location')))));
+							// $Itimailschedule=Trschedule::find('all',array('conditions'=>array("itimail_id=?",$doid),'include'=>array('itimail'=>array('employee'=>array('company','department','designation','grade','location')))));
+							// $Itimailticket=Trticket::find('all',array('conditions'=>array("itimail_id=?",$doid),'include'=>array('itimail'=>array('employee'=>array('company','department','designation','grade','location')))));
 							$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Itimail->employee->loginname)));
 							$email=$usr->email;
 							$superiorId=$Itimail->depthead;
 							$Superior = Employee::find($superiorId);
 							$supAdb = Addressbook::find('first',array('conditions'=>array("username=?",$Superior->loginname)));
 							$complete = false;
-							$Itimailhistory = new Iteiehistory();
+							$Itimailhistory = new Itimailhistory();
 							$Itimailhistory->date = date("Y-m-d h:i:s");
 							$Itimailhistory->fullname = $Employee->fullname;
 							$Itimailhistory->approvaltype = $Itimailapproval->approver->approvaltype->approvaltype;
 							$Itimailhistory->remarks = $data['remarks'];
-							$Itimailhistory->iteie_id = $doid;
+							$Itimailhistory->itimail_id = $doid;
+
+							if($Itimail->formtype == 1) {
+								$title = 'Exchange - Internet Email';
+							}else if($Itimail->formtype == 2) {
+								$title = 'Internet Access';
+							}else if($Itimail->formtype == 3) {
+								$title = 'Increase Mailbox Size';
+							}else if($Itimail->formtype == 4) {
+								$title = 'RD Web Access';
+							}else if($Itimail->formtype == 5) {
+								$title = 'Email Group';
+							}
 							
 							switch ($data['approvalstatus']){
 								case '1':
 									$Itimail->requeststatus = 2;
 									$emto=$email;$emname=$Itimail->employee->fullname;
 									$this->mail->Subject = "Online Approval System -> Need Rework";
-									$red = 'Your Access Directory require some rework :
+									$red = 'Your '.$title.' require some rework :
 											<br>Remarks from Approver : <font color="red">'.$data['remarks']."</font>";
 									$Itimailhistory->actiontype = 3;
 									break;
@@ -716,13 +1188,13 @@ Class Itimailmodule extends Application{
 										$Itimail->requeststatus = 3;
 										$emto=$email;$emname=$Itimail->employee->fullname;
 										$this->mail->Subject = "Online Approval System -> Approval Completed";
-										$red = '<p>Your Access Directory. request has been approved</p>';
+										$red = '<p>Your '.$title.' request has been approved</p>';
 													// '<p><b><span lang=EN-US style=\'color:#002060\'>Note : Please <u>forward</u> this electronic approval to your respective Human Resource Department.</span></b></p>';
 										//delete unnecessary approver
-										$Itimailapproval = Iteieapproval::find('all', array('joins'=>$join,'conditions' => array("iteie_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
+										$Itimailapproval = Itimailapproval::find('all', array('joins'=>$join,'conditions' => array("itimail_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
 										foreach ($Itimailapproval as $data) {
 											if($data->approvalstatus==0){
-												$logger = new Datalogger("Iteieapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
+												$logger = new Datalogger("Itimailapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
 												$logger->SaveData();
 												$data->delete();
 											}
@@ -732,8 +1204,8 @@ Class Itimailmodule extends Application{
 									else{
 										$Itimail->requeststatus = 1;
 										$emto=$adb->email;$emname=$adb->fullname;
-										$this->mail->Subject = "Online Approval System -> new Access Directory Request";
-										$red = 'new Access Directory Request awaiting for your approval:';
+										$this->mail->Subject = 'Online Approval System -> new '.$title.' Request';
+										$red = 'new '.$title.' Request awaiting for your approval:';
 									}
 									$Itimailhistory->actiontype = 4;							
 									break;
@@ -742,7 +1214,7 @@ Class Itimailmodule extends Application{
 									$emto=$email;$emname=$Itimail->employee->fullname;
 									$Itimailhistory->actiontype = 5;
 									$this->mail->Subject = "Online Approval System -> Request Rejected";
-									$red = 'Your Access Directory Request has been rejected
+									$red = 'Your '.$title.' Request has been rejected
 											<br>Remarks from Approver : <font color="red">'.$data['remarks']."</font>";
 									break;
 								default:
@@ -754,21 +1226,7 @@ Class Itimailmodule extends Application{
 							$this->mail->addAddress($emto, $emname);
 							$ItimailJ = Itimail::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
 
-							if($Itimail->accesstype == 1) {
-								$accessT = 'Terminal Server (TS) User Account';
-							}else if($Itimail->accesstype == 2) {
-								$accessT = 'Non-TS Account';
-							}else {
-								$accessT = '';
-							}
 
-							if($Itimail->accounttype == 1) {
-								$accountT = 'Permanent';
-							}else if($Itimail->accounttype == 2) {
-								$accountT = 'Temporary';
-							}else {
-								$accountT = '';
-							}
 
 							$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$emname.',</span></p>
 								<p class=MsoNormal><span style="color:#1F497D">'.$red.'</span></p>
@@ -780,58 +1238,352 @@ Class Itimailmodule extends Application{
 								<tr><td><p class=MsoNormal>Business Group / Business Unit</p></td><td>:</td><td><p class=MsoNormal><b>'.$Itimail->employee->company->companyname.'</b></p></td></tr>
 								<tr><td><p class=MsoNormal>Location</p></td><td>:</td><td><p class=MsoNormal><b>'.$Itimail->employee->location->location.'</b></p></td></tr>
 								<tr><td><p class=MsoNormal>Email</p></td><td>:</td><td><p class=MsoNormal><b>'.$email.'</b></p></td></tr>
-								</table>
-								<p class=MsoNormal><b>Access Directory</b></p>
-								<table border=1 cellspacing=0 cellpadding=3 width=683>
-								
-								<tr><th><p class=MsoNormal>Date</small></p></th>
-									<th><p class=MsoNormal>Name</p></th>
-									<th><p class=MsoNormal>Employee ID</p></th>
-									<th><p class=MsoNormal>Designation</p></th>
-									<th><p class=MsoNormal>BG/BU</p></th>
-									<th><p class=MsoNormal>Office/Location</p></th>
-									<th><p class=MsoNormal>Floor</p></th>
-									<th><p class=MsoNormal>Phone(Ext)</p></th>
-									<th><p class=MsoNormal>Department</p></th>
-								</tr>
-								<tr style="height:22.5pt">
-									<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->createddate)).'</p></td>
-									<td><p class=MsoNormal> '.$Itimail->name.'</p></td>
-									<td><p class=MsoNormal> '.$Itimail->employeeid.'</p></td>
-									<td><p class=MsoNormal> '.$Itimail->designation.'</p></td>
-									<td><p class=MsoNormal> '.$Itimail->bgbu.'</p></td>
-									<td><p class=MsoNormal> '.$Itimail->officelocation.'</p></td>
-									<td><p class=MsoNormal> '.$Itimail->floor.'</p></td>
-									<td><p class=MsoNormal> '.$Itimail->phoneext.'</p></td>
-									<td><p class=MsoNormal> '.$Itimail->department.'</p></td>
-								</tr>
-								</table>
-								<table border=1 cellspacing=0 cellpadding=3 width=683>
-								<tr>
-									<th><p class=MsoNormal>Access Type</p></th>
-									<th><p class=MsoNormal>Account Type</p></th>
-									<th><p class=MsoNormal>Valid From</p></th>
-									<th><p class=MsoNormal>Valid To</p></th>
-									<th><p class=MsoNormal>List Group</p></th>
-								</tr>
-								<tr style="height:22.5pt">
-									<td><p class=MsoNormal> '.$accessT.'</p></td>
-									<td><p class=MsoNormal> '.$accountT.'</p></td>
-									<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validfrom)).'</p></td>
-									<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validto)).'</p></td>
-									<td><p class=MsoNormal> '.$Itimail->listgroup.'</p></td>
-								</tr>
-								';
-							$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
-							$this->mail->msgHTML($this->mailbody);
+								</table>';
+
+								if($Itimail->formtype == 1) {
+
+									if($Itimail->accessrequested == 1) {
+										$accessR = 'Exchange (non-Internet) Email';
+									}else if($Itimail->accessrequested == 2) {
+										$accessR = 'Internet Email';
+									}else if($Itimail->accessrequested == 3) {
+										$accessR = 'Change Domain';
+									}else {
+										$accessR = '';
+									}
+
+									if($Itimail->accesstype == 1) {
+										$accessT = 'Terminal Server (TS) User Account';
+									}else if($Itimail->accesstype == 2) {
+										$accessT = 'Non-TS Account';
+									}else {
+										$accessT = '';
+									}
+
+									if($Itimail->accounttype == 1) {
+										$accountT = 'Permanent';
+									}else if($Itimail->accounttype == 2) {
+										$accountT = 'Temporary';
+									}else {
+										$accountT = '';
+									}
+
+									if($Itimail->emailquota == 1) {
+										$emailQ = '250MB';
+									}else if($Itimail->emailquota == 2) {
+										$emailQ = '500MB';
+									}else if($Itimail->emailquota == 3) {
+										$emailQ = '1000MB';
+									}else if($Itimail->emailquota == 4) {
+										$emailQ = '1500MB';
+									}else if($Itimail->emailquota == 5) {
+										$emailQ = '2000MB';
+									}else {
+										$emailQ = '';
+									}
+
+									if($Itimail->emaildomain == 1) {
+										$emailD = 'itci-hutani.com';
+									}else if($Itimail->emaildomain == 2) {
+										$emailD = 'kalimantan-prima.com';
+									}else if($Itimail->emaildomain == 3) {
+										$emailD = 'balikpapanchip.com';
+									}else if($Itimail->emaildomain == 4) {
+										$emailD = 'lajudinamika.com';
+									}else if($Itimail->emaildomain == 5) {
+										$emailD = 'ptadindo.com';
+									}else if($Itimail->emaildomain == 6) {
+										$emailD = 'D1.LCL';
+									}else {
+										$emailD = '';
+									}
+
+									$listmod = Listmod::find('first',array('conditions'=>array("id=?",$Itimail->listgroupmoderation)));
+
+									$this->mailbody .='	
+										
+										<table border=1 cellspacing=0 cellpadding=3 width=683>
+										<tr>
+											<th><p class=MsoNormal>Access Requested</p></th>
+											<th><p class=MsoNormal>Access Type</p></th>
+											<th><p class=MsoNormal>Account Type</p></th>
+											<th><p class=MsoNormal>Email Quota </p></th>
+											<th><p class=MsoNormal>Email Domain </p></th>
+											<th><p class=MsoNormal>List Group</p></th>
+											<th><p class=MsoNormal>List Group Moderation</p></th>
+											<th><p class=MsoNormal>Valid From</p></th>
+											<th><p class=MsoNormal>Valid To</p></th>
+										</tr>
+										<tr style="height:22.5pt">
+											<td><p class=MsoNormal> '.$accessR.'</p></td>
+											<td><p class=MsoNormal> '.$accessT.'</p></td>
+											<td><p class=MsoNormal> '.$accountT.'</p></td>
+											<td><p class=MsoNormal> '.$emailQ.'</p></td>
+											<td><p class=MsoNormal> '.$emailD.'</p></td>
+											<td><p class=MsoNormal> '.$Itimail->listgroup.'</p></td>
+											<td><p class=MsoNormal> '.$listmod->mod.'</p></td>
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validfrom)).'</p></td>
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validto)).'</p></td>
+										</tr>
+										';
+
+									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+									
+								} else if($Itimail->formtype == 2) {
+									$this->mailbody .='	
+										
+										<table border=1 cellspacing=0 cellpadding=3 width=683>
+										<tr>
+											<th><p class=MsoNormal>http:// (A)</p></th>
+											<th><p class=MsoNormal>http:// (B)</p></th>
+											<th><p class=MsoNormal>Valid From</p></th>
+											<th><p class=MsoNormal>Valid To</p></th>
+										</tr>
+										<tr style="height:22.5pt">
+											<td><p class=MsoNormal> '.$Itimail->web1.'</p></td>
+											<td><p class=MsoNormal> '.$Itimail->web2.'</p></td>
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validfrom)).'</p></td>
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validto)).'</p></td>
+										</tr>
+										';
+
+									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+									
+								} else if($Itimail->formtype == 3) {
+
+									if($Itimail->newmailboxsize == 1) {
+										$newmailbox = '256MB';
+									}else if($Itimail->newmailboxsize == 2) {
+										$newmailbox = '512MB';
+									}else if($Itimail->newmailboxsize == 3) {
+										$newmailbox = '1GB';
+									}else if($Itimail->newmailboxsize == 4) {
+										$newmailbox = '1.5GB';
+									}else if($Itimail->newmailboxsize == 5) {
+										$newmailbox = '2GB';
+									}else if($Itimail->newmailboxsize == 6) {
+										$newmailbox = '3GB';
+									}else if($Itimail->newmailboxsize == 7) {
+										$newmailbox = '4GB';
+									}else if($Itimail->newmailboxsize == 8) {
+										$newmailbox = '5GB';
+									}else if($Itimail->newmailboxsize == 9) {
+										$newmailbox = '6GB';
+									}else if($Itimail->newmailboxsize == 10) {
+										$newmailbox = '7GB';
+									}else if($Itimail->newmailboxsize == 11) {
+										$newmailbox = '8GB';
+									}else if($Itimail->newmailboxsize == 12) {
+										$newmailbox = '9GB';
+									}else if($Itimail->newmailboxsize == 13) {
+										$newmailbox = '10GB';
+									}else {
+										$newmailbox = '';
+									}
+
+									if($Itimail->incomingsize == 1) {
+										$incoming = '5MB';
+									}else if($Itimail->incomingsize == 2) {
+										$incoming = '10MB';
+									}else if($Itimail->incomingsize == 3) {
+										$incoming = '15MB';
+									}else if($Itimail->incomingsize == 4) {
+										$incoming = '20MB';
+									}else if($Itimail->incomingsize == 5) {
+										$incoming = '25MB';
+									}else if($Itimail->incomingsize == 6) {
+										$incoming = '30MB';
+									}else if($Itimail->incomingsize == 7) {
+										$incoming = '35MB';
+									}else if($Itimail->incomingsize == 8) {
+										$incoming = '40MB';
+									}else if($Itimail->incomingsize == 9) {
+										$incoming = '45MB';
+									}else if($Itimail->incomingsize == 10) {
+										$incoming = '50MB';
+									}else if($Itimail->incomingsize == 11) {
+										$incoming = '55MB';
+									}else if($Itimail->incomingsize == 12) {
+										$incoming = '60MB';
+									}else if($Itimail->incomingsize == 13) {
+										$incoming = '65MB';
+									}else if($Itimail->incomingsize == 14) {
+										$incoming = '70MB';
+									}else if($Itimail->incomingsize == 15) {
+										$incoming = '75MB';
+									}else if($Itimail->incomingsize == 16) {
+										$incoming = '80MB';
+									}else if($Itimail->incomingsize == 17) {
+										$incoming = '85MB';
+									}else if($Itimail->incomingsize == 18) {
+										$incoming = '90MB';
+									}else if($Itimail->incomingsize == 19) {
+										$incoming = '95MB';
+									}else if($Itimail->incomingsize == 20) {
+										$incoming = '100MB';
+									}else {
+										$incoming = '';
+									}
+
+									if($Itimail->outgoingsize == 1) {
+										$outgoing = '5MB';
+									}else if($Itimail->outgoingsize == 2) {
+										$outgoing = '10MB';
+									}else if($Itimail->outgoingsize == 3) {
+										$outgoing = '15MB';
+									}else if($Itimail->outgoingsize == 4) {
+										$outgoing = '20MB';
+									}else if($Itimail->outgoingsize == 5) {
+										$outgoing = '25MB';
+									}else if($Itimail->outgoingsize == 6) {
+										$outgoing = '30MB';
+									}else if($Itimail->outgoingsize == 7) {
+										$outgoing = '35MB';
+									}else if($Itimail->outgoingsize == 8) {
+										$outgoing = '40MB';
+									}else if($Itimail->outgoingsize == 9) {
+										$outgoing = '45MB';
+									}else if($Itimail->outgoingsize == 10) {
+										$outgoing = '50MB';
+									}else if($Itimail->outgoingsize == 11) {
+										$outgoing = '55MB';
+									}else if($Itimail->outgoingsize == 12) {
+										$outgoing = '60MB';
+									}else if($Itimail->outgoingsize == 13) {
+										$outgoing = '65MB';
+									}else if($Itimail->outgoingsize == 14) {
+										$outgoing = '70MB';
+									}else if($Itimail->outgoingsize == 15) {
+										$outgoing = '75MB';
+									}else if($Itimail->outgoingsize == 16) {
+										$outgoing = '80MB';
+									}else if($Itimail->outgoingsize == 17) {
+										$outgoing = '85MB';
+									}else if($Itimail->outgoingsize == 18) {
+										$outgoing = '90MB';
+									}else if($Itimail->outgoingsize == 19) {
+										$outgoing = '95MB';
+									}else if($Itimail->outgoingsize == 20) {
+										$outgoing = '100MB';
+									}else {
+										$outgoing = '';
+									}
+
+									$this->mailbody .='	
+										
+										<table border=1 cellspacing=0 cellpadding=3 width=683>
+										<tr>
+											<th><p class=MsoNormal>New Mailbox Size</p></th>
+											<th><p class=MsoNormal>Outgoing Size</p></th>
+											<th><p class=MsoNormal>Incoming Size</p></th>
+											<th><p class=MsoNormal>Valid From</p></th>
+											<th><p class=MsoNormal>Valid To</p></th>
+										</tr>
+										<tr style="height:22.5pt">
+											<td><p class=MsoNormal> '.$newmailbox.'</p></td>
+											<td><p class=MsoNormal> '.$incoming.'</p></td>
+											<td><p class=MsoNormal> '.$outgoing.'</p></td>
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validfrom)).'</p></td>
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validto)).'</p></td>
+										</tr>
+										';
+
+									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+									
+								} else if($Itimail->formtype == 4) {
+									$this->mailbody .='	
+										
+										<table border=1 cellspacing=0 cellpadding=3 width=683>
+										<tr>
+											<th><p class=MsoNormal>RDP to TS</p></th>
+											<th><p class=MsoNormal>Example of usage</p></th>
+											<th><p class=MsoNormal>Valid From</p></th>
+											<th><p class=MsoNormal>Valid To</p></th>
+										</tr>
+										<tr style="height:22.5pt">
+											<td><p class=MsoNormal> '.$Itimail->typeofaccess.'</p></td>
+											<td><p class=MsoNormal> access email, open & edit attachments/ documents, department shared folders, corporate portals, SAP GUI</p></td>
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validfrom)).'</p></td>
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validto)).'</p></td>
+										</tr>
+										';
+
+									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+									
+								} else if($Itimail->formtype == 5) {
+
+									$string = $Itimail->membername;
+
+									$expstring = explode(',',$string);
+									// $countstring = count($expstring)+29;
+
+									$getname = [];
+									foreach($expstring as $p => $key) {
+										$dataname = Employee::find($key);
+										array_push($getname,$dataname->loginname);
+									}
+
+									$getemailname = [];
+									foreach($getname as $p => $key) {
+
+										$datamail = Addressbook::find('first',array('select'=> "CONCAT(fullname,' (',email,')' ) as name",'conditions' => array("username=?",$key)));
+
+										array_push($getemailname,$datamail->name);
+
+									}
+
+									$ss = implode(' | ',$getemailname);
+
+									$this->mailbody .='	
+										
+										<table border=1 cellspacing=0 cellpadding=3 width=683>
+										<tr>
+											<th><p class=MsoNormal>Email Group Name</p></th>
+											<th><p class=MsoNormal>Member Name</p></th>
+											<th><p class=MsoNormal>Valid From</p></th>
+											<th><p class=MsoNormal>Valid To</p></th>
+										</tr>
+										<tr style="height:22.5pt">
+											<td><p class=MsoNormal> '.$Itimail->emailgroupname.'</p></td>
+											<td><p class=MsoNormal> '.$ss.'</p></td>
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validfrom)).'</p></td>
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validto)).'</p></td>
+										</tr>
+										';
+
+									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+									
+								}
+
+							// $this->mailbody .='
+							// 	<table border=1 cellspacing=0 cellpadding=3 width=683>
+							// 	<tr>
+							// 		<th><p class=MsoNormal>Access Type</p></th>
+							// 		<th><p class=MsoNormal>Account Type</p></th>
+							// 		<th><p class=MsoNormal>Valid From</p></th>
+							// 		<th><p class=MsoNormal>Valid To</p></th>
+							// 		<th><p class=MsoNormal>List Group</p></th>
+							// 	</tr>
+							// 	<tr style="height:22.5pt">
+							// 		<td><p class=MsoNormal> '.$accessT.'</p></td>
+							// 		<td><p class=MsoNormal> '.$accountT.'</p></td>
+							// 		<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validfrom)).'</p></td>
+							// 		<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itimail->validto)).'</p></td>
+							// 		<td><p class=MsoNormal> '.$Itimail->listgroup.'</p></td>
+							// 	</tr>
+							// 	';
+							// $this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+							
+								$this->mail->msgHTML($this->mailbody);
 							if ($complete){
+								$form = $Itimail->formtype;
 								$fileName = $this->generatePDFi($doid);
 								$filePath = SITE_PATH.DS.$fileName;
 								$this->mail->addAttachment($filePath);
 							}
 							if (!$this->mail->send()) {
 								$err = new Errorlog();
-								$err->errortype = "ITEIE Mail";
+								$err->errortype = "ITMAIL Mail";
 								$err->errordate = date("Y-m-d h:i:s");
 								$err->errormessage = $this->mail->ErrorInfo;
 								$err->user = $this->currentUser->username;
@@ -846,7 +1598,7 @@ Class Itimailmodule extends Application{
 						echo json_encode($Spklapproval);
 						break;
 					default:
-						$Itimailapproval = Iteieapproval::all();
+						$Itimailapproval = Itimailapproval::all();
 						foreach ($Itimailapproval as $result) {
 							$result = $result->to_array();
 						}
@@ -858,17 +1610,19 @@ Class Itimailmodule extends Application{
 	}
 	function generatePDFi($id){
 		$Itimail = Itimail::find($id);
+		$form = $Itimail->formtype;
 		$superiorId=$Itimail->depthead;
 		$Superior = Employee::find($superiorId);
 		$supAdb = Addressbook::find('first',array('conditions'=>array("username=?",$Superior->loginname)));
 		$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Itimail->employee->loginname)));
 		$email=$usr->email;
+		$fullname=$usr->fullname;
 
 		$datefrom = date("d/m/Y",strtotime($Itimail->validfrom));
 		$dateto = date("d/m/Y",strtotime($Itimail->validto));
 
-		$joinx   = "LEFT JOIN tbl_approver ON (tbl_iteieapproval.approver_id = tbl_approver.id) ";					
-		$Itimailapproval = Iteieapproval::find('all',array('joins'=>$joinx,'conditions' => array("iteie_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
+		$joinx   = "LEFT JOIN tbl_approver ON (tbl_itimailapproval.approver_id = tbl_approver.id) ";					
+		$Itimailapproval = Itimailapproval::find('all',array('joins'=>$joinx,'conditions' => array("itimail_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
 		
 		//condition
 			foreach ($Itimailapproval as $data){
@@ -888,85 +1642,419 @@ Class Itimailmodule extends Application{
 					$itheadname = $data->approver->employee->fullname;
 					$itheaddate = date("d/m/Y",strtotime($data->approvaldate));
 				}
+				if($data->approver->approvaltype->id==33) {
+					$mdname = $data->approver->employee->fullname;
+					$mddate = date("d/m/Y",strtotime($data->approvaldate));
+				}
 			}
+			
 		//end condition
 
 		try {
 			$excel = new COM("Excel.Application") or die ("ERROR: Unable to instantaniate COM!\r\n");
 			$excel->Visible = false;
-			$file="D:/xampp/htdocs/oasys_gogs/doc/it/ad_template.xlsx";
-			// $file="D:/xampp/htdocs/oasys_gogs/doc/it/ad_template.xlsx";
-			$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
-			$Worksheet = $Workbook->Worksheets(1);
-			$Worksheet->Activate;
-			// $xlShiftDown=-4121;
-			// for ($a=6;$a<15;$a++){
-			// 	$Worksheet->Rows($a+1)->Insert($xlShiftDown);
-			// 	$Worksheet->Range("C".$a)->Value = 'Nama '.($a-5);
-			// 	$Worksheet->Range("D".$a)->Value = 'Alamat '.($a-5);
-			// 	$Worksheet->Range("K".$a)->Value = rand(5,15);
-			// }
-			// $Worksheet->Range("F7")->Value = 'Riski';
-			$Worksheet->Range("F7")->Value = $Itimail->name;
-			$Worksheet->Range("F9")->Value = $Itimail->employeeid;
-			$Worksheet->Range("F11")->Value = $Itimail->designation;
-			$Worksheet->Range("F13")->Value = $Itimail->bgbu;
-			$Worksheet->Range("F15")->Value = $Itimail->officelocation;
-			$Worksheet->Range("Y15")->Value = $Itimail->floor;
-			$Worksheet->Range("F17")->Value = $Itimail->phoneext;
-			$Worksheet->Range("F19")->Value = $Itimail->department;
-			//condition
 
-				if($Itimail->accesstype == 1) {
-					$Worksheet->Range("F26")->Value = 'x';
-				}else if($Itimail->accesstype == 2) {
-					$Worksheet->Range("P26")->Value = 'x';
+			if($form == 1) {
+				$title = 'EXINETMAIL';
+
+				$file="D:/xampp/htdocs/oasys_gogs/doc/it/template_inetmail.xlsx";
+				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
+				$Worksheet = $Workbook->Worksheets(1);
+				$Worksheet->Activate;
+
+				$Worksheet->Range("F7")->Value = $fullname;
+				$Worksheet->Range("F9")->Value = $Itimail->employee_id;
+				$Worksheet->Range("F11")->Value = $Itimail->designation;
+				$Worksheet->Range("F13")->Value = $Itimail->bgbu;
+				$Worksheet->Range("F15")->Value = $Itimail->officelocation;
+				$Worksheet->Range("Y15")->Value = $Itimail->floor;
+				$Worksheet->Range("F17")->Value = $Itimail->phoneext;
+				$Worksheet->Range("F19")->Value = $Itimail->department;
+				//condition
+
+					if($Itimail->accessrequested == 1) {
+						$Worksheet->Range("F21")->Value = 'x';
+					}else if($Itimail->accessrequested == 2) {
+						$Worksheet->Range("N21")->Value = 'x';
+					}else if($Itimail->accessrequested == 3) {
+						$Worksheet->Range("T21")->Value = 'x';
+					}
+
+					if($Itimail->accesstype == 1) {
+						$Worksheet->Range("F23")->Value = 'x';
+					}else if($Itimail->accesstype == 2) {
+						$Worksheet->Range("P23")->Value = 'x';
+					}
+		
+					if($Itimail->accounttype == 1) {
+						$Worksheet->Range("F25")->Value = 'x';
+					}else if($Itimail->accounttype == 2) {
+						$Worksheet->Range("P25")->Value = 'x';
+					}
+
+					if($Itimail->emailquota == 1) {
+						$Worksheet->Range("F29")->Value = 'x';
+					}else if($Itimail->emailquota == 2) {
+						$Worksheet->Range("J29")->Value = 'x';
+					}else if($Itimail->emailquota == 3) {
+						$Worksheet->Range("N29")->Value = 'x';
+					}else if($Itimail->emailquota == 4) {
+						$Worksheet->Range("R29")->Value = 'x';
+					}else if($Itimail->emailquota == 5) {
+						$Worksheet->Range("V29")->Value = 'x';
+					}
+
+					if($Itimail->emaildomain == 1) {
+						$emailD = 'itci-hutani.com';
+					}else if($Itimail->emaildomain == 2) {
+						$emailD = 'kalimantan-prima.com';
+					}else if($Itimail->emaildomain == 3) {
+						$emailD = 'balikpapanchip.com';
+					}else if($Itimail->emaildomain == 4) {
+						$emailD = 'lajudinamika.com';
+					}else if($Itimail->emaildomain == 5) {
+						$emailD = 'ptadindo.com';
+					}else if($Itimail->emaildomain == 6) {
+						$emailD = 'D1.LCL';
+					}else {
+						$emailD = '';
+					}
+
+				$listmod = Listmod::find('first',array('conditions'=>array("id=?",$Itimail->listgroupmoderation)));
+		
+
+				//end condition
+				$Worksheet->Range("F31")->Value = $datefrom;
+				$Worksheet->Range("R31")->Value = $dateto;
+				$Worksheet->Range("B37")->Value = $emailD;
+				$Worksheet->Range("H37")->Value = $Itimail->listgroup;
+				$Worksheet->Range("N37")->Value = $listmod->mod;
+				$Worksheet->Range("F41")->Value = $Itimail->reason;
+				$Worksheet->Range("B52")->Value = $deptheadname;
+				$Worksheet->Range("B53")->Value = $deptheaddate;
+				$Worksheet->Range("I52")->Value = $hrdname;
+				$Worksheet->Range("I53")->Value = $hrddate;
+				$Worksheet->Range("P52")->Value = $buheadname;
+				$Worksheet->Range("P53")->Value = $buheaddate;
+				$Worksheet->Range("W52")->Value = $itheadname;
+				$Worksheet->Range("W53")->Value = $itheaddate;
+
+				$Worksheet->Range("A60")->Value = $fullname;
+				$Worksheet->Range("S60")->Value = date("d/m/Y",strtotime($Itimail->createddate));
+
+		} else if($form == 2) {
+			$title = 'INETACCESS';
+
+			$file="D:/xampp/htdocs/oasys_gogs/doc/it/template_inetaccess.xls";
+				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
+				$Worksheet = $Workbook->Worksheets(1);
+				$Worksheet->Activate;
+
+				$Worksheet->Range("F7")->Value = $fullname;
+				$Worksheet->Range("F9")->Value = $Itimail->employee_id;
+				$Worksheet->Range("F11")->Value = $Itimail->designation;
+				$Worksheet->Range("F13")->Value = $Itimail->bgbu;
+				$Worksheet->Range("F15")->Value = $Itimail->officelocation;
+				$Worksheet->Range("Y15")->Value = $Itimail->floor;
+				$Worksheet->Range("F17")->Value = $Itimail->phoneext;
+				$Worksheet->Range("F19")->Value = $Itimail->department;
+				//condition
+		
+
+				//end condition
+				$Worksheet->Range("F29")->Value = $datefrom;
+				$Worksheet->Range("R29")->Value = $dateto;
+				$Worksheet->Range("F23")->Value = $Itimail->web1;
+				$Worksheet->Range("F25")->Value = $Itimail->web2;
+				$Worksheet->Range("F32")->Value = $Itimail->reason;
+				$Worksheet->Range("C44")->Value = $deptheadname;
+				$Worksheet->Range("C45")->Value = $deptheaddate;
+				$Worksheet->Range("J44")->Value = $hrdname;
+				$Worksheet->Range("J45")->Value = $hrddate;
+				$Worksheet->Range("Q44")->Value = $itheadname;
+				$Worksheet->Range("Q45")->Value = $itheaddate;
+
+				$Worksheet->Range("A52")->Value = $fullname;
+				$Worksheet->Range("S52")->Value = date("d/m/Y",strtotime($Itimail->createddate));
+
+		} else if($form == 3) {
+			$title = 'INCMAILBOX';
+
+			$file="D:/xampp/htdocs/oasys_gogs/doc/it/template_incmailbox.xlsx";
+				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
+				$Worksheet = $Workbook->Worksheets(1);
+				$Worksheet->Activate;
+
+				$Worksheet->Range("G7")->Value = $fullname;
+				$Worksheet->Range("G9")->Value = $Itimail->employee_id;
+				$Worksheet->Range("G13")->Value = $Itimail->designation;
+				$Worksheet->Range("G15")->Value = $Itimail->bgbu;
+				$Worksheet->Range("Z15")->Value = $Itimail->officelocation;
+				$Worksheet->Range("G17")->Value = $Itimail->floor;
+				$Worksheet->Range("G19")->Value = $Itimail->phoneext;
+				$Worksheet->Range("G21")->Value = $Itimail->department;
+				//condition
+
+				if($Itimail->newmailboxsize == 1) {
+					$newmailbox = '256MB';
+				}else if($Itimail->newmailboxsize == 2) {
+					$newmailbox = '512MB';
+				}else if($Itimail->newmailboxsize == 3) {
+					$newmailbox = '1GB';
+				}else if($Itimail->newmailboxsize == 4) {
+					$newmailbox = '1.5GB';
+				}else if($Itimail->newmailboxsize == 5) {
+					$newmailbox = '2GB';
+				}else if($Itimail->newmailboxsize == 6) {
+					$newmailbox = '3GB';
+				}else if($Itimail->newmailboxsize == 7) {
+					$newmailbox = '4GB';
+				}else if($Itimail->newmailboxsize == 8) {
+					$newmailbox = '5GB';
+				}else if($Itimail->newmailboxsize == 9) {
+					$newmailbox = '6GB';
+				}else if($Itimail->newmailboxsize == 10) {
+					$newmailbox = '7GB';
+				}else if($Itimail->newmailboxsize == 11) {
+					$newmailbox = '8GB';
+				}else if($Itimail->newmailboxsize == 12) {
+					$newmailbox = '9GB';
+				}else if($Itimail->newmailboxsize == 13) {
+					$newmailbox = '10GB';
 				}else {
-					$accessT = '';
-				}
-	
-				if($Itimail->accounttype == 1) {
-					$Worksheet->Range("F28")->Value = 'x';
-				}else if($Itimail->accounttype == 2) {
-					$Worksheet->Range("P28")->Value = 'x';
-				}else {
-					$accountT = '';
+					$newmailbox = '';
 				}
 
-				if($Itimail->isvip == 1) {
-					$Worksheet->Range("F24")->Value = 'x';
+				if($Itimail->incomingsize == 1) {
+					$incoming = '5MB';
+				}else if($Itimail->incomingsize == 2) {
+					$incoming = '10MB';
+				}else if($Itimail->incomingsize == 3) {
+					$incoming = '15MB';
+				}else if($Itimail->incomingsize == 4) {
+					$incoming = '20MB';
+				}else if($Itimail->incomingsize == 5) {
+					$incoming = '25MB';
+				}else if($Itimail->incomingsize == 6) {
+					$incoming = '30MB';
+				}else if($Itimail->incomingsize == 7) {
+					$incoming = '35MB';
+				}else if($Itimail->incomingsize == 8) {
+					$incoming = '40MB';
+				}else if($Itimail->incomingsize == 9) {
+					$incoming = '45MB';
+				}else if($Itimail->incomingsize == 10) {
+					$incoming = '50MB';
+				}else if($Itimail->incomingsize == 11) {
+					$incoming = '55MB';
+				}else if($Itimail->incomingsize == 12) {
+					$incoming = '60MB';
+				}else if($Itimail->incomingsize == 13) {
+					$incoming = '65MB';
+				}else if($Itimail->incomingsize == 14) {
+					$incoming = '70MB';
+				}else if($Itimail->incomingsize == 15) {
+					$incoming = '75MB';
+				}else if($Itimail->incomingsize == 16) {
+					$incoming = '80MB';
+				}else if($Itimail->incomingsize == 17) {
+					$incoming = '85MB';
+				}else if($Itimail->incomingsize == 18) {
+					$incoming = '90MB';
+				}else if($Itimail->incomingsize == 19) {
+					$incoming = '95MB';
+				}else if($Itimail->incomingsize == 20) {
+					$incoming = '100MB';
 				}else {
-					$Worksheet->Range("P24")->Value = 'x';
+					$incoming = '';
 				}
-	
 
-			//end condition
-			$Worksheet->Range("F31")->Value = $datefrom;
-			$Worksheet->Range("R31")->Value = $dateto;
-			$Worksheet->Range("K37")->Value = $Itimail->listgroup;
-			$Worksheet->Range("F39")->Value = $Itimail->reason;
-			$Worksheet->Range("B50")->Value = $deptheadname;
-			$Worksheet->Range("B51")->Value = $deptheaddate;
-			$Worksheet->Range("I50")->Value = $hrdname;
-			$Worksheet->Range("I51")->Value = $hrddate;
-			$Worksheet->Range("P50")->Value = $buheadname;
-			$Worksheet->Range("P51")->Value = $buheaddate;
-			$Worksheet->Range("W50")->Value = $itheadname;
-			$Worksheet->Range("W51")->Value = $itheaddate;
+				if($Itimail->outgoingsize == 1) {
+					$outgoing = '5MB';
+				}else if($Itimail->outgoingsize == 2) {
+					$outgoing = '10MB';
+				}else if($Itimail->outgoingsize == 3) {
+					$outgoing = '15MB';
+				}else if($Itimail->outgoingsize == 4) {
+					$outgoing = '20MB';
+				}else if($Itimail->outgoingsize == 5) {
+					$outgoing = '25MB';
+				}else if($Itimail->outgoingsize == 6) {
+					$outgoing = '30MB';
+				}else if($Itimail->outgoingsize == 7) {
+					$outgoing = '35MB';
+				}else if($Itimail->outgoingsize == 8) {
+					$outgoing = '40MB';
+				}else if($Itimail->outgoingsize == 9) {
+					$outgoing = '45MB';
+				}else if($Itimail->outgoingsize == 10) {
+					$outgoing = '50MB';
+				}else if($Itimail->outgoingsize == 11) {
+					$outgoing = '55MB';
+				}else if($Itimail->outgoingsize == 12) {
+					$outgoing = '60MB';
+				}else if($Itimail->outgoingsize == 13) {
+					$outgoing = '65MB';
+				}else if($Itimail->outgoingsize == 14) {
+					$outgoing = '70MB';
+				}else if($Itimail->outgoingsize == 15) {
+					$outgoing = '75MB';
+				}else if($Itimail->outgoingsize == 16) {
+					$outgoing = '80MB';
+				}else if($Itimail->outgoingsize == 17) {
+					$outgoing = '85MB';
+				}else if($Itimail->outgoingsize == 18) {
+					$outgoing = '90MB';
+				}else if($Itimail->outgoingsize == 19) {
+					$outgoing = '95MB';
+				}else if($Itimail->outgoingsize == 20) {
+					$outgoing = '100MB';
+				}else {
+					$outgoing = '';
+				}
+
+				//end condition
+				$Worksheet->Range("G26")->Value = $datefrom;
+				$Worksheet->Range("P26")->Value = $dateto;
+				$Worksheet->Range("G23")->Value = $newmailbox;
+				$Worksheet->Range("P23")->Value = $incoming;
+				$Worksheet->Range("X23")->Value = $outgoing;
+				$Worksheet->Range("G29")->Value = $Itimail->reason;
+				$Worksheet->Range("D43")->Value = $deptheadname;
+				$Worksheet->Range("D44")->Value = $deptheaddate;
+				$Worksheet->Range("M43")->Value = $hrdname;
+				$Worksheet->Range("M44")->Value = $hrddate;
+				$Worksheet->Range("V43")->Value = $itheadname;
+				$Worksheet->Range("V44")->Value = $itheaddate;
+
+				$Worksheet->Range("B51")->Value = $fullname;
+				$Worksheet->Range("T51")->Value = date("d/m/Y",strtotime($Itimail->createddate));
+
+		} else if($form == 4) {
+			$title = 'RDWEB';
+
+			$file="D:/xampp/htdocs/oasys_gogs/doc/it/template_rdweb.xlsx";
+				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
+				$Worksheet = $Workbook->Worksheets(1);
+				$Worksheet->Activate;
+
+				$Worksheet->Range("F7")->Value = $fullname;
+				$Worksheet->Range("F9")->Value = $Itimail->employee_id;
+				$Worksheet->Range("F13")->Value = $Itimail->designation;
+				$Worksheet->Range("F15")->Value = $Itimail->bgbu;
+				$Worksheet->Range("F17")->Value = $Itimail->officelocation;
+				$Worksheet->Range("Y17")->Value = $Itimail->floor;
+				$Worksheet->Range("F19")->Value = $Itimail->phoneext;
+				$Worksheet->Range("F21")->Value = $Itimail->department;
+				//condition
+		
+
+				//end condition
+				$Worksheet->Range("F31")->Value = $datefrom;
+				$Worksheet->Range("P31")->Value = $dateto;
+				$Worksheet->Range("J27")->Value = $Itimail->typeofaccess;
+				$Worksheet->Range("F34")->Value = $Itimail->reason;
+				$Worksheet->Range("C48")->Value = $deptheadname;
+				$Worksheet->Range("C49")->Value = $deptheaddate;
+				$Worksheet->Range("I48")->Value = $hrdname;
+				$Worksheet->Range("I49")->Value = $hrddate;
+				$Worksheet->Range("P48")->Value = $mdname;
+				$Worksheet->Range("P49")->Value = $mddate;
+				$Worksheet->Range("W48")->Value = $itheadname;
+				$Worksheet->Range("W49")->Value = $itheaddate;
+
+				$Worksheet->Range("A58")->Value = $fullname;
+				$Worksheet->Range("S58")->Value = date("d/m/Y",strtotime($Itimail->createddate));
+
+		} else if($form == 5) {
+				$title = 'mailgroup';
+
+
+				$file="D:/xampp/htdocs/oasys_gogs/doc/it/template_mailgroup.xls";
+				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
+				$Worksheet = $Workbook->Worksheets(1);
+				$Worksheet->Activate;
+
+				$Worksheet->Range("F7")->Value = $fullname;
+				$Worksheet->Range("F9")->Value = $Itimail->employee_id;
+				$Worksheet->Range("F11")->Value = $Itimail->designation;
+				$Worksheet->Range("F13")->Value = $Itimail->bgbu;
+				$Worksheet->Range("F15")->Value = $Itimail->officelocation;
+				$Worksheet->Range("Y15")->Value = $Itimail->floor;
+				$Worksheet->Range("F17")->Value = $Itimail->phoneext;
+				$Worksheet->Range("F20")->Value = $Itimail->department;
+
+				$Worksheet->Range("F29")->Value = $Itimail->emailgroupname;
+				//condition
+				$string = $Itimail->membername;
+
+				$expstring = explode(',',$string);
+				// $countstring = count($expstring)+29;
+
+				$getname = [];
+				foreach($expstring as $p => $key) {
+					$dataname = Employee::find($key);
+					array_push($getname,$dataname->loginname);
+				}
+
+				$getemailname = [];
+				foreach($getname as $p => $key) {
+
+					$datamail = Addressbook::find('first',array('select'=> "CONCAT(fullname,' (',email,')' ) as name",'conditions' => array("username=?",$key)));
+
+					array_push($getemailname,$datamail->name);
+
+				}
+
+				$ss = implode(' | ',$getemailname);
+				print_r($ss);
+
+
+				$Worksheet->Range("F31")->Value = $ss;
+
+				$Worksheet->Range("F41")->Value = $Itimail->reason;
+
+
+
+
+				// $xlShiftDown=-4121;
+				// for ($a=29;$a<$countstring;$a++){
+				// 	$Worksheet->Rows($a+1)->Insert($xlShiftDown);
+				// 	$Worksheet->Range("F".$a)->Value = ($a-28).'. '.($getname[$a-29]);
+				// }
+		
+
+				//end condition
+				// $Worksheet->Range("F31")->Value = $datefrom;
+				// $Worksheet->Range("P31")->Value = $dateto;
+				// $Worksheet->Range("J27")->Value = $Itimail->typeofaccess;
+				// $Worksheet->Range("F34")->Value = $Itimail->reason;
+				$Worksheet->Range("I56")->Value = $deptheadname;
+				$Worksheet->Range("I57")->Value = $deptheaddate;
+				$Worksheet->Range("P56")->Value = $buheadname;
+				$Worksheet->Range("P57")->Value = $buheaddate;
+				$Worksheet->Range("W56")->Value = $itheadname;
+				$Worksheet->Range("W57")->Value = $itheaddate;
+
+				$Worksheet->Range("C56")->Value = $fullname;
+				$Worksheet->Range("C57")->Value = date("d/m/Y",strtotime($Itimail->createddate));
+
+		}
 
 			$xlTypePDF = 0;
 			$xlQualityStandard = 0;
-			// $path="D:/xampp/htdocs/oasys_gogs/doc/it/pdf/output.pdf";
-			$fileName ='doc'.DS.'it'.DS.'pdf'.DS.'ITIMAIL'.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$fileName ='doc'.DS.'it'.DS.'pdf'.DS.$title.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$fileName = str_replace("/","",$fileName);
-			$path='D:/xampp/htdocs/oasys_gogs/doc'.DS.'it'.DS.'pdf'.DS.'ITIMAIL'.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$path='D:/xampp/htdocs/oasys_gogs/doc'.DS.'it'.DS.'pdf'.DS.$title.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
 			if (file_exists($path)) {
-			   unlink($path);
+			unlink($path);
 			}
 			$Worksheet->ExportAsFixedFormat($xlTypePDF, $path, $xlQualityStandard);
 			$Itimail->approveddoc=str_replace("\\","/",$fileName);
 			$Itimail->save();
+
 			return $fileName;
+
 		} catch(com_exception $e) {  
 			$err = new Errorlog();
 			$err->errortype = "IteiePDFGenerator";
@@ -999,7 +2087,7 @@ Class Itimailmodule extends Application{
 					case 'byid':
 						$id = $this->post['id'];
 						if ($id!=""){
-							$Itimailhistory = Iteiehistory::find('all', array('conditions' => array("iteie_id=?",$id)));
+							$Itimailhistory = Itimailhistory::find('all', array('conditions' => array("itimail_id=?",$id)));
 							foreach ($Itimailhistory as &$result) {
 								$result		= $result->to_array();
 							}

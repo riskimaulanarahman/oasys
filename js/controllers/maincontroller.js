@@ -411,7 +411,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 			$scope.mode = mode;
 			$scope.Requestid = data.id;
 			$scope.Employeeid = data.employee_id;
-			$location.path( "/iteiedetail" );
+			$location.path( "/itimaildetail" );
 		}
 	}
 	$scope.loadSPKL= function(data,mode,filter){

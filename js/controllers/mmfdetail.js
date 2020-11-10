@@ -94,7 +94,9 @@
 					}
 				}),
 				sort: "id"
-            }
+			}
+			
+			console.log($scope.data);
             $scope.RequiredType =[{id:0,requiredtype:"- Select -"},{id:1,requiredtype:"Repair"},{id:2,requiredtype:"Servicing"},{id:3,requiredtype:"Calibration"},{id:4,requiredtype:"Others"}];
 			$scope.AppAction = [{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
 			$scope.reqStatus = 0;
