@@ -13,6 +13,10 @@
 			$scope.logout();
 		}else{
             $scope.data = response;
+			$scope.data.membername = Array.isArray($scope.data.membername)?$scope.data.membername:$scope.data.membername.split(",")
+			$scope.data.membername = $.map($scope.data.membername, function(value){
+				return parseInt(value, 10);
+			});
             // $scope.data.department = "";
 			if(($scope.mode=='approve')){
 				$scope.data.remarks="";
@@ -954,14 +958,17 @@
                                     displayExpr: 'fullname',
                                     searchEnabled: true,
                                     contentTemplate: function(e){
+										var values = Array.isArray(e.component.option("value"))?e.component.option("value"):e.component.option("value").split(",");
+										
                                         var $dataGrid = $("<div>").dxDataGrid({
                                             dataSource: e.component.option("dataSource"),
                                             columns: [{dataField:"fullname",width:100},{dataField:"company",width:50}, {dataField:"department",width:200}],
                                             height: 265,
                                             selection: { mode: "multiple" },
-                                            selectedRowKeys: [e.component.option("value")],
+                                            selectedRowKeys: values,
                                             focusedRowEnabled: true,
-                                            focusedRowKey: e.component.option("value"),
+											value:values,
+                                            focusedRowKey: values,
                                             searchPanel: {
                                                 visible: true,
                                                 width: 265,
@@ -978,6 +985,15 @@
                                                 }
                                             }
                                         });
+										dataGrid = $dataGrid.dxDataGrid("instance");  
+										//dataGrid.selectRows(lstSelectedValue, false);  
+
+										e.component.on("valueChanged", function (args) {
+											valuex =Array.isArray(args.value)?args.value:args.value.split(",");
+											this.DefaultValueOne = valuex;  
+											this.SelectedValues = valuex;  
+											dataGrid.selectRows(valuex, false);  
+										});
                                         return $dataGrid;
                                     }
                                 }
@@ -1496,6 +1512,7 @@
 		// data.requireddate = $filter("date")(data.requireddate, "yyyy-MM-dd HH:mm");
 		data.validfrom = $filter("date")(data.validfrom, "yyyy-MM-dd HH:mm");
         data.validto = $filter("date")(data.validto, "yyyy-MM-dd HH:mm");
+		console.log(data.membername)
         var selected = data.membername || [];
             data.membername = selected.join();
 		console.log(data);
