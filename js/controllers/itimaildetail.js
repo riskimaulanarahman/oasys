@@ -951,6 +951,7 @@
                                     text: "Member Name"
                                 },
                                 dataField:"membername",
+								colSpan :4,
                                 editorType: "dxDropDownBox",
                                 visible:($scope.data.formtype==5)?true:false,
                                 disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
