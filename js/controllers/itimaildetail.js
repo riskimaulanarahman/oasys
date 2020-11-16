@@ -13,10 +13,12 @@
 			$scope.logout();
 		}else{
             $scope.data = response;
-			$scope.data.membername = Array.isArray($scope.data.membername)?$scope.data.membername:$scope.data.membername.split(",")
-			$scope.data.membername = $.map($scope.data.membername, function(value){
-				return parseInt(value, 10);
-			});
+			if (($scope.data.formtype==5)){
+				$scope.data.membername = Array.isArray($scope.data.membername)?$scope.data.membername:$scope.data.membername.split(",")
+				$scope.data.membername = $.map($scope.data.membername, function(value){
+					return parseInt(value, 10);
+				});
+			}
             // $scope.data.department = "";
 			if(($scope.mode=='approve')){
 				$scope.data.remarks="";
@@ -958,6 +960,7 @@
                                     displayExpr: 'fullname',
                                     searchEnabled: true,
                                     contentTemplate: function(e){
+										console.log(e.component.option("value"));
 										var values = Array.isArray(e.component.option("value"))?e.component.option("value"):e.component.option("value").split(",");
 										
                                         var $dataGrid = $("<div>").dxDataGrid({
