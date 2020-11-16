@@ -979,14 +979,9 @@
                                                 placeholder: "Search..."
                                             },
                                             onSelectionChanged: function(selectedItems){
-                                                var keys = selectedItems.selectedRowKeys,
-                                                    hasSelection = keys.length;
-                                                if(hasSelection){
-                                                    e.component.option("value", keys); 
-                                                    // e.component.close();
-                                                    console.log(keys);
-    
-                                                }
+                                                var keys = selectedItems.selectedRowKeys;
+												e.component.option("value", keys);
+                     
                                             }
                                         });
 										dataGrid = $dataGrid.dxDataGrid("instance");  
