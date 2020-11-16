@@ -147,7 +147,7 @@
             $scope.RequestType =[{id:0,requesttype:"- Select -"},{id:1,requesttype:"Grant Access"},{id:2,requesttype:"Revoke Access"}];
             $scope.EmailQuota =[{id:0,emailquota:"- Select -"},{id:1,emailquota:"250MB"},{id:2,emailquota:"500MB"},{id:3,emailquota:"1000MB"},{id:4,emailquota:"1500MB"},{id:5,emailquota:"2000MB"}];
 
-            if($scope.data.apprstatuscode!==1) {
+            if($scope.data.apprstatuscode!==5) {
                 $scope.Mailboxsize =[{id:0,mailboxsize:"- Select -"},{id:1,mailboxsize:"256MB"},{id:2,mailboxsize:"512MB"},{id:3,mailboxsize:"1GB"},{id:4,mailboxsize:"1.5GB"},{id:5,mailboxsize:"2GB"}];
                 $scope.Incomingsize =[{id:0,incomingsize:"- Select -"},{id:1,incomingsize:"5MB"},{id:2,incomingsize:"10MB"}];
                 $scope.Outgoingsize =[{id:0,outgoingsize:"- Select -"},{id:1,outgoingsize:"5MB"},{id:2,outgoingsize:"10MB"}];
@@ -556,7 +556,7 @@
                                 editorType: "dxSelectBox",
                                 label:{text:"Access Requested"},
                                 visible:($scope.data.formtype==1)?true:false,
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==1)) ?false:true,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
                                 editorOptions: { 
                                     dataSource:$scope.AccessRequested,  
                                     valueExpr: 'id',
@@ -606,7 +606,7 @@
                                 editorType: "dxSelectBox",
                                 label:{text:"Access Type"},
                                 visible:($scope.data.formtype==1)?true:false,
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==1)) ?false:true,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
                                 validationRules: [{type: "required",message: "Action is required"}],
                                 editorOptions: { 
                                     dataSource:$scope.AccessType,  
@@ -654,7 +654,7 @@
                                 editorType: "dxSelectBox",
                                 label:{text:"Email Quota"},
                                 visible:($scope.data.formtype==1)?true:false,
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==1)) ?false:true,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
                                 // validationRules: [{type: "required", message: "Please select RFC Type" }],
                                 editorOptions: { 
                                     dataSource:$scope.EmailQuota,  
@@ -685,7 +685,7 @@
                                 editorType: "dxSelectBox",
                                 label:{text:"Email Domain"},
                                 visible:($scope.data.formtype==1)?true:false,
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==1)) ?false:true,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
                                 // validationRules: [{type: "required", message: "Please select RFC Type" }],
                                 editorOptions: { 
                                     dataSource:$scope.EmailDomain,  
@@ -710,7 +710,7 @@
                                 disabled: true                           
                             },
                             {dataField:'listgroupmoderation',name:'listgroupmoderation',label:{text:"List Group Moderation"},visible:($scope.data.formtype==1)?true:false,
-                            disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==1)) ?false:true,
+                            disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
                             editorType: "dxDropDownBox",validationRules: [{type: "required", message: "Please select Activity" }],editorOptions: { 
                                 dataSource:$scope.listmod,  
                                 valueExpr: 'id',
@@ -779,7 +779,7 @@
                                 editorType: "dxSelectBox",
                                 label:{text:"New Mailbox Size"},
                                 visible:($scope.data.formtype==3)?true:false,
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==1)) ?false:true,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
                                 // validationRules: [{type: "required", message: "Please select RFC Type" }],
                                 editorOptions: { 
                                     dataSource:$scope.Mailboxsize,  
@@ -800,7 +800,7 @@
                             //         text:"New Mailbox Size",
                             //     },
                             //     visible:($scope.data.formtype==3)?true:false,
-                            //     disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==1)) ?false:true,
+                            //     disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
                             //     name:'newmailboxsize',
                             //     dataType:"number",
                             //     editorType:"dxNumberBox"
@@ -810,7 +810,7 @@
                                 editorType: "dxSelectBox",
                                 label:{text:"Incoming Size"},
                                 visible:($scope.data.formtype==3)?true:false,
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==1)) ?false:true,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
                                 // validationRules: [{type: "required", message: "Please select RFC Type" }],
                                 editorOptions: { 
                                     dataSource:$scope.Incomingsize,  
@@ -831,7 +831,7 @@
                             //         text:"Incoming Size",
                             //     },
                             //     visible:($scope.data.formtype==3)?true:false,
-                            //     disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==1)) ?false:true,
+                            //     disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
                             //     name:'incomingsize',
                             //     dataType:"number",
                             //     editorType:"dxNumberBox"
@@ -841,7 +841,7 @@
                                 editorType: "dxSelectBox",
                                 label:{text:"Outgoing Size"},
                                 visible:($scope.data.formtype==3)?true:false,
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==1)) ?false:true,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
                                 // validationRules: [{type: "required", message: "Please select RFC Type" }],
                                 editorOptions: { 
                                     dataSource:$scope.Outgoingsize,  
@@ -862,7 +862,7 @@
                             //         text:"Outgoing Size",
                             //     },
                             //     visible:($scope.data.formtype==3)?true:false,
-                            //     disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==1)) ?false:true,
+                            //     disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
                             //     name:'outgoingsize',
                             //     dataType:"number",
                             //     editorType:"dxNumberBox"
@@ -884,7 +884,7 @@
                                     text:"http://",
                                 },
                                 visible:($scope.data.formtype==2)?true:false,
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==1)) ?false:true,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
                                 name:'web1',
                                 dataType:"string",
                             },
@@ -894,7 +894,7 @@
                                     text:"http://",
                                 },
                                 visible:($scope.data.formtype==2)?true:false,
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==1)) ?false:true,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
                                 name:'web2',
                                 dataType:"string",
                             },
@@ -915,7 +915,7 @@
                                     text:"TS Access via RD Web RDP to TS",
                                 },
                                 visible:($scope.data.formtype==4)?true:false,
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==1)) ?false:true,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
                                 name:'typeofaccess',
                                 dataType:"string",
                             },
@@ -999,7 +999,7 @@
                                 label:{text:"Account Type"},
                                 // visible:($scope.data.formtype==1)?true:false,
                                 // disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report') && ($scope.data.apprstatuscode!==1))?true:false,
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) ) ?false:true,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
                                 validationRules: [{type: "required",message: "Action is required"}],
                                 editorOptions: { 
                                     dataSource:$scope.AccountType,  
@@ -1028,7 +1028,7 @@
                                 // visible: (($scope.data.formtype==5)) ? false:true,
                                 editorType: "dxDateBox",
                                 label: {text: "Valid From"},
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) ) ?false:true,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
                                 // max: new Date(date + 1000*60*60*24*3),
                                 editorOptions: {
                                     displayFormat:"dd/MM/yyyy",
@@ -1041,7 +1041,7 @@
                                 // visible: (($scope.data.formtype==5)) ? false:true,
                                 editorType: "dxDateBox",
                                 label: {text: "Valid To"},
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
                                 editorOptions: {
                                     displayFormat:"dd/MM/yyyy",
                                     max: new Date(date + 1000*60*60*24*365),
@@ -1067,7 +1067,7 @@
                                 // colSpan:2,
                                 editorType:"dxHtmlEditor",
                                 name:'reason',
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==1)) ?false:true   ,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true   ,
                                 editorOptions: {height: 90,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}                         
                             },
                             {
@@ -1613,7 +1613,7 @@
 						data.approvaldate = d;
                         data.mode="approve";
                         
-                        if($scope.data.apprstatuscode!==1) {
+                        if($scope.data.apprstatuscode!==5) {
                             delete data.accessrequested;
                             delete data.accesstype;
                             delete data.emailquota;
@@ -1633,6 +1633,9 @@
                             delete data.membername;
                             
                             delete data.reason;
+
+                            delete data.validfrom;
+                            delete data.validto;
                         }
 						delete data.createddate;
                         delete data.employee_id;
@@ -1645,8 +1648,7 @@
                         delete data.floor;
                         delete data.phoneext;
                         delete data.accounttype;
-                        delete data.validfrom;
-                        delete data.validto;
+                        
                         delete data.listgroup;
                         
                         

@@ -732,6 +732,25 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                             
                                         </ul>
                                     </li>
+                                    <li class="">
+                                        <a href="#" aria-expanded="false">
+                                            <i class="metismenu-icon"></i><i class='fa fa-calendar-alt'></i> IT
+                                            <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                                        </a>
+                                        <ul class="mm-collapse" style="height: 7.04px;">
+                                            <li>
+                                                <a href="" ng-click="dataITEIE()">
+                                                    <i class="metismenu-icon"></i>Access Directory
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="" ng-click="dataITIMAIL()">
+                                                    <i class="metismenu-icon"></i>Internet Mail
+                                                </a>
+                                            </li>
+                                            
+                                        </ul>
+                                    </li>
 									<li class="nav-item"><a href="" ng-click="dataRFC()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> RFC Record</a></li>
 									<li class="nav-item"><a href="" ng-click="dataSPKL()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Data SPKL</a></li>
 									<li class="nav-item"><a href="" ng-click="detailSPKL()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Detail OT Timesheet</a></li>

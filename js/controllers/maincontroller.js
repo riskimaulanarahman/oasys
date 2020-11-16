@@ -62,6 +62,10 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 				CrudService.checkAccess('MMF30',$rootScope.curUser.username).then(function (access) {
 					$rootScope.viewMMF30 = access.allowview;
 				});
+				CrudService.checkAccess('IT',$rootScope.curUser.username).then(function (access) {
+					$rootScope.viewITEIE = access.allowview;
+					$rootScope.viewITIMAIL = access.allowview;
+				});
 				if(!$rootScope.startRefresh) {
 					$rootScope.startRefresh = setInterval($scope.refreshUsers, 1000);
 				}
@@ -103,6 +107,15 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 		loadModule($rootScope.viewMMF30,"mmf30report",false);
 		$rootScope.$broadcast("initMMF30", "");
 	}
+	$scope.dataITEIE= function(){	
+		loadModule($rootScope.viewITEIE,"iteiereport",false);
+		$rootScope.$broadcast("initITEIE", "");
+	}
+	$scope.dataITIMAIL= function(){	
+		loadModule($rootScope.viewITIMAIL,"itimailreport",false);
+		$rootScope.$broadcast("initITIMAIL", "");
+	}
+
 	$scope.myDayoff= function(){
 		$location.path( "/dayoff" );
 	}

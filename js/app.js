@@ -130,6 +130,8 @@ app.config(function ($routeProvider, $controllerProvider) {
 	.when('/iteie', route.resolve("iteie"))
 	.when('/iteiedetail', route.resolve("iteiedetail"))
 	.when('/iteieapproval', route.resolve("iteieapproval"))
+	.when('/iteiereport', route.resolve("iteiereport"))
+	.when('/itimailreport', route.resolve("itimailreport"))
 	.when('/itimail', route.resolve("itimail"))
 	.when('/itimaildetail', route.resolve("itimaildetail"))
 	.when('/itimailapproval', route.resolve("itimailapproval"))

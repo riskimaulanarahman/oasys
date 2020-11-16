@@ -1054,8 +1054,8 @@ Class Itimailmodule extends Application{
 							}
 							$data=array("jml"=>count($Itimail));
 						} else if(isset($query['filter'])){
-							$join = "LEFT JOIN vwiteiereport v on tbl_iteie.id=v.id";
-							$sel = 'tbl_iteie.*, v.laststatus,v.personholding ';
+							$join = "LEFT JOIN vwitimailreport v on tbl_itimail.id=v.id";
+							$sel = 'tbl_itimail.*, v.laststatus,v.personholding ';
 							$Itimail = Itimail::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
 							foreach ($Itimail as &$result) {
 								$fullname	= $result->employee->fullname;		
@@ -1129,6 +1129,9 @@ Class Itimailmodule extends Application{
 
 						unset($data['emailgroupname']);
 						unset($data['membername']);
+
+						unset($data['validto']);
+						unset($data['validfrom']);
 
 						unset($data['reason']);
 						
@@ -1579,6 +1582,10 @@ Class Itimailmodule extends Application{
 								$form = $Itimail->formtype;
 								$fileName = $this->generatePDFi($doid);
 								$filePath = SITE_PATH.DS.$fileName;
+								$Mailrecipient = Mailrecipient::find('all',array('conditions'=>array("module='IT' and company_list like ?","%".$ItimailJ->employee->companycode."%")));
+								foreach ($Mailrecipient as $data){
+									$this->mail->AddCC($data->email);
+								}
 								$this->mail->addAttachment($filePath);
 							}
 							if (!$this->mail->send()) {
@@ -1624,6 +1631,13 @@ Class Itimailmodule extends Application{
 		$joinx   = "LEFT JOIN tbl_approver ON (tbl_itimailapproval.approver_id = tbl_approver.id) ";					
 		$Itimailapproval = Itimailapproval::find('all',array('joins'=>$joinx,'conditions' => array("itimail_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
 		
+		// $ItimailJ = Itimail::find($id,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
+
+		// $Mailrecipient = Mailrecipient::find('all',array('conditions'=>array("module='IT' and company_list like ?","%".$ItimailJ->employee->companycode."%")));
+		// foreach ($Mailrecipient as $data){
+		// 	print_r($data->email);
+		// }
+
 		//condition
 			foreach ($Itimailapproval as $data){
 				if(($data->approver->approvaltype->id==29) || ($data->approver->employee_id==$Mmf30->depthead)){
@@ -1769,8 +1783,8 @@ Class Itimailmodule extends Application{
 				$Worksheet->Range("F32")->Value = $Itimail->reason;
 				$Worksheet->Range("C44")->Value = $deptheadname;
 				$Worksheet->Range("C45")->Value = $deptheaddate;
-				$Worksheet->Range("J44")->Value = $hrdname;
-				$Worksheet->Range("J45")->Value = $hrddate;
+				$Worksheet->Range("J44")->Value = $buheadname;
+				$Worksheet->Range("J45")->Value = $buheaddate;
 				$Worksheet->Range("Q44")->Value = $itheadname;
 				$Worksheet->Range("Q45")->Value = $itheaddate;
 
@@ -1922,8 +1936,8 @@ Class Itimailmodule extends Application{
 				$Worksheet->Range("G29")->Value = $Itimail->reason;
 				$Worksheet->Range("D43")->Value = $deptheadname;
 				$Worksheet->Range("D44")->Value = $deptheaddate;
-				$Worksheet->Range("M43")->Value = $hrdname;
-				$Worksheet->Range("M44")->Value = $hrddate;
+				$Worksheet->Range("M43")->Value = $buheadname;
+				$Worksheet->Range("M44")->Value = $buheaddate;
 				$Worksheet->Range("V43")->Value = $itheadname;
 				$Worksheet->Range("V44")->Value = $itheaddate;
 
@@ -1956,8 +1970,8 @@ Class Itimailmodule extends Application{
 				$Worksheet->Range("F34")->Value = $Itimail->reason;
 				$Worksheet->Range("C48")->Value = $deptheadname;
 				$Worksheet->Range("C49")->Value = $deptheaddate;
-				$Worksheet->Range("I48")->Value = $hrdname;
-				$Worksheet->Range("I49")->Value = $hrddate;
+				$Worksheet->Range("I48")->Value = $buheadname;
+				$Worksheet->Range("I49")->Value = $buheaddate;
 				$Worksheet->Range("P48")->Value = $mdname;
 				$Worksheet->Range("P49")->Value = $mddate;
 				$Worksheet->Range("W48")->Value = $itheadname;
