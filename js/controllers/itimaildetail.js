@@ -962,7 +962,7 @@
                                     searchEnabled: true,
                                     contentTemplate: function(e){
 										console.log(e.component.option("value"));
-										var values = Array.isArray(e.component.option("value"))?e.component.option("value"):e.component.option("value").split(",");
+										var values = e.component.option("value"); //Array.isArray(e.component.option("value"))?e.component.option("value"):e.component.option("value").split(",");
 										
                                         var $dataGrid = $("<div>").dxDataGrid({
                                             dataSource: e.component.option("dataSource"),
@@ -988,7 +988,7 @@
 										//dataGrid.selectRows(lstSelectedValue, false);  
 
 										e.component.on("valueChanged", function (args) {
-											valuex =Array.isArray(args.value)?args.value:args.value.split(",");
+											valuex =args.value; //Array.isArray(args.value)?args.value:args.value.split(",");
 											this.DefaultValueOne = valuex;  
 											this.SelectedValues = valuex;  
 											dataGrid.selectRows(valuex, false);  
