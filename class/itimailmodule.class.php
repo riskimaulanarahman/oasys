@@ -1112,6 +1112,8 @@ Class Itimailmodule extends Application{
 						}
 						$Itimail->save();
 
+						unset($data['formtype']);
+						
 						unset($data['accessrequested']);
 						unset($data['accesstype']);
 						unset($data['emailquota']);

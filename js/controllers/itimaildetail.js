@@ -1656,7 +1656,7 @@
                         }
 						delete data.createddate;
                         delete data.employee_id;
-                        delete data.formtype;
+                        // delete data.formtype;
                         delete data.department;
                         delete data.requeststatus;
                         delete data.designation;
