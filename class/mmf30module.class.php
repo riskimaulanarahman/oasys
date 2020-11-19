@@ -393,7 +393,7 @@ Class Mmf30module extends Application{
 						try {				
 							$id = $this->post['id'];
 							$Mmf30 = Mmf30::find($id);
-							if ($Mmf30->requeststatus==0){
+							if ($Mmf30->requeststatus==0 || $Mmf30->requeststatus==2){
 								$approval = Mmf30approval::find("all",array('conditions' => array("mmf30_id=?",$id)));
 								foreach ($approval as $delr){
 									$delr->delete();

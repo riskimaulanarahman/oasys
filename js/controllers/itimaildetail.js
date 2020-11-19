@@ -571,7 +571,12 @@
                                         var dis =(e.value==1)?true:false;
 
                                         // $scope.formInstance.itemOption('group5.listgroupmoderation').editorOptions.disabled=dis;
-                                        
+                                        criteria = {status:'appreq',formtype:$scope.data.formtype,itimail_id:$scope.Requestid,employee_id:$scope.data.employee_id,accessreq:e.value};
+                                        CrudService.FindData('itimail',criteria).then(function (response){
+                                            $scope.grid2Component.refresh();
+                                            // console.log(e.value + ' & ' + $scope.Requestid);
+                                            // console.log(response);
+                                        })
 
                                         if(e.value == 1) {
 
@@ -589,7 +594,7 @@
                                                     }
 
                                         } else {
-                                            var found = false;
+                                                    var found = false;
 
                                                     pos = $scope.EmailDomain.map(function(e){
 
@@ -598,6 +603,8 @@
                                                         }
 
                                                     });
+
+                                                    
                                         }
 
                                         
@@ -627,34 +634,6 @@
                                     // }
                                 },
                             },
-                            // {
-                            //     dataField:'accounttype',
-                            //     editorType: "dxSelectBox",
-                            //     label:{text:"Account Type"},
-                            //     visible:($scope.data.formtype==1)?true:false,
-                            //     disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
-                            //     validationRules: [{type: "required",message: "Action is required"}],
-                            //     editorOptions: { 
-                            //         dataSource:$scope.AccountType,  
-                            //         valueExpr: 'id',
-                            //         displayExpr: 'accounttype',
-                            //         onValueChanged: function(e){
-                            //             var dis =(e.value==1)?true:false;
-                            //             // $scope.formInstance.itemOption('group3.validfrom').editorOptions.disabled=dis;
-                            //             // $scope.formInstance.itemOption('group3.validto').editorOptions.disabled=dis;
-                            //             $scope.formInstance.getEditor('validfrom').option('disabled',dis);
-                            //             $scope.formInstance.getEditor('validto').option('disabled',dis);
-                            //             if(dis) {
-                            //                 $scope.formInstance.updateData('validfrom',  $scope.data.createddate);
-                            //                 $scope.formInstance.updateData('validto',  "9999-12-31");
-                            //             } else {
-                            //                 $scope.formInstance.updateData('validfrom',  "");
-                            //                 $scope.formInstance.updateData('validto',  "");
-                            //             }
-                                        
-                            //         }
-                            //     },
-                            // },
                             {
                                 dataField:'emailquota',
                                 editorType: "dxSelectBox",

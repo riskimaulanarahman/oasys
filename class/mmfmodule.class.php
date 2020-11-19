@@ -389,7 +389,7 @@ Class Mmfmodule extends Application{
 						try {				
 							$id = $this->post['id'];
 							$Tr = Mmf::find($id);
-							if ($Tr->requeststatus==0){
+							if ($Tr->requeststatus==0 || $Tr->requeststatus==2){
 								$approval = Mmfapproval::find("all",array('conditions' => array("mmf28_id=?",$id)));
 								foreach ($approval as $delr){
 									$delr->delete();
