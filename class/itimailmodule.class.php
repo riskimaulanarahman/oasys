@@ -1858,7 +1858,7 @@ Class Itimailmodule extends Application{
 				$Worksheet->Range("B37")->Value = $emailD;
 				$Worksheet->Range("H37")->Value = $Itimail->listgroup;
 				$Worksheet->Range("N37")->Value = $listmod->mod;
-				$Worksheet->Range("F41")->Value = $Itimail->reason;
+				$Worksheet->Range("F41")->Value = strip_tags($Itimail->reason);
 				$Worksheet->Range("B52")->Value = $deptheadname;
 				$Worksheet->Range("B53")->Value = $deptheaddate;
 				$Worksheet->Range("I52")->Value = $hrdname;
@@ -1895,7 +1895,7 @@ Class Itimailmodule extends Application{
 				$Worksheet->Range("R29")->Value = $dateto;
 				$Worksheet->Range("F23")->Value = $Itimail->web1;
 				$Worksheet->Range("F25")->Value = $Itimail->web2;
-				$Worksheet->Range("F32")->Value = $Itimail->reason;
+				$Worksheet->Range("F32")->Value = strip_tags($Itimail->reason);
 				$Worksheet->Range("C44")->Value = $deptheadname;
 				$Worksheet->Range("C45")->Value = $deptheaddate;
 				$Worksheet->Range("J44")->Value = $buheadname;
@@ -2048,7 +2048,7 @@ Class Itimailmodule extends Application{
 				$Worksheet->Range("G23")->Value = $newmailbox;
 				$Worksheet->Range("P23")->Value = $incoming;
 				$Worksheet->Range("X23")->Value = $outgoing;
-				$Worksheet->Range("G29")->Value = $Itimail->reason;
+				$Worksheet->Range("G29")->Value = strip_tags($Itimail->reason);
 				$Worksheet->Range("D43")->Value = $deptheadname;
 				$Worksheet->Range("D44")->Value = $deptheaddate;
 				$Worksheet->Range("M43")->Value = $buheadname;
@@ -2082,7 +2082,7 @@ Class Itimailmodule extends Application{
 				$Worksheet->Range("F31")->Value = $datefrom;
 				$Worksheet->Range("P31")->Value = $dateto;
 				$Worksheet->Range("J27")->Value = $Itimail->typeofaccess;
-				$Worksheet->Range("F34")->Value = $Itimail->reason;
+				$Worksheet->Range("F34")->Value = strip_tags($Itimail->reason);
 				$Worksheet->Range("C48")->Value = $deptheadname;
 				$Worksheet->Range("C49")->Value = $deptheaddate;
 				$Worksheet->Range("I48")->Value = $buheadname;
@@ -2141,7 +2141,7 @@ Class Itimailmodule extends Application{
 
 				$Worksheet->Range("F31")->Value = $ss;
 
-				$Worksheet->Range("F41")->Value = $Itimail->reason;
+				$Worksheet->Range("F41")->Value = strip_tags($Itimail->reason);
 
 
 
@@ -2182,6 +2182,13 @@ Class Itimailmodule extends Application{
 			$Itimail->approveddoc=str_replace("\\","/",$fileName);
 			$Itimail->save();
 
+			$Workbook->Close(true);
+			unset($Worksheet);
+			unset($Workbook);
+			$excel->Workbooks->Close();
+			$excel->Quit();
+			unset($excel);
+
 			return $fileName;
 
 		} catch(com_exception $e) {  
@@ -2197,12 +2204,7 @@ Class Itimailmodule extends Application{
 			// exit;
 		
 		}
-		$Workbook->Close(true);
-		unset($Worksheet);
-		unset($Workbook);
-		$excel->Workbooks->Close();
-		$excel->Quit();
-		unset($excel);
+		
 		
 	}
 	function itimailHistory(){

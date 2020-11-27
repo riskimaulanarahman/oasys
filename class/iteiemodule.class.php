@@ -2369,7 +2369,7 @@ Class Iteiemodule extends Application{
 			$Worksheet->Range("F31")->Value = $datefrom;
 			$Worksheet->Range("R31")->Value = $dateto;
 			$Worksheet->Range("K37")->Value = $Iteie->listgroup;
-			$Worksheet->Range("F39")->Value = $Iteie->reason;
+			$Worksheet->Range("F39")->Value = strip_tags($Iteie->reason);
 			$Worksheet->Range("B50")->Value = $deptheadname;
 			$Worksheet->Range("B51")->Value = $deptheaddate;
 			$Worksheet->Range("I50")->Value = $hrdname;
@@ -2391,6 +2391,14 @@ Class Iteiemodule extends Application{
 			$Worksheet->ExportAsFixedFormat($xlTypePDF, $path, $xlQualityStandard);
 			$Iteie->approveddoc=str_replace("\\","/",$fileName);
 			$Iteie->save();
+
+			$Workbook->Close(true);
+			unset($Worksheet);
+			unset($Workbook);
+			$excel->Workbooks->Close();
+			$excel->Quit();
+			unset($excel);
+
 			return $fileName;
 		} catch(com_exception $e) {  
 			$err = new Errorlog();
@@ -2405,12 +2413,7 @@ Class Iteiemodule extends Application{
 			// exit;
 		
 		}
-		$Workbook->Close(true);
-		unset($Worksheet);
-		unset($Workbook);
-		$excel->Workbooks->Close();
-		$excel->Quit();
-		unset($excel);
+		
 		
 	}
 	function iteieHistory(){

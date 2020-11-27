@@ -119,6 +119,23 @@
 
             console.log($scope.data);
 
+            var today = new Date();
+            var dd = today.getDate();
+
+            var mm = today.getMonth()+1; 
+            var yyyy = today.getFullYear();
+            if(dd<10) 
+            {
+                dd='0'+dd;
+            } 
+
+            if(mm<10) 
+            {
+                mm='0'+mm;
+            } 
+
+            today = yyyy+'-'+mm+'-'+dd;
+
             $scope.AccessRequested =[{id:0,accessrequested:"- Select -"},{id:1,accessrequested:"Exchange (non-Internet) Email"},{id:2,accessrequested:"Internet Email"},{id:3,accessrequested:"Change Domain"}];
             $scope.AccessType =[{id:0,accesstype:"- Select -"},{id:1,accesstype:"Terminal Server (TS) User Account"},{id:2,accesstype:"Non-TS Account"}];
             $scope.AccountType =[{id:0,accounttype:"- Select -"},{id:1,accounttype:"Permanent"},{id:2,accounttype:"Temporary"}];
@@ -468,8 +485,8 @@
                                             $scope.formInstance.updateData('validfrom',  $scope.data.createddate);
                                             $scope.formInstance.updateData('validto',  "9999-12-31");
                                         } else {
-                                            $scope.formInstance.updateData('validfrom',  "");
-                                            $scope.formInstance.updateData('validto',  "");
+                                            $scope.formInstance.updateData('validfrom',  today);
+                                            $scope.formInstance.updateData('validto',  today);
                                         }
                                         
                                     }

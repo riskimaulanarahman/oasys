@@ -145,6 +145,23 @@
 
             console.log($scope.data);
 
+            var today = new Date();
+            var dd = today.getDate();
+
+            var mm = today.getMonth()+1; 
+            var yyyy = today.getFullYear();
+            if(dd<10) 
+            {
+                dd='0'+dd;
+            } 
+
+            if(mm<10) 
+            {
+                mm='0'+mm;
+            } 
+
+            today = yyyy+'-'+mm+'-'+dd;
+
             $scope.FormType =[{id:0,formtype:"- Select -"},{id:1,formtype:"Exchange - Internet Email"},{id:2,formtype:"Internet Access"},{id:3,formtype:"Increase Mailbox Size"},{id:4,formtype:"RD Web Access"},{id:5,formtype:"Email Group"}];
 
             $scope.AccessRequested =[{id:0,accessrequested:"- Select -"},{id:1,accessrequested:"Exchange (non-Internet) Email"},{id:2,accessrequested:"Internet Email"},{id:3,accessrequested:"Change Domain"}];
@@ -921,7 +938,7 @@
                                     text:"Email Group Name",
                                 },
                                 visible:($scope.data.formtype==5)?true:false,
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
                                 name:'emailgroupname',
                                 dataType:"string",
                             },
@@ -933,7 +950,7 @@
 								colSpan :4,
                                 editorType: "dxDropDownBox",
                                 visible:($scope.data.formtype==5)?true:false,
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5) || ($scope.data.apprstatuscode==5)) ?false:true,
                                 editorOptions: { 
                                     dataSource:$scope.allEmpDataSource,  
                                     valueExpr: 'id',
@@ -1001,6 +1018,8 @@
                                     displayExpr: 'accounttype',
                                     onValueChanged: function(e){
                                         var dis =(e.value==1)?true:false;
+
+                                        
                                         // $scope.formInstance.itemOption('group3.validfrom').editorOptions.disabled=dis;
                                         // $scope.formInstance.itemOption('group3.validto').editorOptions.disabled=dis;
                                         $scope.formInstance.getEditor('validfrom').option('disabled',dis);
@@ -1009,8 +1028,8 @@
                                             $scope.formInstance.updateData('validfrom',  $scope.data.createddate);
                                             $scope.formInstance.updateData('validto',  "9999-12-31");
                                         } else {
-                                            $scope.formInstance.updateData('validfrom',  "");
-                                            $scope.formInstance.updateData('validto',  "");
+                                            $scope.formInstance.updateData('validfrom',  today);
+                                            $scope.formInstance.updateData('validto',  today);
                                         }
                                         
                                     }
@@ -1023,7 +1042,7 @@
                                 editorType: "dxDateBox",
                                 label: {text: "Valid From"},
                                 disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
-                                // max: new Date(date + 1000*60*60*24*3),
+                                // min: new Date(date + 1000*60*60*24*3),
                                 editorOptions: {
                                     displayFormat:"dd/MM/yyyy",
                                     // disabled: (($scope.mode=='add' ) || ($scope.mode=='edit') || ($scope.data.accounttype!==1)) ?false:true,
