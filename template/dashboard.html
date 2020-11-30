@@ -157,25 +157,25 @@
 							<i class="icon {{ ( pendingITEIE >0  || pendingITEIEReq >0 || pendingITIMAIL >0  || pendingITIMAILReq >0 )? 'icon-anim-pulse' : ''}} fas fa-file-signature text-white"></i></div>
 						<div class="widget-chart-content">
 							<div class="widget-heading text-danger"><b>IT online Form</b></div>
-							<button ng-click="SPKLApproval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-danger btn-lg">
+							<button ng-click="iteieApproval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-danger btn-lg">
 								<span class="mr-2 opacity-7">
 									<i class="icon {{ pendingITEIE >0 ? 'icon-anim-pulse' : ''}}  fa fa-marker"></i>
 								</span>
 								Pending Active Directory Approval <span class="badge badge-pill badge-light {{ pendingITEIE >0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingITEIE"></span>
 							</button>
-							<button ng-click="mySPKL()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-danger btn-lg">
+							<button ng-click="myITEIE()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-danger btn-lg">
 								<span class="mr-2 opacity-7">
 									<i class="icon {{ pendingITEIEReq >0 ? 'icon-anim-pulse' : ''}} fa fa-calendar-alt"></i>
 								</span>
 								Pending Active Directory Request <span class="badge badge-pill  {{ pendingITEIEReq >0 ? 'icon-anim-pulse' : ''}} badge-light text-dark" ng-bind="pendingITEIEReq"></span>
 							</button>
-							<button ng-click="SPKLTMSApproval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-danger btn-lg">
+							<button ng-click="itimailApproval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-danger btn-lg">
 								<span class="mr-2 opacity-7">
 									<i class="icon  {{ pendingITIMAIL >0 ? 'icon-anim-pulse' : ''}} fa fa-marker"></i>
 								</span>
 								Pending Request Form Approval <span class="badge badge-pill badge-light {{ pendingITIMAIL >0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingITIMAIL"></span>
 							</button>
-							<button ng-click="myTimesheet()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-danger btn-lg">
+							<button ng-click="myITIMAIL()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-danger btn-lg">
 								<span class="mr-2 opacity-7">
 									<i class="icon {{ pendingITIMAILReq >0 ? 'icon-anim-pulse' : ''}} fa fa-calendar-alt"></i>
 								</span>

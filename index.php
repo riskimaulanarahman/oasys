@@ -594,7 +594,8 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 							</li>
                             <li ng-class="{'mm-active': (isActive('/mmf') || isActive('/mmf30') || isActive('/mmfdetail') || isActive('/mmfapproval') || isActive('/mmf30approval'))}">
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>MMF<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
-								<ul ng-class="{'mm-show': (isActive('/mmf') || isActive('/mmf30') || isActive('/mmfapproval') || isActive('/mmf30approval'))}">
+                                <ul ng-class="{'mm-show': (isActive('/mmf') || isActive('/mmf30') || isActive('/mmfapproval') || isActive('/mmf30approval'))}">
+                                
 									<!-- <li class="nav-item"><a href="" ng-click="myMMF()" class="nav-link" ><i class='fa fa-calendar-alt'></i> My Request</a></li> -->
 
                                     <li class="">
@@ -639,7 +640,8 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 								</ul>
                             </li>
                             
-                            <li ng-class="">
+                            <li ng-class="{'mm-active': (isActive('/iteie') || isActive('/itimail') || isActive('/iteiedetail') || isActive('/itimaildetail') || isActive('/itimailapproval') || isActive('/iteieapproval'))}">
+                            <!-- <li ng-class=""> -->
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>IT Approval<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul ng-class="">
                                     <li class="">
