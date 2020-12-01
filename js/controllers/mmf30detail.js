@@ -468,7 +468,7 @@
                         colCount : 2,
                         items: [
                             // {label:{text:"Comments"},dataField:'proccomments',colSpan:2,editorType:"dxHtmlEditor",visible: (($scope.data.apprstatuscode==3)) ?true:false,editorOptions: {height: 90,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}},
-                            {label:{text:"Remarks"},dataField:'remarks',colSpan:2,editorType:"dxHtmlEditor",editorOptions: {height: 90,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}},
+                            {label:{text:"Remarks"},dataField:'remarks',colSpan:2,editorType:"dxHtmlEditor",visible: ($scope.mode=='approve') ?true:false,editorOptions: {height: 90,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}},
                             // {label: {
                             //         text: "Approval Action"
                             //     },
@@ -1412,7 +1412,9 @@
 				delete data.supplieremailfax;
                 delete data.contractno;
                 delete data.reason;
-                delete data.remarksu;
+				delete data.remarksu;
+				// delete data.remarks;
+				
 				
 				delete data.depthead;
 				// delete data.buyer;
@@ -1463,6 +1465,7 @@
                         delete data.contractno;
                         delete data.reason;
                         delete data.remarksu;
+                        // delete data.remarks;
                         // delete data.ReceivedOn;
                         // delete data.proccomments;
                         
