@@ -53,7 +53,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
       </div>
       <div class='row'>
         <div class='col-lg-12'>
-		 <form name="form" ng-submit="form.$valid && login()" novalidate>
+		 <form name="form" method="post" ng-submit="form.$valid && login()" novalidate>
             <fieldset class='text-center'>
               <legend>Login to your account</legend>
               <div class="form-group" ng-class="{ 'has-error': form.$submitted && form.username.$invalid }">
