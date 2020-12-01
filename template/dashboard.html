@@ -149,6 +149,41 @@
 						</div>
 					</div>
 				</div>
+
+				<div class="col-lg-6 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-primary border-primary">
+					<div class="card no-shadow rm-border bg-night-fade widget-chart text-center card-btm-border card-shadow-primary border-primary"  style="min-height:275px;">
+						<div class="icon-wrapper rounded-circle">
+							<div class="icon-wrapper-bg opacity-9 bg-danger"></div>
+							<i class="icon {{ ( pendingITEIE >0  || pendingITEIEReq >0 || pendingITIMAIL >0  || pendingITIMAILReq >0 )? 'icon-anim-pulse' : ''}} fas fa-file-signature text-white"></i></div>
+						<div class="widget-chart-content">
+							<div class="widget-heading text-danger"><b>IT online Form</b></div>
+							<button ng-click="iteieApproval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-danger btn-lg">
+								<span class="mr-2 opacity-7">
+									<i class="icon {{ pendingITEIE >0 ? 'icon-anim-pulse' : ''}}  fa fa-marker"></i>
+								</span>
+								Pending Active Directory Approval <span class="badge badge-pill badge-light {{ pendingITEIE >0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingITEIE"></span>
+							</button>
+							<button ng-click="myITEIE()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-danger btn-lg">
+								<span class="mr-2 opacity-7">
+									<i class="icon {{ pendingITEIEReq >0 ? 'icon-anim-pulse' : ''}} fa fa-calendar-alt"></i>
+								</span>
+								Pending Active Directory Request <span class="badge badge-pill  {{ pendingITEIEReq >0 ? 'icon-anim-pulse' : ''}} badge-light text-dark" ng-bind="pendingITEIEReq"></span>
+							</button>
+							<button ng-click="itimailApproval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-danger btn-lg">
+								<span class="mr-2 opacity-7">
+									<i class="icon  {{ pendingITIMAIL >0 ? 'icon-anim-pulse' : ''}} fa fa-marker"></i>
+								</span>
+								Pending Request Form Approval <span class="badge badge-pill badge-light {{ pendingITIMAIL >0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingITIMAIL"></span>
+							</button>
+							<button ng-click="myITIMAIL()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-danger btn-lg">
+								<span class="mr-2 opacity-7">
+									<i class="icon {{ pendingITIMAILReq >0 ? 'icon-anim-pulse' : ''}} fa fa-calendar-alt"></i>
+								</span>
+								Pending Request Form Request <span class="badge badge-pill {{ pendingITIMAILReq >0 ? 'icon-anim-pulse' : ''}}  badge-light text-dark" ng-bind="pendingITIMAILReq"></span>
+							</button>
+						</div>
+					</div>
+				</div>
 				
 			</div>
 			<!--

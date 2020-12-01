@@ -84,6 +84,22 @@ app.register.controller('dashboardCtrl', ['$rootScope','$scope', '$http', '$inte
 			CrudService.FindData('spkltmsapp',criteria).then(function (response){
 				$scope.pendingSPKLTMS=response.jml;
 			});
+			criteria = {status:'pending'};
+			CrudService.FindData('iteiebyemp',criteria).then(function (response){
+				$scope.pendingITEIEReq=response.jml;
+			});
+			criteria = {mypending:'true'};
+			CrudService.FindData('iteieapp',criteria).then(function (response){
+				$scope.pendingITEIE=response.jml;
+			});
+			criteria = {status:'pending'};
+			CrudService.FindData('itimailbyemp',criteria).then(function (response){
+				$scope.pendingITIMAILReq=response.jml;
+			});
+			criteria = {mypending:'true'};
+			CrudService.FindData('itimailapp',criteria).then(function (response){
+				$scope.pendingITIMAIL=response.jml;
+			});
 		}, 1000);
 		
         // DevExpress.ui.notify({

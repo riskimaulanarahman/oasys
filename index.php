@@ -594,7 +594,8 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 							</li>
                             <li ng-class="{'mm-active': (isActive('/mmf') || isActive('/mmf30') || isActive('/mmfdetail') || isActive('/mmfapproval') || isActive('/mmf30approval'))}">
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>MMF<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
-								<ul ng-class="{'mm-show': (isActive('/mmf') || isActive('/mmf30') || isActive('/mmfapproval') || isActive('/mmf30approval'))}">
+                                <ul ng-class="{'mm-show': (isActive('/mmf') || isActive('/mmf30') || isActive('/mmfapproval') || isActive('/mmf30approval'))}">
+                                
 									<!-- <li class="nav-item"><a href="" ng-click="myMMF()" class="nav-link" ><i class='fa fa-calendar-alt'></i> My Request</a></li> -->
 
                                     <li class="">
@@ -639,7 +640,8 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 								</ul>
                             </li>
                             
-                            <!-- <li ng-class="">
+                            <li ng-class="{'mm-active': (isActive('/iteie') || isActive('/itimail') || isActive('/iteiedetail') || isActive('/itimaildetail') || isActive('/itimailapproval') || isActive('/iteieapproval'))}">
+                            <!-- <li ng-class=""> -->
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>IT Approval<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul ng-class="">
                                     <li class="">
@@ -650,7 +652,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                         <ul class="mm-collapse" style="height: 7.04px;">
                                             <li>
                                                 <a href="" ng-click="myITEIE()">
-                                                    <i class="metismenu-icon"></i>Access Directory
+                                                    <i class="metismenu-icon"></i>Active Directory
                                                 </a>
                                             </li>
                                             <li>
@@ -669,7 +671,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                         <ul class="mm-collapse" style="height: 7.04px;">
                                         <li>
                                                 <a href="" ng-click="iteieApproval()">
-                                                    <i class="metismenu-icon"></i>Access Directory
+                                                    <i class="metismenu-icon"></i>Active Directory
                                                 </a>
                                             </li>
                                             <li>
@@ -681,7 +683,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                         </ul>
                                     </li>
 								</ul>
-							</li> -->
+							</li>
 							<li ng-class="{'mm-active': (isActive('/rfc') || isActive('/rfcapproval'))}" >
 								<a href="#"  ><i class='metismenu-icon fas fa-marker'></i>RFC<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul ng-class="{'mm-show': (isActive('/rfc') || isActive('/rfcapproval'))}">
@@ -732,7 +734,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                             
                                         </ul>
                                     </li>
-                                    <!-- <li class="">
+                                    <li class="">
                                         <a href="#" aria-expanded="false">
                                             <i class="metismenu-icon"></i><i class='fa fa-calendar-alt'></i> IT
                                             <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
@@ -740,7 +742,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                         <ul class="mm-collapse" style="height: 7.04px;">
                                             <li>
                                                 <a href="" ng-click="dataITEIE()">
-                                                    <i class="metismenu-icon"></i>Access Directory
+                                                    <i class="metismenu-icon"></i>Active Directory
                                                 </a>
                                             </li>
                                             <li>
@@ -750,7 +752,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                             </li>
                                             
                                         </ul>
-                                    </li> -->
+                                    </li>
 									<li class="nav-item"><a href="" ng-click="dataRFC()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> RFC Record</a></li>
 									<li class="nav-item"><a href="" ng-click="dataSPKL()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Data SPKL</a></li>
 									<li class="nav-item"><a href="" ng-click="detailSPKL()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Detail OT Timesheet</a></li>
