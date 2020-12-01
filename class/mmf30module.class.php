@@ -965,7 +965,7 @@ Class Mmf30module extends Application{
 								$requisitiontype = '';
 							}
 							$Mmf30detail = Mmf30detail::find('all',array('conditions'=>array("mmf30_id=?",$doid),'include'=>array('mmf30'=>array('employee'=>array('company','department','designation','grade')))));
-							$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span>Dear '.$adb->fullname.',</span></p>
+							$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span>Dear '.$emname.',</span></p>
 								<p class=MsoNormal><span>'.$red.'</span></p>
 								<p class=MsoNormal><span>&nbsp;</span></p>
 								<table border=1 cellspacing=0 cellpadding=3 width=683>
