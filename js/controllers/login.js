@@ -68,6 +68,16 @@
 						CrudService.checkAccess('SPKL',$rootScope.curUser.username).then(function (access) {
 							$rootScope.viewSPKL = access.allowview;
 						});
+						CrudService.checkAccess('MMF',$rootScope.curUser.username).then(function (access) {
+							$rootScope.viewMMF = access.allowview;
+						});
+						CrudService.checkAccess('MMF30',$rootScope.curUser.username).then(function (access) {
+							$rootScope.viewMMF30 = access.allowview;
+						});
+						CrudService.checkAccess('IT',$rootScope.curUser.username).then(function (access) {
+							$rootScope.viewITEIE = access.allowview;
+							$rootScope.viewITIMAIL = access.allowview;
+						});
 						if(!$rootScope.startRefresh) {
 							$rootScope.startRefresh = setInterval($scope.refreshUsers, 1000);
 						}
