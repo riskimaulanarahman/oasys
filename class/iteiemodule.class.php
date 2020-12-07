@@ -707,7 +707,7 @@ Class Iteiemodule extends Application{
 						unset($data['department']);
 						unset($data['approveddoc']);
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-						$Iteie = Iteie::find($doid);
+						// $Iteie = Iteie::find($doid);
 						$join   = "LEFT JOIN tbl_approver ON (tbl_iteieapproval.approver_id = tbl_approver.id) ";
 						if (isset($data['mode'])){
 							$Iteieapproval = Iteieapproval::find('first', array('joins'=>$join,'conditions' => array("iteie_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
@@ -715,15 +715,15 @@ Class Iteiemodule extends Application{
 						}else{
 							$Iteieapproval = Iteieapproval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
 						}
-						foreach($data as $key=>$val) {
-							if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks')) {
-								// if(($key == 'isrepair') || ($key == 'isscrap')) {
-									$value=(($val===0) || ($val==='0') || ($val==='false'))?false:((($val===1) || ($val==='1') || ($val==='true'))?true:$val);
-								// }
-								$Iteie->$key=$value;
-							}
-						}
-						$Iteie->save();
+						// foreach($data as $key=>$val) {
+						// 	if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks')) {
+						// 		// if(($key == 'isrepair') || ($key == 'isscrap')) {
+						// 			$value=(($val===0) || ($val==='0') || ($val==='false'))?false:((($val===1) || ($val==='1') || ($val==='true'))?true:$val);
+						// 		// }
+						// 		$Iteie->$key=$value;
+						// 	}
+						// }
+						// $Iteie->save();
 
 						// unset($data['materialdispatchno']);
 						// unset($data['isrepair']);
