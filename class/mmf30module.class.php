@@ -830,7 +830,6 @@ Class Mmf30module extends Application{
 						unset($data['department']);
 						unset($data['approveddoc']);
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-						$mmf30 = Mmf30::find($doid);
 						$join   = "LEFT JOIN tbl_approver ON (tbl_mmf30approval.approver_id = tbl_approver.id) ";
 						if (isset($data['mode'])){
 							$Mmf30approval = Mmf30approval::find('first', array('joins'=>$join,'conditions' => array("mmf30_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
@@ -838,6 +837,9 @@ Class Mmf30module extends Application{
 						}else{
 							$Mmf30approval = Mmf30approval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
 						}
+						
+						$mmf30 = Mmf30::find($doid);
+
 						foreach($data as $key=>$val) {
 							if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks')) {
 								// if(($key == 'isrepair') || ($key == 'isscrap')) {
