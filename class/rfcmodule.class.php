@@ -473,7 +473,7 @@ Class RfcModule extends Application{
 						} else if(isset($query['filter'])){
 							$join = "LEFT JOIN vwrfcreport v on tbl_rfc.id=v.id";
 							$sel = 'tbl_rfc.*, v.laststatus,v.personholding ';
-							$Rfc = Rfc::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
+							$Rfc = Rfc::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array("tbl_rfc.createddate between ? and ?",$query['startDate'],$query['endDate']),'include' => array('employee')));
 							foreach ($Rfc as &$result) {
 								$fullname	= $result->employee->fullname;		
 								$result		= $result->to_array();
