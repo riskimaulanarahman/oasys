@@ -1200,7 +1200,7 @@ Class DayoffModule extends Application{
 						try {				
 							$id = $this->post['id'];
 							$Dayoff = Dayoff::find($id);
-							if ($Dayoff->requeststatus==0){
+							if ($Dayoff->requeststatus==0 || $Dayoff->requeststatus==2){
 								$approval = Dayoffapproval::find("all",array('conditions' => array("dayoff_id=?",$id)));
 								foreach ($approval as $delr){
 									$delr->delete();
