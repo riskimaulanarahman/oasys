@@ -827,7 +827,7 @@ Class DayoffModule extends Application{
 										$hol= count($Holiday)>2?2:count($Holiday);
 										$max = ($sun+$hol)-2;
 										//covid -19 SOP only 2 days max per month
-										//$max = 2;
+										$max = 2;
 										$joins   = "LEFT JOIN tbl_dayoffreq as r ON (dayoff_id = r.id) ";	
 										$do = Dayoffdetail::find('all', array('joins'=>$joins,'conditions' => array("month(dateworked)=? and r.employee_id=?",date("m", strtotime($data['dateworked'])),$Employee->id),'include'=>array("dayoff")));
 										if (count($do)>=$max){
