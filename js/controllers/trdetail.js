@@ -770,7 +770,7 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 			{dataField:'dateofbirth',validationRules: [{ type: "required" }],width:100,caption: "Date of Birth",dataType:"date", format: 'dd/MM/yyyy',editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",max:Date.now(),disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
 			{dataField:'phonenumber',caption: "Phone Number",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
 			{dataField:'gender',validationRules: [{ type: "required" }],caption: "Gender",lookup: {dataSource: [{key:"Male",val:"Male"},{key:"Female",val:"Female"}],valueExpr: "key", displayExpr: "val" },dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
-			{dataField:'hrremarks',caption: "Remarks / Confirmation from HR (Konfirmasi dari HR)",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') )?false:true}},
+			{dataField:'hrremarks',caption: "Remarks / Confirmation from HR (Konfirmasi dari HR)",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='reschedule'))?false:true}},
 		],editing: {
             useIcons:true,
             mode: "cell",

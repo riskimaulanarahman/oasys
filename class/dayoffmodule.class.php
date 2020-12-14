@@ -825,7 +825,7 @@ Class DayoffModule extends Application{
 										$Holiday = Holiday::find('all',array('conditions' => array("month(HolidayDate)=? and not(weekday(HolidayDate))='6'",date("m", strtotime($data['dateworked'])))));
 										$sun= total_sun(date("m", strtotime($data['dateworked'])),date("Y", strtotime($data['dateworked'])));
 										$hol= count($Holiday)>2?2:count($Holiday);
-										//$max = ($sun+$hol)-2;
+										$max = ($sun+$hol)-2;
 										//covid -19 SOP only 2 days max per month
 										$max = 2;
 										$joins   = "LEFT JOIN tbl_dayoffreq as r ON (dayoff_id = r.id) ";	
@@ -991,7 +991,7 @@ Class DayoffModule extends Application{
 											$Dayoffapproval->save();
 										}
 									}
-									if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="022") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
+									if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
 										
 										$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=4 and tbl_employee.location_id='1'")));
 										if(count($Approver2)>0){
@@ -1100,7 +1100,7 @@ Class DayoffModule extends Application{
 									$Dayoffapproval->save();
 								}
 							}
-							if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="022") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
+							if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
 								$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=4 and tbl_employee.location_id='1'")));
 								if(count($Approver2)>0){
 									$Dayoffapproval = new Dayoffapproval();
@@ -1200,7 +1200,7 @@ Class DayoffModule extends Application{
 						try {				
 							$id = $this->post['id'];
 							$Dayoff = Dayoff::find($id);
-							if ($Dayoff->requeststatus==0){
+							if ($Dayoff->requeststatus==0 || $Dayoff->requeststatus==2){
 								$approval = Dayoffapproval::find("all",array('conditions' => array("dayoff_id=?",$id)));
 								foreach ($approval as $delr){
 									$delr->delete();

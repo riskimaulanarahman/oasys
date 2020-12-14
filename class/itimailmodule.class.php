@@ -1786,7 +1786,7 @@ Class Itimailmodule extends Application{
 			if($form == 1) {
 				$title = 'EXINETMAIL';
 
-				$file="D:/xampp/htdocs/oasys_gogs/doc/it/template_inetmail.xlsx";
+				$file="D:/xampp/htdocs/oasys/doc/it/template_inetmail.xlsx";
 				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
 				$Worksheet = $Workbook->Worksheets(1);
 				$Worksheet->Activate;
@@ -1874,7 +1874,7 @@ Class Itimailmodule extends Application{
 		} else if($form == 2) {
 			$title = 'INETACCESS';
 
-			$file="D:/xampp/htdocs/oasys_gogs/doc/it/template_inetaccess.xls";
+			$file="D:/xampp/htdocs/oasys/doc/it/template_inetaccess.xls";
 				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
 				$Worksheet = $Workbook->Worksheets(1);
 				$Worksheet->Activate;
@@ -1909,7 +1909,7 @@ Class Itimailmodule extends Application{
 		} else if($form == 3) {
 			$title = 'INCMAILBOX';
 
-			$file="D:/xampp/htdocs/oasys_gogs/doc/it/template_incmailbox.xlsx";
+			$file="D:/xampp/htdocs/oasys/doc/it/template_incmailbox.xlsx";
 				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
 				$Worksheet = $Workbook->Worksheets(1);
 				$Worksheet->Activate;
@@ -2062,7 +2062,7 @@ Class Itimailmodule extends Application{
 		} else if($form == 4) {
 			$title = 'RDWEB';
 
-			$file="D:/xampp/htdocs/oasys_gogs/doc/it/template_rdweb.xlsx";
+			$file="D:/xampp/htdocs/oasys/doc/it/template_rdweb.xlsx";
 				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
 				$Worksheet = $Workbook->Worksheets(1);
 				$Worksheet->Activate;
@@ -2099,7 +2099,7 @@ Class Itimailmodule extends Application{
 				$title = 'mailgroup';
 
 
-				$file="D:/xampp/htdocs/oasys_gogs/doc/it/template_mailgroup.xls";
+				$file="D:/xampp/htdocs/oasys/doc/it/template_mailgroup.xls";
 				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
 				$Worksheet = $Workbook->Worksheets(1);
 				$Worksheet->Activate;
@@ -2174,7 +2174,7 @@ Class Itimailmodule extends Application{
 			$xlQualityStandard = 0;
 			$fileName ='doc'.DS.'it'.DS.'pdf'.DS.$title.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$fileName = str_replace("/","",$fileName);
-			$path='D:/xampp/htdocs/oasys_gogs/doc'.DS.'it'.DS.'pdf'.DS.$title.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$path='D:/xampp/htdocs/oasys/doc'.DS.'it'.DS.'pdf'.DS.$title.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
 			if (file_exists($path)) {
 			unlink($path);
 			}

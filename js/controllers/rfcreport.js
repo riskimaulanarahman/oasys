@@ -6,10 +6,49 @@ app.register.controller('rfcreportCtrl', ['$rootScope','$scope', '$http', '$inte
 	if ((!$rootScope.isAdmin) &&  (!$rootScope.viewRFC)){
 		$location.path( "/" );
 	}
+	$scope.formFilterInstance = [];
+	var date = new Date();
+	var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+	var endDay = new Date(date.getFullYear(), date.getMonth()+1, 0);
+	$scope.filterData = {startDate : $filter("date")(firstDay, 'yyyy-MM-dd'), endDate : $filter("date")(endDay, 'yyyy-MM-dd') };
+	$scope.formOptions = {
+		readOnly: false,
+		showColonAfterLabel: true,
+		labelLocation: "left",
+		minColWidth: 200,
+		colCount:3,
+		showValidationSummary: true,
+		onInitialized: function(e) {
+			$scope.formFilterInstance = e.component;
+		},items: [{
+                dataField: "startDate",
+                editorType: "dxDateBox",
+				displayFormat: "yyyy-mm-dd",
+                validationRules: [{
+                    type: "required",
+                    message: "Date is required"
+                }]
+            },{
+                dataField: "endDate",
+                editorType: "dxDateBox",
+				displayFormat: "yyyy-mm-dd",
+                validationRules: [{
+                    type: "required",
+                    message: "Date is required"
+                }]
+            }],
+		bindingOptions: {
+			 'formData': 'filterData',		 
+		}
+	}
+	function initController() {
+		$scope.dataGrid.refresh();
+	}
+	$scope.showForm= true;
 	var myStore = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;
-			criteria = {filter:'all'};
+			criteria = {filter:'all',startDate:$filter("date")($scope.filterData.startDate, 'yyyy-MM-dd'),endDate:$filter("date")($scope.filterData.endDate, 'yyyy-MM-dd')};
             return CrudService.FindData('rfcapp',criteria).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.notify(response.message,"error");
@@ -36,6 +75,9 @@ app.register.controller('rfcreportCtrl', ['$rootScope','$scope', '$http', '$inte
     });
 	$scope.$on("initRFC", function(event, name) {
 		$scope.dataGrid.refresh();
+    });
+	$rootScope.$on("dataRefreshing", function(event, data) {
+		initController();
     });
 	var myData = new DevExpress.data.DataSource({
 		store: myStore
