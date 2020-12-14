@@ -259,7 +259,7 @@ Class Iteiemodule extends Application{
 									$Iteieapproval->save();
 								}
 
-								if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
+								if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
 									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=30 and tbl_employee.location_id='1'")));
 									if(count($Approver2)>0){
 										$Iteieapproval = new Iteieapproval();
@@ -961,7 +961,7 @@ Class Iteiemodule extends Application{
 		try {
 			$excel = new COM("Excel.Application") or die ("ERROR: Unable to instantaniate COM!\r\n");
 			$excel->Visible = false;
-			$file="D:/xampp/htdocs/oasys/doc/it/ad_template.xlsx";
+			$file= SITE_PATH."/doc/it/ad_template.xlsx";
 			// $file="D:/xampp/htdocs/oasys/doc/it/ad_template.xlsx";
 			$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
 			$Worksheet = $Workbook->Worksheets(1);
@@ -1026,7 +1026,7 @@ Class Iteiemodule extends Application{
 			// $path="D:/xampp/htdocs/oasys/doc/it/pdf/output.pdf";
 			$fileName ='doc'.DS.'it'.DS.'pdf'.DS.'ITEIE'.$Iteie->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$fileName = str_replace("/","",$fileName);
-			$path='D:/xampp/htdocs/oasys/doc'.DS.'it'.DS.'pdf'.DS.'ITEIE'.$Iteie->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$path= SITE_PATH.'/doc'.DS.'it'.DS.'pdf'.DS.'ITEIE'.$Iteie->employee->sapid.'_'.date("YmdHis").'.pdf';
 			if (file_exists($path)) {
 			   unlink($path);
 			}
@@ -1034,7 +1034,7 @@ Class Iteiemodule extends Application{
 			$Iteie->approveddoc=str_replace("\\","/",$fileName);
 			$Iteie->save();
 
-			$Workbook->Close(true);
+			$Workbook->Close(false);
 			unset($Worksheet);
 			unset($Workbook);
 			$excel->Workbooks->Close();
