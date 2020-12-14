@@ -7,7 +7,7 @@
         if (typeof($scope.mode)=="undefined"){
             $location.path( "/" );
         }
-	console.log($scope.mode);
+	//console.log($scope.mode);
 	CrudService.GetById('itimail',$scope.Requestid).then(function(response){
 		if(response.status=="autherror"){
 			$scope.logout();
@@ -143,7 +143,7 @@
 
             date = new Date().getTime();
 
-            console.log($scope.data);
+            //console.log($scope.data);
 
             var today = new Date();
             var dd = today.getDate();
@@ -254,12 +254,15 @@
 				},
 				onContentReady:function(e){
 					$scope.formInstance = e.component;
+					var vis4 = ($scope.data.formtype==4)?true:false;
+					$scope.formInstance.getEditor('accounttype').option('disabled',vis4);
+					$scope.formInstance.updateData('validfrom',  new Date($scope.data.validfrom));
 				},
 				readOnly : (($scope.mode=='view')||($scope.mode=='report'))?true:false,
 				labelLocation : "top",
 				minColWidth  :800,
 				colCount : 2,
-				formData:$scope.data,	
+				formData:$scope.data,
                 items: [
                     {	
                         itemType: "group",
@@ -339,8 +342,10 @@
 
                                             $scope.formInstance.itemOption('gmailgroup.emailgroupname', 'visible', vis5);
                                             $scope.formInstance.itemOption('gmailgroup.membername', 'visible', vis5);
-
-                                            // $scope.formInstance.itemOption('group3.validfrom', 'visible', visdate);
+											console.log(vis4)
+											$scope.formInstance.getEditor('accounttype').option('disabled',vis4);
+											$scope.formInstance.updateData('accounttype',  2);
+                                            //$scope.formInstance.itemOption('group3.validfrom', 'visible', vis4);
                                             // $scope.formInstance.itemOption('group3.validto', 'visible', visdate);
 
                                         
@@ -1006,11 +1011,12 @@
 						items: [
                             {
                                 dataField:'accounttype',
+								name:'accounttype',
                                 editorType: "dxSelectBox",
                                 label:{text:"Account Type"},
                                 // visible:($scope.data.formtype==1)?true:false,
                                 // disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report') && ($scope.data.apprstatuscode!==1))?true:false,
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )|| ($scope.data.apprstatuscode==5)) ?false:true,
                                 validationRules: [{type: "required",message: "Action is required"}],
                                 editorOptions: { 
                                     dataSource:$scope.AccountType,  
@@ -1025,11 +1031,20 @@
                                         $scope.formInstance.getEditor('validfrom').option('disabled',dis);
                                         $scope.formInstance.getEditor('validto').option('disabled',dis);
                                         if(dis) {
-                                            $scope.formInstance.updateData('validfrom',  $scope.data.createddate);
-                                            $scope.formInstance.updateData('validto',  "9999-12-31");
+                                            $scope.formInstance.updateData('validfrom',  new Date($scope.data.createddate));
+                                            $scope.formInstance.updateData('validto',  new Date("9999-12-31"));
                                         } else {
-                                            $scope.formInstance.updateData('validfrom',  today);
-                                            $scope.formInstance.updateData('validto',  today);
+                                            $scope.formInstance.updateData('validfrom',  new Date());
+											if ($scope.data.formtype==4){
+												var d = new Date();
+												var year = d.getFullYear();
+												var month = d.getMonth();
+												var day = d.getDate();
+												var c = new Date(year + 1, month, day);
+												$scope.formInstance.updateData('validto',  c);
+											}else{
+												$scope.formInstance.updateData('validto',  new Date());
+											}
                                         }
                                         
                                     }
@@ -1046,7 +1061,19 @@
                                 editorOptions: {
                                     displayFormat:"dd/MM/yyyy",
                                     // disabled: (($scope.mode=='add' ) || ($scope.mode=='edit') || ($scope.data.accounttype!==1)) ?false:true,
-                                }
+									onValueChanged: function (e) {
+										if ($scope.data.formtype==4){
+											var d = e.value;
+											var year = d.getFullYear();
+											var month = d.getMonth();
+											var day = d.getDate();
+											var c = new Date(year + 1, month, day);
+											console.log(c)
+											$scope.formInstance.getEditor('validto').option('max',c);
+										}
+									}
+								},
+								
                             },
                             {
                                 dataField:'validto',
@@ -1058,7 +1085,6 @@
                                 editorOptions: {
                                     displayFormat:"dd/MM/yyyy",
                                     max: new Date(date + 1000*60*60*24*365),
-
                                     // disabled: (($scope.mode=='add' ) || ($scope.mode=='edit') || ($scope.data.accounttype!==1)) ?false:true,
                                 }
                             }
