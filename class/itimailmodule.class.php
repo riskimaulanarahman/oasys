@@ -206,7 +206,7 @@ Class Itimailmodule extends Application{
 
 												if(count($Itimailapproval)==0){
 
-													if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
+													if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
 
 														$ApproverCADKF = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id='30' and tbl_employee.location_id='1'")));
 														if(count($ApproverCADKF)>0){
@@ -1786,7 +1786,7 @@ Class Itimailmodule extends Application{
 			if($form == 1) {
 				$title = 'EXINETMAIL';
 
-				$file="D:/xampp/htdocs/oasys/doc/it/template_inetmail.xlsx";
+				$file= SITE_PATH."/doc/it/template_inetmail.xlsx";
 				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
 				$Worksheet = $Workbook->Worksheets(1);
 				$Worksheet->Activate;
@@ -1874,7 +1874,7 @@ Class Itimailmodule extends Application{
 		} else if($form == 2) {
 			$title = 'INETACCESS';
 
-			$file="D:/xampp/htdocs/oasys/doc/it/template_inetaccess.xls";
+			$file= SITE_PATH."/doc/it/template_inetaccess.xls";
 				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
 				$Worksheet = $Workbook->Worksheets(1);
 				$Worksheet->Activate;
@@ -1909,7 +1909,7 @@ Class Itimailmodule extends Application{
 		} else if($form == 3) {
 			$title = 'INCMAILBOX';
 
-			$file="D:/xampp/htdocs/oasys/doc/it/template_incmailbox.xlsx";
+			$file= SITE_PATH."/doc/it/template_incmailbox.xlsx";
 				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
 				$Worksheet = $Workbook->Worksheets(1);
 				$Worksheet->Activate;
@@ -2062,7 +2062,7 @@ Class Itimailmodule extends Application{
 		} else if($form == 4) {
 			$title = 'RDWEB';
 
-			$file="D:/xampp/htdocs/oasys/doc/it/template_rdweb.xlsx";
+			$file= SITE_PATH."/doc/it/template_rdweb.xlsx";
 				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
 				$Worksheet = $Workbook->Worksheets(1);
 				$Worksheet->Activate;
@@ -2099,7 +2099,7 @@ Class Itimailmodule extends Application{
 				$title = 'mailgroup';
 
 
-				$file="D:/xampp/htdocs/oasys/doc/it/template_mailgroup.xls";
+				$file= SITE_PATH."/doc/it/template_mailgroup.xls";
 				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
 				$Worksheet = $Workbook->Worksheets(1);
 				$Worksheet->Activate;
@@ -2174,7 +2174,7 @@ Class Itimailmodule extends Application{
 			$xlQualityStandard = 0;
 			$fileName ='doc'.DS.'it'.DS.'pdf'.DS.$title.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$fileName = str_replace("/","",$fileName);
-			$path='D:/xampp/htdocs/oasys/doc'.DS.'it'.DS.'pdf'.DS.$title.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$path= SITE_PATH.'/doc'.DS.'it'.DS.'pdf'.DS.$title.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
 			if (file_exists($path)) {
 			unlink($path);
 			}
@@ -2182,7 +2182,7 @@ Class Itimailmodule extends Application{
 			$Itimail->approveddoc=str_replace("\\","/",$fileName);
 			$Itimail->save();
 
-			$Workbook->Close(true);
+			$Workbook->Close(false);
 			unset($Worksheet);
 			unset($Workbook);
 			$excel->Workbooks->Close();
