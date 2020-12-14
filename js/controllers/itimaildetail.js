@@ -1009,7 +1009,7 @@
                                 editorType: "dxSelectBox",
                                 label:{text:"Account Type"},
                                 // visible:($scope.data.formtype==1)?true:false,
-                                // disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report') && ($scope.data.apprstatuscode!==1))?true:false,
+                                // disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report') && ($scope.data.apprstatuscode!==5))?true:false,
                                 disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
                                 validationRules: [{type: "required",message: "Action is required"}],
                                 editorOptions: { 
@@ -1648,6 +1648,8 @@
                             
                             delete data.reason;
 
+                            delete data.accounttype;
+
                             delete data.validfrom;
                             delete data.validto;
                         }
@@ -1662,6 +1664,9 @@
                         delete data.floor;
                         delete data.phoneext;
                         delete data.accounttype;
+
+                        // delete data.validfrom;
+                        // delete data.validto;
                         
                         delete data.listgroup;
                         

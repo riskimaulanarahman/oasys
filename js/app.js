@@ -135,7 +135,11 @@ app.config(function ($routeProvider, $controllerProvider) {
 	.when('/itimail', route.resolve("itimail"))
 	.when('/itimaildetail', route.resolve("itimaildetail"))
 	.when('/itimailapproval', route.resolve("itimailapproval"))
-	// .when('/itsharefolder', route.resolve("itsharefolder"))
+	.when('/itsharefolder', route.resolve("itsharefolder"))
+	.when('/itsharefolderdetail', route.resolve("itsharefolderdetail"))
+	.when('/itsharefolderapproval', route.resolve("itsharefolderapproval"))
+	.when('/itsharefolderreport', route.resolve("itsharefolderreport"))
+
 	// .when('/itinetaccess', route.resolve("itinetaccess"))
 	// .when('/itrdweb', route.resolve("itrdweb"))
 	// .when('/itmailsize', route.resolve("itmailsize"))

@@ -1207,7 +1207,7 @@ Class Itimailmodule extends Application{
 						unset($data['department']);
 						unset($data['approveddoc']);
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-						// $Itimail = Itimail::find($doid);
+						$Itimail = Itimail::find($doid);
 						$join   = "LEFT JOIN tbl_approver ON (tbl_itimailapproval.approver_id = tbl_approver.id) ";
 						if (isset($data['mode'])){
 							$Itimailapproval = Itimailapproval::find('first', array('joins'=>$join,'conditions' => array("itimail_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
@@ -1215,15 +1215,15 @@ Class Itimailmodule extends Application{
 						}else{
 							$Itimailapproval = Itimailapproval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
 						}
-						// foreach($data as $key=>$val) {
-						// 	if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks') ) {
-						// 		// if(($key == 'isrepair') || ($key == 'isscrap')) {
-						// 			$value=(($val===0) || ($val==='0') || ($val==='false'))?false:((($val===1) || ($val==='1') || ($val==='true'))?true:$val);
-						// 		// }
-						// 		$Itimail->$key=$value;
-						// 	}
-						// }
-						// $Itimail->save();
+						foreach($data as $key=>$val) {
+							if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks') ) {
+								// if(($key == 'isrepair') || ($key == 'isscrap')) {
+									$value=(($val===0) || ($val==='0') || ($val==='false'))?false:((($val===1) || ($val==='1') || ($val==='true'))?true:$val);
+								// }
+								$Itimail->$key=$value;
+							}
+						}
+						$Itimail->save();
 
 						unset($data['formtype']);
 						

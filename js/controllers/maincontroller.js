@@ -115,6 +115,10 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 		loadModule($rootScope.viewITIMAIL,"itimailreport",false);
 		$rootScope.$broadcast("initITIMAIL", "");
 	}
+	$scope.dataITSHAREF= function(){	
+		loadModule($rootScope.viewITSHAREF,"itsharefolderreport",false);
+		$rootScope.$broadcast("initITSHAREF", "");
+	}
 
 	$scope.myDayoff= function(){
 		$location.path( "/dayoff" );
@@ -137,7 +141,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.myITIMAIL= function(){
 		$location.path( "/itimail" );
 	}
-	$scope.myITSHAREFOLDER= function(){
+	$scope.myITSHAREF= function(){
 		$location.path( "/itsharefolder" );
 	}
 	$scope.myITINETACCESS= function(){
@@ -222,6 +226,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.mmf30Approval= function(){ loadModule(true,"mmf30approval",true);$rootScope.$broadcast("initMMF30", "");} 
 	$scope.iteieApproval= function(){ loadModule(true,"iteieapproval",true);$rootScope.$broadcast("initITEIE", "");} 
 	$scope.itimailApproval= function(){ loadModule(true,"itimailapproval",true);$rootScope.$broadcast("initITIMAIL", "");} 
+	$scope.itsharefolderApproval= function(){ loadModule(true,"itsharefolderapproval",true);$rootScope.$broadcast("initITSHAREF", "");} 
 	$scope.SPKLApproval= function(){ loadModule(true,"spklapproval",true);$rootScope.$broadcast("initSPKL", "");} 
 	$scope.SPKLTMSApproval = function(){ loadModule(true,"spkltmsapproval",true);$rootScope.$broadcast("initSPKLTMS", "");} 
 	function loadModule(access,template,filter){
@@ -425,6 +430,29 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 			$scope.Requestid = data.id;
 			$scope.Employeeid = data.employee_id;
 			$location.path( "/itimaildetail" );
+		}
+	}
+	$scope.loadITSHAREF= function(data,mode,filter){
+		$scope.Filter=filter;
+		if (mode=='add'){
+			CrudService.Create('itsharef',data).then(function (response) {
+				if(response.status=="error"){
+					DevExpress.ui.dialog.alert(response.message,"Error");
+				}else if(response.status=="autherror"){
+					DevExpress.ui.notify(response.message,"error");
+					$scope.logout();
+				}else{
+					$scope.mode = mode;
+					$scope.Requestid = response.id;
+					$scope.Employeeid = response.employee_id;
+					$location.path( "/itsharefolderdetail" );
+				}
+			});
+		}else{
+			$scope.mode = mode;
+			$scope.Requestid = data.id;
+			$scope.Employeeid = data.employee_id;
+			$location.path( "/itsharefolderdetail" );
 		}
 	}
 	$scope.loadSPKL= function(data,mode,filter){
