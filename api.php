@@ -52,7 +52,7 @@ $page = array("login",
 	// "itinetaccessmodule",
 	// "itmailsizemodule",
 	// "itrdwebmodule",
-	// "itsharefoldermodule",
+	"itsharefoldermodule",
 	// "itstoragetfmodule"
 );
 

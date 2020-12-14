@@ -889,6 +889,10 @@ Class Iteiemodule extends Application{
 							if ($complete){
 								$fileName = $this->generatePDFi($doid);
 								$filePath = SITE_PATH.DS.$fileName;
+								$Mailrecipient = Mailrecipient::find('all',array('conditions'=>array("module='IT' and company_list like ?","%".$ItimailJ->employee->companycode."%")));
+								foreach ($Mailrecipient as $data){
+									$this->mail->AddCC($data->email);
+								}
 								$this->mail->addAttachment($filePath);
 							}
 							if (!$this->mail->send()) {
@@ -957,8 +961,8 @@ Class Iteiemodule extends Application{
 		try {
 			$excel = new COM("Excel.Application") or die ("ERROR: Unable to instantaniate COM!\r\n");
 			$excel->Visible = false;
-			$file="D:/xampp/htdocs/oasys_gogs/doc/it/ad_template.xlsx";
-			// $file="D:/xampp/htdocs/oasys_gogs/doc/it/ad_template.xlsx";
+			$file="D:/xampp/htdocs/oasys/doc/it/ad_template.xlsx";
+			// $file="D:/xampp/htdocs/oasys/doc/it/ad_template.xlsx";
 			$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
 			$Worksheet = $Workbook->Worksheets(1);
 			$Worksheet->Activate;
@@ -1019,10 +1023,10 @@ Class Iteiemodule extends Application{
 
 			$xlTypePDF = 0;
 			$xlQualityStandard = 0;
-			// $path="D:/xampp/htdocs/oasys_gogs/doc/it/pdf/output.pdf";
+			// $path="D:/xampp/htdocs/oasys/doc/it/pdf/output.pdf";
 			$fileName ='doc'.DS.'it'.DS.'pdf'.DS.'ITEIE'.$Iteie->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$fileName = str_replace("/","",$fileName);
-			$path='D:/xampp/htdocs/oasys_gogs/doc'.DS.'it'.DS.'pdf'.DS.'ITEIE'.$Iteie->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$path='D:/xampp/htdocs/oasys/doc'.DS.'it'.DS.'pdf'.DS.'ITEIE'.$Iteie->employee->sapid.'_'.date("YmdHis").'.pdf';
 			if (file_exists($path)) {
 			   unlink($path);
 			}

@@ -7,7 +7,7 @@
         var myStore = new DevExpress.data.CustomStore({
             load: function() {			
                 $scope.isLoaded =true;
-                return CrudService.GetAll('itimailbyemp').then(function (response) {
+                return CrudService.GetAll('itsharefbyemp').then(function (response) {
                     if(response.status=="error"){
                         DevExpress.ui.notify(response.message,"error");
                     }else{
@@ -17,12 +17,12 @@
             },
          
             byKey: function(key) {
-                CrudService.GetById('itimail',encodeURIComponent(key)).then(function (response) {
+                CrudService.GetById('itsharef',encodeURIComponent(key)).then(function (response) {
                     return response;
                 });
             },
             insert: function(values) {
-                CrudService.Create('itimail',values).then(function (response) {
+                CrudService.Create('itsharef',values).then(function (response) {
                     if(response.status=="error"){
                          DevExpress.ui.notify(response.message,"error");
                     }
@@ -30,7 +30,7 @@
                 });
             },
             update: function(key, values) {
-                CrudService.Update('itimail',key.id,values).then(function (response) {
+                CrudService.Update('itsharef',key.id,values).then(function (response) {
                     if(response.status=="error"){
                          DevExpress.ui.notify(response.message,"error");
                     }
@@ -38,7 +38,7 @@
                 });
             },
             remove: function(key) {
-                CrudService.Delete('itimail',key.id).then(function (response) {
+                CrudService.Delete('itsharef',key.id).then(function (response) {
                     if(response.status=="error"){
                          DevExpress.ui.notify(response.message,"error");
                     }
@@ -83,7 +83,7 @@
                                 .text('')
                                 .on('dxclick', function () {
                                     DevExpress.ui.notify("Loading detail data for "+options.data.requestdate,"info",600);
-                                    $scope.loadITIMAIL(options.data,"view",true);
+                                    $scope.loaditsharef(options.data,"view",true);
                                 })
                                 .appendTo(container);
                             if((options.data.requeststatus=='0') || (options.data.requeststatus=='2')){
@@ -93,7 +93,7 @@
                                     // if (!$scope.allowEdit){
                                         // DevExpress.ui.notify("You don't have authority to edit data","error");
                                     // } else{
-                                        $scope.loadITIMAIL(options.data,"edit",true);
+                                        $scope.loaditsharef(options.data,"edit",true);
                                     // }
                                 })
                                 .appendTo(container);
@@ -250,7 +250,7 @@
                         onClick: function() {
                             var date = new Date();
                             var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
-                            $scope.loadITIMAIL({createddate:d,username:$rootScope.curUser.username},"add",true);
+                            $scope.loaditsharef({createddate:d,username:$rootScope.curUser.username},"add",true);
                         }
                     }
                 });
