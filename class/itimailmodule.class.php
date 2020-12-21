@@ -232,7 +232,7 @@ Class Itimailmodule extends Application{
 														$dx = Itimailapproval::find('all',array('joins'=>$joins,'conditions' => array("itimail_id=? and tbl_approver.approvaltype_id=33",$id)));	
 														foreach ($dx as $result) {
 															$result->delete();
-															$logger = new Datalogger("Itimailapproval","delete",json_encode($result->to_array()),"delete Approval");
+															$logger = new Datalogger("Itimailapproval","delete",json_encode($result->to_array()),"delete Approval Internet Email");
 															$logger->SaveData();
 														}
 													}
@@ -243,7 +243,7 @@ Class Itimailmodule extends Application{
 												$dx = Itimailapproval::find('all',array('joins'=>$joins,'conditions' => array("itimail_id=? and tbl_approver.approvaltype_id=30",$id)));	
 												foreach ($dx as $result) {
 													$result->delete();
-													$logger = new Datalogger("Itimailapproval","delete",json_encode($result->to_array()),"delete Approval");
+													$logger = new Datalogger("Itimailapproval","delete",json_encode($result->to_array()),"delete Approval RD Web");
 													$logger->SaveData();
 												}
 											}
@@ -265,7 +265,7 @@ Class Itimailmodule extends Application{
 												$dx = Itimailapproval::find('all',array('joins'=>$joins,'conditions' => array("itimail_id=? and tbl_approver.approvaltype_id=30",$id)));	
 												foreach ($dx as $result) {
 													$result->delete();
-													$logger = new Datalogger("Itimailapproval","delete",json_encode($result->to_array()),"delete Approval");
+													$logger = new Datalogger("Itimailapproval","delete",json_encode($result->to_array()),"delete Approval other form");
 													$logger->SaveData();
 												}
 											}
@@ -274,7 +274,7 @@ Class Itimailmodule extends Application{
 												$dx = Itimailapproval::find('all',array('joins'=>$joins,'conditions' => array("itimail_id=? and tbl_approver.approvaltype_id=33",$id)));	
 												foreach ($dx as $result) {
 													$result->delete();
-													$logger = new Datalogger("Itimailapproval","delete",json_encode($result->to_array()),"delete Approval");
+													$logger = new Datalogger("Itimailapproval","delete",json_encode($result->to_array()),"delete Approval other form");
 													$logger->SaveData();
 												}
 											}
@@ -310,65 +310,57 @@ Class Itimailmodule extends Application{
 									}
 									
 
-									if ($accessreq != 1){
-										if(count($Itimailapproval)>0){
-											$dx = Itimailapproval::find('all',array('joins'=>$joins,'conditions' => array("itimail_id=? and tbl_approver.approvaltype_id=30",$id)));	
-											foreach ($dx as $result) {
-												$result->delete();
-												$logger = new Datalogger("Itimailapproval","delete",json_encode($result->to_array()),"delete Approval");
-												$logger->SaveData();
+									if ($accessreq == 2){
+
+										$App1 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id='30' and tbl_employee.location_id ='1' ")));
+
+										if($App1) {
+											if(count($Itimailapproval)>0){
+												$dx = Itimailapproval::find('all',array('joins'=>$joins,'conditions' => array("itimail_id=? and tbl_approver.approvaltype_id=30",$id)));	
+												foreach ($dx as $result) {
+													$result->delete();
+													$logger = new Datalogger("Itimailapproval","delete",json_encode($result->to_array()),"delete Approval internet email");
+													$logger->SaveData();
+												}
+											}
+											
+		
+											$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id='30' and tbl_employee.location_id ='1' ")));
+
+
+											if(count($Approver2)>0){
+												$Itimailapproval = new Itimailapproval();
+												$Itimailapproval->itimail_id = $Itimail->id;
+												$Itimailapproval->approver_id = $Approver2->id;
+												$Itimailapproval->save();
 											}
 										}
 
-											// if(count($Itimailapproval)==0){
-
-											// 	if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
-
-											// 		$ApproverCADKF = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id='30' and tbl_employee.location_id='1'")));
-											// 		$ApproverCADKF = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id='30' and tbl_employee.location_id='1'")));
-											// 		if(count($ApproverCADKF)>0){
-											// 				$Itimailapproval = new Itimailapproval();
-											// 				$Itimailapproval->itimail_id = $Itimail->id;
-											// 				$Itimailapproval->approver_id = $ApproverCADKF->id;
-											// 				$Itimailapproval->save();
-											// 				$logger = new Datalogger("Itimailapproval","add","Add Approval",json_encode($Itimailapproval->to_array()));
-											// 				$logger->SaveData();
-											// 		}
-
-											// 	} else {
-													// if($accessreq != 1) {
-													$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id='30' and tbl_employee.loginname like '%Randie_Tjoe%'")));
-													// } else {
-														
-													// 	$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=30 and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
-													// }
-													if(count($Approver2)>0){
-														$Itimailapproval = new Itimailapproval();
-														$Itimailapproval->itimail_id = $Itimail->id;
-														$Itimailapproval->approver_id = $Approver2->id;
-														$Itimailapproval->save();
-													}
-
-											// 	}
 											echo "1";
+
+											print_r($Approver2);
 
 
 											// }
 												
 									} else {
 
-										if(count($Itimailapproval)>0){
-											$dx = Itimailapproval::find('all',array('joins'=>$joins,'conditions' => array("itimail_id=? and tbl_approver.approvaltype_id=30",$id)));	
-											foreach ($dx as $result) {
-												$result->delete();
-												$logger = new Datalogger("Itimailapproval","delete",json_encode($result->to_array()),"delete Approval");
-												$logger->SaveData();
+										$App2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id='30' and tbl_employee.location_id ='1' ")));
+										if(!$App2) {
+											if(count($Itimailapproval)>0){
+												$dx = Itimailapproval::find('all',array('joins'=>$joins,'conditions' => array("itimail_id=? and tbl_approver.approvaltype_id=30",$id)));	
+												foreach ($dx as $result) {
+													$result->delete();
+													$logger = new Datalogger("Itimailapproval","delete",json_encode($result->to_array()),"delete Approval not internet email");
+													$logger->SaveData();
+												}
 											}
 										}
 
 										echo "2";
 
-										// if(count($Itimailapproval)==0){
+										// if(count($Itimailapproval)>0){
+
 
 											if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
 
