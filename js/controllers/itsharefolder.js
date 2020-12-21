@@ -83,7 +83,7 @@
                                 .text('')
                                 .on('dxclick', function () {
                                     DevExpress.ui.notify("Loading detail data for "+options.data.requestdate,"info",600);
-                                    $scope.loaditsharef(options.data,"view",true);
+                                    $scope.loadITSHAREF(options.data,"view",true);
                                 })
                                 .appendTo(container);
                             if((options.data.requeststatus=='0') || (options.data.requeststatus=='2')){
@@ -93,7 +93,7 @@
                                     // if (!$scope.allowEdit){
                                         // DevExpress.ui.notify("You don't have authority to edit data","error");
                                     // } else{
-                                        $scope.loaditsharef(options.data,"edit",true);
+                                        $scope.loadITSHAREF(options.data,"edit",true);
                                     // }
                                 })
                                 .appendTo(container);
@@ -250,7 +250,7 @@
                         onClick: function() {
                             var date = new Date();
                             var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
-                            $scope.loaditsharef({createddate:d,username:$rootScope.curUser.username},"add",true);
+                            $scope.loadITSHAREF({createddate:d,username:$rootScope.curUser.username},"add",true);
                         }
                     }
                 });
