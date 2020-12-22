@@ -26,6 +26,10 @@ app.register.controller('dashboardCtrl', ['$rootScope','$scope', '$http', '$inte
 	$scope.pendingSPKLReq = 0;
 	$scope.pendingSPKLTMS = 0;
 	$scope.pendingSPKLTMSReq = 0;
+	$scope.pendingITEIEReq = 0;
+	$scope.pendingITEIE=0;
+	$scope.pendingITIMAILReq=0;
+	$scope.pendingITIMAIL=0;
     function initController() {
 		setTimeout(function(){ 
 			criteria = {status:'pending'};
