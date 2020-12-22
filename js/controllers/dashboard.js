@@ -104,7 +104,7 @@ app.register.controller('dashboardCtrl', ['$rootScope','$scope', '$http', '$inte
 			CrudService.FindData('itimailapp',criteria).then(function (response){
 				$scope.pendingITIMAIL=response.jml;
 			});
-		}, 1000);
+		}, 500);
 		
         // DevExpress.ui.notify({
             // message: "Welcome \r\n ",
