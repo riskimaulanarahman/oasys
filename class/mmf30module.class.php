@@ -592,6 +592,7 @@ Class Mmf30module extends Application{
 											<th><p class=MsoNormal>Currency</p></th>
 											<th><p class=MsoNormal>Unit Price</p></th>
 											<th><p class=MsoNormal>Extended Price</p></th>
+											<th><p class=MsoNormal>Remarks</p></th>
 										</tr>
 										';
 									$no=1;
@@ -607,6 +608,7 @@ Class Mmf30module extends Application{
 											<td><p class=MsoNormal> '.$data->currency.'</p></td>
 											<td><p class=MsoNormal> '.number_format($data->unitprice).'</p></td>
 											<td><p class=MsoNormal> '.number_format($data->extendedprice).'</p></td>
+											<td><p class=MsoNormal> '.$data->remarks.'</p></td>
 											</tr>';
 										$no++;
 									}
@@ -1025,6 +1027,7 @@ Class Mmf30module extends Application{
 											<th><p class=MsoNormal>Currency</p></th>
 											<th><p class=MsoNormal>Unit Price</p></th>
 											<th><p class=MsoNormal>Extended Price</p></th>
+											<th><p class=MsoNormal>Remarks</p></th>
 										</tr>
 										';
 									$no=1;
@@ -1041,6 +1044,7 @@ Class Mmf30module extends Application{
 											<td><p class=MsoNormal> '.$data->currency.'</p></td>
 											<td><p class=MsoNormal> '.number_format($data->unitprice).'</p></td>
 											<td><p class=MsoNormal> '.number_format($data->extendedprice).'</p></td>
+											<td><p class=MsoNormal> '.$data->remarks.'</p></td>
 											</tr>';
 										$no++;
 							}
@@ -1407,6 +1411,7 @@ Class Mmf30module extends Application{
 		<td style="width:60px;max-width:60px; border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle><b>Currency</b></td>
 		<td style="width:55px;max-width:55px; border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle ><b>Unit<br>Price</b></td>
 		<td style="width:60px;max-width:60px; border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle><b>Extended<br>Price</b></td>
+		<td style="width:60px;max-width:60px; border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle><b>Remarks<br>Price</b></td>
 		</tr>
 		';
 		$no=1;
@@ -1427,6 +1432,7 @@ Class Mmf30module extends Application{
 				<td style="width:60px;max-width:60px; border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle><b>'.$data->currency.'</b></td>
 				<td style="width:55px;max-width:55px; border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle ><b>'.number_format($data->unitprice).'</b></td>
 				<td style="width:60px;max-width:60px; border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle><b>'.number_format($data->extendedprice).'</b></td>
+				<td style="width:60px;max-width:60px; border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle><b>'.$data->remarks.'</b></td>
 			</tr>
 			
 				';
@@ -1563,7 +1569,7 @@ Class Mmf30module extends Application{
 											// echo json_encode($Mmf30->wonumber, JSON_NUMERIC_CHECK);
 		
 		try {
-			$html2pdf = new Html2Pdf('P', 'A4', 'en');
+			$html2pdf = new Html2Pdf('L', 'A4', 'en');
 			$html2pdf->pdf->SetDisplayMode('fullpage');
 			$html2pdf->writeHTML( $pdfContent);
 			ob_clean();

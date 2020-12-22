@@ -981,6 +981,14 @@
 					format: "fixedPoint",
                     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }
+			},
+			{
+                dataField:'remarks',
+                caption: "Remarks",
+                dataType: "string",
+                editorOptions: {
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                }
             },
 		],
 		"export": {
