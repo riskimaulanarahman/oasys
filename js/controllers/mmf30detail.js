@@ -1006,6 +1006,7 @@
 			"columns[6].editorOptions.disabled":"lockUser",
 			"columns[7].editorOptions.disabled":"lockUser",
 			"columns[8].editorOptions.disabled":"lockUser",
+			"columns[9].editorOptions.disabled":"lockDetail",
 			"columns[5].lookup.dataSource":"units",
 			"columns[6].lookup.dataSource":"currencys"
         },editing: {
