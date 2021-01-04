@@ -13,12 +13,12 @@
 			$scope.logout();
 		}else{
             $scope.data = response;
-			if (($scope.data.formtype==5)){
-				$scope.data.membername = Array.isArray($scope.data.membername)?$scope.data.membername:$scope.data.membername.split(",")
-				$scope.data.membername = $.map($scope.data.membername, function(value){
-					return parseInt(value, 10);
-				});
-			}
+			// if (($scope.data.formtype==5)){
+			// 	$scope.data.membername = Array.isArray($scope.data.membername)?$scope.data.membername:$scope.data.membername.split(",")
+			// 	$scope.data.membername = $.map($scope.data.membername, function(value){
+			// 		return parseInt(value, 10);
+			// 	});
+			// }
             // $scope.data.department = "";
 			if(($scope.mode=='approve')){
 				$scope.data.remarks="";
@@ -858,7 +858,9 @@
             mode: "cell",
 			allowUpdating: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule'))?(($rootScope.isAdmin)?true:false):true,
 			allowAdding:(($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule'))?(($rootScope.isAdmin)?true:false):true,
-			allowDeleting:($rootScope.isAdmin)?true:false,
+            // allowDeleting:($rootScope.isAdmin)?true:false,
+			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule'))?(($rootScope.isAdmin)?true:false):true,
+            
             form:{colCount: 1,
             },
         },
@@ -935,7 +937,9 @@
             mode: "cell",
 			allowUpdating: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule'))?(($rootScope.isAdmin)?true:false):true,
 			allowAdding:(($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule'))?(($rootScope.isAdmin)?true:false):true,
-			allowDeleting:($rootScope.isAdmin)?true:false,
+            allowDeleting:(($rootScope.isAdmin) || ($scope.mode=='approve'))?true:false,
+			// allowDeleting:(($scope.mode=='approve')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+            
             form:{colCount: 1,
             },
         },
@@ -1128,25 +1132,14 @@
 				delete data.bgbu;
 				delete data.officelocation;
 				delete data.floor;
-				delete data.phoneext;
-                delete data.accessrequested;
-				delete data.accesstype;
+                delete data.phoneext;
+                
+                delete data.foldername;
+           
 				delete data.accounttype;
-				delete data.emailquota;
 				delete data.validfrom;
 				delete data.validto;
-				delete data.emaildomain;
-				delete data.listgroup;
-				delete data.listgroupmoderation;
-				delete data.web1;
-				delete data.web2;
-				delete data.newmailboxsize;
-				delete data.incomingsize;
-				delete data.outgoingsize;
-				delete data.typeofaccess;
-				delete data.emailgroupname;
-				delete data.membername;
-				delete data.reason;
+				
 				delete data.isdeclaration;
 
 				delete data.depthead;
@@ -1187,25 +1180,7 @@
                         data.mode="approve";
                         
                         if($scope.data.apprstatuscode!==5) {
-                            delete data.accessrequested;
-                            delete data.accesstype;
-                            delete data.emailquota;
-                            delete data.emaildomain;
-                            delete data.listgroupmoderation;
-
-                            delete data.web1;
-                            delete data.web2;
-
-                            delete data.newmailboxsize;
-                            delete data.incomingsize;
-                            delete data.outgoingsize;
-
-                            delete data.typeofaccess;
-
-                            delete data.emailgroupname;
-                            delete data.membername;
-                            
-                            delete data.reason;
+                            delete data.foldername;
 
                             delete data.accounttype;
 
@@ -1226,9 +1201,6 @@
 
                         // delete data.validfrom;
                         // delete data.validto;
-                        
-                        delete data.listgroup;
-                        
                         
                         delete data.isdeclaration;
 
@@ -1301,8 +1273,8 @@
                         delete data.apprstatuscode;
                         data.validfrom = $filter("date")(data.validfrom, "yyyy-MM-dd HH:mm");
                         data.validto = $filter("date")(data.validto, "yyyy-MM-dd HH:mm");
-                        var selected = data.membername || [];
-                            data.membername = selected.join();
+                        // var selected = data.membername || [];
+                        //     data.membername = selected.join();
                         CrudService.Update('itsharef',data.id,data).then(function (response) {
                             if(response.status=="error"){
                                     DevExpress.ui.notify(response.message,"error");
@@ -1319,7 +1291,7 @@
                                         offset: '0 0' 
                                     }
                                 });
-                                $location.path( "/itsharef" );
+                                $location.path( "/itsharefolder" );
                             }
                             
                         });

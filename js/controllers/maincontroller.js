@@ -226,7 +226,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.mmf30Approval= function(){ loadModule(true,"mmf30approval",true);$rootScope.$broadcast("initMMF30", "");} 
 	$scope.iteieApproval= function(){ loadModule(true,"iteieapproval",true);$rootScope.$broadcast("initITEIE", "");} 
 	$scope.itimailApproval= function(){ loadModule(true,"itimailapproval",true);$rootScope.$broadcast("initITIMAIL", "");} 
-	$scope.itsharefolderApproval= function(){ loadModule(true,"itsharefolderapproval",true);$rootScope.$broadcast("initITSHAREF", "");} 
+	$scope.itsharefApproval= function(){ loadModule(true,"itsharefolderapproval",true);$rootScope.$broadcast("initITSHAREF", "");} 
 	$scope.SPKLApproval= function(){ loadModule(true,"spklapproval",true);$rootScope.$broadcast("initSPKL", "");} 
 	$scope.SPKLTMSApproval = function(){ loadModule(true,"spkltmsapproval",true);$rootScope.$broadcast("initSPKLTMS", "");} 
 	function loadModule(access,template,filter){

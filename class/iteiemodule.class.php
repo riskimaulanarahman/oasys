@@ -939,7 +939,7 @@ Class Iteiemodule extends Application{
 		
 		//condition
 			foreach ($Iteieapproval as $data){
-				if(($data->approver->approvaltype->id==29) || ($data->approver->employee_id==$Mmf30->depthead)){
+				if(($data->approver->approvaltype->id==29) || ($data->approver->employee_id==$Iteie->depthead)){
 					$deptheadname = $data->approver->employee->fullname;
 					$deptheaddate = date("d/m/Y",strtotime($data->approvaldate));
 				}
