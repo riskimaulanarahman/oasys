@@ -1756,7 +1756,7 @@ Class Itimailmodule extends Application{
 
 		//condition
 			foreach ($Itimailapproval as $data){
-				if(($data->approver->approvaltype->id==29) || ($data->approver->employee_id==$Mmf30->depthead)){
+				if(($data->approver->approvaltype->id==29) || ($data->approver->employee_id==$Itimail->depthead)){
 					$deptheadname = $data->approver->employee->fullname;
 					$deptheaddate = date("d/m/Y",strtotime($data->approvaldate));
 				}
@@ -2155,8 +2155,8 @@ Class Itimailmodule extends Application{
 		
 
 				//end condition
-				// $Worksheet->Range("F31")->Value = $datefrom;
-				// $Worksheet->Range("P31")->Value = $dateto;
+				$Worksheet->Range("F26")->Value = $datefrom;
+				$Worksheet->Range("R26")->Value = $dateto;
 				// $Worksheet->Range("J27")->Value = $Itimail->typeofaccess;
 				// $Worksheet->Range("F34")->Value = $Itimail->reason;
 				$Worksheet->Range("I56")->Value = $deptheadname;

@@ -148,10 +148,10 @@ Class Itsharefoldermodule extends Application{
 				switch ($this->post['criteria']){
 					case 'byid':
 						$id = $this->post['id'];
-						// $join = "LEFT JOIN vwitsharefreport ON tbl_itsharef.id = vwitsharefreport.id";
-						// $select = "tbl_itsharef.*,vwitsharefreport.apprstatuscode";
-						$Itsharef = Itsharef::find($id, array('include' => array('employee'=>array('company','department','designation','location'))));
-						// $Itsharef = Itsharef::find($id, array('joins'=>$join,'select'=>$select,'include' => array('employee'=>array('company','department','designation'))));
+						$join = "LEFT JOIN vwitsharefreport ON tbl_itsharef.id = vwitsharefreport.id";
+						$select = "tbl_itsharef.*,vwitsharefreport.apprstatuscode";
+						// $Itsharef = Itsharef::find($id, array('include' => array('employee'=>array('company','department','designation','location'))));
+						$Itsharef = Itsharef::find($id, array('joins'=>$join,'select'=>$select,'include' => array('employee'=>array('company','department','designation'))));
 						if ($Itsharef){
 							$fullname = $Itsharef->employee->fullname;
 							$bgbu = $Itsharef->employee->companycode;
@@ -606,7 +606,7 @@ Class Itsharefoldermodule extends Application{
 							}
 						}catch (Exception $e){
 							$err = new Errorlog();
-							$err->errortype = "DeleteITEIE";
+							$err->errortype = "DeleteITSHAREF";
 							$err->errordate = date("Y-m-d h:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
@@ -1066,7 +1066,7 @@ Class Itsharefoldermodule extends Application{
 							}
 						}catch (Exception $e){
 							$err = new Errorlog();
-							$err->errortype = "UpdateITEIE";
+							$err->errortype = "UpdateITSHAREF";
 							$err->errordate = date("Y-m-d h:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
@@ -1361,320 +1361,6 @@ Class Itsharefoldermodule extends Application{
 								<tr><td><p class=MsoNormal>Email</p></td><td>:</td><td><p class=MsoNormal><b>'.$email.'</b></p></td></tr>
 								</table>';
 
-								if($Itsharef->formtype == 1) {
-
-									if($Itsharef->accessrequested == 1) {
-										$accessR = 'Exchange (non-Internet) Email';
-									}else if($Itsharef->accessrequested == 2) {
-										$accessR = 'Internet Email';
-									}else if($Itsharef->accessrequested == 3) {
-										$accessR = 'Change Domain';
-									}else {
-										$accessR = '';
-									}
-
-									if($Itsharef->accesstype == 1) {
-										$accessT = 'Terminal Server (TS) User Account';
-									}else if($Itsharef->accesstype == 2) {
-										$accessT = 'Non-TS Account';
-									}else {
-										$accessT = '';
-									}
-
-									if($Itsharef->accounttype == 1) {
-										$accountT = 'Permanent';
-									}else if($Itsharef->accounttype == 2) {
-										$accountT = 'Temporary';
-									}else {
-										$accountT = '';
-									}
-
-									if($Itsharef->emailquota == 1) {
-										$emailQ = '250MB';
-									}else if($Itsharef->emailquota == 2) {
-										$emailQ = '500MB';
-									}else if($Itsharef->emailquota == 3) {
-										$emailQ = '1000MB';
-									}else if($Itsharef->emailquota == 4) {
-										$emailQ = '1500MB';
-									}else if($Itsharef->emailquota == 5) {
-										$emailQ = '2000MB';
-									}else {
-										$emailQ = '';
-									}
-
-									if($Itsharef->emaildomain == 1) {
-										$emailD = 'itci-hutani.com';
-									}else if($Itsharef->emaildomain == 2) {
-										$emailD = 'kalimantan-prima.com';
-									}else if($Itsharef->emaildomain == 3) {
-										$emailD = 'balikpapanchip.com';
-									}else if($Itsharef->emaildomain == 4) {
-										$emailD = 'lajudinamika.com';
-									}else if($Itsharef->emaildomain == 5) {
-										$emailD = 'ptadindo.com';
-									}else if($Itsharef->emaildomain == 6) {
-										$emailD = 'D1.LCL';
-									}else {
-										$emailD = '';
-									}
-
-									$listmod = Listmod::find('first',array('conditions'=>array("id=?",$Itsharef->listgroupmoderation)));
-
-									$this->mailbody .='	
-										
-										<table border=1 cellspacing=0 cellpadding=3 width=683>
-										<tr>
-											<th><p class=MsoNormal>Access Requested</p></th>
-											<th><p class=MsoNormal>Access Type</p></th>
-											<th><p class=MsoNormal>Account Type</p></th>
-											<th><p class=MsoNormal>Email Quota </p></th>
-											<th><p class=MsoNormal>Email Domain </p></th>
-											<th><p class=MsoNormal>List Group</p></th>
-											<th><p class=MsoNormal>List Group Moderation</p></th>
-											<th><p class=MsoNormal>Valid From</p></th>
-											<th><p class=MsoNormal>Valid To</p></th>
-										</tr>
-										<tr style="height:22.5pt">
-											<td><p class=MsoNormal> '.$accessR.'</p></td>
-											<td><p class=MsoNormal> '.$accessT.'</p></td>
-											<td><p class=MsoNormal> '.$accountT.'</p></td>
-											<td><p class=MsoNormal> '.$emailQ.'</p></td>
-											<td><p class=MsoNormal> '.$emailD.'</p></td>
-											<td><p class=MsoNormal> '.$Itsharef->listgroup.'</p></td>
-											<td><p class=MsoNormal> '.$listmod->mod.'</p></td>
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itsharef->validfrom)).'</p></td>
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itsharef->validto)).'</p></td>
-										</tr>
-										';
-
-									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
-									
-								} else if($Itsharef->formtype == 2) {
-									$this->mailbody .='	
-										
-										<table border=1 cellspacing=0 cellpadding=3 width=683>
-										<tr>
-											<th><p class=MsoNormal>http:// (A)</p></th>
-											<th><p class=MsoNormal>http:// (B)</p></th>
-											<th><p class=MsoNormal>Valid From</p></th>
-											<th><p class=MsoNormal>Valid To</p></th>
-										</tr>
-										<tr style="height:22.5pt">
-											<td><p class=MsoNormal> '.$Itsharef->web1.'</p></td>
-											<td><p class=MsoNormal> '.$Itsharef->web2.'</p></td>
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itsharef->validfrom)).'</p></td>
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itsharef->validto)).'</p></td>
-										</tr>
-										';
-
-									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
-									
-								} else if($Itsharef->formtype == 3) {
-
-									if($Itsharef->newmailboxsize == 1) {
-										$newmailbox = '256MB';
-									}else if($Itsharef->newmailboxsize == 2) {
-										$newmailbox = '512MB';
-									}else if($Itsharef->newmailboxsize == 3) {
-										$newmailbox = '1GB';
-									}else if($Itsharef->newmailboxsize == 4) {
-										$newmailbox = '1.5GB';
-									}else if($Itsharef->newmailboxsize == 5) {
-										$newmailbox = '2GB';
-									}else if($Itsharef->newmailboxsize == 6) {
-										$newmailbox = '3GB';
-									}else if($Itsharef->newmailboxsize == 7) {
-										$newmailbox = '4GB';
-									}else if($Itsharef->newmailboxsize == 8) {
-										$newmailbox = '5GB';
-									}else if($Itsharef->newmailboxsize == 9) {
-										$newmailbox = '6GB';
-									}else if($Itsharef->newmailboxsize == 10) {
-										$newmailbox = '7GB';
-									}else if($Itsharef->newmailboxsize == 11) {
-										$newmailbox = '8GB';
-									}else if($Itsharef->newmailboxsize == 12) {
-										$newmailbox = '9GB';
-									}else if($Itsharef->newmailboxsize == 13) {
-										$newmailbox = '10GB';
-									}else {
-										$newmailbox = '';
-									}
-
-									if($Itsharef->incomingsize == 1) {
-										$incoming = '5MB';
-									}else if($Itsharef->incomingsize == 2) {
-										$incoming = '10MB';
-									}else if($Itsharef->incomingsize == 3) {
-										$incoming = '15MB';
-									}else if($Itsharef->incomingsize == 4) {
-										$incoming = '20MB';
-									}else if($Itsharef->incomingsize == 5) {
-										$incoming = '25MB';
-									}else if($Itsharef->incomingsize == 6) {
-										$incoming = '30MB';
-									}else if($Itsharef->incomingsize == 7) {
-										$incoming = '35MB';
-									}else if($Itsharef->incomingsize == 8) {
-										$incoming = '40MB';
-									}else if($Itsharef->incomingsize == 9) {
-										$incoming = '45MB';
-									}else if($Itsharef->incomingsize == 10) {
-										$incoming = '50MB';
-									}else if($Itsharef->incomingsize == 11) {
-										$incoming = '55MB';
-									}else if($Itsharef->incomingsize == 12) {
-										$incoming = '60MB';
-									}else if($Itsharef->incomingsize == 13) {
-										$incoming = '65MB';
-									}else if($Itsharef->incomingsize == 14) {
-										$incoming = '70MB';
-									}else if($Itsharef->incomingsize == 15) {
-										$incoming = '75MB';
-									}else if($Itsharef->incomingsize == 16) {
-										$incoming = '80MB';
-									}else if($Itsharef->incomingsize == 17) {
-										$incoming = '85MB';
-									}else if($Itsharef->incomingsize == 18) {
-										$incoming = '90MB';
-									}else if($Itsharef->incomingsize == 19) {
-										$incoming = '95MB';
-									}else if($Itsharef->incomingsize == 20) {
-										$incoming = '100MB';
-									}else {
-										$incoming = '';
-									}
-
-									if($Itsharef->outgoingsize == 1) {
-										$outgoing = '5MB';
-									}else if($Itsharef->outgoingsize == 2) {
-										$outgoing = '10MB';
-									}else if($Itsharef->outgoingsize == 3) {
-										$outgoing = '15MB';
-									}else if($Itsharef->outgoingsize == 4) {
-										$outgoing = '20MB';
-									}else if($Itsharef->outgoingsize == 5) {
-										$outgoing = '25MB';
-									}else if($Itsharef->outgoingsize == 6) {
-										$outgoing = '30MB';
-									}else if($Itsharef->outgoingsize == 7) {
-										$outgoing = '35MB';
-									}else if($Itsharef->outgoingsize == 8) {
-										$outgoing = '40MB';
-									}else if($Itsharef->outgoingsize == 9) {
-										$outgoing = '45MB';
-									}else if($Itsharef->outgoingsize == 10) {
-										$outgoing = '50MB';
-									}else if($Itsharef->outgoingsize == 11) {
-										$outgoing = '55MB';
-									}else if($Itsharef->outgoingsize == 12) {
-										$outgoing = '60MB';
-									}else if($Itsharef->outgoingsize == 13) {
-										$outgoing = '65MB';
-									}else if($Itsharef->outgoingsize == 14) {
-										$outgoing = '70MB';
-									}else if($Itsharef->outgoingsize == 15) {
-										$outgoing = '75MB';
-									}else if($Itsharef->outgoingsize == 16) {
-										$outgoing = '80MB';
-									}else if($Itsharef->outgoingsize == 17) {
-										$outgoing = '85MB';
-									}else if($Itsharef->outgoingsize == 18) {
-										$outgoing = '90MB';
-									}else if($Itsharef->outgoingsize == 19) {
-										$outgoing = '95MB';
-									}else if($Itsharef->outgoingsize == 20) {
-										$outgoing = '100MB';
-									}else {
-										$outgoing = '';
-									}
-
-									$this->mailbody .='	
-										
-										<table border=1 cellspacing=0 cellpadding=3 width=683>
-										<tr>
-											<th><p class=MsoNormal>New Mailbox Size</p></th>
-											<th><p class=MsoNormal>Outgoing Size</p></th>
-											<th><p class=MsoNormal>Incoming Size</p></th>
-											<th><p class=MsoNormal>Valid From</p></th>
-											<th><p class=MsoNormal>Valid To</p></th>
-										</tr>
-										<tr style="height:22.5pt">
-											<td><p class=MsoNormal> '.$newmailbox.'</p></td>
-											<td><p class=MsoNormal> '.$incoming.'</p></td>
-											<td><p class=MsoNormal> '.$outgoing.'</p></td>
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itsharef->validfrom)).'</p></td>
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itsharef->validto)).'</p></td>
-										</tr>
-										';
-
-									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
-									
-								} else if($Itsharef->formtype == 4) {
-									$this->mailbody .='	
-										
-										<table border=1 cellspacing=0 cellpadding=3 width=683>
-										<tr>
-											<th><p class=MsoNormal>RDP to TS</p></th>
-											<th><p class=MsoNormal>Example of usage</p></th>
-											<th><p class=MsoNormal>Valid From</p></th>
-											<th><p class=MsoNormal>Valid To</p></th>
-										</tr>
-										<tr style="height:22.5pt">
-											<td><p class=MsoNormal> '.$Itsharef->typeofaccess.'</p></td>
-											<td><p class=MsoNormal> access email, open & edit attachments/ documents, department shared folders, corporate portals, SAP GUI</p></td>
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itsharef->validfrom)).'</p></td>
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itsharef->validto)).'</p></td>
-										</tr>
-										';
-
-									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
-									
-								} else if($Itsharef->formtype == 5) {
-
-									$string = $Itsharef->membername;
-
-									$expstring = explode(',',$string);
-									// $countstring = count($expstring)+29;
-
-									$getname = [];
-									foreach($expstring as $p => $key) {
-										$dataname = Employee::find($key);
-										array_push($getname,$dataname->loginname);
-									}
-
-									$getemailname = [];
-									foreach($getname as $p => $key) {
-
-										$datamail = Addressbook::find('first',array('select'=> "CONCAT(fullname,' (',email,')' ) as name",'conditions' => array("username=?",$key)));
-
-										array_push($getemailname,$datamail->name);
-
-									}
-
-									$ss = implode(' | ',$getemailname);
-
-									$this->mailbody .='	
-										
-										<table border=1 cellspacing=0 cellpadding=3 width=683>
-										<tr>
-											<th><p class=MsoNormal>Email Group Name</p></th>
-											<th><p class=MsoNormal>Member Name</p></th>
-											<th><p class=MsoNormal>Valid From</p></th>
-											<th><p class=MsoNormal>Valid To</p></th>
-										</tr>
-										<tr style="height:22.5pt">
-											<td><p class=MsoNormal> '.$Itsharef->emailgroupname.'</p></td>
-											<td><p class=MsoNormal> '.$ss.'</p></td>
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itsharef->validfrom)).'</p></td>
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itsharef->validto)).'</p></td>
-										</tr>
-										';
-
-									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
-									
-								}
 
 							// $this->mailbody .='
 							// 	<table border=1 cellspacing=0 cellpadding=3 width=683>
@@ -1813,7 +1499,11 @@ Class Itsharefoldermodule extends Application{
 	}
 	function generatePDFi($id){
 		$Itsharef = Itsharef::find($id);
-		$form = $Itsharef->formtype;
+		$Itsharefdetail = Itsharefdetail::find('all',array('conditions'=>array("itsharef_id=?",$id),'include'=>array('itsharef'=>array('employee'=>array('company','department','designation','grade','location')))));	
+		
+		// print_r($Itsharefdetail);
+
+		// $form = $Itsharef->formtype;
 		$superiorId=$Itsharef->depthead;
 		$Superior = Employee::find($superiorId);
 		$supAdb = Addressbook::find('first',array('conditions'=>array("username=?",$Superior->loginname)));
@@ -1836,7 +1526,7 @@ Class Itsharefoldermodule extends Application{
 
 		//condition
 			foreach ($Itsharefapproval as $data){
-				if(($data->approver->approvaltype->id==29) || ($data->approver->employee_id==$Mmf30->depthead)){
+				if(($data->approver->approvaltype->id==29) || ($data->approver->employee_id==$Itsharef->depthead)){
 					$deptheadname = $data->approver->employee->fullname;
 					$deptheaddate = date("d/m/Y",strtotime($data->approvaldate));
 				}
@@ -1862,12 +1552,12 @@ Class Itsharefoldermodule extends Application{
 
 		try {
 			$excel = new COM("Excel.Application") or die ("ERROR: Unable to instantaniate COM!\r\n");
-			$excel->Visible = false;
+			$excel->Visible = true;
 
-			if($form == 1) {
-				$title = 'EXINETMAIL';
+				$title = 'sharefolder';
 
-				$file="D:/xampp/htdocs/oasys/doc/it/template_inetmail.xlsx";
+
+				$file= SITE_PATH."/doc/it/template_sharefolder.xls";
 				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
 				$Worksheet = $Workbook->Worksheets(1);
 				$Worksheet->Activate;
@@ -1880,382 +1570,80 @@ Class Itsharefoldermodule extends Application{
 				$Worksheet->Range("Y15")->Value = $Itsharef->floor;
 				$Worksheet->Range("F17")->Value = $Itsharef->phoneext;
 				$Worksheet->Range("F19")->Value = $Itsharef->department;
+
+				$Worksheet->Range("F25")->Value = $Itsharef->foldername;
 				//condition
+				// $string = $Itsharef->membername;
 
-					if($Itsharef->accessrequested == 1) {
-						$Worksheet->Range("F21")->Value = 'x';
-					}else if($Itsharef->accessrequested == 2) {
-						$Worksheet->Range("N21")->Value = 'x';
-					}else if($Itsharef->accessrequested == 3) {
-						$Worksheet->Range("T21")->Value = 'x';
-					}
+				// $expstring = explode(',',$string);
+				// // $countstring = count($expstring)+29;
 
-					if($Itsharef->accesstype == 1) {
-						$Worksheet->Range("F23")->Value = 'x';
-					}else if($Itsharef->accesstype == 2) {
-						$Worksheet->Range("P23")->Value = 'x';
-					}
-		
-					if($Itsharef->accounttype == 1) {
-						$Worksheet->Range("F25")->Value = 'x';
-					}else if($Itsharef->accounttype == 2) {
-						$Worksheet->Range("P25")->Value = 'x';
-					}
-
-					if($Itsharef->emailquota == 1) {
-						$Worksheet->Range("F29")->Value = 'x';
-					}else if($Itsharef->emailquota == 2) {
-						$Worksheet->Range("J29")->Value = 'x';
-					}else if($Itsharef->emailquota == 3) {
-						$Worksheet->Range("N29")->Value = 'x';
-					}else if($Itsharef->emailquota == 4) {
-						$Worksheet->Range("R29")->Value = 'x';
-					}else if($Itsharef->emailquota == 5) {
-						$Worksheet->Range("V29")->Value = 'x';
-					}
-
-					if($Itsharef->emaildomain == 1) {
-						$emailD = 'itci-hutani.com';
-					}else if($Itsharef->emaildomain == 2) {
-						$emailD = 'kalimantan-prima.com';
-					}else if($Itsharef->emaildomain == 3) {
-						$emailD = 'balikpapanchip.com';
-					}else if($Itsharef->emaildomain == 4) {
-						$emailD = 'lajudinamika.com';
-					}else if($Itsharef->emaildomain == 5) {
-						$emailD = 'ptadindo.com';
-					}else if($Itsharef->emaildomain == 6) {
-						$emailD = 'D1.LCL';
-					}else {
-						$emailD = '';
-					}
-
-				$listmod = Listmod::find('first',array('conditions'=>array("id=?",$Itsharef->listgroupmoderation)));
-		
-
-				//end condition
-				$Worksheet->Range("F31")->Value = $datefrom;
-				$Worksheet->Range("R31")->Value = $dateto;
-				$Worksheet->Range("B37")->Value = $emailD;
-				$Worksheet->Range("H37")->Value = $Itsharef->listgroup;
-				$Worksheet->Range("N37")->Value = $listmod->mod;
-				$Worksheet->Range("F41")->Value = strip_tags($Itsharef->reason);
-				$Worksheet->Range("B52")->Value = $deptheadname;
-				$Worksheet->Range("B53")->Value = $deptheaddate;
-				$Worksheet->Range("I52")->Value = $hrdname;
-				$Worksheet->Range("I53")->Value = $hrddate;
-				$Worksheet->Range("P52")->Value = $buheadname;
-				$Worksheet->Range("P53")->Value = $buheaddate;
-				$Worksheet->Range("W52")->Value = $itheadname;
-				$Worksheet->Range("W53")->Value = $itheaddate;
-
-				$Worksheet->Range("A60")->Value = $fullname;
-				$Worksheet->Range("S60")->Value = date("d/m/Y",strtotime($Itsharef->createddate));
-
-		} else if($form == 2) {
-			$title = 'INETACCESS';
-
-			$file="D:/xampp/htdocs/oasys/doc/it/template_inetaccess.xls";
-				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
-				$Worksheet = $Workbook->Worksheets(1);
-				$Worksheet->Activate;
-
-				$Worksheet->Range("F7")->Value = $fullname;
-				$Worksheet->Range("F9")->Value = $Itsharef->employee_id;
-				$Worksheet->Range("F11")->Value = $Itsharef->designation;
-				$Worksheet->Range("F13")->Value = $Itsharef->bgbu;
-				$Worksheet->Range("F15")->Value = $Itsharef->officelocation;
-				$Worksheet->Range("Y15")->Value = $Itsharef->floor;
-				$Worksheet->Range("F17")->Value = $Itsharef->phoneext;
-				$Worksheet->Range("F19")->Value = $Itsharef->department;
-				//condition
-		
-
-				//end condition
-				$Worksheet->Range("F29")->Value = $datefrom;
-				$Worksheet->Range("R29")->Value = $dateto;
-				$Worksheet->Range("F23")->Value = $Itsharef->web1;
-				$Worksheet->Range("F25")->Value = $Itsharef->web2;
-				$Worksheet->Range("F32")->Value = strip_tags($Itsharef->reason);
-				$Worksheet->Range("C44")->Value = $deptheadname;
-				$Worksheet->Range("C45")->Value = $deptheaddate;
-				$Worksheet->Range("J44")->Value = $buheadname;
-				$Worksheet->Range("J45")->Value = $buheaddate;
-				$Worksheet->Range("Q44")->Value = $itheadname;
-				$Worksheet->Range("Q45")->Value = $itheaddate;
-
-				$Worksheet->Range("A52")->Value = $fullname;
-				$Worksheet->Range("S52")->Value = date("d/m/Y",strtotime($Itsharef->createddate));
-
-		} else if($form == 3) {
-			$title = 'INCMAILBOX';
-
-			$file="D:/xampp/htdocs/oasys/doc/it/template_incmailbox.xlsx";
-				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
-				$Worksheet = $Workbook->Worksheets(1);
-				$Worksheet->Activate;
-
-				$Worksheet->Range("G7")->Value = $fullname;
-				$Worksheet->Range("G9")->Value = $Itsharef->employee_id;
-				$Worksheet->Range("G13")->Value = $Itsharef->designation;
-				$Worksheet->Range("G15")->Value = $Itsharef->bgbu;
-				$Worksheet->Range("Z15")->Value = $Itsharef->officelocation;
-				$Worksheet->Range("G17")->Value = $Itsharef->floor;
-				$Worksheet->Range("G19")->Value = $Itsharef->phoneext;
-				$Worksheet->Range("G21")->Value = $Itsharef->department;
-				//condition
-
-				if($Itsharef->newmailboxsize == 1) {
-					$newmailbox = '256MB';
-				}else if($Itsharef->newmailboxsize == 2) {
-					$newmailbox = '512MB';
-				}else if($Itsharef->newmailboxsize == 3) {
-					$newmailbox = '1GB';
-				}else if($Itsharef->newmailboxsize == 4) {
-					$newmailbox = '1.5GB';
-				}else if($Itsharef->newmailboxsize == 5) {
-					$newmailbox = '2GB';
-				}else if($Itsharef->newmailboxsize == 6) {
-					$newmailbox = '3GB';
-				}else if($Itsharef->newmailboxsize == 7) {
-					$newmailbox = '4GB';
-				}else if($Itsharef->newmailboxsize == 8) {
-					$newmailbox = '5GB';
-				}else if($Itsharef->newmailboxsize == 9) {
-					$newmailbox = '6GB';
-				}else if($Itsharef->newmailboxsize == 10) {
-					$newmailbox = '7GB';
-				}else if($Itsharef->newmailboxsize == 11) {
-					$newmailbox = '8GB';
-				}else if($Itsharef->newmailboxsize == 12) {
-					$newmailbox = '9GB';
-				}else if($Itsharef->newmailboxsize == 13) {
-					$newmailbox = '10GB';
-				}else {
-					$newmailbox = '';
-				}
-
-				if($Itsharef->incomingsize == 1) {
-					$incoming = '5MB';
-				}else if($Itsharef->incomingsize == 2) {
-					$incoming = '10MB';
-				}else if($Itsharef->incomingsize == 3) {
-					$incoming = '15MB';
-				}else if($Itsharef->incomingsize == 4) {
-					$incoming = '20MB';
-				}else if($Itsharef->incomingsize == 5) {
-					$incoming = '25MB';
-				}else if($Itsharef->incomingsize == 6) {
-					$incoming = '30MB';
-				}else if($Itsharef->incomingsize == 7) {
-					$incoming = '35MB';
-				}else if($Itsharef->incomingsize == 8) {
-					$incoming = '40MB';
-				}else if($Itsharef->incomingsize == 9) {
-					$incoming = '45MB';
-				}else if($Itsharef->incomingsize == 10) {
-					$incoming = '50MB';
-				}else if($Itsharef->incomingsize == 11) {
-					$incoming = '55MB';
-				}else if($Itsharef->incomingsize == 12) {
-					$incoming = '60MB';
-				}else if($Itsharef->incomingsize == 13) {
-					$incoming = '65MB';
-				}else if($Itsharef->incomingsize == 14) {
-					$incoming = '70MB';
-				}else if($Itsharef->incomingsize == 15) {
-					$incoming = '75MB';
-				}else if($Itsharef->incomingsize == 16) {
-					$incoming = '80MB';
-				}else if($Itsharef->incomingsize == 17) {
-					$incoming = '85MB';
-				}else if($Itsharef->incomingsize == 18) {
-					$incoming = '90MB';
-				}else if($Itsharef->incomingsize == 19) {
-					$incoming = '95MB';
-				}else if($Itsharef->incomingsize == 20) {
-					$incoming = '100MB';
-				}else {
-					$incoming = '';
-				}
-
-				if($Itsharef->outgoingsize == 1) {
-					$outgoing = '5MB';
-				}else if($Itsharef->outgoingsize == 2) {
-					$outgoing = '10MB';
-				}else if($Itsharef->outgoingsize == 3) {
-					$outgoing = '15MB';
-				}else if($Itsharef->outgoingsize == 4) {
-					$outgoing = '20MB';
-				}else if($Itsharef->outgoingsize == 5) {
-					$outgoing = '25MB';
-				}else if($Itsharef->outgoingsize == 6) {
-					$outgoing = '30MB';
-				}else if($Itsharef->outgoingsize == 7) {
-					$outgoing = '35MB';
-				}else if($Itsharef->outgoingsize == 8) {
-					$outgoing = '40MB';
-				}else if($Itsharef->outgoingsize == 9) {
-					$outgoing = '45MB';
-				}else if($Itsharef->outgoingsize == 10) {
-					$outgoing = '50MB';
-				}else if($Itsharef->outgoingsize == 11) {
-					$outgoing = '55MB';
-				}else if($Itsharef->outgoingsize == 12) {
-					$outgoing = '60MB';
-				}else if($Itsharef->outgoingsize == 13) {
-					$outgoing = '65MB';
-				}else if($Itsharef->outgoingsize == 14) {
-					$outgoing = '70MB';
-				}else if($Itsharef->outgoingsize == 15) {
-					$outgoing = '75MB';
-				}else if($Itsharef->outgoingsize == 16) {
-					$outgoing = '80MB';
-				}else if($Itsharef->outgoingsize == 17) {
-					$outgoing = '85MB';
-				}else if($Itsharef->outgoingsize == 18) {
-					$outgoing = '90MB';
-				}else if($Itsharef->outgoingsize == 19) {
-					$outgoing = '95MB';
-				}else if($Itsharef->outgoingsize == 20) {
-					$outgoing = '100MB';
-				}else {
-					$outgoing = '';
-				}
-
-				//end condition
-				$Worksheet->Range("G26")->Value = $datefrom;
-				$Worksheet->Range("P26")->Value = $dateto;
-				$Worksheet->Range("G23")->Value = $newmailbox;
-				$Worksheet->Range("P23")->Value = $incoming;
-				$Worksheet->Range("X23")->Value = $outgoing;
-				$Worksheet->Range("G29")->Value = strip_tags($Itsharef->reason);
-				$Worksheet->Range("D43")->Value = $deptheadname;
-				$Worksheet->Range("D44")->Value = $deptheaddate;
-				$Worksheet->Range("M43")->Value = $buheadname;
-				$Worksheet->Range("M44")->Value = $buheaddate;
-				$Worksheet->Range("V43")->Value = $itheadname;
-				$Worksheet->Range("V44")->Value = $itheaddate;
-
-				$Worksheet->Range("B51")->Value = $fullname;
-				$Worksheet->Range("T51")->Value = date("d/m/Y",strtotime($Itsharef->createddate));
-
-		} else if($form == 4) {
-			$title = 'RDWEB';
-
-			$file="D:/xampp/htdocs/oasys/doc/it/template_rdweb.xlsx";
-				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
-				$Worksheet = $Workbook->Worksheets(1);
-				$Worksheet->Activate;
-
-				$Worksheet->Range("F7")->Value = $fullname;
-				$Worksheet->Range("F9")->Value = $Itsharef->employee_id;
-				$Worksheet->Range("F13")->Value = $Itsharef->designation;
-				$Worksheet->Range("F15")->Value = $Itsharef->bgbu;
-				$Worksheet->Range("F17")->Value = $Itsharef->officelocation;
-				$Worksheet->Range("Y17")->Value = $Itsharef->floor;
-				$Worksheet->Range("F19")->Value = $Itsharef->phoneext;
-				$Worksheet->Range("F21")->Value = $Itsharef->department;
-				//condition
-		
-
-				//end condition
-				$Worksheet->Range("F31")->Value = $datefrom;
-				$Worksheet->Range("P31")->Value = $dateto;
-				$Worksheet->Range("J27")->Value = $Itsharef->typeofaccess;
-				$Worksheet->Range("F34")->Value = strip_tags($Itsharef->reason);
-				$Worksheet->Range("C48")->Value = $deptheadname;
-				$Worksheet->Range("C49")->Value = $deptheaddate;
-				$Worksheet->Range("I48")->Value = $buheadname;
-				$Worksheet->Range("I49")->Value = $buheaddate;
-				$Worksheet->Range("P48")->Value = $mdname;
-				$Worksheet->Range("P49")->Value = $mddate;
-				$Worksheet->Range("W48")->Value = $itheadname;
-				$Worksheet->Range("W49")->Value = $itheaddate;
-
-				$Worksheet->Range("A58")->Value = $fullname;
-				$Worksheet->Range("S58")->Value = date("d/m/Y",strtotime($Itsharef->createddate));
-
-		} else if($form == 5) {
-				$title = 'mailgroup';
-
-
-				$file="D:/xampp/htdocs/oasys/doc/it/template_mailgroup.xls";
-				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
-				$Worksheet = $Workbook->Worksheets(1);
-				$Worksheet->Activate;
-
-				$Worksheet->Range("F7")->Value = $fullname;
-				$Worksheet->Range("F9")->Value = $Itsharef->employee_id;
-				$Worksheet->Range("F11")->Value = $Itsharef->designation;
-				$Worksheet->Range("F13")->Value = $Itsharef->bgbu;
-				$Worksheet->Range("F15")->Value = $Itsharef->officelocation;
-				$Worksheet->Range("Y15")->Value = $Itsharef->floor;
-				$Worksheet->Range("F17")->Value = $Itsharef->phoneext;
-				$Worksheet->Range("F20")->Value = $Itsharef->department;
-
-				$Worksheet->Range("F29")->Value = $Itsharef->emailgroupname;
-				//condition
-				$string = $Itsharef->membername;
-
-				$expstring = explode(',',$string);
-				// $countstring = count($expstring)+29;
-
-				$getname = [];
-				foreach($expstring as $p => $key) {
-					$dataname = Employee::find($key);
-					array_push($getname,$dataname->loginname);
-				}
-
-				$getemailname = [];
-				foreach($getname as $p => $key) {
-
-					$datamail = Addressbook::find('first',array('select'=> "CONCAT(fullname,' (',email,')' ) as name",'conditions' => array("username=?",$key)));
-
-					array_push($getemailname,$datamail->name);
-
-				}
-
-				$ss = implode(' | ',$getemailname);
-				print_r($ss);
-
-
-				$Worksheet->Range("F31")->Value = $ss;
-
-				$Worksheet->Range("F41")->Value = strip_tags($Itsharef->reason);
-
-
-
-
+				// $getname = [];
 				// $xlShiftDown=-4121;
-				// for ($a=29;$a<$countstring;$a++){
-				// 	$Worksheet->Rows($a+1)->Insert($xlShiftDown);
-				// 	$Worksheet->Range("F".$a)->Value = ($a-28).'. '.($getname[$a-29]);
+
+				// foreach($Itsharefdetail as $p) {
+				// 	$Worksheet->Rows(30)->Insert($xlShiftDown);
+				// 	// echo json_encode($p->grantaccessto);
+				// 	$Worksheet->Range("F29")->Value = $p->grantaccessto;
+
+				// 	// $dataname = Employee::find($key);
+				// 	// array_push($getname,$dataname->loginname);
 				// }
+
+				// $getemailname = [];
+				// foreach($getname as $p => $key) {
+
+				// 	$datamail = Addressbook::find('first',array('select'=> "CONCAT(fullname,' (',email,')' ) as name",'conditions' => array("username=?",$key)));
+
+				// 	array_push($getemailname,$datamail->name);
+
+				// }
+
+				// $ss = implode(' | ',$getemailname);
+				// print_r($ss);
+
+
+				// $Worksheet->Range("F31")->Value = $ss;
+
+				$Worksheet->Range("F36")->Value = strip_tags($Itsharef->remarks);
+
+				$Worksheet->Range("H33")->Value = $datefrom;
+				$Worksheet->Range("Q33")->Value = $dateto;
+
+
+				$xlShiftDown=-4121;
+				for ($a=29;$a<29+count($Itsharefdetail);$a++){
+					$Worksheet->Rows($a+1)->Insert($xlShiftDown);
+					$Worksheet->Range("F".$a)->Value = $Itsharefdetail[$a-29]->grantaccessto;
+					$Worksheet->Range("Q".$a)->Value = ($Itsharefdetail[$a-29]->readonly == 1)?'x':'';
+					$Worksheet->Range("R".$a)->Value = 'Read Only';
+					$Worksheet->Range("U".$a)->Value = ($Itsharefdetail[$a-29]->change == 1)?'x':'';
+					$Worksheet->Range("V".$a)->Value = 'Change';
+					// $Worksheet->Range("F".$a)->Value = ($a-28).'. '.($getname[$a-29]);
+				}
 		
 
 				//end condition
-				// $Worksheet->Range("F31")->Value = $datefrom;
-				// $Worksheet->Range("P31")->Value = $dateto;
+				
 				// $Worksheet->Range("J27")->Value = $Itsharef->typeofaccess;
 				// $Worksheet->Range("F34")->Value = $Itsharef->reason;
-				$Worksheet->Range("I56")->Value = $deptheadname;
-				$Worksheet->Range("I57")->Value = $deptheaddate;
-				$Worksheet->Range("P56")->Value = $buheadname;
-				$Worksheet->Range("P57")->Value = $buheaddate;
-				$Worksheet->Range("W56")->Value = $itheadname;
-				$Worksheet->Range("W57")->Value = $itheaddate;
 
-				$Worksheet->Range("C56")->Value = $fullname;
-				$Worksheet->Range("C57")->Value = date("d/m/Y",strtotime($Itsharef->createddate));
+				// $Worksheet->Range("I56")->Value = $deptheadname;
+				// $Worksheet->Range("I57")->Value = $deptheaddate;
+				// $Worksheet->Range("P56")->Value = $buheadname;
+				// $Worksheet->Range("P57")->Value = $buheaddate;
+				// $Worksheet->Range("W56")->Value = $itheadname;
+				// $Worksheet->Range("W57")->Value = $itheaddate;
 
-		}
+				// $Worksheet->Range("C56")->Value = $fullname;
+				// $Worksheet->Range("C57")->Value = date("d/m/Y",strtotime($Itsharef->createddate));
+
 
 			$xlTypePDF = 0;
 			$xlQualityStandard = 0;
 			$fileName ='doc'.DS.'it'.DS.'pdf'.DS.$title.$Itsharef->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$fileName = str_replace("/","",$fileName);
-			$path='D:/xampp/htdocs/oasys/doc'.DS.'it'.DS.'pdf'.DS.$title.$Itsharef->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$path= SITE_PATH.'/doc'.DS.'it'.DS.'pdf'.DS.$title.$Itsharef->employee->sapid.'_'.date("YmdHis").'.pdf';
 			if (file_exists($path)) {
 			unlink($path);
 			}
@@ -2263,7 +1651,7 @@ Class Itsharefoldermodule extends Application{
 			$Itsharef->approveddoc=str_replace("\\","/",$fileName);
 			$Itsharef->save();
 
-			$Workbook->Close(true);
+			$Workbook->Close(false);
 			unset($Worksheet);
 			unset($Workbook);
 			$excel->Workbooks->Close();
@@ -2274,7 +1662,7 @@ Class Itsharefoldermodule extends Application{
 
 		} catch(com_exception $e) {  
 			$err = new Errorlog();
-			$err->errortype = "IteiePDFGenerator";
+			$err->errortype = "ITSHAREFPDFGenerator";
 			$err->errordate = date("Y-m-d h:i:s");
 			$err->errormessage = $e->getMessage();
 			$err->user = $this->currentUser->username;

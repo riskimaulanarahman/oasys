@@ -684,7 +684,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                                 </a>
                                             </li>
                                             <!-- <li>
-                                                <a href="" ng-click="itisharefApproval()">
+                                                <a href="" ng-click="itsharefApproval()">
                                                     <i class="metismenu-icon"></i>Shared Folder
                                                 </a>
                                             </li> -->
