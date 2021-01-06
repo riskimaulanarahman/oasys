@@ -157,7 +157,11 @@
             $scope.EmailDomain =[{id:0,emaildomain:"- Select -"},{id:1,emaildomain:"itci-hutani.com"},{id:2,emaildomain:"kalimantan-prima.com"},{id:3,emaildomain:"balikpapanchip.com"},{id:4,emaildomain:"lajudinamika.com"},{id:5,emaildomain:"ptadindo.com"}];
             $scope.ListGroup =[{id:0,listgroup:"- Select -"},{id:1,listgroup:"IHM"},{id:2,listgroup:"KPSI"},{id:3,listgroup:"BCL"},{id:4,listgroup:"LDU"},{id:5,listgroup:"Adindo"}];
             $scope.ListGroupModeration =[{id:0,listgroupmoderation:"- Select -"},{id:1,listgroupmoderation:"Mod-IHM"},{id:2,listgroupmoderation:"Mod-BCL"},{id:3,listgroupmoderation:"Mod-KDU-HRD"},{id:4,listgroupmoderation:"Mod-KF-Head"},{id:5,listgroupmoderation:"Mod-KF-Head2"},{id:6,listgroupmoderation:"Mod-KPSI-Pro"},{id:7,listgroupmoderation:"Mod-KDU-FA"}];
+            if($scope.data.apprstatuscode!==5) {
             $scope.AppAction = [{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
+            } else {
+            $scope.AppAction = [{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"},{id:4,appaction:"Add More Approval"}];
+            }
             $scope.AccountType =[{id:0,accounttype:"- Select -"},{id:1,accounttype:"Permanent"},{id:2,accounttype:"Temporary"}];
             
 			$scope.reqStatus = 0;
@@ -512,14 +516,15 @@
 						colCount:3,
 						items: [
                             {
-                                dataField:'remarks',
+                                dataField:'reason',
                                 label: {
                                     text:"Reason for request/Remarks",
                                 },
                                 // colSpan:2,
                                 editorType:"dxHtmlEditor",
                                 name:'remarks',
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true   ,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true   ,
+                                // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true   ,
                                 editorOptions: {height: 90,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}                         
                             },
                             {
@@ -1141,6 +1146,7 @@
 				delete data.validto;
 				
 				delete data.isdeclaration;
+				delete data.reason;
 
 				delete data.depthead;
 				delete data.apprstatuscode;
@@ -1160,7 +1166,7 @@
 							   offset: '0 0' 
 						   }
 						});
-						$location.path( "/itsharefapproval" );
+						$location.path( "/itsharefolderapproval" );
 					}
 					
 				});
@@ -1186,6 +1192,10 @@
 
                             delete data.validfrom;
                             delete data.validto;
+                            delete data.reason;
+                            
+
+
                         }
 						delete data.createddate;
                         delete data.employee_id;
@@ -1199,10 +1209,14 @@
                         delete data.phoneext;
                         delete data.accounttype;
 
+                        delete data.requesttype;
+
+
                         // delete data.validfrom;
                         // delete data.validto;
                         
                         delete data.isdeclaration;
+
 
                         delete data.depthead;
 				        delete data.apprstatuscode;
@@ -1222,7 +1236,7 @@
 									   offset: '0 0' 
 								   }
 								});
-								$location.path( "/itsharefapproval" );
+								$location.path( "/itsharefolderapproval" );
 							}
 							
 						});
@@ -1265,24 +1279,42 @@
 				criteria = {status:'approver',itsharef_id:$scope.Requestid};
 				CrudService.FindData('itsharefapp',criteria).then(function (response){
 					if(response.jml>0){
-                        var data = $scope.formInstance.option("formData");
-                        data.requeststatus = 1;
-                        delete data.fullname;
-                        // delete data.department;
-                        delete data.approvalstatus;
-                        delete data.apprstatuscode;
-                        data.validfrom = $filter("date")(data.validfrom, "yyyy-MM-dd HH:mm");
-                        data.validto = $filter("date")(data.validto, "yyyy-MM-dd HH:mm");
-                        // var selected = data.membername || [];
-                        //     data.membername = selected.join();
-                        CrudService.Update('itsharef',data.id,data).then(function (response) {
-                            if(response.status=="error"){
-                                    DevExpress.ui.notify(response.message,"error");
+                        criteria = {status:'approver',itsharef_id:$scope.Requestid};
+						CrudService.FindData('itsharefdetail',criteria).then(function (response){
+						    if(response.jml>0){
+                                var data = $scope.formInstance.option("formData");
+                                data.requeststatus = 1;
+                                delete data.fullname;
+                                // delete data.department;
+                                delete data.approvalstatus;
+                                delete data.apprstatuscode;
+                                data.validfrom = $filter("date")(data.validfrom, "yyyy-MM-dd HH:mm");
+                                data.validto = $filter("date")(data.validto, "yyyy-MM-dd HH:mm");
+                                CrudService.Update('itsharef',data.id,data).then(function (response) {
+                                    if(response.status=="error"){
+                                            DevExpress.ui.notify(response.message,"error");
+                                    }else{
+                                        DevExpress.ui.notify({
+                                            message: "Data has been Updated",
+                                            type: "success",
+                                            displayTime: 2000,
+                                            height: 80,
+                                            position: {
+                                                my: 'top center', 
+                                                at: 'center center', 
+                                                of: window, 
+                                                offset: '0 0' 
+                                            }
+                                        });
+                                        $location.path( "/itsharefolder" );
+                                    }
+                                    
+                                });
                             }else{
                                 DevExpress.ui.notify({
-                                    message: "Data has been Updated",
-                                    type: "success",
-                                    displayTime: 2000,
+                                    message: "Please add detail (mohon lengkapi detail)",
+                                    type: "warning",
+                                    displayTime: 5000,
                                     height: 80,
                                     position: {
                                         my: 'top center', 
@@ -1291,10 +1323,8 @@
                                         offset: '0 0' 
                                     }
                                 });
-                                $location.path( "/itsharefolder" );
                             }
-                            
-                        });
+                        })
 					}else{
 						DevExpress.ui.notify({
 							message: "Please add person to do approval/verification in Approver List tab",
