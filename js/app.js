@@ -55,7 +55,7 @@ if (!String.prototype.padStart) {
 var RouteProvider = function () {
 	var scriptPath = "js/controllers/";
 	var templatePath = "template/";
-	var v= '5.04'
+	var v= '5.05'
 	this.resolve = function (name) {
 		var route = {};
 		route.templateUrl = templatePath + name + ".html?v="+v;
