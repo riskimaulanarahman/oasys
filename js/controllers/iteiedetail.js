@@ -1154,22 +1154,22 @@
     
     $scope.onFormSubmit = function(e) {
 		e.preventDefault();
-		criteria = {status:'waiting',username:$scope.formInstance.option("formData").employee_id,id:$scope.Requestid};
-		CrudService.FindData('iteiebyemp',criteria).then(function (response){
-			if(response.jml>0){
-				DevExpress.ui.notify({
-					message: "Cannot add more request, Selected employee still have waiting approval request",
-					type: "warning",
-					displayTime: 5000,
-					height: 80,
-					position: {
-					   my: 'top center', 
-					   at: 'center center', 
-					   of: window, 
-					   offset: '0 0' 
-				   }
-				});
-			}else{
+		// criteria = {status:'waiting',username:$scope.formInstance.option("formData").employee_id,id:$scope.Requestid};
+		// CrudService.FindData('iteiebyemp',criteria).then(function (response){
+		// 	if(response.jml>0){
+		// 		DevExpress.ui.notify({
+		// 			message: "Cannot add more request, Selected employee still have waiting approval request",
+		// 			type: "warning",
+		// 			displayTime: 5000,
+		// 			height: 80,
+		// 			position: {
+		// 			   my: 'top center', 
+		// 			   at: 'center center', 
+		// 			   of: window, 
+		// 			   offset: '0 0' 
+		// 		   }
+		// 		});
+		// 	}else{
 				criteria = {status:'approver',iteie_id:$scope.Requestid};
 				CrudService.FindData('iteieapp',criteria).then(function (response){
 					if(response.jml>0){
@@ -1216,8 +1216,8 @@
 						});
 					}			
 				})
-			}
-		})
+		// 	}
+		// })
 			 	   
     };
 
