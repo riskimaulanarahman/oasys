@@ -709,11 +709,19 @@ Class Itsharefoldermodule extends Application{
 						$doid = $this->post['id'];
 						$data = $this->post['data'];
 						$mode= $data['mode'];
+						$appstatus = $data['approvalstatus'];
 						unset($data['id']);
 						unset($data['depthead']);
 						unset($data['fullname']);
 						unset($data['department']);
 						unset($data['approveddoc']);
+						// if(isset($data['approvalstatus']) == 4) {
+						// }
+						if ($appstatus=='4' || $appstatus==4 ){
+							unset($data['approvalstatus']);
+						}
+						print_r($data);
+
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 						$Itsharef = Itsharef::find($doid);
 						$join   = "LEFT JOIN tbl_approver ON (tbl_itsharefapproval.approver_id = tbl_approver.id) ";
@@ -731,6 +739,7 @@ Class Itsharefoldermodule extends Application{
 								$Itsharef->$key=$value;
 							}
 						}
+						
 						$Itsharef->save();
 
 						// unset($data['formtype']);
@@ -756,7 +765,8 @@ Class Itsharefoldermodule extends Application{
 						unset($data['validto']);
 						unset($data['validfrom']);
 
-						unset($data['reason']);
+						unset($data['reason']);	
+						
 						
 						
 						$olddata = $Itsharefapproval->to_array();
@@ -764,6 +774,7 @@ Class Itsharefoldermodule extends Application{
 							$val=($val=='false')?false:(($val=='true')?true:$val);
 							$Itsharefapproval->$key=$val;
 						}
+						
 						$Itsharefapproval->save();
 						$logger = new Datalogger("Itsharefapproval","update",json_encode($olddata),json_encode($data));
 						$logger->SaveData();
@@ -789,6 +800,7 @@ Class Itsharefoldermodule extends Application{
 							$Itsharefhistory->itsharef_id = $doid;
 							
 							switch ($data['approvalstatus']){
+								
 								case '1':
 									$Itsharef->requeststatus = 2;
 									$emto=$email;$emname=$Itsharef->employee->fullname;
@@ -831,11 +843,20 @@ Class Itsharefoldermodule extends Application{
 									$red = 'Your '.$title.' Request has been rejected
 											<br>Remarks from Approver : <font color="red">'.$data['remarks']."</font>";
 									break;
+								case '4':
+									$Itsharef->requeststatus = 1;
+									// $nTrapproval->approvalstatus = 0;
+									$emto=$adb->email;$emname=$adb->fullname;
+									$this->mail->Subject = 'Online Approval System -> new Share Folder Request';
+									$red = 'new '.$title.' Request awaiting for your approval:';
+									$Itsharefhistory->actiontype = 3;							
+									break;
 								default:
 									break;
 							}
 							$Itsharef->save();
 							$Itsharefhistory->save();
+							// $nTrapproval->save();
 							echo "email to :".$emto." ->".$emname;
 							$this->mail->addAddress($emto, $emname);
 							$ItsharefJ = Itsharef::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));

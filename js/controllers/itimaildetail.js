@@ -171,12 +171,12 @@
             $scope.EmailQuota =[{id:0,emailquota:"- Select -"},{id:1,emailquota:"250MB"},{id:2,emailquota:"500MB"},{id:3,emailquota:"1000MB"},{id:4,emailquota:"1500MB"},{id:5,emailquota:"2000MB"}];
 
             if($scope.data.apprstatuscode!==5) {
-                $scope.Mailboxsize =[{id:0,mailboxsize:"- Select -"},{id:1,mailboxsize:"256MB"},{id:2,mailboxsize:"512MB"},{id:3,mailboxsize:"1GB"},{id:4,mailboxsize:"1.5GB"},{id:5,mailboxsize:"2GB"}];
-                $scope.Incomingsize =[{id:0,incomingsize:"- Select -"},{id:1,incomingsize:"5MB"},{id:2,incomingsize:"10MB"}];
-                $scope.Outgoingsize =[{id:0,outgoingsize:"- Select -"},{id:1,outgoingsize:"5MB"},{id:2,outgoingsize:"10MB"}];
+                $scope.Mailboxsize =[{id:0,mailboxsize:"No Change"},{id:1,mailboxsize:"256MB"},{id:2,mailboxsize:"512MB"},{id:3,mailboxsize:"1GB"},{id:4,mailboxsize:"1.5GB"},{id:5,mailboxsize:"2GB"}];
+                $scope.Incomingsize =[{id:0,incomingsize:"No Change"},{id:1,incomingsize:"5MB"},{id:2,incomingsize:"10MB"}];
+                $scope.Outgoingsize =[{id:0,outgoingsize:"No Change"},{id:1,outgoingsize:"5MB"},{id:2,outgoingsize:"10MB"}];
             } else {
                 $scope.Mailboxsize =[
-                    {id:0,mailboxsize:"- Select -"},
+                    {id:0,mailboxsize:"No Change"},
                     {id:1,mailboxsize:"256MB"},
                     {id:2,mailboxsize:"512MB"},
                     {id:3,mailboxsize:"1GB"},
@@ -192,7 +192,7 @@
                     {id:13,mailboxsize:"10GB"},
                 ];
                 $scope.Incomingsize =[
-                    {id:0,incomingsize:"- Select -"},
+                    {id:0,incomingsize:"No Change"},
                     {id:1,incomingsize:"5MB"},
                     {id:2,incomingsize:"10MB"},
                     {id:3,incomingsize:"15MB"},
@@ -215,7 +215,7 @@
                     {id:20,incomingsize:"100MB"},
                 ];
                 $scope.Outgoingsize =[
-                    {id:0,outgoingsize:"- Select -"},
+                    {id:0,outgoingsize:"No Change"},
                     {id:1,outgoingsize:"5MB"},
                     {id:2,outgoingsize:"10MB"},
                     {id:3,outgoingsize:"15MB"},
