@@ -1371,7 +1371,7 @@ Class Mmf30module extends Application{
 			</tr>
 			<tr>
 				<td class="tg-top tg-left tg-bottom"><b class="red tg-value">Required by:</b></td>
-				<td class="tg-top tg-right tg-bottom" colspan="2"><u>'.$usr->fullname.'</u></td>
+				<td class="tg-top tg-right tg-bottom" colspan="2"><u>'.$Mmf30->employee->fullname.'</u></td>
 				<td class="tg-top tg-left tg-bottom"><b class="red tg-value">Deliver to:</b></td>
 				<td class="tg-top tg-right tg-bottom" colspan="2"><u>'.$Mmf30->deliverto.'</u></td>
 				<td class="tg-top tg-left tg-bottom"><b class="blue tg-value">Department:*</b></td>
@@ -1485,7 +1485,7 @@ Class Mmf30module extends Application{
 		  </tr>
 		  <tr>
 			<td class="tg-left tg-bottom red" colspan="2" rowspan="2" valign=top>(End-User)</td>
-			<td class="tg-right" colspan="3"><img src="images/approved.png"><br>'.$usr->fullname.' / '.$v_date.'</td>
+			<td class="tg-right" colspan="3"><img src="images/approved.png"><br>'.$Mmf30->employee->fullname.' / '.$v_date.'</td>
 			<td class="tg-left tg-bottom tg-right" colspan="4" rowspan="2" valign=top>'.$Mmf30->reason.'</td>
 			<td class="tg-left tg-right" colspan="3"></td>
 		  </tr>

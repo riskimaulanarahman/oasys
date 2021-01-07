@@ -1739,7 +1739,7 @@ Class Itimailmodule extends Application{
 		$supAdb = Addressbook::find('first',array('conditions'=>array("username=?",$Superior->loginname)));
 		$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Itimail->employee->loginname)));
 		$email=$usr->email;
-		$fullname=$usr->fullname;
+		$fullname= $Itimail->employee->fullname;
 
 		$datefrom = date("d/m/Y",strtotime($Itimail->validfrom));
 		$dateto = date("d/m/Y",strtotime($Itimail->validto));
