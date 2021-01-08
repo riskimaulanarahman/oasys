@@ -112,6 +112,8 @@ app.register.controller('rfcactivityCtrl', ['$rootScope','$scope', '$http', '$in
 				  ,{dataField:'activitycode',caption:"Code"}
 				  ,{dataField:'activitydescr',caption:"Description"}
 				  ,{dataField:'remarks',caption:"Remarks"}
+				  ,{dataField:'ishrrelated',caption: "HR Related Activity",dataType: "boolean", showEditorAlways: true }
+				  ,{dataField:'iscapexrelated',caption: "Capex Related Activity",dataType: "boolean", showEditorAlways: true }
 				  ,{dataField:'isactive',caption: "Active",dataType: "boolean", showEditorAlways: true }
                   ],
         "export": {
@@ -172,7 +174,7 @@ app.register.controller('rfcactivityCtrl', ['$rootScope','$scope', '$http', '$in
         },
         onEditorPreparing: function (e) { 
             $scope.formComponent = e.component;
-			if ((e.dataField == "isactive")){
+			if ((e.dataField == "isactive") || (e.dataField == "ishrrelated")|| (e.dataField == "iscapexrelated")){
                 e.editorName = "dxSwitch";
 				e.editorOptions.switchedOnText = "Yes";
 				e.editorOptions.switchedOffText = "No";
