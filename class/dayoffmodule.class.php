@@ -875,7 +875,9 @@ Class DayoffModule extends Application{
 						try {
 							$id = $this->post['id'];
 							$data = $this->post['data'];
-							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+							$Dayoffdetail = Dayoffdetail::find($id);
+							$Dayoff = $Dayoff::find($Dayoffdetail->dayoff_id);
+							$Employee = Employee::find('first', array('conditions' => array("id=?",$Dayoff->employee_id)));
 							$joinx   = "LEFT JOIN tbl_dayoffreq as r ON (dayoff_id = r.id) ";	
 							$dd = Dayoffdetail::find('all', array('joins'=>$joinx,'conditions' => array("dateworked=? and r.employee_id=?  and (isapproved='1' or isapproved is null) ",$data['dateworked'],$Employee->id),'include'=>array("dayoff")));
 							if (count($dd)>0){
@@ -896,7 +898,7 @@ Class DayoffModule extends Application{
 									if (count($do)>=$max){
 										echo json_encode(array("status"=>"error","message"=>"You have reached maximum number of Dayoff Request ( ".$max." days) for the month ".date("F", strtotime($data['dateworked']))));
 									}else{
-										$Dayoffdetail = Dayoffdetail::find($id);
+										//$Dayoffdetail = Dayoffdetail::find($id);
 										$olddata = $Dayoffdetail->to_array();
 										foreach($data as $key=>$val){					
 											$val=($val=='No')?false:(($val=='Yes')?true:$val);
