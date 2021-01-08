@@ -876,7 +876,7 @@ Class DayoffModule extends Application{
 							$id = $this->post['id'];
 							$data = $this->post['data'];
 							$Dayoffdetail = Dayoffdetail::find($id);
-							$Dayoff = $Dayoff::find($Dayoffdetail->dayoff_id);
+							$Dayoff = Dayoff::find($Dayoffdetail->dayoff_id);
 							$Employee = Employee::find('first', array('conditions' => array("id=?",$Dayoff->employee_id)));
 							$joinx   = "LEFT JOIN tbl_dayoffreq as r ON (dayoff_id = r.id) ";	
 							$dd = Dayoffdetail::find('all', array('joins'=>$joinx,'conditions' => array("dateworked=? and r.employee_id=?  and (isapproved='1' or isapproved is null) ",$data['dateworked'],$Employee->id),'include'=>array("dayoff")));
