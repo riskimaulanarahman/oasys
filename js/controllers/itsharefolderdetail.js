@@ -4,10 +4,12 @@
         $scope.test=[];
         $scope.disabled= true;
         $scope.data = [];  
+        $scope.roleapp = [];  
         if (typeof($scope.mode)=="undefined"){
             $location.path( "/" );
         }
-	//console.log($scope.mode);
+    // console.log($scope.data);
+    var d = new Date();
 	CrudService.GetById('itsharef',$scope.Requestid).then(function(response){
 		if(response.status=="autherror"){
 			$scope.logout();
@@ -157,10 +159,11 @@
             $scope.EmailDomain =[{id:0,emaildomain:"- Select -"},{id:1,emaildomain:"itci-hutani.com"},{id:2,emaildomain:"kalimantan-prima.com"},{id:3,emaildomain:"balikpapanchip.com"},{id:4,emaildomain:"lajudinamika.com"},{id:5,emaildomain:"ptadindo.com"}];
             $scope.ListGroup =[{id:0,listgroup:"- Select -"},{id:1,listgroup:"IHM"},{id:2,listgroup:"KPSI"},{id:3,listgroup:"BCL"},{id:4,listgroup:"LDU"},{id:5,listgroup:"Adindo"}];
             $scope.ListGroupModeration =[{id:0,listgroupmoderation:"- Select -"},{id:1,listgroupmoderation:"Mod-IHM"},{id:2,listgroupmoderation:"Mod-BCL"},{id:3,listgroupmoderation:"Mod-KDU-HRD"},{id:4,listgroupmoderation:"Mod-KF-Head"},{id:5,listgroupmoderation:"Mod-KF-Head2"},{id:6,listgroupmoderation:"Mod-KPSI-Pro"},{id:7,listgroupmoderation:"Mod-KDU-FA"}];
-            if($scope.data.apprstatuscode!==5) {
-            $scope.AppAction = [{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
-            } else {
+            if(($scope.data.apprstatuscode==5) || ($scope.data.apprstatuscode==4)) {
             $scope.AppAction = [{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"},{id:4,appaction:"Add More Approval"}];
+            } else {
+            $scope.AppAction = [{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
+
             }
             $scope.AccountType =[{id:0,accounttype:"- Select -"},{id:1,accounttype:"Permanent"},{id:2,accounttype:"Temporary"}];
             
@@ -416,9 +419,13 @@
                                     text:"folder name",
                                 },
                                 // visible:($scope.data.formtype==2)?true:false,
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==4) || ($scope.data.apprstatuscode==5)) ?false:true,
                                 name:'foldername',
                                 dataType:"string",
+                                validationRules: [{
+                                    type: "required",
+                                    message: "Please input foldername"
+                                }]
                             },
                             
                         ]
@@ -437,7 +444,7 @@
                                 label:{text:"Account Type"},
                                 // visible:($scope.data.formtype==1)?true:false,
                                 // disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report') && ($scope.data.apprstatuscode!==5))?true:false,
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==4) || ($scope.data.apprstatuscode==5)) ?false:true,
                                 validationRules: [{type: "required",message: "Action is required"}],
                                 editorOptions: { 
                                     dataSource:$scope.AccountType,  
@@ -477,7 +484,7 @@
                                 // visible: (($scope.data.formtype==5)) ? false:true,
                                 editorType: "dxDateBox",
                                 label: {text: "Valid From"},
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==4) || ($scope.data.apprstatuscode==5)) ?false:true,
                                 // min: new Date(date + 1000*60*60*24*3),
                                 editorOptions: {
                                     displayFormat:"dd/MM/yyyy",
@@ -499,7 +506,7 @@
                                 // visible: (($scope.data.formtype==5)) ? false:true,
                                 editorType: "dxDateBox",
                                 label: {text: "Valid To"},
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==4) || ($scope.data.apprstatuscode==5)) ?false:true,
                                 editorOptions: {
                                     displayFormat:"dd/MM/yyyy",
                                     // max: new Date(date + 1000*60*60*24*365),
@@ -518,13 +525,13 @@
                             {
                                 dataField:'reason',
                                 label: {
-                                    text:"Reason for request/Remarks",
+                                    text:"Reason for request/Remarks/Folder path",
                                 },
                                 // colSpan:2,
                                 editorType:"dxHtmlEditor",
                                 name:'remarks',
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true   ,
-                                // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true   ,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==4) || ($scope.data.apprstatuscode==5)) ?false:true   ,
+                                // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==4) || ($scope.data.apprstatuscode==5)) ?false:true   ,
                                 editorOptions: {height: 90,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}                         
                             },
                             {
@@ -581,7 +588,7 @@
 								text: "Back",
 								type: "danger",
 								onClick: function(){
-									var path = (($scope.mode=='report') || ($scope.mode=='reschedule')) ? "itsharefreport" :"itsharefolder";
+									var path = (($scope.mode=='report') || ($scope.mode=='reschedule')) ? "itsharefolderreport" :"itsharefolder";
 									$location.path( "/"+path );
 								},
 								visible: (($scope.mode=='approve'))  ?false:true,
@@ -699,10 +706,36 @@
 			};
 		}
     });
+
+    CrudService.GetById('itsharefdetail',$scope.Requestid).then(function(response){
+    //     console.log(response);
+        $scope.roleapp = response;
+        // console.log($scope.roleapp[0]);
+        
+        $.each(response,function(x,y) {
+            // console.log(y.apprstatuscode);
+        });
+    }); 
+
+    
+
+
     var myStore = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;
-			return CrudService.GetById('itsharefdetail',$scope.Requestid);         		
+            $scope.load = CrudService.GetById('itsharefdetail',$scope.Requestid);
+
+             
+
+            // console.log($scope.load);
+
+            return $scope.load;
+            // return CrudService.GetById('itsharefdetail',$scope.Requestid);   
+            // CrudService.GetById('itsharefdetail',$scope.Requestid).then(function(response){
+            // //     console.log(response);
+            // //     $scope.roleapp = response;
+            //     return response
+            // })      		
 		},
 		byKey: function(key) {
             CrudService.GetById('itsharefdetail',encodeURIComponent(key)).then(function (response) {
@@ -720,7 +753,7 @@
 			});
 		},
 		update: function(key, values) {
-			values.approvaldate = $filter("date")(values.approvaldate, "yyyy-MM-dd HH:mm")
+			// values.approvaldate = $filter("date")(values.approvaldate, "yyyy-MM-dd HH:mm")
             CrudService.Update('itsharefdetail',key.id,values).then(function (response) {
 				if(response.status=="error"){
 					 DevExpress.ui.notify(response.message,"error");
@@ -802,9 +835,55 @@
 	var myData3 = new DevExpress.data.DataSource({
 		store: myStore3
     });
+    var myStore4 = new DevExpress.data.CustomStore({
+		load: function() {			
+            $scope.isLoaded =true;
+			return CrudService.GetById('itshareffile',$scope.Requestid);         		
+		},
+		byKey: function(key) {
+            CrudService.GetById('itshareffile',encodeURIComponent(key)).then(function (response) {
+				return response;
+			});
+		},
+		insert: function(values) {
+			values.upload_date = $filter("date")(values.upload_date, "yyyy-MM-dd HH:mm")
+			values.itsharef_id=$scope.Requestid;
+			values.file_loc =$scope.path;
+            CrudService.Create('itshareffile',values).then(function (response) {
+				if(response.status=="error"){
+					 DevExpress.ui.notify(response.message,"error");
+				}
+				$scope.grid5Component.refresh();
+			});
+		},
+		update: function(key, values) {
+			if ($scope.path!=""){
+				values.upload_date = $filter("date")(values.upload_date, "yyyy-MM-dd HH:mm");
+				values.file_loc =$scope.path;
+			}
+            CrudService.Update('itshareffile',key.id,values).then(function (response) {
+				if(response.status=="error"){
+					 DevExpress.ui.notify(response.message,"error");
+				}
+				$scope.grid5Component.refresh();
+			});
+		},
+		remove: function(key) {
+			CrudService.Delete('itshareffile',key.id).then(function (response) {
+				if(response.status=="error"){
+					 DevExpress.ui.notify(response.message,"error");
+				}
+				$scope.grid5Component.refresh();
+			});
+		}
+    });
+    var myData4 = new DevExpress.data.DataSource({
+		store: myStore4
+    });
 
     $scope.tabs = [
-		{ id:3, TabName : "Detail", title: 'Detail', template: "tab2"   },
+        { id:3, TabName : "Detail", title: 'Detail', template: "tab2"   },
+		{ id:4, TabName : "SupportDoc", title: 'Supporting Document', template: "tab3"   },
 		{ id:1, TabName : "Approver List", title: 'Approver List', template: "tab"   },
 		{ id:2, TabName : "History Tracking", title: 'History Tracking', template: "tab1"   },
     ];
@@ -823,85 +902,164 @@
         sort: "id"
     }
 
-    $scope.grid4Options = {
-		dataSource: myData,
-		allowColumnResizing: true,
-		columnResizingMode : "widget",
-        columnMinWidth: 50,
-        columnAutoWidth: true,
-		columns: [
-			{
-                dataField:'grantaccessto',
-                caption: "Grant Access To",
-                dataType: "string",
-                editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
-                }
-            },
-            {dataField:'readonly',dataType: "boolean" },
-            {dataField:'change',dataType: "boolean" },
-            // {
-            //     dataField:'readonly',
-            //     caption: "Read Only",
-            //     dataType: "string",
-            //     editorOptions: {
-            //         disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
-            //     }
-            // },
-            // {
-            //     dataField:'change',
-            //     caption: "Change",
-            //     dataType: "string",
-            //     editorOptions: {
-            //         disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
-            //     }
-            // },
-		],
+    CrudService.GetById('itsharef',$scope.Requestid).then(function(response){
+		if(response.status=="autherror"){
+			$scope.logout();
+		}else{
+            $scope.reqtype = [{id:1,rtypeaction:"Create Share Folder"},{id:2,rtypeaction:"Grant Access to Existing Folder"},{id:3,rtypeaction:"Delete Shared Folder"},{id:4,rtypeaction:"Revoke Access from Existing Folder"},{id:5,rtypeaction:"Exclude from Archiving Policy"}];
 
-		editing: {
-            useIcons:true,
-            mode: "cell",
-			allowUpdating: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule'))?(($rootScope.isAdmin)?true:false):true,
-			allowAdding:(($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule'))?(($rootScope.isAdmin)?true:false):true,
-            // allowDeleting:($rootScope.isAdmin)?true:false,
-			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule'))?(($rootScope.isAdmin)?true:false):true,
-            
-            form:{colCount: 1,
+            $scope.data = response;
+            console.log('nih' + $scope.data.apprstatuscode);
+            $scope.grid4Options = {
+                dataSource: myData,
+                allowColumnResizing: true,
+                columnResizingMode : "widget",
+                columnMinWidth: 50,
+                columnAutoWidth: true,
+                columns: [
+                    {
+                        dataField:'foldername',
+                        caption: "Folder Name",
+                        dataType: "string",
+                        // editorOptions: {
+                        //     disabled:(($scope.mode=='approve') ||($scope.mode=='view') ||($scope.data.apprstatuscode==3))?true:false
+                        // }
+                    },
+                    {
+                        dataField:"requesttype",
+                        caption: "Request Type",
+                        editorType: "dxSelectBox",
+                        editorOptions: { 
+                            dataSource:$scope.reqtype,  
+                            valueExpr: 'id',
+                            displayExpr: 'rtypeaction',
+                            searchEnabled: true,
+                            value: ""
+                        },
+                        validationRules: [{
+                            type: "required",
+                            message: "Please Select Action"
+                        }],
+                        encodeHtml: false,
+                        customizeText: function (e) {
+                                var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-warning'>need action</span>",
+                                "<span class='mb-2 mr-2 badge badge-pill badge-primary'>Create Share Folder</span>",
+                                "<span class='mb-2 mr-2 badge badge-pill badge-primary'>Grant Access to Existing Folder</span>",
+                                "<span class='mb-2 mr-2 badge badge-pill badge-danger'>Delete Shared Folder</span>",
+                                "<span class='mb-2 mr-2 badge badge-pill badge-danger'>Revoke Access from Existing Folder</span>",
+                                "<span class='mb-2 mr-2 badge badge-pill badge-primary'>Exclude from Archiving Policy</span>",
+                                ""];
+                                return rDesc[e.value];
+                        },
+                    },
+                    {
+                        dataField:'grantaccessto',
+                        caption: "Grant Access To",
+                        dataType: "string",
+                        // editorOptions: {
+                        //     disabled:(($scope.mode=='approve') ||($scope.mode=='view') ||($scope.data.apprstatuscode==3))?true:false
+                        // }
+                    },
+                    {
+                        dataField:'change',
+                        caption:'Permission',
+                        dataType: "boolean",
+                        // editorOptions: {
+                        //     disabled:(($scope.mode=='approve') ||($scope.mode=='view') )?true:false
+                        // }
+
+                        // editorType: "dxCheckBox",
+                        // showEditorAlways: false
+                        // width: "80%"
+                    },
+                    // {dataField:'change',dataType: "boolean" },
+                    // {
+                    //     dataField:'readonly',
+                    //     caption: "Read Only",
+                    //     dataType: "string",
+                    //     editorOptions: {
+                    //         disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                    //     }
+                    // },
+                    // {
+                    //     dataField:'change',
+                    //     caption: "Change",
+                    //     dataType: "string",
+                    //     editorOptions: {
+                    //         disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                    //     }
+                    // },
+                ],
+
+                editing: {
+                    useIcons:true,
+                    // mode: "row",
+                    mode: "cell",
+                    // allowUpdating: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule')||($scope.data.apprstatuscode==5))?true:false,
+                    allowUpdating: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule'))?(($rootScope.isAdmin)||($scope.data.apprstatuscode==4)||($scope.data.apprstatuscode==5)?true:false):true,
+                    // allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
+                    
+                    allowAdding:(($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule'))?(($rootScope.isAdmin)?true:false):true,
+                    // allowDeleting:($rootScope.isAdmin)?true:false,
+                    allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule'))?(($rootScope.isAdmin)?true:false):true,
+                    
+                    form:{colCount: 1,
+                    },
+                },
+                onInitialized:function (e){
+                    $scope.grid2Component = e.component;
+                },
+                // onEditingStart: function(e) {
+                //     e.component.columnOption("id", "allowEditing", false); 		
+                // },
+                onEditorPreparing: function (e) {  
+                    $scope.grid2Component = e.component;
+                    // if (e.dataField == "readonly"){
+                    //     e.editorName = "dxCheckBox";
+                    //     e.editorOptions.width = "20%";
+                    //     e.editorOptions.switchedOnText = "Yes";
+                    //     e.editorOptions.switchedOffText = "No";
+                    // } 
+                    if (e.dataField == "change"){
+                        e.editorName = "dxSwitch";
+                        e.editorOptions.width = "20%";
+                        e.editorOptions.switchedOnText = "Change";
+                        e.editorOptions.switchedOffText = "Read";
+                    }	
+                },
+                // onInitNewRow: function (e) {
+                //     e.component.columnOption("id", "allowEditing", false);
+                    
+                // },
+                onSelectionChanged: function(data) {
+                    $scope.selectedItems = data.selectedRowsData;
+                    $scope.disabled = !$scope.selectedItems.length;
+                },
+                onRowUpdated: function(e) {        
+                    $scope.editors = {};
+                },
+                onRowInserted: function(e) {
+                    $scope.editors = {};
             },
-        },
-		onInitialized:function (e){
-			$scope.grid2Component = e.component;
-		},
-		onEditorPreparing: function (e) {  
-            $scope.grid2Component = e.component;
-            if (e.dataField == "readonly"){
-                e.editorName = "dxSwitch";
-                e.editorOptions.switchedOnText = "Yes";
-                e.editorOptions.switchedOffText = "No";
-            } 
-			if (e.dataField == "change"){
-                e.editorName = "dxSwitch";
-                e.editorOptions.switchedOnText = "Yes";
-                e.editorOptions.switchedOffText = "No";
-            }	
-		},
-		onToolbarPreparing: function(e) {
-            $scope.dataGrid2 = e.component;
-    
-            e.toolbarOptions.items.unshift({						
-                location: "after",
-                widget: "dxButton",
-                options: {
-                    hint: "Refresh Data",
-                    icon: "refresh",
-                    onClick: function() {
-                        $scope.dataGrid2.refresh();
-                    }
-                }
-            });
-        },
-		
-    };
+                onToolbarPreparing: function(e) {
+                    $scope.dataGrid2 = e.component;
+            
+                    e.toolbarOptions.items.unshift({						
+                        location: "after",
+                        widget: "dxButton",
+                        options: {
+                            hint: "Refresh Data",
+                            icon: "refresh",
+                            onClick: function() {
+                                $scope.dataGrid2.refresh();
+                            }
+                        }
+                    });
+                },
+                
+            };
+        }
+    });
     
     $scope.grid2Options = {
 		dataSource: myData2,
@@ -929,7 +1087,12 @@
 				}},
 			{dataField:'approvalstatus',width:150,allowEditing:false, visible: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false,encodeHtml: false,
 			customizeText: function (e) {
-					var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
+                    var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>",
+                    "<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>",
+                    "<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>",
+                    "<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",
+                    "<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>",
+                    ""];
 					return rDesc[e.value];
 				}},
 			//{dataField:'remarks',encodeHtml: false,}
@@ -941,6 +1104,7 @@
             useIcons:true,
             mode: "cell",
 			allowUpdating: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule'))?(($rootScope.isAdmin)?true:false):true,
+			// allowAdding:(($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule') && ($scope.data.apprstatuscode!==5))?false:true,
 			allowAdding:(($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule'))?(($rootScope.isAdmin)?true:false):true,
             allowDeleting:(($rootScope.isAdmin) || ($scope.mode=='approve'))?true:false,
 			// allowDeleting:(($scope.mode=='approve')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
@@ -971,6 +1135,7 @@
         },
 		
     };
+    // console.log($rootScope);
 	$scope.grid3Options = {
 		dataSource: myData3,
 		allowColumnResizing: true,
@@ -984,7 +1149,14 @@
 			{dataField:'approvaltype',width:150,caption: "Role",allowEditing:false,dataType: "string"},
 			{dataField:'actiontype',width:150,caption: "Action",allowEditing:false,encodeHtml: false,
 			customizeText: function (e) {
-					var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-default'>Created</span>","<span class='mb-2 mr-2 badge badge-pill badge-default'>Save as Draft</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Submitted</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Ask Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
+                    var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-default'>Created</span>",
+                    "<span class='mb-2 mr-2 badge badge-pill badge-default'>Save as Draft</span>",
+                    "<span class='mb-2 mr-2 badge badge-pill badge-primary'>Submitted</span>",
+                    "<span class='mb-2 mr-2 badge badge-pill badge-warning'>Ask Rework</span>",
+                    "<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>",
+                    "<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",
+                    "<span class='mb-2 mr-2 badge badge-pill badge-warning'>Add More Approval</span>",
+                    ""];
 					return rDesc[e.value];
 				}},
 			{dataField:'remarks',encodeHtml: false}
@@ -1016,6 +1188,158 @@
             });
         },
     };
+
+    $scope.grid5Options = {
+		dataSource: myData4,
+		allowColumnResizing: true,
+		columnResizingMode : "widget",
+        columnMinWidth: 50,
+        columnAutoWidth: true,
+		columns: [
+					{dataField:'file_descr',width:250,caption:"File Description",encodeHtml: false,dataType: "string",editorOptions: {disabled:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?false:true):false}},
+					
+					{
+							dataField: "file_loc",
+							caption:"FileLocation",
+							width: 100,
+							allowFiltering: false,
+							allowSorting: false,
+							formItem: { visible: false},
+							cellTemplate: function (container, options) {
+								if (options.value!=""){
+									$("<div />").dxButton({
+										icon: 'download',
+										stylingMode: "contained",
+										type: "success",
+										target : '_blank',
+										width: 50,
+										height:25,
+										onClick: function (e) {
+											window.open(options.value, '_blank');
+										}
+									}).appendTo(container);
+								};
+							}
+						},{dataField:'FileLoc',caption:"Select File Attachment",visible:false},
+						{dataField:'upload_date',width:150,caption: "Upload Date",dataType:"date", format: 'dd/MM/yyyy HH:mm:ss',editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy HH:mm:ss",disabled: true}},
+			
+			
+		],editing: {
+            useIcons:true,
+            mode: "popup",
+			allowUpdating:( ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowAdding:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+            //allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
+            //allowAdding: ($rootScope.isAdmin)?true:false, // Enables insertion
+            form:{colCount: 2,
+            },
+			popup: {
+					title: "Edit Attachment",
+					showTitle: true,
+					position: {
+						my: "center",
+						at: "center",
+						of: window
+					},
+					toolbarItems: [
+					  {
+						toolbar: 'bottom',
+						location: 'after',
+						widget: 'dxButton',
+						options: {
+							onClick: function(e) {	
+								if($scope.path==""){
+									DevExpress.ui.notify("Please select file attachment and process your upload before saving the data","error");
+									e.cancel = true;
+								}else{
+									if($scope.adaFile){
+										DevExpress.ui.notify("Please finish your upload before saving the data","error");
+										e.cancel = true;
+									} else{
+										$scope.grid5Component.saveEditData();
+									}
+								}
+								
+							},
+							text: 'Save'
+						}
+					  },
+					  {
+						toolbar: 'bottom',
+						location: 'after',
+						widget: 'dxButton',
+						options: {
+							onClick: function(e) {
+								$scope.grid5Component.cancelEditData();
+							},text: 'Cancel'
+						}
+					  }
+					]
+				}
+        },
+		onInitialized:function (e){
+			$scope.grid5Component = e.component;
+		},
+		onInitNewRow: function (e) {
+				e.data.upload_date = $filter("date")(d, 'yyyy-MM-dd HH:mm:ss');
+			},
+		onEditorPreparing: function (e) {
+			$scope.path = "";
+			if (e.dataField == "upload_date" ) {
+				e.editorName = "dxDateBox";
+				e.editorOptions.displayFormat= "dd/MM/yyyy  HH:mm:ss";
+			} 				
+			if (e.dataField == "FileLoc") {
+				e.editorName = "dxFileUploader";
+				e.editorOptions.uploadMode = "useButtons";
+				e.editorOptions.name = "myFile";
+				e.editorOptions.accept = "image/*,application/pdf,application/msword,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+				e.editorOptions.uploadUrl= "api.php?action=uploaditshareffile&id="+$scope.Requestid;
+				e.editorOptions.onUploaded= function (e) {						
+					$scope.path = e.request.response;
+					console.log(e);
+					$scope.adaFile =false;
+				}
+				e.editorOptions.onUploadError= function(e) {
+					$scope.path ="";
+					DevExpress.ui.notify(e.request.response,"error");
+				}
+				e.editorOptions.onValueChanged= function(e){					
+					$scope.adaFile = (e.value.length==0)?false:true;
+				}
+			}  
+			if (e.dataField == "file_descr") {
+				e.editorName = "dxHtmlEditor";
+				e.editorOptions.height = 250;
+				e.colSpan = 2;
+				e.editorOptions.toolbar = {	items: ["bold", "italic", "underline"]	};
+			}    				
+		},
+		onEditorPrepared: function (e) {
+			if (e.dataField == "file_descr") {
+				var index = e.row.rowIndex;
+				var rm = (typeof(e.value)=="undefined")?"":e.value;
+				$scope.grid5Component.cellValue(index, "file_descr", rm.trim()+" ");
+			}                 
+		 },
+		onToolbarPreparing: function(e) {
+			$scope.dataGrid = e.component;		
+			e.toolbarOptions.items.unshift(
+			{						
+				location: "after",
+				widget: "dxButton",
+				options: {
+					hint: "Refresh Data",
+					icon: "refresh",
+					onClick: function() {
+						$scope.grid5Component.refresh();
+					}
+				}
+			});
+		},
+    };
+
 	$scope.selectedTab = 0;
 	$scope.tabSettings = {
 		dataSource: $scope.tabs,
@@ -1185,7 +1509,7 @@
 						data.approvaldate = d;
                         data.mode="approve";
                         
-                        if($scope.data.apprstatuscode!==5) {
+                        if(($scope.data.apprstatuscode==1) || ($scope.data.apprstatuscode==2) || ($scope.data.apprstatuscode==3)) {
                             delete data.foldername;
 
                             delete data.accounttype;
@@ -1194,12 +1518,9 @@
                             delete data.validto;
                             delete data.reason;
                             
-
-
                         }
 						delete data.createddate;
                         delete data.employee_id;
-                        // delete data.formtype;
                         delete data.department;
                         delete data.requeststatus;
                         delete data.designation;
@@ -1210,13 +1531,8 @@
                         delete data.accounttype;
 
                         delete data.requesttype;
-
-
-                        // delete data.validfrom;
-                        // delete data.validto;
                         
                         delete data.isdeclaration;
-
 
                         delete data.depthead;
 				        delete data.apprstatuscode;
