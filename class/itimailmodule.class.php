@@ -158,7 +158,7 @@ Class Itimailmodule extends Application{
 							$data=$Itimail->to_array();
 							$data['fullname']=$fullname;
 							$data['bgbu']=$bgbu;
-							$data['listgroup']=$bgbu;
+							// $data['listgroup']=$bgbu;
 							$data['department']=$department;
 							$data['officelocation']=$location;
 							$data['designation']=$designation;
