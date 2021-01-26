@@ -1666,6 +1666,8 @@
                             delete data.newmailboxsize;
                             delete data.incomingsize;
                             delete data.outgoingsize;
+                            delete data.listgroup;
+
 
                             delete data.typeofaccess;
 
@@ -1694,7 +1696,7 @@
                         // delete data.validfrom;
                         // delete data.validto;
                         
-                        delete data.listgroup;
+                        // delete data.listgroup;
                         
                         
                         delete data.isdeclaration;
