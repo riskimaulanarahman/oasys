@@ -1232,6 +1232,7 @@ Class Itimailmodule extends Application{
 						unset($data['accesstype']);
 						unset($data['emailquota']);
 						unset($data['emaildomain']);
+						unset($data['listgroup']);
 						unset($data['listgroupmoderation']);
 						
 						unset($data['web1']);
