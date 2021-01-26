@@ -61,6 +61,12 @@ Class Itsharefoldermodule extends Application{
 				case 'apiitsharefhist':
 					$this->itsharefHistory();
 					break;
+				case 'apiitshareffile':
+					$this->itsharefAttachment();
+					break;
+				case 'uploaditshareffile':
+					$this->uploadItsharefFile();
+					break;
 				
 				default:
 					break;
@@ -151,6 +157,7 @@ Class Itsharefoldermodule extends Application{
 						$join = "LEFT JOIN vwitsharefreport ON tbl_itsharef.id = vwitsharefreport.id";
 						$select = "tbl_itsharef.*,vwitsharefreport.apprstatuscode";
 						// $Itsharef = Itsharef::find($id, array('include' => array('employee'=>array('company','department','designation','location'))));
+						// $Itsharef = Itsharef::find('first', array('joins'=>$join,'conditions' => array("tbl_itsharef.id=?",$id),'select'=>$select,'include' => array('employee'=>array('company','department','designation'))));
 						$Itsharef = Itsharef::find($id, array('joins'=>$join,'select'=>$select,'include' => array('employee'=>array('company','department','designation'))));
 						if ($Itsharef){
 							$fullname = $Itsharef->employee->fullname;
@@ -161,7 +168,6 @@ Class Itsharefoldermodule extends Application{
 							$data=$Itsharef->to_array();
 							$data['fullname']=$fullname;
 							$data['bgbu']=$bgbu;
-							// $data['listgroup']=$bgbu;
 							$data['department']=$department;
 							$data['officelocation']=$location;
 							$data['designation']=$designation;
@@ -238,29 +244,12 @@ Class Itsharefoldermodule extends Application{
 						unset($data['__KEY__']);
 						unset($data['username']);
 						$data['employee_id']=$Employee->id;
-						// $data['createdby']=$Employee->id;
 						$data['RequestStatus']=0;
 						try{
-							// $Itsharefnew = Itsharef::find('first',array('select' => "CONCAT('Itsharef/','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(wonumber,-4,4)) is null then 1 else max(substring(wonumber,-4,4))+1 end,4,'0')) as wonumber","conditions"=>array("substring(wonumber,7,".strlen($Employee->companycode).")=? and substring(wonumber,".(strlen($Employee->companycode)+8).",4)=YEAR(CURDATE())",$Employee->companycode)));
-							// $data['wonumber']=$Itsharefnew->wonumber;
 							$Itsharef = Itsharef::create($data);
 							$data=$Itsharef->to_array();
 							$joinx   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
 
-								// $Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=30")));
-								// if(count($Approver)>0){
-								// 	$Itsharefapproval = new Itsharefapproval();
-								// 	$Itsharefapproval->itsharef_id = $Itsharef->id;
-								// 	$Itsharefapproval->approver_id = $Approver->id;
-								// 	$Itsharefapproval->save();
-								// }
-								// $Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31")));
-								// if(count($Approver2)>0){
-								// 	$Itsharefapproval = new Itsharefapproval();
-								// 	$Itsharefapproval->itsharef_id = $Itsharef->id;
-								// 	$Itsharefapproval->approver_id = $Approver2->id;
-								// 	$Itsharefapproval->save();
-								// }
 								$Approver3 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=32")));
 								if(count($Approver3)>0){
 									$Itsharefapproval = new Itsharefapproval();
@@ -269,67 +258,27 @@ Class Itsharefoldermodule extends Application{
 									$Itsharefapproval->save();
 								}
 
-								// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
-								// 	// $Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=30 and tbl_employee.location_id='1'")));
-								// 	// if(count($Approver2)>0){
-								// 	// 	$Itsharefapproval = new Itsharefapproval();
-								// 	// 	$Itsharefapproval->itsharef_id = $Itsharef->id;
-								// 	// 	$Itsharefapproval->approver_id = $Approver2->id;
-								// 	// 	$Itsharefapproval->save();
-								// 	// }
+								if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND"))
+								{
+									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=34 and tbl_employee.location_id='1'")));
+									if(count($Approver2)>0){
+										$Itsharefapproval = new Itsharefapproval();
+										$Itsharefapproval->itsharef_id = $Itsharef->id;
+										$Itsharefapproval->approver_id = $Approver2->id;
+										$Itsharefapproval->save();
+									}
 									
-								// 	if(($Employee->department->sapcode!="13000090") && ($Employee->department->sapcode!="13000121") && ($Employee->company->sapcode!="NKF") && ($Employee->company->sapcode!="RND")  && ($Employee->company->companycode!="BCL")  && ($Employee->company->companycode!="LDU")){
-								// 		if(($Employee->level_id!=4) && ($Employee->level_id!=6) ){
-								// 			$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and tbl_employee.companycode='KPSI' and not(tbl_employee.id=?)",$Employee->id)));
-								// 			if(count($Approver)>0){
-								// 				$Itsharefapproval = new Itsharefapproval();
-								// 				$Itsharefapproval->itsharef_id = $Itsharef->id;
-								// 				$Itsharefapproval->approver_id = $Approver->id;
-								// 				$Itsharefapproval->save();
-								// 			}
-								// 		}
-								// 	}else{
-								// 		$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and tbl_employee.company_id=? and not tbl_employee.companycode='KPSI'  and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
-								// 		if(count($Approver)>0){
-								// 			$Itsharefapproval = new Itsharefapproval();
-								// 			$Itsharefapproval->itsharef_id = $Itsharef->id;
-								// 			$Itsharefapproval->approver_id = $Approver->id;
-								// 			$Itsharefapproval->save();
-								// 		}else{
-								// 			$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
-								// 			if(count($Approver)>0){
-								// 				$Itsharefapproval = new Itsharefapproval();
-								// 				$Itsharefapproval->itsharef_id = $Itsharef->id;
-								// 				$Itsharefapproval->approver_id = $Approver->id;
-								// 				$Itsharefapproval->save();
-								// 			}
-								// 		}
-								// 	}	
-								// }else{
-								// 	$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and not tbl_employee.companycode='KPSI' and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
-								// 	if(count($Approver)>0){
-								// 		$Itsharefapproval = new Itsharefapproval();
-								// 		$Itsharefapproval->itsharef_id = $Itsharef->id;
-								// 		$Itsharefapproval->approver_id = $Approver->id;
-								// 		$Itsharefapproval->save();
-								// 	}else{
-								// 		$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
-								// 		if(count($Approver)>0){
-								// 			$Itsharefapproval = new Itsharefapproval();
-								// 			$Itsharefapproval->itsharef_id = $Itsharef->id;
-								// 			$Itsharefapproval->approver_id = $Approver->id;
-								// 			$Itsharefapproval->save();
-								// 		}
-								// 	}
+	
+								}else{
 
-								// 	// $Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=30 and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
-								// 	// if(count($Approver2)>0){
-								// 	// 	$Itsharefapproval = new Itsharefapproval();
-								// 	// 	$Itsharefapproval->itsharef_id = $Itsharef->id;
-								// 	// 	$Itsharefapproval->approver_id = $Approver2->id;
-								// 	// 	$Itsharefapproval->save();
-								// 	// }
-								// }
+									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=34 and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
+									if(count($Approver2)>0){
+										$Itsharefapproval = new Itsharefapproval();
+										$Itsharefapproval->itsharef_id = $Itsharef->id;
+										$Itsharefapproval->approver_id = $Approver2->id;
+										$Itsharefapproval->save();
+									}
+								}
 
 							$Iteihistory = new Itsharefhistory();
 							$Iteihistory->date = date("Y-m-d h:i:s");
@@ -508,21 +457,20 @@ Class Itsharefoldermodule extends Application{
 										<table border=1 cellspacing=0 cellpadding=3 width=683>
 										<tr><th><p class=MsoNormal>No</p></th>
 											<th><p class=MsoNormal>Grant Access To</p></th>
-											<th><p class=MsoNormal>Readonly</p></th>
-											<th><p class=MsoNormal>Change</p></th>
+											<th><p class=MsoNormal>Permission</p></th>
 										</tr>
 										';
 									$no=1;
 									foreach ($Itsharefdetail as $data){
-										if($data->readonly == 1) {
-											$readonly = 'YA';
-										} else {
-											$readonly = 'TIDAK';
-										}
+										// if($data->readonly == 1) {
+										// 	$readonly = 'YA';
+										// } else {
+										// 	$readonly = 'TIDAK';
+										// }
 										if($data->change == 1) {
-											$change = 'YA';
+											$change = 'Change';
 										} else {
-											$change = 'TIDAK';
+											$change = 'ReadOnly';
 										}
 										$this->mailbody .='<tr style="height:22.5pt">
 											<td><p class=MsoNormal> '.$no.'</p></td>
@@ -608,6 +556,7 @@ Class Itsharefoldermodule extends Application{
 								$approvaltype = $result->approver->approvaltype_id;
 								$result		= $result->to_array();
 								$result['approvaltype']=$approvaltype;
+								// print_r($result);
 							}
 							echo json_encode($Itsharefapproval, JSON_NUMERIC_CHECK);
 						}else{
@@ -627,7 +576,7 @@ Class Itsharefoldermodule extends Application{
 								$data=array("jml"=>1);
 							}else{
 								$join   = "LEFT JOIN tbl_approver ON (tbl_itsharefapproval.approver_id = tbl_approver.id) ";
-								$Itsharefapproval = Itsharefapproval::find('all', array('joins'=>$join,'conditions' => array("itsharef_id=? and ApprovalStatus<=1 and not tbl_approver.employee_id=?",$query['itsharef_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
+								$Itsharefapproval = Itsharefapproval::find('all', array('joins'=>$join,'conditions' => array("itsharef_id=? and ApprovalStatus in (0,1,4) and not tbl_approver.employee_id=?",$query['itsharef_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
 								foreach ($Itsharefapproval as &$result) {
 									$fullname	= $result->approver->employee->fullname;
 									$result		= $result->to_array();
@@ -641,7 +590,7 @@ Class Itsharefoldermodule extends Application{
 							$Itsharef = Itsharef::find('all', array('conditions' => array("RequestStatus =1"),'include' => array('employee')));
 							foreach ($Itsharef as $result) {
 								$joinx   = "LEFT JOIN tbl_approver ON (tbl_itsharefapproval.approver_id = tbl_approver.id) ";					
-								$Itsharefapproval = Itsharefapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and itsharef_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+								$Itsharefapproval = Itsharefapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus in (0,4) and itsharef_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 								if($Itsharefapproval->approver->employee_id==$emp_id){
 									$request[]=$result->id;
 								}
@@ -717,9 +666,9 @@ Class Itsharefoldermodule extends Application{
 						unset($data['approveddoc']);
 						// if(isset($data['approvalstatus']) == 4) {
 						// }
-						if ($appstatus=='4' || $appstatus==4 ){
-							unset($data['approvalstatus']);
-						}
+						// if ($appstatus=='4' || $appstatus==4 ){
+						// 	$data['approvalstatus'] == 0;
+						// }
 						print_r($data);
 
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
@@ -781,7 +730,7 @@ Class Itsharefoldermodule extends Application{
 						if (isset($mode) && ($mode=='approve')){
 							$Itsharef = Itsharef::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
 							$joinx   = "LEFT JOIN tbl_approver ON (tbl_itsharefapproval.approver_id = tbl_approver.id) ";					
-							$nTrapproval = Itsharefapproval::find('first',array('joins'=>$joinx,'conditions' => array("itsharef_id=? and ApprovalStatus=0",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+							$nTrapproval = Itsharefapproval::find('first',array('joins'=>$joinx,'conditions' => array("itsharef_id=? and ApprovalStatus=0 or ApprovalStatus=4",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 							$username = $nTrapproval->approver->employee->loginname;
 							$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
 							// $Itsharefschedule=Trschedule::find('all',array('conditions'=>array("itsharef_id=?",$doid),'include'=>array('itsharef'=>array('employee'=>array('company','department','designation','grade','location')))));
@@ -808,6 +757,8 @@ Class Itsharefoldermodule extends Application{
 									$red = 'Your '.$title.' require some rework :
 											<br>Remarks from Approver : <font color="red">'.$data['remarks']."</font>";
 									$Itsharefhistory->actiontype = 3;
+									echo 'case 1';
+
 									break;
 								case '2':
 									if ($Itsharefapproval->approver->isfinal == 1){
@@ -833,7 +784,9 @@ Class Itsharefoldermodule extends Application{
 										$this->mail->Subject = 'Online Approval System -> new Share Folder Request';
 										$red = 'new '.$title.' Request awaiting for your approval:';
 									}
-									$Itsharefhistory->actiontype = 4;							
+									$Itsharefhistory->actiontype = 4;	
+									echo 'case 2';
+
 									break;
 								case '3':
 									$Itsharef->requeststatus = 4;
@@ -842,6 +795,8 @@ Class Itsharefoldermodule extends Application{
 									$this->mail->Subject = "Online Approval System -> Request Rejected";
 									$red = 'Your '.$title.' Request has been rejected
 											<br>Remarks from Approver : <font color="red">'.$data['remarks']."</font>";
+									echo 'case 3';
+
 									break;
 								case '4':
 									$Itsharef->requeststatus = 1;
@@ -849,7 +804,9 @@ Class Itsharefoldermodule extends Application{
 									$emto=$adb->email;$emname=$adb->fullname;
 									$this->mail->Subject = 'Online Approval System -> new Share Folder Request';
 									$red = 'new '.$title.' Request awaiting for your approval:';
-									$Itsharefhistory->actiontype = 3;							
+									$Itsharefhistory->actiontype = 6;	
+									
+									echo 'case 4';
 									break;
 								default:
 									break;
@@ -891,6 +848,36 @@ Class Itsharefoldermodule extends Application{
 									<td><p class=MsoNormal> '.$Itsharef->reason.'</p></td>
 								</tr>
 								';
+
+								$Itsharefdetail = Itsharefdetail::find('all',array('conditions'=>array("itsharef_id=?",$doid),'include'=>array('itsharef'=>array('employee'=>array('company','department','designation','grade','location')))));	
+
+								$this->mailbody .='</table>
+									<table border=1 cellspacing=0 cellpadding=3 width=683>
+									<tr><th><p class=MsoNormal>No</p></th>
+										<th><p class=MsoNormal>Grant Access To</p></th>
+										<th><p class=MsoNormal>Permission</p></th>
+									</tr>
+									';
+								$no=1;
+								foreach ($Itsharefdetail as $data){
+									// if($data->readonly == 1) {
+									// 	$readonly = 'YA';
+									// } else {
+									// 	$readonly = 'TIDAK';
+									// }
+									if($data->change == 1) {
+										$change = 'Change';
+									} else {
+										$change = 'ReadOnly';
+									}
+									$this->mailbody .='<tr style="height:22.5pt">
+										<td><p class=MsoNormal> '.$no.'</p></td>
+										<td><p class=MsoNormal> '.$data->grantaccessto.'</p></td>
+										<td><p class=MsoNormal> '.$change.'</p></td>
+										</tr>';
+									$no++;
+								}
+
 							$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 							
 								$this->mail->msgHTML($this->mailbody);
@@ -942,10 +929,21 @@ Class Itsharefoldermodule extends Application{
 					case 'byid':
 						$id = $this->post['id'];
 						if ($id!=""){
-							$Itsharefdetail = Itsharefdetail::find('all', array('conditions' => array("itsharef_id=?",$id)));
+							$join = "LEFT JOIN vwitsharefreport ON tbl_itsharefdetail.itsharef_id = vwitsharefreport.id";
+							$select = "tbl_itsharefdetail.*,vwitsharefreport.apprstatuscode";
+							$Itsharefdetail = Itsharefdetail::find('all', array('joins'=>$join,'select'=>$select,'conditions' => array("itsharef_id=?",$id)));
+							$getdetail = Itsharefdetail::find('first', array('joins'=>$join,'select'=>$select,'conditions' => array("itsharef_id=?",$id)));
+							// $Itsharefdetail = Itsharefdetail::find('all', array('conditions' => array("itsharef_id=?",$id)));
 							foreach ($Itsharefdetail as &$result) {
-								$result		= $result->to_array();
+								$result	= $result->to_array();
 							}
+							// $Itsharefdetail['rolestatus'] = $getdetail->apprstatuscode;
+
+							// if ($Itsharefdetail){
+							// 	// $Itsharefdetail['rolestatus']=$Itsharefdetail->apprstatuscode;
+								// print_r($Itsharefdetail);
+							// }
+
 							echo json_encode($Itsharefdetail, JSON_NUMERIC_CHECK);
 						}else{
 							$Itsharefdetail = new Itsharefdetail();
@@ -967,6 +965,11 @@ Class Itsharefoldermodule extends Application{
 						unset($data['__KEY__']);
 						// $exprice = $data['unitprice'] * $data['qty'];
 						// $data['extendedprice'] = $exprice;
+						if($data['change']=='true') {
+							$data['change'] = 1;
+						}else if($data['change']=='false') {
+							$data['change'] = 0;
+						}
 						$Itsharefdetail = Itsharefdetail::create($data);
 						$logger = new Datalogger("Itsharefdetail","create",null,json_encode($data));
 						$logger->SaveData();
@@ -986,8 +989,18 @@ Class Itsharefoldermodule extends Application{
 						
 						$Itsharefdetail = Itsharefdetail::find($id);
 						$olddata = $Itsharefdetail->to_array();
+						// foreach($data as $key=>$val){
+						// 	$Itsharefdetail->$key=$val;
+						// }
 						foreach($data as $key=>$val){
+							// $val=($val=='true')?1:0;
+							if($val=='true') {
+								$val = 1;
+							}else if($val=='false') {
+								$val = 0;
+							}
 							$Itsharefdetail->$key=$val;
+							
 						}
 						// $exprice = $Itsharefdetail->unitprice * $Itsharefdetail->qty;
 						// $Itsharefdetail->extendedprice = $exprice;
@@ -1008,19 +1021,123 @@ Class Itsharefoldermodule extends Application{
 			}
 		}
 	}
+	function  itsharefAttachment(){
+		if (count($this->post)==0){
+			http_response_code(405);
+    		echo json_encode(array("message" => "Method not Allowed"));
+		}else{
+			$auth = $this->jwt->checkAuth();
+			if($auth){
+				switch ($this->post['criteria']){
+					case 'byid':
+						$id = $this->post['id'];
+						if ($id!=""){
+							$Itsharefattachment = Itsharefattachment::find('all', array('conditions' => array("itsharef_id=?",$id)));
+							foreach ($Itsharefattachment as &$result) {
+								$result		= $result->to_array();
+							}
+							echo json_encode($Itsharefattachment, JSON_NUMERIC_CHECK);
+						}else{
+							$Itsharefattachment = new Itsharefattachment();
+							echo json_encode($Itsharefattachment);
+						}
+						break;
+					case 'find':
+						$query=$this->post['query'];
+						if(isset($query['status'])){
+							$Itsharefattachment = Itsharefattachment::find('all', array('conditions' => array("itsharef_id=?",$query['itsharef_id'])));
+							$data=array("jml"=>count($Itsharefattachment));
+						}else{
+							$data=array();
+						}
+						echo json_encode($data, JSON_NUMERIC_CHECK);
+						break;
+					case 'create':			
+						$data = $this->post['data'];
+						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+						$data['employee_id']=$Employee->id;
+						unset($data['__KEY__']);
+						
+						$Itsharefattachment = Itsharefattachment::create($data);
+						$logger = new Datalogger("Itsharefattachment","create",null,json_encode($data));
+						$logger->SaveData();
+						break;
+					case 'delete':				
+						$id = $this->post['id'];
+						$Itsharefattachment = Itsharefattachment::find($id);
+						$data=$Itsharefattachment->to_array();
+						$Itsharefattachment->delete();
+						$logger = new Datalogger("Itsharefattachment","delete",json_encode($data),null);
+						$logger->SaveData();
+						echo json_encode($Itsharefattachment);
+						break;
+					case 'update':				
+						$id = $this->post['id'];
+						$data = $this->post['data'];
+						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+						$data['employee_id']=$Employee->id;
+						$Itsharefattachment = Itsharefattachment::find($id);
+						$olddata = $Itsharefattachment->to_array();
+						foreach($data as $key=>$val){					
+							$val=($val=='No')?false:(($val=='Yes')?true:$val);
+							$Itsharefattachment->$key=$val;
+						}
+						$Itsharefattachment->save();
+						$logger = new Datalogger("Itsharefattachment","update",json_encode($olddata),json_encode($data));
+						$logger->SaveData();
+						echo json_encode($Itsharefattachment);
+						
+						break;
+					default:
+						$Itsharefattachment = Itsharefattachment::all();
+						foreach ($Itsharefattachment as &$result) {
+							$result = $result->to_array();
+						}
+						echo json_encode($Itsharefattachment, JSON_NUMERIC_CHECK);
+						break;
+				}
+			}
+		}
+	}
+	public function uploadItsharefFile(){
+		$id= $this->get['id'];
+		if(!isset($_FILES['myFile'])) {
+			http_response_code(400);
+			echo "There is no file to upload";
+			exit;
+		}
+		$max_image_size = 5242880;
+		if(!is_uploaded_file($_FILES['myFile']['tmp_name'])) {
+			http_response_code(400);
+			echo "Unable to upload File";
+			exit;
+		}
+		if($_FILES['myFile']['size'] > $max_image_size) {
+			http_response_code(413);
+			echo "File Size too Large, Maximum 5MB";
+			exit;
+		}
+		if((strpos($_FILES['myFile']['type'], "image") === false) && (strpos($_FILES['myFile']['type'], "pdf") === false) && (strpos($_FILES['myFile']['type'], "officedocument") === false)  && (strpos($_FILES['myFile']['type'], "msword") === false) && (strpos($_FILES['myFile']['type'], "excel") === false)){
+			http_response_code(415);
+			echo "Only Accept Image File, pdf or Office Document (Excel & Word) ";
+			exit;
+		}
+		$path_to_file = "upload/itsharef/".$id."_".time()."_".$_FILES['myFile']['name'];
+		$path_to_file = str_replace("%","_",$path_to_file);
+		$path_to_file = str_replace(" ","_",$path_to_file);
+		echo $path_to_file;
+        move_uploaded_file($_FILES['myFile']['tmp_name'], $path_to_file);
+	}
 	function generatePDFi($id){
 		$Itsharef = Itsharef::find($id);
 		$Itsharefdetail = Itsharefdetail::find('all',array('conditions'=>array("itsharef_id=?",$id),'include'=>array('itsharef'=>array('employee'=>array('company','department','designation','grade','location')))));	
 		
-		// print_r($Itsharefdetail);
-
-		// $form = $Itsharef->formtype;
 		$superiorId=$Itsharef->depthead;
 		$Superior = Employee::find($superiorId);
 		$supAdb = Addressbook::find('first',array('conditions'=>array("username=?",$Superior->loginname)));
 		$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Itsharef->employee->loginname)));
 		$email=$usr->email;
-		$fullname=$usr->fullname;
+		$fullname=$Itsharef->employee->fullname;
 
 		$datefrom = date("d/m/Y",strtotime($Itsharef->validfrom));
 		$dateto = date("d/m/Y",strtotime($Itsharef->validto));
@@ -1028,47 +1145,19 @@ Class Itsharefoldermodule extends Application{
 		$joinx   = "LEFT JOIN tbl_approver ON (tbl_itsharefapproval.approver_id = tbl_approver.id) ";					
 		$Itsharefapproval = Itsharefapproval::find('all',array('joins'=>$joinx,'conditions' => array("itsharef_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
 		
-		// $ItsharefJ = Itsharef::find($id,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
-
-		// $Mailrecipient = Mailrecipient::find('all',array('conditions'=>array("module='IT' and company_list like ?","%".$ItsharefJ->employee->companycode."%")));
-		// foreach ($Mailrecipient as $data){
-		// 	print_r($data->email);
-		// }
-
 		//condition
-			foreach ($Itsharefapproval as $data){
-				if(($data->approver->approvaltype->id==29) || ($data->approver->employee_id==$Itsharef->depthead)){
-					$deptheadname = $data->approver->employee->fullname;
-					$deptheaddate = date("d/m/Y",strtotime($data->approvaldate));
-				}
-				if($data->approver->approvaltype->id==30) {
-					$hrdname = $data->approver->employee->fullname;
-					$hrddate = date("d/m/Y",strtotime($data->approvaldate));
-				}
-				if($data->approver->approvaltype->id==31) {
-					$buheadname = $data->approver->employee->fullname;
-					$buheaddate = date("d/m/Y",strtotime($data->approvaldate));
-				}
-				if($data->approver->approvaltype->id==32) {
-					$itheadname = $data->approver->employee->fullname;
-					$itheaddate = date("d/m/Y",strtotime($data->approvaldate));
-				}
-				if($data->approver->approvaltype->id==33) {
-					$mdname = $data->approver->employee->fullname;
-					$mddate = date("d/m/Y",strtotime($data->approvaldate));
-				}
-			}
+			
 			
 		//end condition
 
 		try {
 			$excel = new COM("Excel.Application") or die ("ERROR: Unable to instantaniate COM!\r\n");
-			$excel->Visible = true;
+			$excel->Visible = false;
 
 				$title = 'sharefolder';
 
 
-				$file= SITE_PATH."/doc/it/template_sharefolder.xls";
+				$file= SITE_PATH."/doc/it/template_sharefoldernew1.xls";
 				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
 				$Worksheet = $Workbook->Worksheets(1);
 				$Worksheet->Activate;
@@ -1083,71 +1172,116 @@ Class Itsharefoldermodule extends Application{
 				$Worksheet->Range("F19")->Value = $Itsharef->department;
 
 				$Worksheet->Range("F25")->Value = $Itsharef->foldername;
-				//condition
-				// $string = $Itsharef->membername;
-
-				// $expstring = explode(',',$string);
-				// // $countstring = count($expstring)+29;
-
-				// $getname = [];
-				// $xlShiftDown=-4121;
-
-				// foreach($Itsharefdetail as $p) {
-				// 	$Worksheet->Rows(30)->Insert($xlShiftDown);
-				// 	// echo json_encode($p->grantaccessto);
-				// 	$Worksheet->Range("F29")->Value = $p->grantaccessto;
-
-				// 	// $dataname = Employee::find($key);
-				// 	// array_push($getname,$dataname->loginname);
-				// }
-
-				// $getemailname = [];
-				// foreach($getname as $p => $key) {
-
-				// 	$datamail = Addressbook::find('first',array('select'=> "CONCAT(fullname,' (',email,')' ) as name",'conditions' => array("username=?",$key)));
-
-				// 	array_push($getemailname,$datamail->name);
-
-				// }
-
-				// $ss = implode(' | ',$getemailname);
-				// print_r($ss);
-
-
-				// $Worksheet->Range("F31")->Value = $ss;
-
-				$Worksheet->Range("F36")->Value = strip_tags($Itsharef->remarks);
 
 				$Worksheet->Range("H33")->Value = $datefrom;
 				$Worksheet->Range("Q33")->Value = $dateto;
 
+				// $Worksheet->Range("F36")->Value = $Itsharef->reason;
+				$Worksheet->Range("F36")->Value = strip_tags($Itsharef->reason);
 
+				$arrappr['role'] = array();
+				$arrappr['name'] = array();
+				$arrappr['date'] = array();
+
+				array_push($arrappr['role'],'Originator');
+				array_push($arrappr['name'],$fullname);
+				array_push($arrappr['date'],date("d/m/Y",strtotime($Itsharef->createddate)));
+
+				foreach ($Itsharefapproval as $data){
+					if(($data->approver->approvaltype->id==29) || ($data->approver->employee_id==$Itsharef->depthead)){
+						$deptheadname = $data->approver->employee->fullname;
+						$deptheaddate = date("d/m/Y",strtotime($data->approvaldate));
+
+						array_push($arrappr['role'],'Department head');
+						array_push($arrappr['name'],$deptheadname);
+						array_push($arrappr['date'],$deptheaddate);
+
+					}
+				
+					if($data->approver->approvaltype->id==31) {
+						$buheadname = $data->approver->employee->fullname;
+						$buheaddate = date("d/m/Y",strtotime($data->approvaldate));
+
+						array_push($arrappr['role'],'BU head');
+						array_push($arrappr['name'],$buheadname);
+						array_push($arrappr['date'],$buheaddate);
+
+					}
+					
+					if($data->approver->approvaltype->id==34) {
+						$itsitename = $data->approver->employee->fullname;
+						$itsitedate = date("d/m/Y",strtotime($data->approvaldate));
+
+						array_push($arrappr['role'],'IT Site');
+						array_push($arrappr['name'],$itsitename);
+						array_push($arrappr['date'],$itsitedate);
+
+					}
+
+					if($data->approver->approvaltype->id==32) {
+						$itheadname = $data->approver->employee->fullname;
+						$itheaddate = date("d/m/Y",strtotime($data->approvaldate));
+
+						array_push($arrappr['role'],'IT Lead');
+						array_push($arrappr['name'],$itheadname);
+						array_push($arrappr['date'],$itheaddate);
+
+					}
+				}
+
+					echo json_encode($arrappr);
+
+				$picpath= SITE_PATH."/images/approved.png";
+	
 				$xlShiftDown=-4121;
+
+				for ($b=49;$b<49+count($arrappr['name']);$b++) {
+					// print_r($arrdephead[$b-49]);
+					$Worksheet->Rows($b+1)->Copy();
+					$Worksheet->Rows($b+1)->Insert($xlShiftDown);
+					$Worksheet->Range("A".$b)->Value = $arrappr['role'][$b-49];
+					$Worksheet->Range("I".$b)->Value = $arrappr['name'][$b-49];
+					$Worksheet->Range("Q".$b)->Value = $arrappr['date'][$b-49];
+
+					$pic=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+					$pic->Height  = 20;
+					$pic->Top = $excel->Cells($b, 23)->Top ;
+					$pic->Left = $excel->Cells($b, 23)->Left ;
+				}
+
+
 				for ($a=29;$a<29+count($Itsharefdetail);$a++){
+					// $Worksheet->Rows($a+1)->Copy();
 					$Worksheet->Rows($a+1)->Insert($xlShiftDown);
-					$Worksheet->Range("F".$a)->Value = $Itsharefdetail[$a-29]->grantaccessto;
-					$Worksheet->Range("Q".$a)->Value = ($Itsharefdetail[$a-29]->readonly == 1)?'x':'';
+					$Worksheet->Range("A".$a)->Value = $Itsharefdetail[$a-29]->foldername;
+					$Worksheet->Range("J".$a)->Value = $Itsharefdetail[$a-29]->grantaccessto;
+					$Worksheet->Range("Q".$a)->Value = ($Itsharefdetail[$a-29]->change == 0)?'x':'';
 					$Worksheet->Range("R".$a)->Value = 'Read Only';
 					$Worksheet->Range("U".$a)->Value = ($Itsharefdetail[$a-29]->change == 1)?'x':'';
 					$Worksheet->Range("V".$a)->Value = 'Change';
-					// $Worksheet->Range("F".$a)->Value = ($a-28).'. '.($getname[$a-29]);
+					$Worksheet->Range("X".$a)->Value = $Itsharefdetail[$a-29]->requesttype;
+					$Worksheet->Range("Y".$a)->Value = 'Type';
+
+
+					// if($Itsharefdetail[$a-29]->requesttype == 1) {
+					// 	$Worksheet->Range("X".$a)->Value = 'Create Share Folder';
+					// }else if($Itsharefdetail[$a-29]->requesttype == 2){
+					// 	$Worksheet->Range("X".$a)->Value = 'Create Share Folder';
+
+					// }else if($Itsharefdetail[$a-29]->requesttype == 3){
+					// 	$Worksheet->Range("X".$a)->Value = 'Create Share Folder';
+
+					// }else if($Itsharefdetail[$a-29]->requesttype == 4){
+					// 	$Worksheet->Range("X".$a)->Value = 'Create Share Folder';
+
+					// }else if($Itsharefdetail[$a-29]->requesttype == 5){
+					// 	$Worksheet->Range("X".$a)->Value = 'Create Share Folder';
+
+					// }
 				}
 		
 
 				//end condition
-				
-				// $Worksheet->Range("J27")->Value = $Itsharef->typeofaccess;
-				// $Worksheet->Range("F34")->Value = $Itsharef->reason;
-
-				// $Worksheet->Range("I56")->Value = $deptheadname;
-				// $Worksheet->Range("I57")->Value = $deptheaddate;
-				// $Worksheet->Range("P56")->Value = $buheadname;
-				// $Worksheet->Range("P57")->Value = $buheaddate;
-				// $Worksheet->Range("W56")->Value = $itheadname;
-				// $Worksheet->Range("W57")->Value = $itheaddate;
-
-				// $Worksheet->Range("C56")->Value = $fullname;
-				// $Worksheet->Range("C57")->Value = date("d/m/Y",strtotime($Itsharef->createddate));
 
 
 			$xlTypePDF = 0;

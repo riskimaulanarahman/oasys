@@ -714,7 +714,7 @@
                                 visible:($scope.data.formtype==1)?true:false,
                                 name:'listgroup',
                                 dataType:"string",
-                                disabled: true                           
+                                disabled: false                           
                             },
                             {dataField:'listgroupmoderation',name:'listgroupmoderation',label:{text:"List Group Moderation"},visible:($scope.data.formtype==1)?true:false,
                             disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
