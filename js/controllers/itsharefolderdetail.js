@@ -413,20 +413,20 @@
                         colSpan:2,
 						colCount:3,
 						items: [
-                            {
-                                dataField:'foldername',
-                                label: {
-                                    text:"folder name",
-                                },
-                                // visible:($scope.data.formtype==2)?true:false,
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==4) || ($scope.data.apprstatuscode==5)) ?false:true,
-                                name:'foldername',
-                                dataType:"string",
-                                validationRules: [{
-                                    type: "required",
-                                    message: "Please input foldername"
-                                }]
-                            },
+                            // {
+                            //     dataField:'foldername',
+                            //     label: {
+                            //         text:"folder name",
+                            //     },
+                            //     // visible:($scope.data.formtype==2)?true:false,
+                            //     disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==4) || ($scope.data.apprstatuscode==5)) ?false:true,
+                            //     name:'foldername',
+                            //     dataType:"string",
+                            //     validationRules: [{
+                            //         type: "required",
+                            //         message: "Please input foldername"
+                            //     }]
+                            // },
                             
                         ]
                     },
@@ -1001,7 +1001,7 @@
                     
                     allowAdding:(($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule'))?(($rootScope.isAdmin)?true:false):true,
                     // allowDeleting:($rootScope.isAdmin)?true:false,
-                    allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule'))?(($rootScope.isAdmin)?true:false):true,
+                    allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule'))?(($rootScope.isAdmin)||($scope.data.apprstatuscode==4)||($scope.data.apprstatuscode==5)?true:false):true,
                     
                     form:{colCount: 1,
                     },
@@ -1510,7 +1510,7 @@
                         data.mode="approve";
                         
                         if(($scope.data.apprstatuscode==1) || ($scope.data.apprstatuscode==2) || ($scope.data.apprstatuscode==3)) {
-                            delete data.foldername;
+                            // delete data.foldername;
 
                             delete data.accounttype;
 

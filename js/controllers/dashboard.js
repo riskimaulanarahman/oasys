@@ -100,6 +100,14 @@ app.register.controller('dashboardCtrl', ['$rootScope','$scope', '$http', '$inte
 			CrudService.FindData('itimailapp',criteria).then(function (response){
 				$scope.pendingITIMAIL=response.jml;
 			});
+			criteria = {status:'pending'};
+			CrudService.FindData('itsharefbyemp',criteria).then(function (response){
+				$scope.pendingITSHAREFReq=response.jml;
+			});
+			criteria = {mypending:'true'};
+			CrudService.FindData('itsharefapp',criteria).then(function (response){
+				$scope.pendingITSHAREF=response.jml;
+			});
 		}, 1000);
 		
         // DevExpress.ui.notify({

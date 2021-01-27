@@ -406,6 +406,8 @@ Class Itsharefoldermodule extends Application{
 									}
 									
 								}
+
+								$title = 'Share Folder';
 								
 								if($data['requeststatus']==1){
 									$Itsharefapproval = Itsharefapproval::find('all', array('conditions' => array("itsharef_id=?",$id)));					
@@ -438,13 +440,11 @@ Class Itsharefoldermodule extends Application{
 									$this->mailbody .='
 										<table border=1 cellspacing=0 cellpadding=3 width=683>
 										<tr>
-											<th><p class=MsoNormal>Folder Name</p></th>
 											<th><p class=MsoNormal>Valid From</p></th>
 											<th><p class=MsoNormal>Valid To</p></th>
 											<th><p class=MsoNormal>Reason</p></th>
 										</tr>
 										<tr style="height:22.5pt">
-											<td><p class=MsoNormal> '.$Itsharef->foldername.'</p></td>
 											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itsharef->validfrom)).'</p></td>
 											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itsharef->validto)).'</p></td>
 											<td><p class=MsoNormal> '.$Itsharef->reason.'</p></td>
@@ -456,17 +456,26 @@ Class Itsharefoldermodule extends Application{
 									$this->mailbody .='</table>
 										<table border=1 cellspacing=0 cellpadding=3 width=683>
 										<tr><th><p class=MsoNormal>No</p></th>
+											<th><p class=MsoNormal>Folder Name</p></th>
+											<th><p class=MsoNormal>Request Type</p></th>
 											<th><p class=MsoNormal>Grant Access To</p></th>
 											<th><p class=MsoNormal>Permission</p></th>
 										</tr>
 										';
 									$no=1;
 									foreach ($Itsharefdetail as $data){
-										// if($data->readonly == 1) {
-										// 	$readonly = 'YA';
-										// } else {
-										// 	$readonly = 'TIDAK';
-										// }
+										if($data->requesttype == 1) {
+											$rt = 'Create Share Folder';
+										} else if($data->requesttype == 2) {
+											$rt = 'Grant Access to Existing Folder';
+										} else if($data->requesttype == 3) {
+											$rt = 'Delete Shared Folder';
+										} else if($data->requesttype == 4) {
+											$rt = 'Revoke Access from Existing Folder';
+										} else if($data->requesttype == 5) {
+											$rt = 'Exclude from Archiving Policy';
+										}
+
 										if($data->change == 1) {
 											$change = 'Change';
 										} else {
@@ -474,8 +483,9 @@ Class Itsharefoldermodule extends Application{
 										}
 										$this->mailbody .='<tr style="height:22.5pt">
 											<td><p class=MsoNormal> '.$no.'</p></td>
+											<td><p class=MsoNormal> '.$data->foldername.'</p></td>
+											<td><p class=MsoNormal> '.$rt.'</p></td>
 											<td><p class=MsoNormal> '.$data->grantaccessto.'</p></td>
-											<td><p class=MsoNormal> '.$readonly.'</p></td>
 											<td><p class=MsoNormal> '.$change.'</p></td>
 											</tr>';
 										$no++;
@@ -716,7 +726,7 @@ Class Itsharefoldermodule extends Application{
 
 						unset($data['reason']);	
 						
-						
+						unset($data['requesttype']);
 						
 						$olddata = $Itsharefapproval->to_array();
 						foreach($data as $key=>$val){
@@ -747,6 +757,8 @@ Class Itsharefoldermodule extends Application{
 							$Itsharefhistory->approvaltype = $Itsharefapproval->approver->approvaltype->approvaltype;
 							$Itsharefhistory->remarks = $data['remarks'];
 							$Itsharefhistory->itsharef_id = $doid;
+
+							$title = 'Share Folder';
 							
 							switch ($data['approvalstatus']){
 								
@@ -781,7 +793,7 @@ Class Itsharefoldermodule extends Application{
 									else{
 										$Itsharef->requeststatus = 1;
 										$emto=$adb->email;$emname=$adb->fullname;
-										$this->mail->Subject = 'Online Approval System -> new Share Folder Request';
+										$this->mail->Subject = 'Online Approval System -> new '.$title.' Request';
 										$red = 'new '.$title.' Request awaiting for your approval:';
 									}
 									$Itsharefhistory->actiontype = 4;	
@@ -802,7 +814,7 @@ Class Itsharefoldermodule extends Application{
 									$Itsharef->requeststatus = 1;
 									// $nTrapproval->approvalstatus = 0;
 									$emto=$adb->email;$emname=$adb->fullname;
-									$this->mail->Subject = 'Online Approval System -> new Share Folder Request';
+									$this->mail->Subject = 'Online Approval System -> new '.$title.' Request';
 									$red = 'new '.$title.' Request awaiting for your approval:';
 									$Itsharefhistory->actiontype = 6;	
 									
@@ -836,13 +848,11 @@ Class Itsharefoldermodule extends Application{
 							$this->mailbody .='
 								<table border=1 cellspacing=0 cellpadding=3 width=683>
 								<tr>
-									<th><p class=MsoNormal>Folder Name</p></th>
 									<th><p class=MsoNormal>Valid From</p></th>
 									<th><p class=MsoNormal>Valid To</p></th>
 									<th><p class=MsoNormal>Reason</p></th>
 								</tr>
 								<tr style="height:22.5pt">
-									<td><p class=MsoNormal> '.$Itsharef->foldername.'</p></td>
 									<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itsharef->validfrom)).'</p></td>
 									<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Itsharef->validto)).'</p></td>
 									<td><p class=MsoNormal> '.$Itsharef->reason.'</p></td>
@@ -854,17 +864,27 @@ Class Itsharefoldermodule extends Application{
 								$this->mailbody .='</table>
 									<table border=1 cellspacing=0 cellpadding=3 width=683>
 									<tr><th><p class=MsoNormal>No</p></th>
+										<th><p class=MsoNormal>Folder Name</p></th>
+										<th><p class=MsoNormal>Request Type</p></th>
 										<th><p class=MsoNormal>Grant Access To</p></th>
 										<th><p class=MsoNormal>Permission</p></th>
 									</tr>
 									';
 								$no=1;
 								foreach ($Itsharefdetail as $data){
-									// if($data->readonly == 1) {
-									// 	$readonly = 'YA';
-									// } else {
-									// 	$readonly = 'TIDAK';
-									// }
+									if($data->requesttype == 1) {
+										$rt = 'Create Share Folder';
+									} else if($data->requesttype == 2) {
+										$rt = 'Grant Access to Existing Folder';
+									} else if($data->requesttype == 3) {
+										$rt = 'Delete Shared Folder';
+									} else if($data->requesttype == 4) {
+										$rt = 'Revoke Access from Existing Folder';
+									} else if($data->requesttype == 5) {
+										$rt = 'Exclude from Archiving Policy';
+									}
+
+
 									if($data->change == 1) {
 										$change = 'Change';
 									} else {
@@ -872,6 +892,8 @@ Class Itsharefoldermodule extends Application{
 									}
 									$this->mailbody .='<tr style="height:22.5pt">
 										<td><p class=MsoNormal> '.$no.'</p></td>
+										<td><p class=MsoNormal> '.$data->foldername.'</p></td>
+										<td><p class=MsoNormal> '.$rt.'</p></td>
 										<td><p class=MsoNormal> '.$data->grantaccessto.'</p></td>
 										<td><p class=MsoNormal> '.$change.'</p></td>
 										</tr>';
@@ -1251,7 +1273,7 @@ Class Itsharefoldermodule extends Application{
 
 
 				for ($a=29;$a<29+count($Itsharefdetail);$a++){
-					// $Worksheet->Rows($a+1)->Copy();
+					$Worksheet->Rows($a+1)->Copy();
 					$Worksheet->Rows($a+1)->Insert($xlShiftDown);
 					$Worksheet->Range("A".$a)->Value = $Itsharefdetail[$a-29]->foldername;
 					$Worksheet->Range("J".$a)->Value = $Itsharefdetail[$a-29]->grantaccessto;
@@ -1296,6 +1318,8 @@ Class Itsharefoldermodule extends Application{
 			$Itsharef->approveddoc=str_replace("\\","/",$fileName);
 			$Itsharef->save();
 
+			// $excel->Application->CutCopyMode(false);
+			$excel->CutCopyMode = false;
 			$Workbook->Close(false);
 			unset($Worksheet);
 			unset($Workbook);

@@ -660,11 +660,11 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                                     <i class="metismenu-icon"></i>Request Form
                                                 </a>
                                             </li>
-                                            <!-- <li>
+                                            <li>
                                                 <a href="" ng-click="myITSHAREF()">
                                                     <i class="metismenu-icon"></i>Shared Folder
                                                 </a>
-                                            </li> -->
+                                            </li>
                                         </ul>
                                     </li>
                                     <li class="">
@@ -683,11 +683,11 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                                     <i class="metismenu-icon"></i>Request Form
                                                 </a>
                                             </li>
-                                            <!-- <li>
+                                            <li>
                                                 <a href="" ng-click="itsharefApproval()">
                                                     <i class="metismenu-icon"></i>Shared Folder
                                                 </a>
-                                            </li> -->
+                                            </li>
                                             
                                         </ul>
                                     </li>
@@ -759,11 +759,11 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                                     <i class="metismenu-icon"></i>Request Form
                                                 </a>
                                             </li>
-                                            <!-- <li>
+                                            <li>
                                                 <a href="" ng-click="dataITSHAREF()">
                                                     <i class="metismenu-icon"></i>Share Folder
                                                 </a>
-                                            </li> -->
+                                            </li>
                                             
                                         </ul>
                                     </li>
