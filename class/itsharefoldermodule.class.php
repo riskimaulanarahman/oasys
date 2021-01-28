@@ -315,6 +315,10 @@ Class Itsharefoldermodule extends Application{
 								foreach ($detail as $delr){
 									$delr->delete();
 								}
+								$att = Itsharefattachment::find("all",array('conditions' => array("itsharef_id=?",$id)));
+								foreach ($att as $delr){
+									$delr->delete();
+								}
 								// $detail = Trschedule::find("all",array('conditions' => array("itsharef_id=?",$id)));
 								// foreach ($detail as $delr){
 								// 	$delr->delete();
