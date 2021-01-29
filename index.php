@@ -660,11 +660,11 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                                     <i class="metismenu-icon"></i>Request Form
                                                 </a>
                                             </li>
-                                            <!-- <li>
+                                            <li>
                                                 <a href="" ng-click="myITSHAREF()">
                                                     <i class="metismenu-icon"></i>Shared Folder
                                                 </a>
-                                            </li> -->
+                                            </li>
                                         </ul>
                                     </li>
                                     <li class="">
@@ -683,11 +683,11 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                                     <i class="metismenu-icon"></i>Request Form
                                                 </a>
                                             </li>
-                                            <!-- <li>
+                                            <li>
                                                 <a href="" ng-click="itsharefApproval()">
                                                     <i class="metismenu-icon"></i>Shared Folder
                                                 </a>
-                                            </li> -->
+                                            </li>
                                             
                                         </ul>
                                     </li>
@@ -759,11 +759,11 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                                     <i class="metismenu-icon"></i>Request Form
                                                 </a>
                                             </li>
-                                            <!-- <li>
+                                            <li>
                                                 <a href="" ng-click="dataITSHAREF()">
                                                     <i class="metismenu-icon"></i>Share Folder
                                                 </a>
-                                            </li> -->
+                                            </li>
                                             
                                         </ul>
                                     </li>
@@ -823,14 +823,14 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 	<script language="JavaScript" src="js/lib/dx.all.js" type="text/javascript"></script>
 	<script language="JavaScript" src="js/lib/FileSaver.min.js" type="text/javascript"></script>
 
-	<script language="JavaScript" src="js/app.js?v=5.05" type="text/javascript"></script>
-	<script language="JavaScript" src="js/directive.js?v=5.05" type="text/javascript"></script>
-	<script language="JavaScript" src="js/services.js?v=5.05" type="text/javascript"></script>
-	<script language="JavaScript" src="js/filter.js?v=5.05" type="text/javascript"></script>
-	<script language="JavaScript" src="js/factory.js?v=5.05" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/maincontroller.js?v=5.05" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/login.js?v=5.05" type="text/javascript"></script>
-	<script language="JavaScript" src="js/script.js?v=5.05" type="text/javascript"></script>
+	<script language="JavaScript" src="js/app.js?v=5.06" type="text/javascript"></script>
+	<script language="JavaScript" src="js/directive.js?v=5.06" type="text/javascript"></script>
+	<script language="JavaScript" src="js/services.js?v=5.06" type="text/javascript"></script>
+	<script language="JavaScript" src="js/filter.js?v=5.06" type="text/javascript"></script>
+	<script language="JavaScript" src="js/factory.js?v=5.06" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/maincontroller.js?v=5.06" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/login.js?v=5.06" type="text/javascript"></script>
+	<script language="JavaScript" src="js/script.js?v=5.06" type="text/javascript"></script>
 
 	<script type="text/javascript" src="assets/scripts/main.js"></script>
 </body>
