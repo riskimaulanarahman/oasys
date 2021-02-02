@@ -65,6 +65,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 				CrudService.checkAccess('IT',$rootScope.curUser.username).then(function (access) {
 					$rootScope.viewITEIE = access.allowview;
 					$rootScope.viewITIMAIL = access.allowview;
+					$rootScope.viewITSHAREF = access.allowview;
 				});
 				if(!$rootScope.startRefresh) {
 					$rootScope.startRefresh = setInterval($scope.refreshUsers, 1000);
