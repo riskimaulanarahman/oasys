@@ -241,7 +241,7 @@
             // $scope.EmailDomain = [];
             // console.log($scope.EmailDomain);
 
-            $scope.EmailDomain =[{id:0,emaildomain:"- Select -"},{id:1,emaildomain:"itci-hutani.com"},{id:2,emaildomain:"kalimantan-prima.com"},{id:3,emaildomain:"balikpapanchip.com"},{id:4,emaildomain:"lajudinamika.com"},{id:5,emaildomain:"ptadindo.com"}];
+            $scope.EmailDomain =[{id:0,emaildomain:"- Select -"},{id:1,emaildomain:"itci-hutani.com"},{id:2,emaildomain:"kalimantan-prima.com"},{id:3,emaildomain:"balikpapanchip.com"},{id:4,emaildomain:"lajudinamika.com"},{id:5,emaildomain:"ptadindo.com"},{id:6,emaildomain:"D1.LCL"}];
             $scope.ListGroup =[{id:0,listgroup:"- Select -"},{id:1,listgroup:"IHM"},{id:2,listgroup:"KPSI"},{id:3,listgroup:"BCL"},{id:4,listgroup:"LDU"},{id:5,listgroup:"Adindo"}];
             $scope.ListGroupModeration =[{id:0,listgroupmoderation:"- Select -"},{id:1,listgroupmoderation:"Mod-IHM"},{id:2,listgroupmoderation:"Mod-BCL"},{id:3,listgroupmoderation:"Mod-KDU-HRD"},{id:4,listgroupmoderation:"Mod-KF-Head"},{id:5,listgroupmoderation:"Mod-KF-Head2"},{id:6,listgroupmoderation:"Mod-KPSI-Pro"},{id:7,listgroupmoderation:"Mod-KDU-FA"}];
 			$scope.AppAction = [{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
@@ -600,37 +600,37 @@
                                             // console.log(response);
                                         })
 
-                                        if(e.value == 1) {
+                                        // if(e.value == 1) {
 
-                                                    var found = false;
+                                        //             var found = false;
 
-                                                    pos = $scope.EmailDomain.map(function(e){
+                                        //             pos = $scope.EmailDomain.map(function(e){
 
-                                                        if(e.id == 6) {
-                                                            found = true;
-                                                        }
+                                        //                 if(e.id == 6) {
+                                        //                     found = true;
+                                        //                 }
 
-                                                    });
-                                                    if(!found) {
-                                                        $scope.EmailDomain.push({id:6,emaildomain:"D1.LCL"});
-                                                    }
+                                        //             });
+                                        //             if(!found) {
+                                        //                 $scope.EmailDomain.push({id:6,emaildomain:"D1.LCL"});
+                                        //             }
 
-                                        } else {
-                                                    var found = false;
+                                        // } else {
+                                        //             var found = false;
 
-                                                    pos = $scope.EmailDomain.map(function(e){
+                                        //             pos = $scope.EmailDomain.map(function(e){
 
-                                                        if(e.id == 6) {
-                                                            $scope.EmailDomain.pop({id:6,emaildomain:"D1.LCL"});
-                                                        }
+                                        //                 if(e.id == 6) {
+                                        //                     $scope.EmailDomain.pop({id:6,emaildomain:"D1.LCL"});
+                                        //                 }
 
-                                                    });
+                                        //             });
 
                                                     
-                                        }
+                                        // }
 
                                         
-                                        $scope.formInstance.itemOption('group5.emaildomain', 'dataSource', $scope.EmailDomain);
+                                        // $scope.formInstance.itemOption('group5.emaildomain', 'dataSource', $scope.EmailDomain);
 
                                         
                                     }
@@ -693,7 +693,7 @@
                                 label:{text:"Email Domain"},
                                 visible:($scope.data.formtype==1)?true:false,
                                 disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
-                                // validationRules: [{type: "required", message: "Please select RFC Type" }],
+                                validationRules: [{type: "required", message: "Please select emaildomain" }],
                                 editorOptions: { 
                                     dataSource:$scope.EmailDomain,  
                                     valueExpr: 'id',
