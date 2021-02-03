@@ -277,6 +277,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 							dataSource:$scope.contractorDatasource,  
 							valueExpr: 'id',
 							displayExpr: 'contractorname',
+							showClearButton:true,
 							searchEnabled: true,
 							contentTemplate: function(e){
 								var $dataGrid = $("<div>").dxDataGrid({
@@ -308,6 +309,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 							dataSource:$scope.contractorDatasource,  
 							valueExpr: 'id',
 							displayExpr: 'contractorname',
+							showClearButton:true,
 							searchEnabled: true,
 							contentTemplate: function(e){
 								var $dataGrid = $("<div>").dxDataGrid({
