@@ -1486,7 +1486,7 @@ Class RfcModule extends Application{
 									// $Rfcapproval->approver_id = $Approver->id;
 									// $Rfcapproval->save();
 								// }
-								$companyBU=( ($Employee->companycode=='KPA') )?"KPSI":$Employee->companycode;
+								$companyBU=( ($Employee->companycode=='KPA') || ($Employee->companycode=='AHL') )?"KPSI":$Employee->companycode;
 								if (($Employee->company->sapcode=='RND') || ($Employee->company->sapcode=='NKF')){
 									$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='11' and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
 								}else{
