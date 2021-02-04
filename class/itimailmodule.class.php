@@ -1207,6 +1207,8 @@ Class Itimailmodule extends Application{
 						unset($data['fullname']);
 						unset($data['department']);
 						unset($data['approveddoc']);
+						unset($data['membername']);
+
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 						$Itimail = Itimail::find($doid);
 						$join   = "LEFT JOIN tbl_approver ON (tbl_itimailapproval.approver_id = tbl_approver.id) ";
