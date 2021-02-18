@@ -49,10 +49,10 @@ $page = array("login",
 	"iteiemodule",
 	"itimailmodule",
 	"listmodmodule",
-	// "itinetaccessmodule",
+	"itsharefoldermodule",
+	"advancemodule",
 	// "itmailsizemodule",
 	// "itrdwebmodule",
-	"itsharefoldermodule",
 	// "itstoragetfmodule"
 );
 

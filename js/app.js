@@ -55,7 +55,7 @@ if (!String.prototype.padStart) {
 var RouteProvider = function () {
 	var scriptPath = "js/controllers/";
 	var templatePath = "template/";
-	var v= '5.06'
+	var v= '5.07'
 	this.resolve = function (name) {
 		var route = {};
 		route.templateUrl = templatePath + name + ".html?v="+v;
@@ -139,11 +139,11 @@ app.config(function ($routeProvider, $controllerProvider) {
 	.when('/itsharefolderdetail', route.resolve("itsharefolderdetail"))
 	.when('/itsharefolderapproval', route.resolve("itsharefolderapproval"))
 	.when('/itsharefolderreport', route.resolve("itsharefolderreport"))
+	.when('/advance', route.resolve("advance"))
+	.when('/advancedetail', route.resolve("advancedetail"))
+	.when('/advanceapproval', route.resolve("advanceapproval"))
+	.when('/advancereport', route.resolve("advancereport"))
 
-	// .when('/itinetaccess', route.resolve("itinetaccess"))
-	// .when('/itrdweb', route.resolve("itrdweb"))
-	// .when('/itmailsize', route.resolve("itmailsize"))
-	// .when('/itstoragetf', route.resolve("itstoragetf"))
 	.otherwise({
 		redirectTo: '/'
 	});

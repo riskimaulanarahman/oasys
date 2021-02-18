@@ -67,6 +67,9 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 					$rootScope.viewITIMAIL = access.allowview;
 					$rootScope.viewITSHAREF = access.allowview;
 				});
+				CrudService.checkAccess('Advance',$rootScope.curUser.username).then(function (access) {
+					$rootScope.viewAdvance = access.allowview;
+				});
 				if(!$rootScope.startRefresh) {
 					$rootScope.startRefresh = setInterval($scope.refreshUsers, 1000);
 				}
@@ -120,6 +123,10 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 		loadModule($rootScope.viewITSHAREF,"itsharefolderreport",false);
 		$rootScope.$broadcast("initITSHAREF", "");
 	}
+	$scope.dataAdvance= function(){	
+		loadModule($rootScope.viewAdvance,"advancereport",false);
+		$rootScope.$broadcast("initAdvance", "");
+	}
 
 	$scope.myDayoff= function(){
 		$location.path( "/dayoff" );
@@ -145,17 +152,8 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.myITSHAREF= function(){
 		$location.path( "/itsharefolder" );
 	}
-	$scope.myITINETACCESS= function(){
-		$location.path( "/itinetaccess" );
-	}
-	$scope.myITRDWEB= function(){
-		$location.path( "/itrdweb" );
-	}
-	$scope.myITMAILSIZE= function(){
-		$location.path( "/itmailsize" );
-	}
-	$scope.myITSTORAGETF= function(){
-		$location.path( "/itstoragetf" );
+	$scope.myAdvance= function(){
+		$location.path( "/advance" );
 	}
 
 	$scope.mySPKL= function(){
@@ -228,6 +226,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.iteieApproval= function(){ loadModule(true,"iteieapproval",true);$rootScope.$broadcast("initITEIE", "");} 
 	$scope.itimailApproval= function(){ loadModule(true,"itimailapproval",true);$rootScope.$broadcast("initITIMAIL", "");} 
 	$scope.itsharefApproval= function(){ loadModule(true,"itsharefolderapproval",true);$rootScope.$broadcast("initITSHAREF", "");} 
+	$scope.advanceApproval= function(){ loadModule(true,"advanceapproval",true);$rootScope.$broadcast("initAdvance", "");} 
 	$scope.SPKLApproval= function(){ loadModule(true,"spklapproval",true);$rootScope.$broadcast("initSPKL", "");} 
 	$scope.SPKLTMSApproval = function(){ loadModule(true,"spkltmsapproval",true);$rootScope.$broadcast("initSPKLTMS", "");} 
 	function loadModule(access,template,filter){
@@ -454,6 +453,29 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 			$scope.Requestid = data.id;
 			$scope.Employeeid = data.employee_id;
 			$location.path( "/itsharefolderdetail" );
+		}
+	}
+	$scope.loadAdvance= function(data,mode,filter){
+		$scope.Filter=filter;
+		if (mode=='add'){
+			CrudService.Create('advance',data).then(function (response) {
+				if(response.status=="error"){
+					DevExpress.ui.dialog.alert(response.message,"Error");
+				}else if(response.status=="autherror"){
+					DevExpress.ui.notify(response.message,"error");
+					$scope.logout();
+				}else{
+					$scope.mode = mode;
+					$scope.Requestid = response.id;
+					$scope.Employeeid = response.employee_id;
+					$location.path( "/advancedetail" );
+				}
+			});
+		}else{
+			$scope.mode = mode;
+			$scope.Requestid = data.id;
+			$scope.Employeeid = data.employee_id;
+			$location.path( "/advancedetail" );
 		}
 	}
 	$scope.loadSPKL= function(data,mode,filter){

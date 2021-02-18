@@ -936,6 +936,7 @@
                             searchEnabled: true,
                             value: ""
                         },
+                        width: "20%",
                         validationRules: [{
                             type: "required",
                             message: "Please Select Action"
@@ -956,6 +957,7 @@
                         dataField:'grantaccessto',
                         caption: "Grant Access To",
                         dataType: "string",
+                        width: "15%",
                         // editorOptions: {
                         //     disabled:(($scope.mode=='approve') ||($scope.mode=='view') ||($scope.data.apprstatuscode==3))?true:false
                         // }
@@ -970,7 +972,7 @@
 
                         // editorType: "dxCheckBox",
                         // showEditorAlways: false
-                        // width: "80%"
+                        width: "20%"
                     },
                     // {dataField:'change',dataType: "boolean" },
                     // {

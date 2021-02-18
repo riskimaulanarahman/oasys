@@ -1,0 +1,225 @@
+(function (app) {
+app.register.controller('advancepaymentCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
+    $scope.ds={};
+    $scope.test=[];
+	$scope.disabled= true;
+	
+    var myStore = new DevExpress.data.CustomStore({
+		load: function() {			
+            $scope.isLoaded =true;
+            return CrudService.GetAll('spkltms').then(function (response) {
+				if(response.status=="error"){
+					DevExpress.ui.notify(response.message,"error");
+				}else{
+					return response;
+				}
+			});            		
+		},
+	 
+		byKey: function(key) {
+
+		},
+		insert: function(values) {
+
+		},
+		update: function(key, values) {
+
+		},
+		remove: function(key) {
+
+		}
+    });
+	$scope.allowDel = false;
+    var myData = new DevExpress.data.DataSource({
+		store: myStore
+    });
+    //$scope.myData = myData;
+    function moveEditColumnToLeft(dataGrid) {
+		dataGrid.columnOption("command:edit", { 
+			visibleIndex: -1,
+			width: 80 
+		});
+    }
+    $scope.dataGridOptions = {
+        dataSource: myData,
+        showColumnLines: true,
+        showRowLines: true,
+        rowAlternationEnabled: true,
+        allowColumnResizing: true,
+        columnResizingMode: "widget",
+        columnAutoWidth: true,
+        showBorders: true,
+        height: 600,
+        headerFilter: {
+            visible: true
+        },
+        columns: [{
+                    caption: "Action",
+                    fixed: true,
+                    fixedPosition: "left",
+                    width: 120,
+                    allowFiltering: false,
+                    allowSorting: false,
+                    formItem: { visible: false},
+                    cellTemplate: function (container, options) {
+                        $('<div style="padding:2px 15px 2px 15px;"/>').addClass('dx-icon-detailslayout btn-pill btn-shadow btn btn-primary')
+                            .text('')
+                            .on('dxclick', function () {
+                                DevExpress.ui.notify("Loading detail data for "+options.data.requestdate,"info",600);
+								$scope.loadSPKLTMS(options.data,"view",true);
+                            })
+                            .appendTo(container);
+						if((options.data.tmsreqstatus=='0') || (options.data.tmsreqstatus=='2')){	
+							$('<div style="padding:2px 15px 2px 15px;"/>').addClass('dx-icon-edit btn-pill btn-shadow btn btn-success')
+                            .text('')
+                            .on('dxclick', function () {
+								// if (!$scope.allowEdit){
+									// DevExpress.ui.notify("You don't have authority to edit data","error");
+								// } else{
+									$scope.loadSPKLTMS(options.data,"edit",true);
+								// }
+                            })
+                            .appendTo(container);
+						}else{
+							$('<div style="padding:2px 15px 2px 15px;"/>').text('').appendTo(container);
+						}
+                    }
+                }
+                ,{caption: '#',formItem: { visible: false},width: 40,
+					cellTemplate: function(container, options) {
+						container.text(options.rowIndex +1);
+					}
+                },
+				{dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200},
+				{dataField:'datework',caption:"Date Work",dataType:"date", format:"dd/MM/yyyy",width: 200},
+				{dataField:'tmsreqstatus',caption:"Status",encodeHtml: false ,width: 300,
+					customizeText: function (e) {
+						var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Not yet Submitted</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
+						return rDesc[e.value];
+					}},
+				{dataField:'remarks',encodeHtml: false },
+				{
+							dataField: "approvedtmsdoc",
+							caption:"Approval Doc",
+							width: 100,
+							allowFiltering: false,
+							allowSorting: false,
+							formItem: { visible: false},
+							cellTemplate: function (container, options) {
+								if ((options.value!="") && (options.value)){
+									$("<div />").dxButton({
+										icon: 'download',
+										stylingMode: "contained",
+										type: "success",
+										target : '_blank',
+										width: 50,
+										onClick: function (e) {
+											window.open(options.value, '_blank');
+										}
+									}).appendTo(container);
+								}
+							}
+						},
+                ],	
+        "export": {
+            enabled: true,
+            fileName: "ExportGrid",
+            allowExportSelectedData: false
+        },
+		bindingOptions :{
+
+        },
+        columnChooser: {
+            enabled: true
+        },
+        loadPanel: {
+            enabled: true
+        }, 
+        columnFixing: { 
+            enabled: true
+        },
+        paging: {
+            pageSize: 10
+        },
+        pager: {
+            showPageSizeSelector: false,
+            allowedPageSizes: [5, 10, 20],
+            showInfo: false
+        },
+        editing: {
+            useIcons:true,
+            mode: "popup",
+			allowUpdating: false,
+			allowAdding:false,
+			allowDeleting:true,
+            form:{colCount: 1,
+            },
+            popup: {  
+                title: "Form Data SPKL",  
+                showTitle: true  
+            }, 
+        },
+        searchPanel: {
+            visible: true,
+            width: 240,
+            placeholder: "Search..."
+        },
+        scrolling: {
+            mode: "infinite"
+        },
+        onContentReady: function(e){
+            moveEditColumnToLeft(e.component);
+        },
+		onCellPrepared: function(e) {
+			if (e.columnIndex == 0 && e.rowType == "data") {
+				if((e.data.requeststatus!==0) && (e.data.requeststatus!==2) ){
+					e.cellElement.find(".dx-link-delete").remove();
+				}
+			}
+		},
+        onEditingStart: function(e) {
+            e.component.columnOption("id", "allowEditing", false);
+        },
+        onEditorPreparing: function (e) { 
+            $scope.formComponent = e.component;
+        },
+        onEditorPrepared: function(e) {
+        },
+        onInitNewRow: function (e) {
+            e.component.columnOption("id", "allowEditing", false);
+        },
+        onSelectionChanged: function(data) {
+            $scope.selectedItems = data.selectedRowsData;
+            $scope.disabled = !$scope.selectedItems.length;
+        },
+        onRowUpdated: function(e) {        
+            $scope.editors = {};
+        },
+        onRowInserted: function(e) {
+             $scope.editors = {};
+        },
+        onToolbarPreparing: function(e) {
+            $scope.dataGrid = e.component;
+    
+            e.toolbarOptions.items.unshift({						
+                location: "after",
+                widget: "dxButton",
+                options: {
+                    hint: "Refresh Data",
+                    icon: "refresh",
+                    onClick: function() {
+                        $scope.dataGrid.refresh();
+                    }
+                }
+            });
+        },
+        onContextMenuPreparing: function (e) {
+            var dataGrid = e.component;
+        } ,
+        onInitialized: function(e) {
+            $scope.gridInstance = e.component;
+            $scope.ds = e.component.getDataSource();
+        },                             
+    };   
+}]);
+})(app || angular.module("kduApp"));
