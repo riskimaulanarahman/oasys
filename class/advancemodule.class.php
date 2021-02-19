@@ -55,24 +55,24 @@ Class Advancemodule extends Application{
 				case 'apiadvanceapp':
 					$this->advanceApproval();
 					break;
-				case 'apispkltmsapp':
-					$this->spklTMSApproval();
+				case 'apiadvancetmsapp':
+					$this->advanceTMSApproval();
 					break;
-				case 'apispklhist':
-					$this->spklHistory();
+				case 'apiadvancehist':
+					$this->advanceHistory();
 					break;
-				case 'apispkltmshist':
-					$this->spklTMSHistory();
+				case 'apiadvancetmshist':
+					$this->advanceTMSHistory();
 					break;
-				case 'apispklpdf':	
+				case 'apiadvancepdf':	
 					$id = $this->get['id'];
 					$this->generatePDF($id);
 					break;
-				case 'apispkltmspdf':	
+				case 'apiadvancetmspdf':	
 					$id = $this->get['id'];
 					$this->generateTMSPDF($id);
 					break;
-				case 'apispkltms':
+				case 'apiadvancetms':
 					$this->SPKLTms();
 					break;
 				case 'apitestxl2pdf':
@@ -113,7 +113,7 @@ Class Advancemodule extends Application{
 	}
 	function generatePDF($doid){
 		$Spkl = Spkl::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
-		$Spkldetail=Spkldetail::find('all',array('conditions'=>array("advance_id=?",$doid),'include'=>array('spkl'=>array('employee'=>array('company','department','designation','grade','location')))));
+		$Spkldetail=Spkldetail::find('all',array('conditions'=>array("advance_id=?",$doid),'include'=>array('advance'=>array('employee'=>array('company','department','designation','grade','location')))));
 		$pdfContent ="<style>  td { padding:3px; font-size:8pt;} th { padding:3px; font-size:8pt;font-weight:normal} small {font-size:7pt;}</style>
 					<table border=0 cellpadding=2 cellspacing=0 style='width:100%; margin:2px;margin-left:10px;'><tr><td style='border:0.5px solid #212; width:700px;margin-left:20px;padding-left:15px;'><h5 style='width:100%;text-align:center'><b><u>SURAT PERINTAH KERJA LEMBUR (SPKL)</u></b>";
 		$pdfContent .="<br><i>Overtime Instruction & Approval Form</i></h5>";
@@ -151,7 +151,7 @@ Class Advancemodule extends Application{
 					if ($data->isapproved){
 						$pdfContent .='<td> </td>';
 					}	else{
-						$Reject = Employee::find('first', array('conditions' => array("id=?", $data->rejectspklby)));
+						$Reject = Employee::find('first', array('conditions' => array("id=?", $data->rejectadvanceby)));
 						$pdfContent .='<td>'.wordwrap(' Rejected by '.$Reject->fullname,20,"<br>").'</td>';
 					}
 			$pdfContent .='</tr>';
@@ -163,7 +163,7 @@ Class Advancemodule extends Application{
 						<br>- Satu formulir SPKL mewakili rencana kerja lembur di 1 (satu) hari/tanggal. 
 						<br>- SPKL wajib dilampirkan pada daftar hadir (timesheet) dan diserahkan kepada departemen SDM dalam waktu 1X24 jam,atau pada hari kerja berikutnya.</small>";
 				
-		$joinx   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";					
+		$joinx   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";					
 		$Spklapproval = Spklapproval::find('all',array('joins'=>$joinx,'conditions' => array("advance_id=?",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));
 		foreach ($Spklapproval as $data){
 			if(($data->approver->approvaltype->id==20) || ($data->approver->employee_id==$Spkl->depthead)){
@@ -213,7 +213,7 @@ Class Advancemodule extends Application{
 			$html2pdf = new Html2Pdf('P', 'A4', 'fr');
 			$html2pdf->writeHTML($pdfContent);
 			ob_clean();
-			$fileName ='doc'.DS.'spkl'.DS.'pdf'.DS.''.$Spkl->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$fileName ='doc'.DS.'advance'.DS.'pdf'.DS.''.$Spkl->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$fileName = str_replace("/","",$fileName);
 			$filePath = SITE_PATH.DS.$fileName;
 			$html2pdf->output($filePath, 'F');
@@ -237,7 +237,7 @@ Class Advancemodule extends Application{
 	
 	function generateTMSPDF($doid){
 		$Spkl = Spkl::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
-		$Spkldetail=Spkldetail::find('all',array('conditions'=>array("advance_id=?",$doid),'include'=>array('spkl'=>array('employee'=>array('company','department','designation','grade','location')))));
+		$Spkldetail=Spkldetail::find('all',array('conditions'=>array("advance_id=?",$doid),'include'=>array('advance'=>array('employee'=>array('company','department','designation','grade','location')))));
 
 		$pdfContent ="<style>  td { padding:3px; font-size:8pt;} th { padding:3px; font-size:8pt;font-weight:normal} small {font-size:7pt;}</style>
 					<table border=0 cellpadding=2 cellspacing=0 style='width:100%; margin:2px;margin-left:10px;'><tr><td style='border:0.5px solid #212; width:700px;margin-left:20px;padding-left:15px;'><h5 style='width:100%;text-align:center'><b><u>SURAT PERINTAH KERJA LEMBUR (SPKL)</u></b>";
@@ -276,7 +276,7 @@ Class Advancemodule extends Application{
 					if ($data->isapproved){
 						$pdfContent .='<td> </td>';
 					}	else{
-						$Reject = Employee::find('first', array('conditions' => array("id=?", $data->rejectspklby)));
+						$Reject = Employee::find('first', array('conditions' => array("id=?", $data->rejectadvanceby)));
 						$pdfContent .='<td>'.wordwrap(' Rejected by '.$Reject->fullname,20,"<br>").'</td>';
 					}
 			$pdfContent .='</tr>';
@@ -288,7 +288,7 @@ Class Advancemodule extends Application{
 						<br>- Satu formulir SPKL mewakili rencana kerja lembur di 1 (satu) hari/tanggal. 
 						<br>- SPKL wajib dilampirkan pada daftar hadir (timesheet) dan diserahkan kepada departemen SDM dalam waktu 1X24 jam,atau pada hari kerja berikutnya.</small>";
 		
-		$joinx   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";					
+		$joinx   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";					
 		$Spklapproval = Spklapproval::find('all',array('joins'=>$joinx,'conditions' => array("advance_id=?",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
 		$pdfContent .= "<table border=0 cellspacing=4 cellpadding=3>
 						<tr><td align='center'>Diperintahkan Oleh, <br>Askep</td><td width='50'></td><td align='center'>Disetujui Oleh,<br>Dept. Head / Sector Manager</td><td width='50'></td><td align='center'>Diperiksa Oleh,<br>HR BU/HO</td>";
@@ -382,7 +382,7 @@ Class Advancemodule extends Application{
 						<br>- 1 formulir Daftar Hadir mewakili 1 hari/tanggal pelaksanaan kerja lembur. 
 						<br>- Daftar Hadir beserta SPKL wajib diserahkan kepada departemen SDM dalam waktu 1X24 jam, atau pada hari kerja berikutnya.</small>";
 		
-		$joinx   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";					
+		$joinx   = "LEFT JOIN tbl_approver ON (tbl_advanceotapproval.approver_id = tbl_approver.id) ";					
 		
 		$Spkltmsapproval = Spkltmsapproval::find('all',array('joins'=>$joinx,'conditions' => array("advance_id=?",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));	
 		foreach ($Spkltmsapproval as $data){
@@ -427,7 +427,7 @@ Class Advancemodule extends Application{
 			$html2pdf = new Html2Pdf('P', 'A4', 'fr');
 			$html2pdf->writeHTML($pdfContent);
 			ob_clean();
-			$fileName ='doc'.DS.'spkl'.DS.'pdf'.DS.'TMS'.$Spkl->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$fileName ='doc'.DS.'advance'.DS.'pdf'.DS.'TMS'.$Spkl->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$fileName = str_replace("/","",$fileName);
 			$filePath = SITE_PATH.DS.$fileName;
 			$html2pdf->output($filePath, 'F');
@@ -447,7 +447,7 @@ Class Advancemodule extends Application{
 			echo $formatter->getHtmlMessage();
 		}
 	}
-	function spklHistory(){
+	function advanceHistory(){
 		if (count($this->post)==0){
 			http_response_code(405);
     		echo json_encode(array("message" => "Method not Allowed"));
@@ -458,7 +458,7 @@ Class Advancemodule extends Application{
 					case 'byid':
 						$id = $this->post['id'];
 						if ($id!=""){
-							$Spklhistory = Spklhistory::find('all', array('conditions' => array("advance_id=?",$id),'include' => array('spkl')));
+							$Spklhistory = Spklhistory::find('all', array('conditions' => array("advance_id=?",$id),'include' => array('advance')));
 							foreach ($Spklhistory as &$result) {
 								$result		= $result->to_array();
 							}
@@ -471,7 +471,7 @@ Class Advancemodule extends Application{
 			}
 		}
 	}
-	function spklTMSHistory(){
+	function advanceTMSHistory(){
 		if (count($this->post)==0){
 			http_response_code(405);
     		echo json_encode(array("message" => "Method not Allowed"));
@@ -482,7 +482,7 @@ Class Advancemodule extends Application{
 					case 'byid':
 						$id = $this->post['id'];
 						if ($id!=""){
-							$Spkltmshistory = Spkltmshistory::find('all', array('conditions' => array("advance_id=?",$id),'include' => array('spkl')));
+							$Spkltmshistory = Spkltmshistory::find('all', array('conditions' => array("advance_id=?",$id),'include' => array('advance')));
 							foreach ($Spkltmshistory as &$result) {
 								$result		= $result->to_array();
 							}
@@ -523,13 +523,13 @@ Class Advancemodule extends Application{
 						$query=$this->post['query'];		
 						if(isset($query['status'])){
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-							$join   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";
+							$join   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";
 							$dx = Advanceapproval::find('first', array('joins'=>$join,'conditions' => array("advance_id=? and tbl_approver.employee_id = ?",$query['advance_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
 							$Advance = Advance::find($query['advance_id']);
 							if($dx->approver->isfinal==1){
 								$data=array("jml"=>1);
 							}else{
-								$join   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";
+								$join   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";
 								$Advanceapproval = Advanceapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=? and ApprovalStatus<=1 and not tbl_approver.employee_id=?",$query['advance_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
 								foreach ($Advanceapproval as &$result) {
 									$fullname	= $result->approver->employee->fullname;	
@@ -543,7 +543,7 @@ Class Advancemodule extends Application{
 							$emp_id = $Employee->id;
 							$Advance = Advance::find('all', array('conditions' => array("RequestStatus =1"),'include' => array('employee')));
 							foreach ($Advance as $result) {
-								$joinx   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";					
+								$joinx   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";					
 								$Advanceapproval = Advanceapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and advance_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 								if($Advanceapproval->approver->employee_id==$emp_id){
 									$request[]=$result->id;
@@ -562,7 +562,7 @@ Class Advancemodule extends Application{
 							$Advance = Advance::find('all', array('conditions' => array("RequestStatus =1"),'include' => array('employee')));
 							$jml=0;
 							foreach ($Advance as $result) {
-								$joinx   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";					
+								$joinx   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";					
 								$Advanceapproval = Advanceapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and advance_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 								if($Advanceapproval->approver->employee_id==$emp_id){
 									$request[]=$result->id;
@@ -577,14 +577,14 @@ Class Advancemodule extends Application{
 							$data=array("jml"=>count($Advance));
 						} else if(isset($query['filter'])){
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-							$join = "LEFT JOIN vwspklreport v on tbl_spkl.id=v.id LEFT JOIN tbl_employee ON (tbl_spkl.employee_id = tbl_employee.id) ";
-							$sel = 'tbl_spkl.*, v.spklstatus,v.otstatus,v.personholding ';
+							$join = "LEFT JOIN vwadvancereport v on tbl_advance.id=v.id LEFT JOIN tbl_employee ON (tbl_advance.employee_id = tbl_employee.id) ";
+							$sel = 'tbl_advance.*, v.advancestatus,v.otstatus,v.personholding ';
 							$Advance = Advance::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
 							
 							if($Employee->location->sapcode=='0200' || $this->currentUser->isadmin){
 								$Advance = Advance::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee'=>array('company','department'))));
 							}else{
-								$Advance = Advance::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_spkl.RequestStatus=3 and tbl_employee.company_id=?',$Employee->company_id ),'include' => array('employee'=>array('company','department'))));
+								$Advance = Advance::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_advance.RequestStatus=3 and tbl_employee.company_id=?',$Employee->company_id ),'include' => array('employee'=>array('company','department'))));
 							}
 							
 							foreach ($Advance as &$result) {
@@ -618,7 +618,7 @@ Class Advancemodule extends Application{
 						$doid = $this->post['id'];
 						$data = $this->post['data'];
 						$mode= $data['mode'];
-						$Spkldetail=Spkldetail::find('all',array('conditions'=>array("advance_id=?",$doid),'include'=>array('spkl'=>array('employee'=>array('company','department','designation','grade')))));
+						$Spkldetail=Spkldetail::find('all',array('conditions'=>array("advance_id=?",$doid),'include'=>array('advance'=>array('employee'=>array('company','department','designation','grade')))));
 						$allcheck = 0;
 						foreach ($Spkldetail as $result) {
 							if(is_null($result->isapproved)){
@@ -643,7 +643,7 @@ Class Advancemodule extends Application{
 							unset($data['ismorethan2hours']);
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							
-							$join   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";
+							$join   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";
 							if (isset($data['mode'])){
 								$Spklapproval = Spklapproval::find('first', array('joins'=>$join,'conditions' => array("advance_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
 								unset($data['mode']);
@@ -660,11 +660,11 @@ Class Advancemodule extends Application{
 							$logger->SaveData();
 							if (isset($mode) && ($mode=='approve')){
 								$Spkl = Spkl::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
-								$joinx   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";					
+								$joinx   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";					
 								$nSpklapproval = Spklapproval::find('first',array('joins'=>$joinx,'conditions' => array("advance_id=? and ApprovalStatus=0",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 								$username = $nSpklapproval->approver->employee->loginname;
 								$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
-								$Spkldetail=Spkldetail::find('all',array('conditions'=>array("advance_id=?",$doid),'include'=>array('spkl'=>array('employee'=>array('company','department','designation','grade','location')))));
+								$Spkldetail=Spkldetail::find('all',array('conditions'=>array("advance_id=?",$doid),'include'=>array('advance'=>array('employee'=>array('company','department','designation','grade','location')))));
 								if ($Spkl->datework !== null){
 									foreach ($Spkldetail as $row){
 										if ($row->isapproved){
@@ -687,7 +687,7 @@ Class Advancemodule extends Application{
 											$row->actualtotalhours = 0;
 											$row->actualnormalhours = 0;
 											$row->actualovertimehours = 0;
-											$Reject = Employee::find('first', array('conditions' => array("id=?", $row->rejectspklby)));
+											$Reject = Employee::find('first', array('conditions' => array("id=?", $row->rejectadvanceby)));
 											$row->descriptionofwork = "SPKL Rejected by ".$Reject->fullname;
 										}
 										$row->save();	
@@ -831,7 +831,7 @@ Class Advancemodule extends Application{
 			// }
 		}
 	}
-	function spklTMSApproval(){
+	function advanceTMSApproval(){
 		if (count($this->post)==0){
 			http_response_code(405);
     		echo json_encode(array("message" => "Method not Allowed"));
@@ -842,7 +842,7 @@ Class Advancemodule extends Application{
 					case 'byid':
 						$id = $this->post['id'];
 						if ($id!=""){
-							$join   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";
+							$join   = "LEFT JOIN tbl_approver ON (tbl_advanceotapproval.approver_id = tbl_approver.id) ";
 							$Spkltmsapproval = Spkltmsapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=?",$id),'include' => array('approver'=>array('approvaltype')),"order"=>"tbl_approver.sequence"));
 							foreach ($Spkltmsapproval as &$result) {
 								$approvaltype = $result->approver->approvaltype_id;
@@ -859,14 +859,14 @@ Class Advancemodule extends Application{
 						$query=$this->post['query'];		
 						if(isset($query['status'])){
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-							$join   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";
+							$join   = "LEFT JOIN tbl_approver ON (tbl_advanceotapproval.approver_id = tbl_approver.id) ";
 							$dx = Spkltmsapproval::find('first', array('joins'=>$join,'conditions' => array("advance_id=? and tbl_approver.employee_id = ?",$query['advance_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
 							$Spkl = Spkl::find($query['advance_id']);
 							if($dx->approver->isfinal==1){
 								$data=array("jml"=>1);
 							}else{
 								if($Spkl->isexceedplan && $dx->approver->approvaltype_id=='20'){
-									$join   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";
+									$join   = "LEFT JOIN tbl_approver ON (tbl_advanceotapproval.approver_id = tbl_approver.id) ";
 									$Spkltmsapproval = Spkltmsapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=? and ApprovalStatus<=1 and not tbl_approver.employee_id=?",$query['advance_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
 									foreach ($Spkltmsapproval as &$result) {
 										$fullname	= $result->approver->employee->fullname;		
@@ -884,7 +884,7 @@ Class Advancemodule extends Application{
 							$emp_id = $Employee->id;
 							$Spkl = Spkl::find('all', array('conditions' => array("tmsreqstatus =1"),'include' => array('employee')));
 							foreach ($Spkl as $result) {
-								$joinx   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";					
+								$joinx   = "LEFT JOIN tbl_approver ON (tbl_advanceotapproval.approver_id = tbl_approver.id) ";					
 								$Spkltmsapproval = Spkltmsapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and advance_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 								if($Spkltmsapproval->approver->employee_id==$emp_id){
 									$request[]=$result->id;
@@ -903,7 +903,7 @@ Class Advancemodule extends Application{
 							$Spkl = Spkl::find('all', array('conditions' => array("tmsreqstatus =1"),'include' => array('employee')));
 							$jml=0;
 							foreach ($Spkl as $result) {
-								$joinx   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";					
+								$joinx   = "LEFT JOIN tbl_approver ON (tbl_advanceotapproval.approver_id = tbl_approver.id) ";					
 								$Spkltmsapproval = Spkltmsapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and advance_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 								if($Spkltmsapproval->approver->employee_id==$emp_id){
 									$request[]=$result->id;
@@ -917,8 +917,8 @@ Class Advancemodule extends Application{
 							}
 							$data=array("jml"=>count($Spkl));
 						} else if(isset($query['filter'])){
-							$join = "LEFT JOIN vwspklreport v on tbl_spkl.id=v.id";
-							$sel = 'tbl_spkl.*, v.laststatus,v.personholding ';
+							$join = "LEFT JOIN vwadvancereport v on tbl_advance.id=v.id";
+							$sel = 'tbl_advance.*, v.laststatus,v.personholding ';
 							$Spkl = Spkl::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
 							foreach ($Spkl as &$result) {
 								$fullname	= $result->employee->fullname;		
@@ -951,7 +951,7 @@ Class Advancemodule extends Application{
 						$doid = $this->post['id'];
 						$data = $this->post['data'];
 						$mode= $data['mode'];
-						$Spkldetail=Spkldetail::find('all',array('conditions'=>array("advance_id=?",$doid),'include'=>array('spkl'=>array('employee'=>array('company','department','designation','grade')))));
+						$Spkldetail=Spkldetail::find('all',array('conditions'=>array("advance_id=?",$doid),'include'=>array('advance'=>array('employee'=>array('company','department','designation','grade')))));
 						$allcheck = 0;
 						foreach ($Spkldetail as $result) {
 							if($result->isapproved=='1' and is_null($result->isotapproved)){
@@ -971,7 +971,7 @@ Class Advancemodule extends Application{
 							unset($data['approvalstep']);
 							unset($data['ismorethan2hours']);
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-							$join   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";
+							$join   = "LEFT JOIN tbl_approver ON (tbl_advanceotapproval.approver_id = tbl_approver.id) ";
 							if (isset($data['mode'])){
 								$Spkltmsapproval = Spkltmsapproval::find('first', array('joins'=>$join,'conditions' => array("advance_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
 								unset($data['mode']);
@@ -988,11 +988,11 @@ Class Advancemodule extends Application{
 							$logger->SaveData();
 							if (isset($mode) && ($mode=='approve')){
 								$Spkl = Spkl::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
-								$joinx   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";					
+								$joinx   = "LEFT JOIN tbl_approver ON (tbl_advanceotapproval.approver_id = tbl_approver.id) ";					
 								$nSpklapproval = Spkltmsapproval::find('first',array('joins'=>$joinx,'conditions' => array("advance_id=? and ApprovalStatus=0",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 								$username = $nSpklapproval->approver->employee->loginname;
 								$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
-								$Spkldetail=Spkldetail::find('all',array('conditions'=>array("advance_id=?",$doid),'include'=>array('spkl'=>array('employee'=>array('company','department','designation','grade','location')))));
+								$Spkldetail=Spkldetail::find('all',array('conditions'=>array("advance_id=?",$doid),'include'=>array('advance'=>array('employee'=>array('company','department','designation','grade','location')))));
 								$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Spkl->employee->loginname)));
 								$email=$usr->email;
 								
@@ -1067,7 +1067,7 @@ Class Advancemodule extends Application{
 								$Spkltmshistory->save();
 								echo "email to :".$emto." ->".$emname;
 								$this->mail->addAddress($emto, $emname);
-								$spkltype=array("New","Addendum","Project Capex");
+								$advancetype=array("New","Addendum","Project Capex");
 								$SpklJ = Spkl::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
 								$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$emname.',</span></p>
 													<p class=MsoNormal><span style="color:#1F497D">'.$red.'</span></p>
@@ -1252,8 +1252,8 @@ Class Advancemodule extends Application{
 					case 'byid':
 						$id = $this->post['id'];
 						if ($id!=""){
-							$joinx="left join tbl_employee on tbl_spkldetail.employee_id=tbl_employee.id left join tbl_designation on tbl_employee.designation_id=tbl_designation.id";
-							$sel="tbl_spkldetail.*,tbl_employee.fullname,tbl_employee.sapid,tbl_designation.designationname as position";
+							$joinx="left join tbl_employee on tbl_advancedetail.employee_id=tbl_employee.id left join tbl_designation on tbl_employee.designation_id=tbl_designation.id";
+							$sel="tbl_advancedetail.*,tbl_employee.fullname,tbl_employee.sapid,tbl_designation.designationname as position";
 							$Advancedetail = Advancedetail::find('all', array("joins"=>$joinx,"select"=>$sel,'conditions' => array("advance_id=?",$id)));
 							foreach ($Advancedetail as &$result) {
 								$appText = ($result->isapproved==null)?"":(($result->isapproved)?"Yes":"No");
@@ -1275,7 +1275,7 @@ Class Advancemodule extends Application{
 							$data=array("jml"=>count($Advancedetail));
 						}else if (isset($query['detail'])){
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-							$joinx   = "LEFT JOIN tbl_spkl as r ON (advance_id = r.id) left join tbl_employee e on r.employee_id=e.id";	
+							$joinx   = "LEFT JOIN tbl_advance as r ON (advance_id = r.id) left join tbl_employee e on r.employee_id=e.id";	
 							if(($Employee->location->sapcode=='0200') || ($this->currentUser->isadmin)){
 								$Advancedetail = Advancedetail::find('all', array('joins'=>$joinx,'include'=>array('employee'=>array("department","location","company","designation","department")),'conditions' => array("isOTApproved='1' and r.TMSReqStatus='3' and r.datework between ? and ?",$query['startDate'],$query['endDate']),'order'=>"datework"));
 							}else{
@@ -1283,10 +1283,10 @@ Class Advancemodule extends Application{
 							}
 							
 							foreach ($Advancedetail as &$result) {
-								$joine  = "LEFT JOIN tbl_employee d ON (tbl_spkl.depthead = d.id)";	
-								$sel = 'tbl_spkl.*,d.fullname as DeptHead';
-								$Spkl = Spkl::find('first', array('select'=>$sel,'joins'=>$joine,'include'=>array('employee'=>array("department","location","company","designation","department")),'conditions' => array("tbl_spkl.id=?",$result->advance_id)));
-								$join  = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";	
+								$joine  = "LEFT JOIN tbl_employee d ON (tbl_advance.depthead = d.id)";	
+								$sel = 'tbl_advance.*,d.fullname as DeptHead';
+								$Spkl = Spkl::find('first', array('select'=>$sel,'joins'=>$joine,'include'=>array('employee'=>array("department","location","company","designation","department")),'conditions' => array("tbl_advance.id=?",$result->advance_id)));
+								$join  = "LEFT JOIN tbl_approver ON (tbl_advanceotapproval.approver_id = tbl_approver.id) ";	
 								$Spkltmsapproval = Spkltmsapproval::find('first',array('joins'=>$join,'conditions'=>array("advance_id=?",$result->advance_id),'order'=>"tbl_approver.sequence desc",'include' => array('approver'=>array('employee'))));
 								$appText = ($result->isapproved==null)?"":(($result->isapproved)?"Yes":"No");
 								
@@ -1370,10 +1370,10 @@ Class Advancemodule extends Application{
 							if (isset($data['isapproved'])  ){
 								if ($data['isapproved']=='No'){
 									$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-									$Advancedetail->rejectspklby=$Employee->id;
+									$Advancedetail->rejectadvanceby=$Employee->id;
 									$Advancedetail->isotapproved=false;
 								}else{
-									$Advancedetail->rejectspklby=null;
+									$Advancedetail->rejectadvanceby=null;
 									$Advancedetail->isotapproved=null;
 								}								
 							}
@@ -1400,7 +1400,7 @@ Class Advancemodule extends Application{
 							}
 						}
 						if ($isexceed>0){
-							$joins   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";					
+							$joins   = "LEFT JOIN tbl_approver ON (tbl_advanceotapproval.approver_id = tbl_approver.id) ";					
 							$Spkltmsapproval = Spkltmsapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and approvaltype_id='21'",$advance_id)));	
 							foreach ($Spkltmsapproval as &$result) {
 								$result		= $result->to_array();
@@ -1433,7 +1433,7 @@ Class Advancemodule extends Application{
 							}
 						} else {
 							//delete unnecessary approver
-							$joins   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";					
+							$joins   = "LEFT JOIN tbl_approver ON (tbl_advanceotapproval.approver_id = tbl_approver.id) ";					
 							$dx = Spkltmsapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=21",$advance_id)));	
 							foreach ($dx as $result) {
 								//delete same type approver
@@ -1443,7 +1443,7 @@ Class Advancemodule extends Application{
 						}
 						echo "isMoreThan2hours = ".$isMoreThan2hours;
 						if ($isMoreThan2hours>0){
-							$joins   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";					
+							$joins   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";					
 							$Spklapproval = Spklapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and approvaltype_id='22'",$advance_id)));	
 							foreach ($Spklapproval as &$result) {
 								$result		= $result->to_array();
@@ -1519,7 +1519,7 @@ Class Advancemodule extends Application{
 															}
 						} else {
 							//delete unnecessary approver
-							$joins   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";					
+							$joins   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";					
 							$dx = Spklapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=22",$advance_id)));	
 							foreach ($dx as $result) {
 								//delete same type approver
@@ -1598,10 +1598,10 @@ Class Advancemodule extends Application{
 							if (isset($data['isapproved'])  ){
 								if ($data['isapproved']=='No'){
 									$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-									$Advancedetail->rejectspklby=$Employee->id;
+									$Advancedetail->rejectadvanceby=$Employee->id;
 									$Advancedetail->isotapproved=false;
 								}else{
-									$Advancedetail->rejectspklby=null;
+									$Advancedetail->rejectadvanceby=null;
 									$Advancedetail->isotapproved=null;
 								}								
 							}
@@ -1628,7 +1628,7 @@ Class Advancemodule extends Application{
 							}
 						}
 						if ($isexceed>0){
-							$joins   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";					
+							$joins   = "LEFT JOIN tbl_approver ON (tbl_advanceotapproval.approver_id = tbl_approver.id) ";					
 							$Spkltmsapproval = Spkltmsapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and approvaltype_id='21'",$advance_id)));	
 							foreach ($Spkltmsapproval as &$result) {
 								$result		= $result->to_array();
@@ -1661,7 +1661,7 @@ Class Advancemodule extends Application{
 							}
 						} else {
 							//delete unnecessary approver
-							$joins   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";					
+							$joins   = "LEFT JOIN tbl_approver ON (tbl_advanceotapproval.approver_id = tbl_approver.id) ";					
 							$dx = Spkltmsapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=21",$advance_id)));	
 							foreach ($dx as $result) {
 								//delete same type approver
@@ -1671,7 +1671,7 @@ Class Advancemodule extends Application{
 						}
 						echo "isMoreThan2hours = ".$isMoreThan2hours;
 						if ($isMoreThan2hours>0){
-							$joins   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";					
+							$joins   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";					
 							$Spklapproval = Spklapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and approvaltype_id='22'",$advance_id)));	
 							foreach ($Spklapproval as &$result) {
 								$result		= $result->to_array();
@@ -1747,7 +1747,7 @@ Class Advancemodule extends Application{
 															}
 						} else {
 							//delete unnecessary approver
-							$joins   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";					
+							$joins   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";					
 							$dx = Spklapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=22",$advance_id)));	
 							foreach ($dx as $result) {
 								//delete same type approver
@@ -1928,7 +1928,7 @@ Class Advancemodule extends Application{
 						$Spkl->save();
 						
 						if (isset($data['depthead'])){
-							$joins   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";					
+							$joins   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";					
 							$dx = Spklapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=20 and not(tbl_approver.employee_id=?)",$id,$depthead)));	
 							foreach ($dx as $result) {
 								//delete same type approver
@@ -1968,12 +1968,12 @@ Class Advancemodule extends Application{
 								$data->approvalstatus=0;
 								$data->save();
 							}
-							$joinx   = "LEFT JOIN tbl_approver ON (tbl_spklapproval.approver_id = tbl_approver.id) ";					
+							$joinx   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";					
 							$Spklapproval = Spklapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and advance_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 							$username = $Spklapproval->approver->employee->loginname;
 							$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
 							$email = $adb->email;
-							$Spkldetail=Spkldetail::find('all',array('conditions'=>array("advance_id=?",$id),'include'=>array('spkl','employee'=>array('company','department','designation','grade'))));
+							$Spkldetail=Spkldetail::find('all',array('conditions'=>array("advance_id=?",$id),'include'=>array('advance','employee'=>array('company','department','designation','grade'))));
 							$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$adb->fullname.',</span></p>
 												<p class=MsoNormal><span style="color:#1F497D">New SPKL/Overtime request is awaiting for your approval:</span></p>
 												<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
@@ -2130,7 +2130,7 @@ Class Advancemodule extends Application{
 						$id = $this->post['id'];
 						$Employee = Employee::find($id);
 						if ($Employee){
-							$join = "LEFT join tbl_employee on tbl_spkl.employee_id = tbl_employee.id left join tbl_department on tbl_employee.department_id=tbl_department.id";
+							$join = "LEFT join tbl_employee on tbl_advance.employee_id = tbl_employee.id left join tbl_department on tbl_employee.department_id=tbl_department.id";
 							$Spkl = Spkl::find('all', array('joins'=>$join,'conditions' => array("tbl_department.id=? and RequestStatus='3'",$Employee->department_id),'include' => array('employee')));
 							foreach ($Spkl as &$result) {
 								$fullname	= $result->employee->fullname;		
@@ -2178,7 +2178,7 @@ Class Advancemodule extends Application{
 						}
 						$Spkl->approvalstep = ($data['tmsreqstatus']==1)?1:0;
 						$Spkl->save();
-						$joins   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";					
+						$joins   = "LEFT JOIN tbl_approver ON (tbl_advanceotapproval.approver_id = tbl_approver.id) ";					
 						$Spkltmsapproval = Spkltmsapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.employee_id=?",$id,$Spkl->depthead)));	
 						foreach ($Spkltmsapproval as &$result) {
 							$result		= $result->to_array();
@@ -2194,14 +2194,14 @@ Class Advancemodule extends Application{
 							}
 						}
 						if (isset($data['superior'])){
-							$joins   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";					
+							$joins   = "LEFT JOIN tbl_approver ON (tbl_advanceotapproval.approver_id = tbl_approver.id) ";					
 							$dx = Spkltmsapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=20 and not(tbl_approver.employee_id=?)",$id,$superior)));	
 							foreach ($dx as $result) {
 								//delete same type approver
 								$result->delete();
 								$logger = new Datalogger("Spkltmsapproval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
 							}
-							$joins   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";					
+							$joins   = "LEFT JOIN tbl_approver ON (tbl_advanceotapproval.approver_id = tbl_approver.id) ";					
 							$Spkltmsapproval = Spkltmsapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.employee_id=?",$id,$superior)));	
 							foreach ($Spkltmsapproval as &$result) {
 								$result		= $result->to_array();
@@ -2235,12 +2235,12 @@ Class Advancemodule extends Application{
 								$data->approvalstatus=0;
 								$data->save();
 							}
-							$joinx   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";					
+							$joinx   = "LEFT JOIN tbl_approver ON (tbl_advanceotapproval.approver_id = tbl_approver.id) ";					
 							$Spkltmsapproval = Spkltmsapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and advance_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 							$username = $Spkltmsapproval->approver->employee->loginname;
 							$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
 							$email = $adb->email;
-							$Spkldetail=Spkldetail::find('all',array('conditions'=>array("advance_id=?",$id),'include'=>array('spkl','employee'=>array('company','department','designation','grade'))));
+							$Spkldetail=Spkldetail::find('all',array('conditions'=>array("advance_id=?",$id),'include'=>array('advance','employee'=>array('company','department','designation','grade'))));
 							$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$adb->fullname.',</span></p>
 												<p class=MsoNormal><span style="color:#1F497D">New SPKL/Overtime request is awaiting for your approval:</span></p>
 												<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
@@ -2321,7 +2321,7 @@ Class Advancemodule extends Application{
 					default:
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 						if ($Employee){
-							$join = "LEFT join tbl_employee on tbl_spkl.employee_id = tbl_employee.id left join tbl_department on tbl_employee.department_id=tbl_department.id";
+							$join = "LEFT join tbl_employee on tbl_advance.employee_id = tbl_employee.id left join tbl_department on tbl_employee.department_id=tbl_department.id";
 							$Spkl = Spkl::find('all', array('joins'=>$join,'conditions' => array("employee_id=? and RequestStatus='3'",$Employee->id),'include' => array('employee')));
 							foreach ($Spkl as &$result) {
 								$fullname=$result->employee->fullname;
