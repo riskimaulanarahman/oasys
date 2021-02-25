@@ -2234,7 +2234,7 @@ Class SpklModule extends Application{
 								$result = $result->to_array();
 								$result['fullname']=$fullname;
 							}
-							//echo json_encode($Spkl, JSON_NUMERIC_CHECK);
+							echo json_encode($Spkl, JSON_NUMERIC_CHECK);
 						}else{
 							echo json_encode(array());
 						}
