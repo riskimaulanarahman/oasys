@@ -958,9 +958,11 @@
                         caption: "Grant Access To",
                         dataType: "string",
                         width: "15%",
-                        // editorOptions: {
-                        //     disabled:(($scope.mode=='approve') ||($scope.mode=='view') ||($scope.data.apprstatuscode==3))?true:false
-                        // }
+                        maxLength: 30,
+                        editorOptions: {
+                            maxLength: 30
+                            // disabled:(($scope.mode=='approve') ||($scope.mode=='view') ||($scope.data.apprstatuscode==3))?true:false
+                        }
                     },
                     {
                         dataField:'change',
