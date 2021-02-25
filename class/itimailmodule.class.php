@@ -2176,9 +2176,11 @@ Class Itimailmodule extends Application{
 
 			$xlTypePDF = 0;
 			$xlQualityStandard = 0;
-			$fileName ='doc'.DS.'it'.DS.'pdf'.DS.$title.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
+			// $fileName ='doc'.DS.'it'.DS.'pdf'.DS.$title.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$fileName ='doc'.DS.'it'.DS.'pdf'.DS.$title.'_'.$Itsharef->employee->fullname.'_'.$Itsharef->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$fileName = str_replace("/","",$fileName);
-			$path= SITE_PATH.'/doc'.DS.'it'.DS.'pdf'.DS.$title.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
+			// $path= SITE_PATH.'/doc'.DS.'it'.DS.'pdf'.DS.$title.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$path= SITE_PATH.'/doc'.DS.'it'.DS.'pdf'.DS.$title.'_'.$Itsharef->employee->fullname.'_'.$Itsharef->employee->sapid.'_'.date("YmdHis").'.pdf';
 			if (file_exists($path)) {
 			unlink($path);
 			}
