@@ -2228,12 +2228,13 @@ Class SpklModule extends Application{
 						if ($Employee){
 							$join = "LEFT join tbl_employee on tbl_spkl.employee_id = tbl_employee.id left join tbl_department on tbl_employee.department_id=tbl_department.id";
 							$Spkl = Spkl::find('all', array('joins'=>$join,'conditions' => array("employee_id=? and RequestStatus='3'",$Employee->id),'include' => array('employee')));
+							//print_r($Spkl);
 							foreach ($Spkl as &$result) {
 								$fullname=$result->employee->fullname;
 								$result = $result->to_array();
 								$result['fullname']=$fullname;
 							}
-							echo json_encode($Spkl, JSON_NUMERIC_CHECK);
+							//echo json_encode($Spkl, JSON_NUMERIC_CHECK);
 						}else{
 							echo json_encode(array());
 						}
