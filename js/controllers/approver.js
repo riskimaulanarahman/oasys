@@ -72,6 +72,7 @@ app.register.controller('approverCtrl', ['$rootScope','$scope', '$http', '$inter
         }),
         sort: "id"
     }
+    console.log($scope.empDataSource);
     var myData = new DevExpress.data.DataSource({
 		store: myStore
     });
