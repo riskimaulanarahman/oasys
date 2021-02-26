@@ -961,6 +961,9 @@ Class Iteiemodule extends Application{
 		try {
 			$excel = new COM("Excel.Application") or die ("ERROR: Unable to instantaniate COM!\r\n");
 			$excel->Visible = false;
+
+			$title = "AD";
+
 			$file= SITE_PATH."/doc/it/ad_template.xlsx";
 			// $file="D:/xampp/htdocs/oasys/doc/it/ad_template.xlsx";
 			$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
