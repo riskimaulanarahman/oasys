@@ -68,6 +68,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 				sort: "id"
 			}
 			$scope.AppAction = ($scope.data.approvalstep==2)?[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Verify"}]:[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
+			$scope.AdvanceForm =[{id:0,advanceform:"- Select -"},{id:1,advanceform:"HR Related"},{id:2,advanceform:"Ops Related"}];
 			$scope.reqStatus = 0;
 			$scope.gridSelectedRowKeys =[];
 			
@@ -89,25 +90,22 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 						colCount : 2,
 						colSpan :2,
 						items: [
+							{
+                                dataField:'advanceform',
+								name:'advanceform',
+                                editorType: "dxSelectBox",
+                                label:{text:"Advance Form"},
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                validationRules: [{type: "required",message: "Action is required"}],
+                                editorOptions: { 
+                                    dataSource:$scope.AdvanceForm,  
+                                    valueExpr: 'id',
+                                    displayExpr: 'advanceform',
+                                },
+                            },
 						{dataField:'createddate',editorType: "dxDateBox",label: {text: "Creation Date"},editorOptions: {displayFormat:"dd/MM/yyyy",disabled: true}},
-						{dataField:'expecteddate',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,editorType: "dxDateBox",label: {text: "Expected Date"},editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now()},
-						validationRules: [{
-							type: "required",
-							message: "Please Expected Date"
-						}]},
-						{dataField:'duedate',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,editorType: "dxDateBox",label: {text: "Due Date"},editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now()},
-						validationRules: [{
-							type: "required",
-							message: "Please Due Date"
-						}]},
-						{dataField:'requeststatus',label: {text: "Request Status"},template: function(data, itemElement) {  
-							var val = data.editorOptions.value;
-							$scope.reqStatus = data.editorOptions.value;
-							val=(val>=0)?val:5;
-							var rClass = ["mb-2 mr-2 badge badge-pill badge-secondary","mb-2 mr-2 badge badge-pill badge-primary","mb-2 mr-2 badge badge-pill badge-warning","mb-2 mr-2 badge badge-pill badge-success","mb-2 mr-2 badge badge-pill badge-danger","mb-2 mr-2 badge badge-pill badge-alt"];
-							var rDesc = ["Saved as Draft","Waiting Approval","Require Rework","Approved","Rejected","Not Saved"];
-							$('<span>').appendTo(itemElement).addClass(rClass[val]).text(rDesc[val]);
-						}},
+						
+						
 						{
 							dataField:'beneficiary',
 							label: {
@@ -140,7 +138,60 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 							name:'bankaccountnumber',
 							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
 						},
+						
+						
+						// {dataField:'remarks',colSpan:2,editorType:"dxHtmlEditor",editorOptions: {height: 190,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}},
+						
 						{label: {
+								text: "Approval Action"
+							},
+							dataField:"approvalstatus",
+							editorType: "dxSelectBox",
+							visible: ($scope.mode=='approve') ?true:false,
+							editorOptions: { 
+								dataSource:$scope.AppAction,  
+								valueExpr: 'id',
+								displayExpr: 'appaction',
+								searchEnabled: true,
+								value: ""
+							},
+							validationRules: [{
+								type: "required",
+								message: "Action is required"
+							}]
+						},
+						]
+					},
+					{	
+						itemType: "group",
+						caption: "",
+						// name:"reqisition",
+						colSpan:2,
+						colCount : 2,
+						items: [
+							{dataField:'expecteddate',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,editorType: "dxDateBox",label: {text: "Expected Date"},editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now()},
+							validationRules: [{
+								type: "required",
+								message: "Please Expected Date"
+							}]},
+							{dataField:'duedate',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,editorType: "dxDateBox",label: {text: "Due Date"},editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now()},
+							validationRules: [{
+								type: "required",
+								message: "Please Due Date"
+							}]},
+							
+							
+						]
+						
+					},
+					{	
+						itemType: "group",
+						caption: "",
+						// name:"reqisition",
+						colSpan:1,
+						colCount : 1,
+						items: [
+							{label: {
 								text: "Department Head"
 							},
 							dataField:"depthead",
@@ -184,27 +235,22 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 								message: "Please select your department head"
 							}]
 						},
-						{dataField:'remarks',colSpan:2,editorType:"dxHtmlEditor",editorOptions: {height: 190,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}},
+						{dataField:'requeststatus',label: {text: "Request Status"},template: function(data, itemElement) {  
+							var val = data.editorOptions.value;
+							$scope.reqStatus = data.editorOptions.value;
+							val=(val>=0)?val:5;
+							var rClass = ["mb-2 mr-2 badge badge-pill badge-secondary","mb-2 mr-2 badge badge-pill badge-primary","mb-2 mr-2 badge badge-pill badge-warning","mb-2 mr-2 badge badge-pill badge-success","mb-2 mr-2 badge badge-pill badge-danger","mb-2 mr-2 badge badge-pill badge-alt"];
+							var rDesc = ["Saved as Draft","Waiting Approval","Require Rework","Approved","Rejected","Not Saved"];
+							$('<span>').appendTo(itemElement).addClass(rClass[val]).text(rDesc[val]);
+						}},
 						
-						{label: {
-								text: "Approval Action"
-							},
-							dataField:"approvalstatus",
-							editorType: "dxSelectBox",
-							visible: ($scope.mode=='approve') ?true:false,
-							editorOptions: { 
-								dataSource:$scope.AppAction,  
-								valueExpr: 'id',
-								displayExpr: 'appaction',
-								searchEnabled: true,
-								value: ""
-							},
-							validationRules: [{
-								type: "required",
-								message: "Action is required"
-							}]
+						{
+							dataField:'remarks',colSpan:2,editorType:"dxHtmlEditor",editorOptions: {height: 190,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}
 						},
+
+
 						]
+						
 					},
 					{
 						itemType: "group"
@@ -283,7 +329,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 									   }
 									});
 									$scope.data = $scope.formInstance.option("formData");
-									$scope.saveSpklDraft();
+									$scope.saveDraft();
 									
 								},
 								visible: (($scope.mode=='approve') ||($scope.mode=='view') ||($scope.mode=='report'))?false:true,
@@ -728,12 +774,13 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 		
 	}
 	
-	$scope.saveSpklDraft = function(e){
+	$scope.saveDraft = function(e){
 		var data = $scope.formInstance.option("formData");
 		delete data.fullname;
 		delete data.department;
 		delete data.approvalstatus;
-		data.datework = $filter("date")(data.datework, "yyyy-MM-dd HH:mm")
+		data.duedate = $filter("date")(data.duedate, "yyyy-MM-dd HH:mm")
+		data.expecteddate = $filter("date")(data.expecteddate, "yyyy-MM-dd HH:mm")
 		//console.log(data);
 		CrudService.Update('advance',data.id,data).then(function (response) {
 			if(response.status=="error"){

@@ -1913,8 +1913,8 @@ Class Advancemodule extends Application{
 					case 'update':
 						$id = $this->post['id'];
 						$data = $this->post['data'];
-						$Spkl = Spkl::find($id,array('include'=>array('employee'=>array('company','department','designation','grade'))));
-						$olddata = $Spkl->to_array();
+						$Advance = Advance::find($id,array('include'=>array('employee'=>array('company','department','designation','grade'))));
+						$olddata = $Advance->to_array();
 						$depthead = $data['depthead'];
 						unset($data['approvalstatus']);
 						unset($data['fullname']);
@@ -1922,31 +1922,31 @@ Class Advancemodule extends Application{
 						//unset($data['employee']);
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 						foreach($data as $key=>$val){
-							$Spkl->$key=$val;
+							$Advance->$key=$val;
 						}
-						$Spkl->approvalstep = ($data['requeststatus']==1)?1:0;
-						$Spkl->save();
+						$Advance->approvalstep = ($data['requeststatus']==1)?1:0;
+						$Advance->save();
 						
 						if (isset($data['depthead'])){
 							$joins   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";					
-							$dx = Spklapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=20 and not(tbl_approver.employee_id=?)",$id,$depthead)));	
+							$dx = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=20 and not(tbl_approver.employee_id=?)",$id,$depthead)));	
 							foreach ($dx as $result) {
 								//delete same type approver
 								$result->delete();
-								$logger = new Datalogger("Spklapproval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
+								$logger = new Datalogger("Advanceapproval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
 							}				
-							$Spklapproval = Spklapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.employee_id=?",$id,$depthead)));	
-							foreach ($Spklapproval as &$result) {
+							$Advanceapproval = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.employee_id=?",$id,$depthead)));	
+							foreach ($Advanceapproval as &$result) {
 								$result		= $result->to_array();
 								$result['no']=1;
 							}			
-							if(count($Spklapproval)==0){ 
+							if(count($Advanceapproval)==0){ 
 								$Approver = Approver::find('first',array('conditions'=>array("module='Advance' and employee_id=? and approvaltype_id=20",$depthead)));
 								if(count($Approver)>0){
-									$Spklapproval = new Spklapproval();
-									$Spklapproval->advance_id = $Spkl->id;
-									$Spklapproval->approver_id = $Approver->id;
-									$Spklapproval->save();
+									$Advanceapproval = new Advanceapproval();
+									$Advanceapproval->advance_id = $Advance->id;
+									$Advanceapproval->approver_id = $Approver->id;
+									$Advanceapproval->save();
 								}else{
 									$approver = new Approver();
 									$approver->module = "Advance";
@@ -1955,32 +1955,32 @@ Class Advancemodule extends Application{
 									$approver->approvaltype_id = 20;
 									$approver->isfinal = false;
 									$approver->save();
-									$Spklapproval = new Spklapproval();
-									$Spklapproval->advance_id = $Spkl->id;
-									$Spklapproval->approver_id = $approver->id;
-									$Spklapproval->save();
+									$Advanceapproval = new Advanceapproval();
+									$Advanceapproval->advance_id = $Advance->id;
+									$Advanceapproval->approver_id = $approver->id;
+									$Advanceapproval->save();
 								}
 							}
 						}
 						if($data['requeststatus']==1){
-							$Spklapproval = Spklapproval::find('all', array('conditions' => array("advance_id=?",$id)));					
-							foreach($Spklapproval as $data){
+							$Advanceapproval = Advanceapproval::find('all', array('conditions' => array("advance_id=?",$id)));					
+							foreach($Advanceapproval as $data){
 								$data->approvalstatus=0;
 								$data->save();
 							}
 							$joinx   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";					
-							$Spklapproval = Spklapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and advance_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
-							$username = $Spklapproval->approver->employee->loginname;
+							$Advanceapproval = Advanceapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and advance_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+							$username = $Advanceapproval->approver->employee->loginname;
 							$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
 							$email = $adb->email;
-							$Spkldetail=Spkldetail::find('all',array('conditions'=>array("advance_id=?",$id),'include'=>array('advance','employee'=>array('company','department','designation','grade'))));
+							$Advancedetail=Advancedetail::find('all',array('conditions'=>array("advance_id=?",$id),'include'=>array('advance','employee'=>array('company','department','designation','grade'))));
 							$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$adb->fullname.',</span></p>
 												<p class=MsoNormal><span style="color:#1F497D">New SPKL/Overtime request is awaiting for your approval:</span></p>
 												<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
 												<table border=1 cellspacing=0 cellpadding=3 width=683>
-													<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Spkl->employee->fullname.'</b></p></td></tr>
-													<tr><td><p class=MsoNormal>Creation Date</p></td><td>:</td><td><p class=MsoNormal><b>'.date("d/m/Y",strtotime($Spkl->createddate)).'</b></p></td></tr>
-													<tr><td><p class=MsoNormal>Date Work</p></td><td>:</td><td><p class=MsoNormal><b>'.date("d/m/Y",strtotime($Spkl->datework)).'</b></p></td></tr>';
+													<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Advance->employee->fullname.'</b></p></td></tr>
+													<tr><td><p class=MsoNormal>Creation Date</p></td><td>:</td><td><p class=MsoNormal><b>'.date("d/m/Y",strtotime($Advance->createddate)).'</b></p></td></tr>
+													<tr><td><p class=MsoNormal>Date Work</p></td><td>:</td><td><p class=MsoNormal><b>'.date("d/m/Y",strtotime($Advance->datework)).'</b></p></td></tr>';
 							$this->mailbody .='</table>
 												<p class=MsoNormal><b>SPKL Detail :</b></p>
 												<table border=1 cellspacing=0 cellpadding=3 width=683><tr><th  rowspan="2"><p class=MsoNormal>No</p></th>
@@ -1996,7 +1996,7 @@ Class Advancemodule extends Application{
 												<th><p class=MsoNormal>Overtime</p></th></tr>
 												';
 							$no=1;
-							foreach ($Spkldetail as $data){
+							foreach ($Advancedetail as $data){
 								$this->mailbody .='<tr style="height:22.5pt">
 											<td><p class=MsoNormal> '.$no.'</p></td>
 											<td><p class=MsoNormal> '.$data->employee->fullname.'</p></td>
@@ -2025,33 +2025,33 @@ Class Advancemodule extends Application{
 							} else {
 								echo "Message sent!";
 							}
-							$Spklhistory = new Spklhistory();
-							$Spklhistory->date = date("Y-m-d h:i:s");
-							$Spklhistory->fullname = $Employee->fullname;
-							$Spklhistory->advance_id = $id;
-							$Spklhistory->approvaltype = "Originator";
-							$Spklhistory->actiontype = 2;
-							$Spklhistory->save();
+							$Advancehistory = new Advancehistory();
+							$Advancehistory->date = date("Y-m-d h:i:s");
+							$Advancehistory->fullname = $Employee->fullname;
+							$Advancehistory->advance_id = $id;
+							$Advancehistory->approvaltype = "Originator";
+							$Advancehistory->actiontype = 2;
+							$Advancehistory->save();
 						}else{
-							$Spklhistory = new Spklhistory();
-							$Spklhistory->date = date("Y-m-d h:i:s");
-							$Spklhistory->fullname = $Employee->fullname;
-							$Spklhistory->advance_id = $id;
-							$Spklhistory->approvaltype = "Originator";
-							$Spklhistory->actiontype = 1;
-							$Spklhistory->save();
+							$Advancehistory = new Advancehistory();
+							$Advancehistory->date = date("Y-m-d h:i:s");
+							$Advancehistory->fullname = $Employee->fullname;
+							$Advancehistory->advance_id = $id;
+							$Advancehistory->approvaltype = "Originator";
+							$Advancehistory->actiontype = 1;
+							$Advancehistory->save();
 						}
 						$logger = new Datalogger("Advance","update",json_encode($olddata),json_encode($data));
 						$logger->SaveData();
-						//echo json_encode($Spkl);
+						//echo json_encode($Advance);
 						
 						break;
 					default:
-						$Spkl = Spkl::all();
-						foreach ($Spkl as &$result) {
+						$Advance = Advance::all();
+						foreach ($Advance as &$result) {
 							$result = $result->to_array();
 						}					
-						echo json_encode($Spkl, JSON_NUMERIC_CHECK);
+						echo json_encode($Advance, JSON_NUMERIC_CHECK);
 						break;
 				}
 			}
