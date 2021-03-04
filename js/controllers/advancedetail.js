@@ -501,7 +501,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 				}]
 			},editing: {
 				useIcons:true,
-				mode: "cell",
+				mode: "row",
 				allowUpdating:(($scope.mode=='view') ||($scope.mode=='report') || ($scope.data.approvalstep==2))?(($rootScope.isAdmin)?true:false):true,
 				allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 				allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
@@ -512,20 +512,30 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 			},
 			onInitialized:function (e){
 				$scope.grid1Component = e.component;
+				// var sales = e.component.getTotalSummaryValue("amount");
+				// console.log(sales);
 			},
-			onContentReady: function(e){
-				moveEditColumnToLeft(e.component);
+			// onContentReady: function(e){
+			// 	moveEditColumnToLeft(e.component);
+			// },
+			onRowInserted: function(e) {
+				var sales = e.component.getTotalSummaryValue("amount");
+				console.log(sales);
+			},
+			onRowUpdating: function (e) {
+				var sales = e.component.getTotalSummaryValue("amount");
+				console.log(sales);
+			},
+			onRowRemoved: function(e) {
+				var sales = e.component.getTotalSummaryValue("amount");
+				console.log(sales);
 			},
 			onEditorPreparing: function (e) {  
 				$scope.grid1Component = e.component;
-				if ((e.dataField == "isapproved") || (e.dataField == "isused")){
-					e.editorName = "dxRadioGroup";
-					e.editorOptions.layout = "horizontal";
-					e.editorOptions.items = $scope.appText;
-					//e.editorOptions.switchedOffText = "No";
-				}
 			},
 			onToolbarPreparing: function(e) {   
+				// $scope.grid1Component = e.component;
+
 				e.toolbarOptions.items.unshift({						
 					location: "after",
 					widget: "dxButton",

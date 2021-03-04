@@ -1834,6 +1834,37 @@ Class Advancemodule extends Application{
 								$Advancehistory->actiontype = 0;
 								$Advancehistory->save();
 								$joins   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
+
+								$ApproverFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=41")));
+								if(count($ApproverFC)>0){
+									$Advanceapproval = new Advanceapproval();
+									$Advanceapproval->advance_id = $Advance->id;
+									$Advanceapproval->approver_id = $ApproverFC->id;
+									$Advanceapproval->save();
+								}
+
+								if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220")){
+									$ApproverBUFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='37' and tbl_employee.location_id='1'")));
+									if(count($ApproverBUFC)>0){
+										$Advanceapproval = new Advanceapproval();
+										$Advanceapproval->advance_id =$Advance->id;
+										$Advanceapproval->approver_id = $ApproverBUFC->id;
+										$Advanceapproval->save();
+										$logger = new Datalogger("Advanceapproval","add","Add initial BU Approval",json_encode($Advanceapproval->to_array()));
+										$logger->SaveData();
+									}
+								}else{
+									$ApproverBUFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='37'  and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
+									if(count($ApproverBUFC)>0){
+										$Advanceapproval = new Advanceapproval();
+										$Advanceapproval->advance_id = $Advance->id;
+										$Advanceapproval->approver_id = $ApproverBUFC->id;
+										$Advanceapproval->save();
+										$logger = new Datalogger("Advanceapproval","add","Add initial BU Approval",json_encode($Advanceapproval->to_array()));
+										$logger->SaveData();
+									}
+								}
+
 								if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220")){
 									$ApproverHR = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and tbl_employee.location_id='1'")));
 									if(count($ApproverHR)>0){
