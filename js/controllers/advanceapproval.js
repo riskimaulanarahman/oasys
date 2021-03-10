@@ -7,7 +7,7 @@ app.register.controller('advanceapprovalCtrl', ['$rootScope','$scope', '$http', 
 		load: function() {			
             $scope.isLoaded =true;
 			criteria = {pending:'true'};
-            return CrudService.FindData('spklapp',criteria).then(function (response) {
+            return CrudService.FindData('advanceapp',criteria).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.notify(response.message,"error");
 				}else{
@@ -17,7 +17,7 @@ app.register.controller('advanceapprovalCtrl', ['$rootScope','$scope', '$http', 
 		},
 	 
 		byKey: function(key) {
-            CrudService.GetById('spklapp',encodeURIComponent(key)).then(function (response) {
+            CrudService.GetById('advanceapp',encodeURIComponent(key)).then(function (response) {
 				return response;
 			});
 		},
@@ -31,7 +31,7 @@ app.register.controller('advanceapprovalCtrl', ['$rootScope','$scope', '$http', 
 			
 		}
     });
-	$scope.$on("initSPKL", function(event, name) {
+	$scope.$on("initAdvance", function(event, name) {
 		$scope.dataGrid.refresh();
     });
 	var myData = new DevExpress.data.DataSource({
@@ -69,7 +69,7 @@ app.register.controller('advanceapprovalCtrl', ['$rootScope','$scope', '$http', 
                             .text('')
                             .on('dxclick', function () {
                                 DevExpress.ui.notify("Loading detail data for "+options.data.requestdate,"info",600);
-								$scope.loadSPKL(options.data,'approve',true);
+								$scope.loadAdvance(options.data,'approve',true);
                             })
                             .appendTo(container);
                     }

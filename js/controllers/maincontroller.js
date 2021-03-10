@@ -365,6 +365,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	}
 	$scope.loadMMF30= function(data,mode,filter){
 		$scope.Filter=filter;
+		console.log(data);
 		if (mode=='add'){
 			CrudService.Create('mmf30',data).then(function (response) {
 				if(response.status=="error"){
@@ -457,8 +458,10 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	}
 	$scope.loadAdvance= function(data,mode,filter){
 		$scope.Filter=filter;
+		console.log(data);
 		if (mode=='add'){
 			CrudService.Create('advance',data).then(function (response) {
+				console.log(response);
 				if(response.status=="error"){
 					DevExpress.ui.dialog.alert(response.message,"Error");
 				}else if(response.status=="autherror"){

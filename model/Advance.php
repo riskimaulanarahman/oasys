@@ -5,7 +5,7 @@ class Advance extends ActiveRecord\Model
 	static $belongs_to = array(
 		array('employee')
 	);
-	static $has_many = array(
-		array('advancedetail')
-	);
+	// static $has_many = array(
+	// 	array('advancedetail')
+	// );
 }
