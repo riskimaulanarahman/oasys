@@ -9,7 +9,7 @@
         }
     console.log($scope.mode);
     var d = new Date();
-	alert($scope.Requestid);
+	// alert($scope.Requestid);
 	CrudService.GetById('mmf30',$scope.Requestid).then(function(response){
 		if(response.status=="autherror"){
 			$scope.logout();

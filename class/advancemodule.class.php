@@ -112,6 +112,15 @@ Class Advancemodule extends Application{
 						$query=$this->post['query'];
 						if(isset($query['status'])){
 							switch ($query['status']){
+								case 'waiting':
+									$Advance = Advance::find('all', array('conditions' => array("employee_id=? and RequestStatus<3 and id<>?",$query['username'],$query['id']),'include' => array('employee')));
+									foreach ($Advance as &$result) {
+										$fullname	= $result->employee->fullname;		
+										$result		= $result->to_array();
+										$result['fullname']=$fullname;
+									}
+									$data=array("jml"=>count($Advance));
+									break;
 								default:
 									$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 									$Advance = Advance::find('all', array('conditions' => array("employee_id=? and RequestStatus<3",$Employee->id),'include' => array('employee')));
@@ -722,6 +731,7 @@ Class Advancemodule extends Application{
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$join   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";
 							$dx = Advanceapproval::find('first', array('joins'=>$join,'conditions' => array("advance_id=? and tbl_approver.employee_id = ?",$query['advance_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
+							// print_r($dx);
 							$Advance = Advance::find($query['advance_id']);
 							if($dx->approver->isfinal==1){
 								$data=array("jml"=>1);
@@ -775,7 +785,7 @@ Class Advancemodule extends Application{
 						} else if(isset($query['filter'])){
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$join = "LEFT JOIN vwadvancereport v on tbl_advance.id=v.id LEFT JOIN tbl_employee ON (tbl_advance.employee_id = tbl_employee.id) ";
-							$sel = 'tbl_advance.*, v.advancestatus,v.otstatus,v.personholding ';
+							$sel = 'tbl_advance.*, v.advancestatus,v.personholding ';
 							$Advance = Advance::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
 							
 							if($Employee->location->sapcode=='0200' || $this->currentUser->isadmin){
@@ -812,34 +822,24 @@ Class Advancemodule extends Application{
 						echo json_encode($Advanceapproval);
 						break;
 					case 'update':
-						$doid = $this->post['id'];
-						$data = $this->post['data'];
-						$mode= $data['mode'];
-						$Spkldetail=Spkldetail::find('all',array('conditions'=>array("advance_id=?",$doid),'include'=>array('advance'=>array('employee'=>array('company','department','designation','grade')))));
-						$allcheck = 0;
-						foreach ($Spkldetail as $result) {
-							if(is_null($result->isapproved)){
-								$allcheck+=1;
-							}
-						}
-						if (($data['approvalstatus']=='1') || ($data['approvalstatus']=='3')){
-							$allcheck=0;
-						}
-						if($allcheck>0){
-							$result= array("status"=>"error","message"=>"Need to do approval/reject on each detail Overtime request");
-							echo json_encode($result);
-						}else{
+							$doid = $this->post['id'];
+							$data = $this->post['data'];
+							$mode= $data['mode'];
+							$appstatus = $data['approvalstatus'];
 							unset($data['id']);
 							unset($data['depthead']);
 							unset($data['fullname']);
 							unset($data['department']);
-							unset($data['datework']);
 							unset($data['approveddoc']);
-							unset($data['isexceedplan']);
-							unset($data['approvalstep']);
-							unset($data['ismorethan2hours']);
+							// if(isset($data['approvalstatus']) == 4) {
+							// }
+							// if ($appstatus=='4' || $appstatus==4 ){
+							// 	$data['approvalstatus'] == 0;
+							// }
+							print_r($data);
+
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-							
+							$Advance = Advance::find($doid);
 							$join   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";
 							if (isset($data['mode'])){
 								$Advanceapproval = Advanceapproval::find('first', array('joins'=>$join,'conditions' => array("advance_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
@@ -847,49 +847,44 @@ Class Advancemodule extends Application{
 							}else{
 								$Advanceapproval = Advanceapproval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
 							}
+							foreach($data as $key=>$val) {
+								if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks') ) {
+									// if(($key == 'isrepair') || ($key == 'isscrap')) {
+										$value=(($val===0) || ($val==='0') || ($val==='false'))?false:((($val===1) || ($val==='1') || ($val==='true'))?true:$val);
+									// }
+									$Advance->$key=$value;
+								}
+							}
+							
+							$Advance->save();
+
+							unset($data['advanceform']);
+							unset($data['beneficiary']);
+							unset($data['accountname']);
+							unset($data['bank']);
+							unset($data['accountnumber']);
+
+							unset($data['duedate']);
+							unset($data['expecteddate']);
+
+							unset($data['remarks']);	
+							
 							$olddata = $Advanceapproval->to_array();
 							foreach($data as $key=>$val){
 								$val=($val=='false')?false:(($val=='true')?true:$val);
 								$Advanceapproval->$key=$val;
 							}
+							
 							$Advanceapproval->save();
 							$logger = new Datalogger("Advanceapproval","update",json_encode($olddata),json_encode($data));
 							$logger->SaveData();
-							if (isset($mode) && ($mode=='approve')){
+						if (isset($mode) && ($mode=='approve')){
 								$Advance = Advance::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
 								$joinx   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";					
 								$nAdvanceapproval = Advanceapproval::find('first',array('joins'=>$joinx,'conditions' => array("advance_id=? and ApprovalStatus=0",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 								$username = $nAdvanceapproval->approver->employee->loginname;
 								$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
-								$Advancedetail=Advancedetail::find('all',array('conditions'=>array("advance_id=?",$doid),'include'=>array('advance'=>array('employee'=>array('company','department','designation','grade','location')))));
-								if ($Advance->datework !== null){
-									foreach ($Advancedetail as $row){
-										if ($row->isapproved){
-											$time = new DateTime($Advance->datework);
-											$time->add(new DateInterval('PT8H'));
-											$start = $time->format('Y-m-d H:i');
-											$row->actualstartwork = $start;
-											$time = new DateTime($start);
-											$time->add(new DateInterval('PT' . ($row->estimatenormalhours + $row->estimateovertimehours+1). 'H'));
-											$end = $time->format('Y-m-d H:i');
-											$row->actualendwork = $end;
-											
-											$row->actualtotalhours = $row->estimatenormalhours + $row->estimateovertimehours;
-											$row->actualnormalhours = $row->estimatenormalhours;
-											$row->actualovertimehours = $row->estimateovertimehours;
-											
-										}else {
-											$row->actualstartwork = null;
-											$row->actualendwork= null;
-											$row->actualtotalhours = 0;
-											$row->actualnormalhours = 0;
-											$row->actualovertimehours = 0;
-											$Reject = Employee::find('first', array('conditions' => array("id=?", $row->rejectadvanceby)));
-											$row->descriptionofwork = "SPKL Rejected by ".$Reject->fullname;
-										}
-										$row->save();	
-									}
-								}
+
 								$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Advance->employee->loginname)));
 								$email=$usr->email;
 								
@@ -904,19 +899,17 @@ Class Advancemodule extends Application{
 								switch ($data['approvalstatus']){
 									case '1':
 										$Advance->requeststatus = 2;
-										$Advance->approvalstep = 0;
 										$emto=$email;$emname=$Advance->employee->fullname;
 										$this->mail->Subject = "Online Approval System -> Need Rework";
-										$red = 'Your SPKL/ Overtime request require some rework :';
+										$red = 'Your Advance request require some rework :';
 										$Advancehistory->actiontype = 3;
 										break;
 									case '2':
-										if ($Advanceapproval->approver->isfinal == 1 || ($Advanceapproval->approver->approvaltype_id=='21' && $Advance->ismorethan2hours == 0)){
+										if ($Advanceapproval->approver->isfinal == 1){
 											$Advance->requeststatus = 3;
-											$Advance->approvalstep = 0;
 											$emto=$email;$emname=$Advance->employee->fullname;
 											$this->mail->Subject = "Online Approval System -> Approval Completed";
-											$red = 'Your SPKL/Overtime request has been approved';
+											$red = 'Your Advance request has been approved';
 											//delete unnecessary approver
 											$Advanceapproval = Advanceapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
 											foreach ($Advanceapproval as $data) {
@@ -930,20 +923,18 @@ Class Advancemodule extends Application{
 										}
 										else{
 											$Advance->requeststatus = 1;
-											$Advance->approvalstep += 1;
 											$emto=$adb->email;$emname=$adb->fullname;
-											$this->mail->Subject = "Online Approval System -> New SPKL/Overtime Submission";
-											$red = 'New SPKL/Overtime request awaiting for your approval:';
+											$this->mail->Subject = "Online Approval System -> New Advance Submission";
+											$red = 'New Advance request awaiting for your approval:';
 										}
 										$Advancehistory->actiontype = 4;							
 										break;
 									case '3':
 										$Advance->requeststatus = 4;
-										$Advance->approvalstep = 4;
 										$emto=$email;$emname=$Advance->employee->fullname;
 										$Advancehistory->actiontype = 5;
 										$this->mail->Subject = "Online Approval System -> Request Rejected";
-										$red = 'Your SPKL/Overtime request has been rejected';
+										$red = 'Your Advance request has been rejected';
 										break;
 									default:
 										break;
@@ -954,51 +945,79 @@ Class Advancemodule extends Application{
 								echo "email to :".$emto." ->".$emname;
 								$this->mail->addAddress($emto, $emname);
 								
-								$AdvanceJ = Advance::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
+								
 								$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$emname.',</span></p>
-													<p class=MsoNormal><span style="color:#1F497D">'.$red.'</span></p>
-													<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
-													<table border=1 cellspacing=0 cellpadding=3 width=683>
-														<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Advance->employee->fullname.'</b></p></td></tr>
-														<tr><td><p class=MsoNormal>Creation Date</p></td><td>:</td><td><p class=MsoNormal><b>'.date("d/m/Y",strtotime($Advance->createddate)).'</b></p></td></tr>
-														<tr><td><p class=MsoNormal>Date Work</p></td><td>:</td><td><p class=MsoNormal><b>'.date("d/m/Y",strtotime($Advance->datework)).'</b></p></td></tr>';
-								$this->mailbody .='</table>
-													<p class=MsoNormal><b>SPKL Detail :</b></p>
-													<table border=1 cellspacing=0 cellpadding=3 width=683><tr><th  rowspan="2"><p class=MsoNormal>No</p></th>
-													<th rowspan="2"><p class=MsoNormal>Employee Name</p></th>
-													<th rowspan="2"><p class=MsoNormal>SAPID</p></th>
-													<th rowspan="2"><p class=MsoNormal>Position</p></th>
-													<th colspan="2"><p class=MsoNormal>Estimate Time for Work</p></th>
-													
-													<th rowspan="2"><p class=MsoNormal>Target Work</p></th>
-													<th rowspan="2"><p class=MsoNormal>Remarks</p></th>
-													</tr>
-													<tr><th><p class=MsoNormal>Normal</p></th>
-													<th><p class=MsoNormal>Overtime</p></th></tr>
-													';
-								$no=1;
-								foreach ($Advancedetail as $data){
-									$this->mailbody .='<tr style="height:22.5pt">
-												<td><p class=MsoNormal> '.$no.'</p></td>
-												<td><p class=MsoNormal> '.$data->employee->fullname.'</p></td>
-												<td><p class=MsoNormal> '.$data->employee->sapid.'</p></td>
-												<td><p class=MsoNormal> '.$data->employee->designation->designationname.'</p></td>
-												<td><p class=MsoNormal> '.$data->estimatenormalhours.'</p></td>
-												<td><p class=MsoNormal> '.$data->estimateovertimehours.'</p></td>
-												<td><p class=MsoNormal> '.$data->target.'</p></td>
-												<td><p class=MsoNormal> '.$data->remarks.'</p></td>
-									</tr>';
-									$no++;
-								}
-								$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+								<p class=MsoNormal><span style="color:#1F497D">'.$red.'</span></p>
+								<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
+								<table border=1 cellspacing=0 cellpadding=3 width=683>
+								<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Advance->employee->fullname.'</b></p></td></tr>
+								<tr><td><p class=MsoNormal>SAP ID</p></td><td>:</td><td><p class=MsoNormal><b>'.$Advance->employee->sapid.'</b></p></td></tr>
+								<tr><td><p class=MsoNormal>Position</p></td><td>:</td><td><p class=MsoNormal><b>'.$Advance->employee->designation->designationname.'</b></p></td></tr>
+								<tr><td><p class=MsoNormal>Business Group / Business Unit</p></td><td>:</td><td><p class=MsoNormal><b>'.$Advance->employee->company->companyname.'</b></p></td></tr>
+								<tr><td><p class=MsoNormal>Location</p></td><td>:</td><td><p class=MsoNormal><b>'.$Advance->employee->location->location.'</b></p></td></tr>
+								<tr><td><p class=MsoNormal>Email</p></td><td>:</td><td><p class=MsoNormal><b>'.$email.'</b></p></td></tr>
+								</table>';
+						if($Advance->advanceform == 0) {
+							$form = "HR Related";
+						} else {
+							$form = "Ops Related";
+						}
+						$Advancedetail = Advancedetail::find('all',array('conditions'=>array("advance_id=?",$doid),'include'=>array('advance'=>array('employee'=>array('company','department','designation','grade','location')))));	
+
+						$this->mailbody .='
+							<table border=1 cellspacing=0 cellpadding=3 width=683>
+							<tr>
+								<th><p class=MsoNormal>Advance Form</p></th>
+								<th><p class=MsoNormal>Beneficiary</p></th>
+								<th><p class=MsoNormal>Account Name</p></th>
+								<th><p class=MsoNormal>Bank</p></th>
+								<th><p class=MsoNormal>Account Number</p></th>
+								<th><p class=MsoNormal>Due Date</p></th>
+								<th><p class=MsoNormal>Expected Date</p></th>
+								<th><p class=MsoNormal>Remarks</p></th>
+							</tr>
+							<tr style="height:22.5pt">
+								<td><p class=MsoNormal> '.$form.'</p></td>
+								<td><p class=MsoNormal> '.$Advance->beneficiary.'</p></td>
+								<td><p class=MsoNormal> '.$Advance->accountname.'</p></td>
+								<td><p class=MsoNormal> '.$Advance->bank.'</p></td>
+								<td><p class=MsoNormal> '.$Advance->accountnumber.'</p></td>
+								<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Advance->duedate)).'</p></td>
+								<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Advance->expecteddate)).'</p></td>
+								<td><p class=MsoNormal> '.$Advance->remarks.'</p></td>
+							</tr>
+							</table>
+							<table border=1 cellspacing=0 cellpadding=3 width=683>
+									<tr><th><p class=MsoNormal>No</p></th>
+										<th><p class=MsoNormal>Description</p></th>
+										<th><p class=MsoNormal>Account Code</p></th>
+										<th><p class=MsoNormal>Amount</p></th>
+									</tr>
+						';
+						$no=1;
+						foreach ($Advancedetail as $data){
+							$val_tamount += $data->amount;
+							$this->mailbody .='<tr style="height:22.5pt">
+										<td><p class=MsoNormal> '.$no.'</p></td>
+										<td><p class=MsoNormal> '.$data->description.'</p></td>
+										<td><p class=MsoNormal> '.$data->accountcode.'</p></td>
+										<td><p class=MsoNormal> '.number_format($data->amount).'</p></td>
+							</tr>';
+							$no++;
+						}
+						$this->mailbody .='</table>
+						<p><b><span>Total Amount : '.number_format($val_tamount).'</span></b></p><br>
+						<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+						
+								
 								$this->mail->msgHTML($this->mailbody);
 								if ($complete){
-									$filePath= $this->generatePDF($doid);
-									$this->mail->addAttachment($filePath);
+									// $filePath= $this->generatePDFi($doid);
+									// $this->mail->addAttachment($filePath);
 								}
 								if (!$this->mail->send()) {
 									$err = new Errorlog();
-									$err->errortype = "SPKL Mail";
+									$err->errortype = "Advance Mail";
 									$err->errordate = date("Y-m-d h:i:s");
 									$err->errormessage = $this->mail->ErrorInfo;
 									$err->user = $this->currentUser->username;
@@ -1011,7 +1030,6 @@ Class Advancemodule extends Application{
 								}
 							}
 							echo json_encode($Advanceapproval);
-						}
 						break;
 					default:
 						$Advanceapproval = Advanceapproval::all();
@@ -1040,8 +1058,8 @@ Class Advancemodule extends Application{
 					case 'byid':
 						$id = $this->post['id'];
 						if ($id!=""){
-							// $join = "LEFT JOIN vwitsharefreport ON tbl_itsharefdetail.advance_id = vwitsharefreport.id";
-							// $select = "tbl_itsharefdetail.*,vwitsharefreport.apprstatuscode";
+							// $join = "LEFT JOIN vwadvancereport ON tbl_advancedetail.advance_id = vwadvancereport.id";
+							// $select = "tbl_advancedetail.*,vwadvancereport.apprstatuscode";
 							// $Advancedetail = Advancedetail::find('all', array('joins'=>$join,'select'=>$select,'conditions' => array("advance_id=?",$id)));
 							$Advancedetail = Advancedetail::find('all', array('conditions' => array("advance_id=?",$id)));
 							foreach ($Advancedetail as &$result) {
@@ -1147,7 +1165,7 @@ Class Advancemodule extends Application{
 
 	function generatePDFi($id){
 		$Itsharef = Itsharef::find($id);
-		$Itsharefdetail = Itsharefdetail::find('all',array('conditions'=>array("itsharef_id=?",$id),'include'=>array('itsharef'=>array('employee'=>array('company','department','designation','grade','location')))));	
+		$Itsharefdetail = Itsharefdetail::find('all',array('conditions'=>array("advance_id=?",$id),'include'=>array('advance'=>array('employee'=>array('company','department','designation','grade','location')))));	
 		
 		$superiorId=$Itsharef->depthead;
 		$Superior = Employee::find($superiorId);
@@ -1159,8 +1177,8 @@ Class Advancemodule extends Application{
 		$datefrom = date("d/m/Y",strtotime($Itsharef->validfrom));
 		$dateto = date("d/m/Y",strtotime($Itsharef->validto));
 
-		$joinx   = "LEFT JOIN tbl_approver ON (tbl_itsharefapproval.approver_id = tbl_approver.id) ";					
-		$Itsharefapproval = Itsharefapproval::find('all',array('joins'=>$joinx,'conditions' => array("itsharef_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
+		$joinx   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";					
+		$Itsharefapproval = Itsharefapproval::find('all',array('joins'=>$joinx,'conditions' => array("advance_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
 		
 		//condition
 			

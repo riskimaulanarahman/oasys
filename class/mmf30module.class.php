@@ -628,6 +628,45 @@ Class Mmf30module extends Application{
 									} else {
 										echo "Message sent!";
 									}
+
+									if (isset($data['buyer'])){
+										$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf30approval.approver_id = tbl_approver.id) ";					
+										$dx = Mmf30approval::find('all',array('joins'=>$joins,'conditions' => array("mmf30_id=? and tbl_approver.approvaltype_id=28 and not(tbl_approver.employee_id=?)",$id,$buyer)));	
+										foreach ($dx as $result) {
+											//delete same type dept head approver
+											$result->delete();
+											$logger = new Datalogger("MMf30approval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
+										}
+										$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf30approval.approver_id = tbl_approver.id) ";					
+										$Mmf30approval = Mmf30approval::find('all',array('joins'=>$joins,'conditions' => array("mmf30_id=? and tbl_approver.employee_id=?",$id,$buyer)));	
+										foreach ($Mmf30approval as &$result) {
+											$result		= $result->to_array();
+											$result['no']=1;
+										}			
+										if(count($Mmf30approval)==0){ 
+											$Approver = Approver::find('first',array('conditions'=>array("module='MMF30' and employee_id=? and approvaltype_id=28",$buyer)));
+											if(count($Approver)>0){
+												$Mmf30approval = new Mmf30approval();
+												$Mmf30approval->mmf30_id = $Mmf30->id;
+												$Mmf30approval->approver_id = $Approver->id;
+												$Mmf30approval->save();
+											}else{
+												$approver = new Approver();
+												$approver->module = "MMF30";
+												$approver->employee_id=$buyer;
+												$approver->sequence=3;
+												$approver->approvaltype_id = 28;
+												$approver->isfinal = true;
+												$approver->save();
+												$Mmf30approval = new Mmf30approval();
+												$Mmf30approval->mmf30_id = $Mmf30->id;
+												$Mmf30approval->approver_id = $approver->id;
+												$Mmf30approval->save();
+											}
+										}
+										
+									}
+
 									$Mmf30history = new Mmf30history();
 									$Mmf30history->date = date("Y-m-d h:i:s");
 									$Mmf30history->fullname = $Employee->fullname;
@@ -645,43 +684,45 @@ Class Mmf30module extends Application{
 									$Mmf30history->save();
 								}
 
-								if (isset($data['buyer'])){
-									$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf30approval.approver_id = tbl_approver.id) ";					
-									$dx = Mmf30approval::find('all',array('joins'=>$joins,'conditions' => array("mmf30_id=? and tbl_approver.approvaltype_id=28 and not(tbl_approver.employee_id=?)",$id,$buyer)));	
-									foreach ($dx as $result) {
-										//delete same type dept head approver
-										$result->delete();
-										$logger = new Datalogger("MMf30approval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
-									}
-									$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf30approval.approver_id = tbl_approver.id) ";					
-									$Mmf30approval = Mmf30approval::find('all',array('joins'=>$joins,'conditions' => array("mmf30_id=? and tbl_approver.employee_id=?",$id,$buyer)));	
-									foreach ($Mmf30approval as &$result) {
-										$result		= $result->to_array();
-										$result['no']=1;
-									}			
-									if(count($Mmf30approval)==0){ 
-										$Approver = Approver::find('first',array('conditions'=>array("module='MMF30' and employee_id=? and approvaltype_id=28",$buyer)));
-										if(count($Approver)>0){
-											$Mmf30approval = new Mmf30approval();
-											$Mmf30approval->mmf30_id = $Mmf30->id;
-											$Mmf30approval->approver_id = $Approver->id;
-											$Mmf30approval->save();
-										}else{
-											$approver = new Approver();
-											$approver->module = "MMF30";
-											$approver->employee_id=$buyer;
-											$approver->sequence=3;
-											$approver->approvaltype_id = 28;
-											$approver->isfinal = true;
-											$approver->save();
-											$Mmf30approval = new Mmf30approval();
-											$Mmf30approval->mmf30_id = $Mmf30->id;
-											$Mmf30approval->approver_id = $approver->id;
-											$Mmf30approval->save();
-										}
-									}
+								// if (isset($data['buyer'])){
+								// 	$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf30approval.approver_id = tbl_approver.id) ";					
+								// 	$dx = Mmf30approval::find('all',array('joins'=>$joins,'conditions' => array("mmf30_id=? and tbl_approver.approvaltype_id=28 and not(tbl_approver.employee_id=?)",$id,$buyer)));	
+								// 	foreach ($dx as $result) {
+								// 		//delete same type dept head approver
+								// 		$result->delete();
+								// 		$logger = new Datalogger("MMf30approval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
+								// 	}
+								// 	$joins   = "LEFT JOIN tbl_approver ON (tbl_mmf30approval.approver_id = tbl_approver.id) ";					
+								// 	$Mmf30approval = Mmf30approval::find('all',array('joins'=>$joins,'conditions' => array("mmf30_id=? and tbl_approver.employee_id=?",$id,$buyer)));	
+								// 	foreach ($Mmf30approval as &$result) {
+								// 		$result		= $result->to_array();
+								// 		$result['no']=1;
+								// 	}			
+								// 	if(count($Mmf30approval)==0){ 
+								// 		$Approver = Approver::find('first',array('conditions'=>array("module='MMF30' and employee_id=? and approvaltype_id=28",$buyer)));
+								// 		if(count($Approver)>0){
+								// 			$Mmf30approval = new Mmf30approval();
+								// 			$Mmf30approval->mmf30_id = $Mmf30->id;
+								// 			$Mmf30approval->approver_id = $Approver->id;
+								// 			$Mmf30approval->save();
+								// 		}else{
+								// 			$approver = new Approver();
+								// 			$approver->module = "MMF30";
+								// 			$approver->employee_id=$buyer;
+								// 			$approver->sequence=3;
+								// 			$approver->approvaltype_id = 28;
+								// 			$approver->isfinal = true;
+								// 			$approver->save();
+								// 			$Mmf30approval = new Mmf30approval();
+								// 			$Mmf30approval->mmf30_id = $Mmf30->id;
+								// 			$Mmf30approval->approver_id = $approver->id;
+								// 			$Mmf30approval->save();
+								// 		}
+								// 	}
 									
-								}
+								// }
+
+								
 								
 								$logger = new Datalogger("MMF30","update",json_encode($olddata),json_encode($data));
 								$logger->SaveData();

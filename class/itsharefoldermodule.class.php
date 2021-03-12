@@ -930,7 +930,7 @@ Class Itsharefoldermodule extends Application{
 								echo "Message sent!";
 							}
 						}
-						echo json_encode($Spklapproval);
+						echo json_encode($Itsharefapproval);
 						break;
 					default:
 						$Itsharefapproval = Itsharefapproval::all();

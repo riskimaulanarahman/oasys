@@ -130,24 +130,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 						
 						// {dataField:'remarks',colSpan:2,editorType:"dxHtmlEditor",editorOptions: {height: 190,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}},
 						
-						{label: {
-								text: "Approval Action"
-							},
-							dataField:"approvalstatus",
-							editorType: "dxSelectBox",
-							visible: ($scope.mode=='approve') ?true:false,
-							editorOptions: { 
-								dataSource:$scope.AppAction,  
-								valueExpr: 'id',
-								displayExpr: 'appaction',
-								searchEnabled: true,
-								value: ""
-							},
-							validationRules: [{
-								type: "required",
-								message: "Action is required"
-							}]
-						},
+						
 						]
 					},
 					{	
@@ -231,7 +214,24 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 							var rDesc = ["Saved as Draft","Waiting Approval","Require Rework","Approved","Rejected","Not Saved"];
 							$('<span>').appendTo(itemElement).addClass(rClass[val]).text(rDesc[val]);
 						}},
-						
+						{label: {
+							text: "Approval Action"
+						},
+							dataField:"approvalstatus",
+							editorType: "dxSelectBox",
+							visible: ($scope.mode=='approve') ?true:false,
+							editorOptions: { 
+								dataSource:$scope.AppAction,  
+								valueExpr: 'id',
+								displayExpr: 'appaction',
+								searchEnabled: true,
+								value: ""
+							},
+							validationRules: [{
+								type: "required",
+								message: "Action is required"
+							}]
+						},
 						{
 							dataField:'remarks',colSpan:2,editorType:"dxHtmlEditor",editorOptions: {height: 190,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}
 						},
@@ -671,6 +671,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 	});
 	$scope.tabs = [
 		{ id:1, TabName : "Detail Advance", title: 'Detail Advance / Employee List', template: "tab1"   },
+		{ id:4, TabName : "Detail Advance", title: 'Detail Advance / Employee List', template: "tab1"   },
 		{ id:2, TabName : "Approver List", title: 'Approver List', template: "tab2"   },
 		{ id:3, TabName : "History Tracking", title: 'History Tracking', template: "tab3"   },
 	];
@@ -739,6 +740,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 		}else{
 			criteria = {status:'approver',advance_id:$scope.Requestid};
 			CrudService.FindData('advanceapp',criteria).then(function (response){
+				console.log(response.jml);
 				if(response.jml>0){
 					var data = $scope.formInstance.option("formData");
 					var date = new Date();
@@ -827,7 +829,6 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 	}
 	$scope.onFormSubmit = function(e) {
 		e.preventDefault();
-		criteria = {status:'approver',advance_id:$scope.Requestid};
 		criteria = {status:'waiting',username:$scope.formInstance.option("formData").employee_id,id:$scope.Requestid};
 		CrudService.FindData('advancebyemp',criteria).then(function (response){
 			if(response.jml>0){
@@ -844,6 +845,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 				   }
 				});
 			}else{
+				criteria = {status:'approver',advance_id:$scope.Requestid};
 				CrudService.FindData('advanceapp',criteria).then(function (response){
 					if(response.jml>0){
 						criteria = {status:'approver',advance_id:$scope.Requestid};
