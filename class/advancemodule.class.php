@@ -55,28 +55,18 @@ Class Advancemodule extends Application{
 				case 'apiadvanceapp':
 					$this->advanceApproval();
 					break;
-				case 'apiadvancetmsapp':
-					$this->advanceTMSApproval();
-					break;
 				case 'apiadvancehist':
 					$this->advanceHistory();
 					break;
-				case 'apiadvancetmshist':
-					$this->advanceTMSHistory();
-					break;
 				case 'apiadvancepdf':	
 					$id = $this->get['id'];
-					$this->generatePDF($id);
+					$this->generatePDFi($id);
 					break;
-				case 'apiadvancetmspdf':	
-					$id = $this->get['id'];
-					$this->generateTMSPDF($id);
+				case 'apiadvancefile':
+					$this->advanceAttachment();
 					break;
-				case 'apiadvancetms':
-					$this->SPKLTms();
-					break;
-				case 'apitestxl2pdf':
-					$this->testExcel();
+				case 'uploadadvancefile':
+					$this->uploadadvanceFile();
 					break;
 				default:
 					break;
@@ -668,6 +658,34 @@ Class Advancemodule extends Application{
 							} else {
 								echo "Message sent!";
 							}
+
+							// if($Advance->advanceform == 2) {
+
+							// 	$dx = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=36",$id)));	
+							// 	foreach ($dx as $result) {
+							// 		$result->delete();
+							// 		$logger = new Datalogger("Advanceapproval","delete",json_encode($result->to_array()),"delete Approval Advance");
+							// 		$logger->SaveData();
+							// 	}
+
+							// 	if($val_tamount >= 5000000) {
+
+							// 		$ApproverProc = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='42' and tbl_employee.location_id='1'")));
+							// 		if(count($ApproverProc)>0){
+							// 			$Advanceapproval = new Advanceapproval();
+							// 			$Advanceapproval->advance_id =$Advance->id;
+							// 			$Advanceapproval->approver_id = $ApproverProc->id;
+							// 			$Advanceapproval->save();
+							// 			$logger = new Datalogger("Advanceapproval","add","Add initial Proc Approval",json_encode($Advanceapproval->to_array()));
+							// 			$logger->SaveData();
+							// 		}
+									
+							// 	}
+
+
+								
+							// }
+
 							$Advancehistory = new Advancehistory();
 							$Advancehistory->date = date("Y-m-d h:i:s");
 							$Advancehistory->fullname = $Employee->fullname;
@@ -867,7 +885,6 @@ Class Advancemodule extends Application{
 							unset($data['duedate']);
 							unset($data['expecteddate']);
 
-							unset($data['remarks']);	
 							
 							$olddata = $Advanceapproval->to_array();
 							foreach($data as $key=>$val){
@@ -901,12 +918,12 @@ Class Advancemodule extends Application{
 										$Advance->requeststatus = 2;
 										$emto=$email;$emname=$Advance->employee->fullname;
 										$this->mail->Subject = "Online Approval System -> Need Rework";
-										$red = 'Your Advance request require some rework :';
+										$red = 'Your Advance request require some rework : <br>Remarks from Approver : <font color="red">'.$data['remarks']."</font>";
 										$Advancehistory->actiontype = 3;
 										break;
 									case '2':
 										if ($Advanceapproval->approver->isfinal == 1){
-											$Advance->requeststatus = 3;
+											$Advance->requeststatus = 5;
 											$emto=$email;$emname=$Advance->employee->fullname;
 											$this->mail->Subject = "Online Approval System -> Approval Completed";
 											$red = 'Your Advance request has been approved';
@@ -934,7 +951,7 @@ Class Advancemodule extends Application{
 										$emto=$email;$emname=$Advance->employee->fullname;
 										$Advancehistory->actiontype = 5;
 										$this->mail->Subject = "Online Approval System -> Request Rejected";
-										$red = 'Your Advance request has been rejected';
+										$red = 'Your Advance request has been rejected <br>Remarks from Approver : <font color="red">'.$data['remarks']."</font>";
 										break;
 									default:
 										break;
@@ -1012,8 +1029,8 @@ Class Advancemodule extends Application{
 								
 								$this->mail->msgHTML($this->mailbody);
 								if ($complete){
-									// $filePath= $this->generatePDFi($doid);
-									// $this->mail->addAttachment($filePath);
+									$filePath= $this->generatePDFi($doid);
+									$this->mail->addAttachment($filePath);
 								}
 								if (!$this->mail->send()) {
 									$err = new Errorlog();
@@ -1164,21 +1181,22 @@ Class Advancemodule extends Application{
 	}
 
 	function generatePDFi($id){
-		$Itsharef = Itsharef::find($id);
-		$Itsharefdetail = Itsharefdetail::find('all',array('conditions'=>array("advance_id=?",$id),'include'=>array('advance'=>array('employee'=>array('company','department','designation','grade','location')))));	
+		$Advance = Advance::find($id);
+		$Advancedetail = Advancedetail::find('all',array('conditions'=>array("advance_id=?",$id),'include'=>array('advance'=>array('employee'=>array('company','department','designation','grade','location')))));	
 		
-		$superiorId=$Itsharef->depthead;
+		$superiorId=$Advance->depthead;
 		$Superior = Employee::find($superiorId);
 		$supAdb = Addressbook::find('first',array('conditions'=>array("username=?",$Superior->loginname)));
-		$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Itsharef->employee->loginname)));
+		$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Advance->employee->loginname)));
 		$email=$usr->email;
-		$fullname=$Itsharef->employee->fullname;
+		$fullname=$Advance->employee->fullname;
+		$department = $Advance->employee->department->departmentname;
 
-		$datefrom = date("d/m/Y",strtotime($Itsharef->validfrom));
-		$dateto = date("d/m/Y",strtotime($Itsharef->validto));
+		$duedate = date("d/m/Y",strtotime($Advance->duedate));
+		$expecteddate = date("d/m/Y",strtotime($Advance->expecteddate));
 
 		$joinx   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";					
-		$Itsharefapproval = Itsharefapproval::find('all',array('joins'=>$joinx,'conditions' => array("advance_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
+		$Advanceapproval = Advanceapproval::find('all',array('joins'=>$joinx,'conditions' => array("advance_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
 		
 		//condition
 			
@@ -1189,130 +1207,224 @@ Class Advancemodule extends Application{
 			$excel = new COM("Excel.Application") or die ("ERROR: Unable to instantaniate COM!\r\n");
 			$excel->Visible = false;
 
-				$title = 'sharefolder';
+			if($advance->advanceform == 1) {
+				$title = 'advance_hr';
+				$file= SITE_PATH."/doc/hr/advancehr.xlsx";
+			} else {
+				$title = 'advance_ops';
+				$file= SITE_PATH."/doc/hr/advanceops.xlsx";
+			}
 
-
-				$file= SITE_PATH."/doc/it/template_sharefoldernew1.xls";
+				
 				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
 				$Worksheet = $Workbook->Worksheets(1);
 				$Worksheet->Activate;
 
-				$Worksheet->Range("F7")->Value = $fullname;
-				$Worksheet->Range("F9")->Value = $Itsharef->employee_id;
-				$Worksheet->Range("F11")->Value = $Itsharef->designation;
-				$Worksheet->Range("F13")->Value = $Itsharef->bgbu;
-				$Worksheet->Range("F15")->Value = $Itsharef->officelocation;
-				$Worksheet->Range("Y15")->Value = $Itsharef->floor;
-				$Worksheet->Range("F17")->Value = $Itsharef->phoneext;
-				$Worksheet->Range("F19")->Value = $Itsharef->department;
+				$Worksheet->Range("F6")->Value = $fullname;
+				$Worksheet->Range("F7")->Value = $department;
+				$Worksheet->Range("F8")->Value = $Advance->employee_id;
 
-				$Worksheet->Range("F25")->Value = $Itsharef->foldername;
+				$Worksheet->Range("N6")->Value = date("d/m/Y",strtotime($Advance->createddate));
+				$Worksheet->Range("N8")->Value = date("d/m/Y",strtotime($duedate));
+				$Worksheet->Range("N7")->Value = date("d/m/Y",strtotime($expecteddate));
 
-				$Worksheet->Range("H33")->Value = $datefrom;
-				$Worksheet->Range("Q33")->Value = $dateto;
+				$Worksheet->Range("F10")->Value = $Advance->beneficiary;
+				$Worksheet->Range("F11")->Value = $Advance->accountname;
+				$Worksheet->Range("F12")->Value = $Advance->bank;
+				$Worksheet->Range("F13")->Value = $Advance->accountnumber;
 
-				// $Worksheet->Range("F36")->Value = $Itsharef->reason;
-				$Worksheet->Range("F36")->Value = strip_tags($Itsharef->reason);
 
-				$arrappr['role'] = array();
-				$arrappr['name'] = array();
-				$arrappr['date'] = array();
-
-				array_push($arrappr['role'],'Originator');
-				array_push($arrappr['name'],$fullname);
-				array_push($arrappr['date'],date("d/m/Y",strtotime($Itsharef->createddate)));
-
-				foreach ($Itsharefapproval as $data){
-					if(($data->approver->approvaltype->id==29) || ($data->approver->employee_id==$Itsharef->depthead)){
+				foreach ($Advanceapproval as $data){
+					if(($data->approver->approvaltype->id==35) || ($data->approver->employee_id==$Advance->depthead)){
 						$deptheadname = $data->approver->employee->fullname;
-						$deptheaddate = date("d/m/Y",strtotime($data->approvaldate));
-
-						array_push($arrappr['role'],'Department head');
-						array_push($arrappr['name'],$deptheadname);
-						array_push($arrappr['date'],$deptheaddate);
-
+						$deptheaddate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
 					}
 				
-					if($data->approver->approvaltype->id==31) {
-						$buheadname = $data->approver->employee->fullname;
-						$buheaddate = date("d/m/Y",strtotime($data->approvaldate));
-
-						array_push($arrappr['role'],'BU head');
-						array_push($arrappr['name'],$buheadname);
-						array_push($arrappr['date'],$buheaddate);
-
+					if($data->approver->approvaltype->id==36) {
+						$hrdheadname = $data->approver->employee->fullname;
+						$hrdheaddate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
 					}
 					
-					if($data->approver->approvaltype->id==34) {
-						$itsitename = $data->approver->employee->fullname;
-						$itsitedate = date("d/m/Y",strtotime($data->approvaldate));
-
-						array_push($arrappr['role'],'IT Site');
-						array_push($arrappr['name'],$itsitename);
-						array_push($arrappr['date'],$itsitedate);
-
+					if($data->approver->approvaltype->id==37) {
+						$bufcname = $data->approver->employee->fullname;
+						$bufcdate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
 					}
 
-					if($data->approver->approvaltype->id==32) {
-						$itheadname = $data->approver->employee->fullname;
-						$itheaddate = date("d/m/Y",strtotime($data->approvaldate));
+					if($data->approver->approvaltype->id==38) {
+						$buheadname = $data->approver->employee->fullname;
+						$buheaddate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
+					}
 
-						array_push($arrappr['role'],'IT Lead');
-						array_push($arrappr['name'],$itheadname);
-						array_push($arrappr['date'],$itheaddate);
+					if($data->approver->approvaltype->id==39) {
+						$depmdname = $data->approver->employee->fullname;
+						$depmddate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
+					}
 
+					if($data->approver->approvaltype->id==40) {
+						$mdname = $data->approver->employee->fullname;
+						$mddate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
+					}
+
+					if($data->approver->approvaltype->id==41) {
+						$financename = $data->approver->employee->fullname;
+						$financedate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
+					}
+				}
+				$picpath= SITE_PATH."/images/approved.png";
+				
+				$Worksheet->Range("A32")->Value = $fullname;
+				$Worksheet->Range("A33")->Value = 'Date : '.date("d/m/Y",strtotime($Advance->createddate));
+
+				$pic=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+				$pic->Height  = 20;
+				$pic->Top = $excel->Cells(29, 1)->Top ;
+				$pic->Left = $excel->Cells(29, 1)->Left ;
+
+				if($advance->advanceform == 1) {
+					if(!empty($deptheadname)) {
+						$Worksheet->Range("F32")->Value = $deptheadname;
+						$Worksheet->Range("F33")->Value = $deptheaddate;
+						$pic1=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic1->Height  = 20;
+						$pic1->Top = $excel->Cells(29, 6)->Top ;
+						$pic1->Left = $excel->Cells(29, 6)->Left ;
+					}
+	
+					if(!empty($hrdheadname)) {
+						$Worksheet->Range("I32")->Value = $hrdheadname;
+						$Worksheet->Range("I33")->Value = $hrdheaddate;
+						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic2->Height  = 20;
+						$pic2->Top = $excel->Cells(29, 9)->Top ;
+						$pic2->Left = $excel->Cells(29, 9)->Left ;
+					}
+	
+					if(!empty($bufcname)) {
+						$Worksheet->Range("L32")->Value = $bufcname;
+						$Worksheet->Range("L33")->Value = $bufcdate;
+						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic2->Height  = 20;
+						$pic2->Top = $excel->Cells(29, 12)->Top ;
+						$pic2->Left = $excel->Cells(29, 12)->Left ;
+					}
+	
+					if(!empty($buheadname)) {
+						$Worksheet->Range("A45")->Value = $buheadname;
+						$Worksheet->Range("A46")->Value = $buheaddate;
+						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic2->Height  = 20;
+						$pic2->Top = $excel->Cells(42, 1)->Top ;
+						$pic2->Left = $excel->Cells(42, 1)->Left ;
+					}
+	
+					if(!empty($financename)) {
+						$Worksheet->Range("F45")->Value = $financename;
+						$Worksheet->Range("F46")->Value = $financedate;
+						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic2->Height  = 20;
+						$pic2->Top = $excel->Cells(42, 6)->Top ;
+						$pic2->Left = $excel->Cells(42, 6)->Left ;
+					}
+	
+					if(!empty($depmdname)) {
+						$Worksheet->Range("I45")->Value = $depmdname;
+						$Worksheet->Range("I46")->Value = $depmddate;
+						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic2->Height  = 20;
+						$pic2->Top = $excel->Cells(42, 9)->Top ;
+						$pic2->Left = $excel->Cells(42, 9)->Left ;
+					}
+	
+					if(!empty($mdname)) {
+						$Worksheet->Range("L45")->Value = $mdname;
+						$Worksheet->Range("L46")->Value = $mddate;
+						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic2->Height  = 20;
+						$pic2->Top = $excel->Cells(42, 12)->Top ;
+						$pic2->Left = $excel->Cells(42, 12)->Left ;
+					}
+				} else {
+					if(!empty($deptheadname)) {
+						$Worksheet->Range("F32")->Value = $deptheadname;
+						$Worksheet->Range("F33")->Value = $deptheaddate;
+						$pic1=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic1->Height  = 20;
+						$pic1->Top = $excel->Cells(29, 6)->Top ;
+						$pic1->Left = $excel->Cells(29, 6)->Left ;
+					}
+	
+					if(!empty($hrdheadname)) {
+						$Worksheet->Range("I32")->Value = $hrdheadname;
+						$Worksheet->Range("I33")->Value = $hrdheaddate;
+						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic2->Height  = 20;
+						$pic2->Top = $excel->Cells(29, 9)->Top ;
+						$pic2->Left = $excel->Cells(29, 9)->Left ;
+					}
+	
+					if(!empty($bufcname)) {
+						$Worksheet->Range("L32")->Value = $bufcname;
+						$Worksheet->Range("L33")->Value = $bufcdate;
+						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic2->Height  = 20;
+						$pic2->Top = $excel->Cells(29, 12)->Top ;
+						$pic2->Left = $excel->Cells(29, 12)->Left ;
+					}
+	
+					if(!empty($buheadname)) {
+						$Worksheet->Range("A45")->Value = $buheadname;
+						$Worksheet->Range("A46")->Value = $buheaddate;
+						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic2->Height  = 20;
+						$pic2->Top = $excel->Cells(42, 1)->Top ;
+						$pic2->Left = $excel->Cells(42, 1)->Left ;
+					}
+	
+					if(!empty($financename)) {
+						$Worksheet->Range("F45")->Value = $financename;
+						$Worksheet->Range("F46")->Value = $financedate;
+						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic2->Height  = 20;
+						$pic2->Top = $excel->Cells(42, 6)->Top ;
+						$pic2->Left = $excel->Cells(42, 6)->Left ;
+					}
+	
+					if(!empty($depmdname)) {
+						$Worksheet->Range("I45")->Value = $depmdname;
+						$Worksheet->Range("I46")->Value = $depmddate;
+						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic2->Height  = 20;
+						$pic2->Top = $excel->Cells(42, 9)->Top ;
+						$pic2->Left = $excel->Cells(42, 9)->Left ;
+					}
+	
+					if(!empty($mdname)) {
+						$Worksheet->Range("L45")->Value = $mdname;
+						$Worksheet->Range("L46")->Value = $mddate;
+						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic2->Height  = 20;
+						$pic2->Top = $excel->Cells(42, 12)->Top ;
+						$pic2->Left = $excel->Cells(42, 12)->Left ;
 					}
 				}
 
-					echo json_encode($arrappr);
+				
 
-				$picpath= SITE_PATH."/images/approved.png";
+				foreach ($Advancedetail as $data){
+					$val_tamount += $data->amount;
+				}
+
+				$Worksheet->Range("L18")->Value = $val_tamount;
+
 	
 				$xlShiftDown=-4121;
 
-				for ($b=49;$b<49+count($arrappr['name']);$b++) {
-					// print_r($arrdephead[$b-49]);
-					$Worksheet->Rows($b+1)->Copy();
-					$Worksheet->Rows($b+1)->Insert($xlShiftDown);
-					$Worksheet->Range("A".$b)->Value = $arrappr['role'][$b-49];
-					$Worksheet->Range("I".$b)->Value = $arrappr['name'][$b-49];
-					$Worksheet->Range("Q".$b)->Value = $arrappr['date'][$b-49];
-
-					$pic=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-					$pic->Height  = 20;
-					$pic->Top = $excel->Cells($b, 23)->Top ;
-					$pic->Left = $excel->Cells($b, 23)->Left ;
-				}
-
-
-				for ($a=29;$a<29+count($Itsharefdetail);$a++){
+				for ($a=16;$a<16+count($Advancedetail);$a++){
 					$Worksheet->Rows($a+1)->Copy();
 					$Worksheet->Rows($a+1)->Insert($xlShiftDown);
-					$Worksheet->Range("A".$a)->Value = $Itsharefdetail[$a-29]->foldername;
-					$Worksheet->Range("J".$a)->Value = $Itsharefdetail[$a-29]->grantaccessto;
-					$Worksheet->Range("Q".$a)->Value = ($Itsharefdetail[$a-29]->change == 0)?'x':'';
-					$Worksheet->Range("R".$a)->Value = 'Read Only';
-					$Worksheet->Range("U".$a)->Value = ($Itsharefdetail[$a-29]->change == 1)?'x':'';
-					$Worksheet->Range("V".$a)->Value = 'Change';
-					$Worksheet->Range("X".$a)->Value = $Itsharefdetail[$a-29]->requesttype;
-					$Worksheet->Range("Y".$a)->Value = 'Type';
-
-
-					// if($Itsharefdetail[$a-29]->requesttype == 1) {
-					// 	$Worksheet->Range("X".$a)->Value = 'Create Share Folder';
-					// }else if($Itsharefdetail[$a-29]->requesttype == 2){
-					// 	$Worksheet->Range("X".$a)->Value = 'Create Share Folder';
-
-					// }else if($Itsharefdetail[$a-29]->requesttype == 3){
-					// 	$Worksheet->Range("X".$a)->Value = 'Create Share Folder';
-
-					// }else if($Itsharefdetail[$a-29]->requesttype == 4){
-					// 	$Worksheet->Range("X".$a)->Value = 'Create Share Folder';
-
-					// }else if($Itsharefdetail[$a-29]->requesttype == 5){
-					// 	$Worksheet->Range("X".$a)->Value = 'Create Share Folder';
-
-					// }
+					$Worksheet->Range("B".$a)->Value = $Advancedetail[$a-16]->description;
+					$Worksheet->Range("J".$a)->Value = $Advancedetail[$a-16]->accountcode;
+					$Worksheet->Range("L".$a)->Value = $Advancedetail[$a-16]->amount;
 				}
 		
 
@@ -1321,15 +1433,15 @@ Class Advancemodule extends Application{
 
 			$xlTypePDF = 0;
 			$xlQualityStandard = 0;
-			$fileName ='doc'.DS.'it'.DS.'pdf'.DS.$title.'_'.$Itsharef->employee->fullname.'_'.$Itsharef->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$fileName ='doc'.DS.'hr'.DS.'pdf'.DS.$title.'_'.$Advance->employee->fullname.'_'.$Advance->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$fileName = str_replace("/","",$fileName);
-			$path= SITE_PATH.'/doc'.DS.'it'.DS.'pdf'.DS.$title.'_'.$Itsharef->employee->fullname.'_'.$Itsharef->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$path= SITE_PATH.'/doc'.DS.'hr'.DS.'pdf'.DS.$title.'_'.$Advance->employee->fullname.'_'.$Advance->employee->sapid.'_'.date("YmdHis").'.pdf';
 			if (file_exists($path)) {
 			unlink($path);
 			}
 			$Worksheet->ExportAsFixedFormat($xlTypePDF, $path, $xlQualityStandard);
-			$Itsharef->approveddoc=str_replace("\\","/",$fileName);
-			$Itsharef->save();
+			$Advance->approveddoc=str_replace("\\","/",$fileName);
+			$Advance->save();
 
 			// $excel->Application->CutCopyMode(false);
 			$excel->CutCopyMode = false;
@@ -1344,7 +1456,7 @@ Class Advancemodule extends Application{
 
 		} catch(com_exception $e) {  
 			$err = new Errorlog();
-			$err->errortype = "ITSHAREFPDFGenerator";
+			$err->errortype = "AdvanceFPDFGenerator";
 			$err->errordate = date("Y-m-d h:i:s");
 			$err->errormessage = $e->getMessage();
 			$err->user = $this->currentUser->username;
@@ -1357,6 +1469,114 @@ Class Advancemodule extends Application{
 		}
 		
 		
+	}
+
+	function advanceAttachment(){
+		if (count($this->post)==0){
+			http_response_code(405);
+    		echo json_encode(array("message" => "Method not Allowed"));
+		}else{
+			$auth = $this->jwt->checkAuth();
+			if($auth){
+				switch ($this->post['criteria']){
+					case 'byid':
+						$id = $this->post['id'];
+						if ($id!=""){
+							$Advanceattachment = Advanceattachment::find('all', array('conditions' => array("advance_id=?",$id)));
+							foreach ($Advanceattachment as &$result) {
+								$result		= $result->to_array();
+							}
+							echo json_encode($Advanceattachment, JSON_NUMERIC_CHECK);
+						}else{
+							$Advanceattachment = new Advanceattachment();
+							echo json_encode($Advanceattachment);
+						}
+						break;
+					case 'find':
+						$query=$this->post['query'];
+						if(isset($query['status'])){
+							$Advanceattachment = Advanceattachment::find('all', array('conditions' => array("advance_id=?",$query['advance_id'])));
+							$data=array("jml"=>count($Advanceattachment));
+						}else{
+							$data=array();
+						}
+						echo json_encode($data, JSON_NUMERIC_CHECK);
+						break;
+					case 'create':			
+						$data = $this->post['data'];
+						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+						$data['employee_id']=$Employee->id;
+						unset($data['__KEY__']);
+						
+						$Advanceattachment = Advanceattachment::create($data);
+						$logger = new Datalogger("Advanceattachment","create",null,json_encode($data));
+						$logger->SaveData();
+						break;
+					case 'delete':				
+						$id = $this->post['id'];
+						$Advanceattachment = Advanceattachment::find($id);
+						$data=$Advanceattachment->to_array();
+						$Advanceattachment->delete();
+						$logger = new Datalogger("Advanceattachment","delete",json_encode($data),null);
+						$logger->SaveData();
+						echo json_encode($Advanceattachment);
+						break;
+					case 'update':				
+						$id = $this->post['id'];
+						$data = $this->post['data'];
+						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+						$data['employee_id']=$Employee->id;
+						$Advanceattachment = Advanceattachment::find($id);
+						$olddata = $Advanceattachment->to_array();
+						foreach($data as $key=>$val){					
+							$val=($val=='No')?false:(($val=='Yes')?true:$val);
+							$Advanceattachment->$key=$val;
+						}
+						$Advanceattachment->save();
+						$logger = new Datalogger("Advanceattachment","update",json_encode($olddata),json_encode($data));
+						$logger->SaveData();
+						echo json_encode($Advanceattachment);
+						
+						break;
+					default:
+						$Advanceattachment = Advanceattachment::all();
+						foreach ($Advanceattachment as &$result) {
+							$result = $result->to_array();
+						}
+						echo json_encode($Advanceattachment, JSON_NUMERIC_CHECK);
+						break;
+				}
+			}
+		}
+	}
+	public function uploadAdvanceFile(){
+		$id= $this->get['id'];
+		if(!isset($_FILES['myFile'])) {
+			http_response_code(400);
+			echo "There is no file to upload";
+			exit;
+		}
+		$max_image_size = 5242880;
+		if(!is_uploaded_file($_FILES['myFile']['tmp_name'])) {
+			http_response_code(400);
+			echo "Unable to upload File";
+			exit;
+		}
+		if($_FILES['myFile']['size'] > $max_image_size) {
+			http_response_code(413);
+			echo "File Size too Large, Maximum 5MB";
+			exit;
+		}
+		if((strpos($_FILES['myFile']['type'], "image") === false) && (strpos($_FILES['myFile']['type'], "pdf") === false) && (strpos($_FILES['myFile']['type'], "officedocument") === false)  && (strpos($_FILES['myFile']['type'], "msword") === false) && (strpos($_FILES['myFile']['type'], "excel") === false)){
+			http_response_code(415);
+			echo "Only Accept Image File, pdf or Office Document (Excel & Word) ";
+			exit;
+		}
+		$path_to_file = "upload/advance/".$id."_".time()."_".$_FILES['myFile']['name'];
+		$path_to_file = str_replace("%","_",$path_to_file);
+		$path_to_file = str_replace(" ","_",$path_to_file);
+		echo $path_to_file;
+        move_uploaded_file($_FILES['myFile']['tmp_name'], $path_to_file);
 	}
 
 }
