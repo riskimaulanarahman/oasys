@@ -429,7 +429,7 @@ app.register.controller('detailspkltmsCtrl', ['$rootScope','$scope', '$http', '$
 			{dataField:'actualnormalhours',validationRules: [{ type: "required" }],caption: "Act Normal Hrs",dataType: "string",width:60,editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
 			{dataField:'actualovertimehours',validationRules: [{ type: "required" }],caption: "Act Overtime Hrs",dataType: "string",width:60,editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
 			{dataField:'target',caption: "Target Work",validationRules: [{ type: "required" }],encodeHtml: false,width:150,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
-			{dataField:'descriptionofwork',validationRules: [{ type: "required" }],caption: "Achievement",width:250,encodeHtml: false,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			{dataField:'descriptionofwork',validationRules: [{ type: "required" }],caption: "Achievement",width:250,encodeHtml: false,dataType: "string",editorOptions: {disabled:(($scope.mode=='view')||($scope.mode=='report'))?true:false}},
 			],editing: {
             useIcons:true,
             mode: "cell",
