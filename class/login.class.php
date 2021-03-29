@@ -176,10 +176,12 @@ Class Login extends Application{
 		}
 	}
 	public function logout(){
-		$user = Userlog::find('first', array('conditions' => array("user_id=? and LoginIP=? and isActive='1'",$this->currentUser->id,$this->ip )));
-		$user->isactive = false;
-		$user->lastaccess =date("Y-m-d H:i:s");
-		$user->save();
+		$users = Userlog::find('all', array('conditions' => array("user_id=? and LoginIP=? and isActive='1'",$this->currentUser->id,$this->ip )));
+		foreach ($users as $user) {
+			$user->isactive = false;
+			$user->lastaccess =date("Y-m-d H:i:s");
+			$user->save();
+		}
 		echo json_encode(array("message"=>"You have been logged out"));
 	}
 }
