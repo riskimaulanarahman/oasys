@@ -80,6 +80,7 @@ app.register.controller('spklapprovalCtrl', ['$rootScope','$scope', '$http', '$i
 					}
                 },
 				{dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200},
+				{dataField:'fullname',caption: "Request by",width: 150},
 				{dataField:'datework',caption:"Date Work",dataType:"date", format:"dd/MM/yyyy",width: 200},
 				{dataField:'requeststatus',encodeHtml: false ,width: 300,
 					customizeText: function (e) {
