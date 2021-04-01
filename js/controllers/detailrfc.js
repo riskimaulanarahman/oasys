@@ -634,7 +634,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 			values.rfc_id=$scope.Requestid;
             CrudService.Create('rfcdetail',values).then(function (response) {
 				if(response.status=="error"){
-					 DevExpress.ui.notify(response.message,"error");
+					DevExpress.ui.dialog.alert(response.message,"Error");
 				}
 				$scope.grid1Component.refresh();
 			});
@@ -642,7 +642,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 		update: function(key, values) {
             CrudService.Update('rfcdetail',key.id,values).then(function (response) {
 				if(response.status=="error"){
-					 DevExpress.ui.notify(response.message,"error");
+					DevExpress.ui.dialog.alert(response.message,"Error");
 				}
 				$scope.grid1Component.refresh();
 			});
@@ -673,7 +673,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 			values.rfc_id=$scope.Requestid;
             CrudService.Create('rfcterm',values).then(function (response) {
 				if(response.status=="error"){
-					 DevExpress.ui.notify(response.message,"error");
+					DevExpress.ui.dialog.alert(response.message,"Error");
 				}
 				$scope.grid5Component.refresh();
 			});
@@ -681,7 +681,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 		update: function(key, values) {
             CrudService.Update('rfcterm',key.id,values).then(function (response) {
 				if(response.status=="error"){
-					 DevExpress.ui.notify(response.message,"error");
+					DevExpress.ui.dialog.alert(response.message,"Error");
 				}
 				$scope.grid5Component.refresh();
 			});
@@ -689,7 +689,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 		remove: function(key) {
 			CrudService.Delete('rfcterm',key.id).then(function (response) {
 				if(response.status=="error"){
-					 DevExpress.ui.notify(response.message,"error");
+					DevExpress.ui.dialog.alert(response.message,"Error");
 				}
 				$scope.grid5Component.refresh();
 			});
@@ -715,7 +715,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 			values.file_loc =$scope.path;
             CrudService.Create('rfcfile',values).then(function (response) {
 				if(response.status=="error"){
-					 DevExpress.ui.notify(response.message,"error");
+					DevExpress.ui.dialog.alert(response.message,"Error");
 				}
 				$scope.grid2Component.refresh();
 			});
@@ -727,7 +727,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 			}
             CrudService.Update('rfcfile',key.id,values).then(function (response) {
 				if(response.status=="error"){
-					 DevExpress.ui.notify(response.message,"error");
+					DevExpress.ui.dialog.alert(response.message,"Error");
 				}
 				$scope.grid2Component.refresh();
 			});
@@ -735,7 +735,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 		remove: function(key) {
 			CrudService.Delete('rfcfile',key.id).then(function (response) {
 				if(response.status=="error"){
-					 DevExpress.ui.notify(response.message,"error");
+					DevExpress.ui.dialog.alert(response.message,"Error");
 				}
 				$scope.grid2Component.refresh();
 			});
@@ -759,7 +759,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 			values.rfc_id=$scope.Requestid;
             CrudService.Create('rfcapp',values).then(function (response) {
 				if(response.status=="error"){
-					 DevExpress.ui.notify(response.message,"error");
+					DevExpress.ui.dialog.alert(response.message,"Error");
 				}
 				$scope.grid3Component.refresh();
 			});
@@ -768,7 +768,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 			values.approvaldate = $filter("date")(values.approvaldate, "yyyy-MM-dd HH:mm")
             CrudService.Update('rfcapp',key.id,values).then(function (response) {
 				if(response.status=="error"){
-					 DevExpress.ui.notify(response.message,"error");
+					DevExpress.ui.dialog.alert(response.message,"Error");
 				}
 				$scope.grid3Component.refresh();
 			});
@@ -776,7 +776,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 		remove: function(key) {
 			CrudService.Delete('rfcapp',key.id).then(function (response) {
 				if(response.status=="error"){
-					 DevExpress.ui.notify(response.message,"error");
+					DevExpress.ui.dialog.alert(response.message,"Error");
 				}
 				$scope.grid3Component.refresh();
 			});
@@ -974,11 +974,11 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 						options: {
 							onClick: function(e) {	
 								if($scope.path==""){
-									DevExpress.ui.notify("Please select file attachment and process your upload before saving the data","error");
+									DevExpress.ui.dialog.alert("Please select file attachment and process your upload before saving the data","Error");
 									e.cancel = true;
 								}else{
 									if($scope.adaFile){
-										DevExpress.ui.notify("Please finish your upload before saving the data","error");
+										DevExpress.ui.dialog.alert("Please finish your upload before saving the data","Error");
 										e.cancel = true;
 									} else{
 										$scope.grid2Component.saveEditData();
@@ -1179,18 +1179,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 	$scope.updateRFC = function(e){
 		//console.log($scope.formInstance.option("formData").approvalstatus);
 		if($scope.formInstance.option("formData").approvalstatus==""){
-			DevExpress.ui.notify({
-				message: "Please select approval action",
-				type: "warning",
-				displayTime: 5000,
-				height: 80,
-				position: {
-				   my: 'top center', 
-				   at: 'center center', 
-				   of: window, 
-				   offset: '0 0' 
-			   }
-			});
+			DevExpress.ui.dialog.alert("Please select approval action","Error");
 		}else if($scope.formInstance.option("formData").approvalstatus==3){
 			var data = $scope.formInstance.option("formData");
 			var date = new Date();
@@ -1204,7 +1193,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 			delete data.depthead;
 			CrudService.Update('rfcapp',data.id,data).then(function (response) {
 				if(response.status=="error"){
-					DevExpress.ui.notify(response.message,"error");
+					DevExpress.ui.dialog.alert(response.message,"Error");
 				}else{
 					DevExpress.ui.notify({
 						message: "Data has been Updated",
@@ -1238,7 +1227,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 					delete data.depthead;
 					CrudService.Update('rfcapp',data.id,data).then(function (response) {
 						if(response.status=="error"){
-							DevExpress.ui.notify(response.message,"error");
+							DevExpress.ui.dialog.alert(response.message,"Error");
 						}else{
 							DevExpress.ui.notify({
 								message: "Data has been Updated",
@@ -1257,18 +1246,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 						
 					});
 				}else{
-					DevExpress.ui.notify({
-						message: "Please add person to do next approval/verification in Approver List tab",
-						type: "warning",
-						displayTime: 5000,
-						height: 80,
-						position: {
-						   my: 'top center', 
-						   at: 'center center', 
-						   of: window, 
-						   offset: '0 0' 
-					   }
-					});
+					DevExpress.ui.dialog.alert("Please add person to do next approval/verification in Approver List tab","Error");
 				}
 			});
 		}
@@ -1280,7 +1258,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 		data.periodend = $filter("date")(data.periodend, "yyyy-MM-dd HH:mm");
 		CrudService.Update('rfc',data.id,data).then(function (response) {
 			if(response.status=="error"){
-				 DevExpress.ui.notify(response.message,"error");
+				DevExpress.ui.dialog.alert(response.message,"Error");
 			}else{
 				DevExpress.ui.notify({
 					message: "Data has been Updated",
@@ -1314,7 +1292,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 						delete data.approvalstatus;
 						CrudService.Update('rfc',data.id,data).then(function (response) {
 							if(response.status=="error"){
-								 DevExpress.ui.notify(response.message,"error");
+								DevExpress.ui.dialog.alert(response.message,"Error");
 							}else{
 								DevExpress.ui.notify({
 									message: "Data has been Updated",
@@ -1333,33 +1311,11 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 							
 						});
 					}else{
-						DevExpress.ui.notify({
-							message: "Please add description / scope of work",
-							type: "warning",
-							displayTime: 5000,
-							height: 80,
-							position: {
-							   my: 'top center', 
-							   at: 'center center', 
-							   of: window, 
-							   offset: '0 0' 
-						   }
-						});
+						DevExpress.ui.dialog.alert("Please add description / scope of work","Error");
 					}
 				})
 			}else{
-				DevExpress.ui.notify({
-					message: "Please add person to do approval/verification in Approver List tab",
-					type: "warning",
-					displayTime: 5000,
-					height: 80,
-					position: {
-					   my: 'top center', 
-					   at: 'center center', 
-					   of: window, 
-					   offset: '0 0' 
-				   }
-				});
+				DevExpress.ui.dialog.alert("Please add person to do approval/verification in Approver List tab","Error");
 			}			
 		})	 	   
     };

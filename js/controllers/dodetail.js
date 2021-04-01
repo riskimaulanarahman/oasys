@@ -171,18 +171,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 												criteria = {status:'pending',username:keys[0],id:$scope.Requestid};
 												CrudService.FindData('dayoffbyemp',criteria).then(function (response){
 													if(response.jml>0){
-														DevExpress.ui.notify({
-															message: "Cannot add more request, Selected employee still have unsubmitted draft or pending request",
-															type: "warning",
-															displayTime: 5000,
-															height: 80,
-															position: {
-															   my: 'top center', 
-															   at: 'center center', 
-															   of: window, 
-															   offset: '0 0' 
-														   }
-														});
+														DevExpress.ui.dialog.alert("Cannot add more request, Selected employee still have unsubmitted draft or pending request","Error");
 													}else{
 														
 														e.component.option("value", keys[0]); 
@@ -428,18 +417,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 										   }
 										});
 									} else {
-										DevExpress.ui.notify({
-											message: "Your form is not complete or has invalid value, please recheck before submit",
-											type: "warning",
-											displayTime: 3000,
-											height: 80,
-											position: {
-											   my: 'top center', 
-											   at: 'center center', 
-											   of: window, 
-											   offset: '0 0' 
-										   }
-										});
+										DevExpress.ui.dialog.alert("Your form is not complete or has invalid value, please recheck before submit","Error");
 									}
 									$scope.data = $scope.formInstance.option("formData");	
 								},
@@ -467,7 +445,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 			values.dayoff_id=$scope.Requestid;
             CrudService.Create('dodetail',values).then(function (response) {
 				if(response.status=="error"){
-					 DevExpress.ui.notify(response.message,"error");
+					DevExpress.ui.dialog.alert(response.message,"Error");
 				}
 				$scope.grid1Component.refresh();
 			});
@@ -476,7 +454,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 			values.dateworked = $filter("date")(values.dateworked, "yyyy-MM-dd HH:mm")
             CrudService.Update('dodetail',key.id,values).then(function (response) {
 				if(response.status=="error"){
-					 DevExpress.ui.notify(response.message,"error");
+					DevExpress.ui.dialog.alert(response.message,"Error");
 				}
 				$scope.grid1Component.refresh();
 			});
@@ -484,7 +462,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 		remove: function(key) {
 			CrudService.Delete('dodetail',key.id).then(function (response) {
 				if(response.status=="error"){
-					 DevExpress.ui.notify(response.message,"error");
+					DevExpress.ui.dialog.alert(response.message,"Error");
 				}
 				$scope.grid1Component.refresh();
 			});
@@ -508,7 +486,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 			values.dayoff_id=$scope.Requestid;
             CrudService.Create('doapp',values).then(function (response) {
 				if(response.status=="error"){
-					 DevExpress.ui.notify(response.message,"error");
+					DevExpress.ui.dialog.alert(response.message,"Error");
 				}
 				$scope.grid2Component.refresh();
 			});
@@ -517,7 +495,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 			values.approvaldate = $filter("date")(values.approvaldate, "yyyy-MM-dd HH:mm")
             CrudService.Update('doapp',key.id,values).then(function (response) {
 				if(response.status=="error"){
-					 DevExpress.ui.notify(response.message,"error");
+					DevExpress.ui.dialog.alert(response.message,"Error");
 				}
 				$scope.grid2Component.refresh();
 			});
@@ -525,7 +503,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 		remove: function(key) {
 			CrudService.Delete('doapp',key.id).then(function (response) {
 				if(response.status=="error"){
-					 DevExpress.ui.notify(response.message,"error");
+					DevExpress.ui.dialog.alert(response.message,"Error");
 				}
 				$scope.grid2Component.refresh();
 			});
@@ -759,18 +737,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 	$scope.updateDayoff = function(e){
 		//console.log($scope.formInstance.option("formData").approvalstatus);
 		if($scope.formInstance.option("formData").approvalstatus==""){
-			DevExpress.ui.notify({
-				message: "Please select approval action",
-				type: "warning",
-				displayTime: 5000,
-				height: 80,
-				position: {
-				   my: 'top center', 
-				   at: 'center center', 
-				   of: window, 
-				   offset: '0 0' 
-			   }
-			});
+			DevExpress.ui.dialog.alert("Please select approval action","Error");
 		}else if($scope.formInstance.option("formData").approvalstatus==3){
 			var data = $scope.formInstance.option("formData");
 			var date = new Date();
@@ -786,7 +753,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 			delete data.department;
 			CrudService.Update('doapp',data.id,data).then(function (response) {
 				if(response.status=="error"){
-					DevExpress.ui.notify(response.message,"error");
+					DevExpress.ui.dialog.alert(response.message,"Error");
 				}else{
 					DevExpress.ui.notify({
 						message: "Data has been Updated",
@@ -822,7 +789,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 					delete data.department;
 					CrudService.Update('doapp',data.id,data).then(function (response) {
 						if(response.status=="error"){
-							DevExpress.ui.notify(response.message,"error");
+							DevExpress.ui.dialog.alert(response.message,"Error");
 						}else{
 							DevExpress.ui.notify({
 								message: "Data has been Updated",
@@ -841,18 +808,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 						
 					});
 				}else{
-					DevExpress.ui.notify({
-						message: "Please add person to do next approval/verification in Approver List tab",
-						type: "warning",
-						displayTime: 5000,
-						height: 80,
-						position: {
-						   my: 'top center', 
-						   at: 'center center', 
-						   of: window, 
-						   offset: '0 0' 
-					   }
-					});
+					DevExpress.ui.dialog.alert("Please add person to do next approval/verification in Approver List tab","Error");
 				}
 			});
 		}
@@ -865,7 +821,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 		delete data.department;
 		CrudService.Update('dayoff',data.id,data).then(function (response) {
 			if(response.status=="error"){
-				 DevExpress.ui.notify(response.message,"error");
+				 DevExpress.ui.dialog.alert(response.message,"error");
 			}else{
 				DevExpress.ui.notify({
 					message: "Data has been Updated",
@@ -889,18 +845,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 		criteria = {status:'waiting',username:$scope.formInstance.option("formData").employee_id,id:$scope.Requestid};
 		CrudService.FindData('dayoffbyemp',criteria).then(function (response){
 			if(response.jml>0){
-				DevExpress.ui.notify({
-					message: "Cannot add more request, Selected employee still have waiting approval request",
-					type: "warning",
-					displayTime: 5000,
-					height: 80,
-					position: {
-					   my: 'top center', 
-					   at: 'center center', 
-					   of: window, 
-					   offset: '0 0' 
-				   }
-				});
+				DevExpress.ui.dialog.alert("Cannot add more request, Selected employee still have waiting approval request","Error");
 			}else{
 				criteria = {status:'approver',dayoff_id:$scope.Requestid};
 				CrudService.FindData('doapp',criteria).then(function (response){
@@ -915,7 +860,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 								delete data.ytd;
 								CrudService.Update('dayoff',data.id,data).then(function (response) {
 									if(response.status=="error"){
-										 DevExpress.ui.notify(response.message,"error");
+										 DevExpress.ui.dialog.alert(response.message,"Error");
 									}else{
 										DevExpress.ui.notify({
 											message: "Data has been Updated",
@@ -934,33 +879,11 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 									
 								});
 							}else{
-								DevExpress.ui.notify({
-									message: "Please add detail of the request",
-									type: "warning",
-									displayTime: 5000,
-									height: 80,
-									position: {
-									   my: 'top center', 
-									   at: 'center center', 
-									   of: window, 
-									   offset: '0 0' 
-								   }
-								});
+								DevExpress.ui.dialog.alert("Please add detail of the request","Error");
 							}
 						})
 					}else{
-						DevExpress.ui.notify({
-							message: "Please add person to do approval/verification in Approver List tab",
-							type: "warning",
-							displayTime: 5000,
-							height: 80,
-							position: {
-							   my: 'top center', 
-							   at: 'center center', 
-							   of: window, 
-							   offset: '0 0' 
-						   }
-						});
+						DevExpress.ui.dialog.alert("Please add person to do approval/verification in Approver List tab","Error");
 					}			
 				})
 			}
