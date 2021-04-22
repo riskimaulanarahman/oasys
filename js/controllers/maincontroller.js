@@ -70,6 +70,9 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 				CrudService.checkAccess('Advance',$rootScope.curUser.username).then(function (access) {
 					$rootScope.viewAdvance = access.allowview;
 				});
+				CrudService.checkAccess('AdvPayment',$rootScope.curUser.username).then(function (access) {
+					$rootScope.viewAdvPayment = access.allowview;
+				});
 				if(!$rootScope.startRefresh) {
 					$rootScope.startRefresh = setInterval($scope.refreshUsers, 1000);
 				}
@@ -127,6 +130,11 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 		loadModule($rootScope.viewAdvance,"advancereport",false);
 		$rootScope.$broadcast("initAdvance", "");
 	}
+	$scope.dataAdvPayment= function(){	
+		loadModule($rootScope.viewAdvPayment,"advpaymentreport",false);
+		$rootScope.$broadcast("initAdvPayment", "");
+	}
+
 
 	$scope.myDayoff= function(){
 		$location.path( "/dayoff" );
@@ -154,6 +162,9 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	}
 	$scope.myAdvance= function(){
 		$location.path( "/advance" );
+	}
+	$scope.myAdvpayment= function(){
+		$location.path( "/advancepayment" );
 	}
 
 	$scope.mySPKL= function(){
@@ -227,6 +238,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.itimailApproval= function(){ loadModule(true,"itimailapproval",true);$rootScope.$broadcast("initITIMAIL", "");} 
 	$scope.itsharefApproval= function(){ loadModule(true,"itsharefolderapproval",true);$rootScope.$broadcast("initITSHAREF", "");} 
 	$scope.advanceApproval= function(){ loadModule(true,"advanceapproval",true);$rootScope.$broadcast("initAdvance", "");} 
+	$scope.advpaymentApproval= function(){ loadModule(true,"advancepaymentapproval",true);$rootScope.$broadcast("initPayment", "");} 
 	$scope.SPKLApproval= function(){ loadModule(true,"spklapproval",true);$rootScope.$broadcast("initSPKL", "");} 
 	$scope.SPKLTMSApproval = function(){ loadModule(true,"spkltmsapproval",true);$rootScope.$broadcast("initSPKLTMS", "");} 
 	function loadModule(access,template,filter){
@@ -479,6 +491,31 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 			$scope.Requestid = data.id;
 			$scope.Employeeid = data.employee_id;
 			$location.path( "/advancedetail" );
+		}
+	}
+	$scope.loadAdvpayment= function(data,mode,filter){
+		$scope.Filter=filter;
+		console.log(data);
+		if (mode=='add'){
+			CrudService.Create('advpayment',data).then(function (response) {
+				console.log(response);
+				if(response.status=="error"){
+					DevExpress.ui.dialog.alert(response.message,"Error");
+				}else if(response.status=="autherror"){
+					DevExpress.ui.notify(response.message,"error");
+					$scope.logout();
+				}else{
+					$scope.mode = mode;
+					$scope.Requestid = response.id;
+					$scope.Employeeid = response.employee_id;
+					$location.path( "/advancepaymentdetail" );
+				}
+			});
+		}else{
+			$scope.mode = mode;
+			$scope.Requestid = data.id;
+			$scope.Employeeid = data.employee_id;
+			$location.path( "/advancepaymentdetail" );
 		}
 	}
 	$scope.loadSPKL= function(data,mode,filter){

@@ -203,7 +203,7 @@ Class Itsharefoldermodule extends Application{
 									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 									$this->mail->addAddress($usr->email, $usr->fullname);
 									$this->mail->Subject = "Online Approval System -> Request Form Email Request Reschedule";
-									$fileName = $this->generatePDF($id);
+									$fileName = $this->generatePDFi($id);
 									$filePath = SITE_PATH.DS.$fileName;
 									$this->mail->addAttachment($filePath);
 									$this->mail->msgHTML($this->mailbody);
@@ -258,7 +258,7 @@ Class Itsharefoldermodule extends Application{
 									$Itsharefapproval->save();
 								}
 
-								if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND"))
+								if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND"))
 								{
 									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=34 and tbl_employee.location_id='1'")));
 									if(count($Approver2)>0){
@@ -363,7 +363,7 @@ Class Itsharefoldermodule extends Application{
 							// unset($data['department']);
 							unset($data['approvalstatus']);
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-							if($superior==$Employee->id){
+							if($superior == $Employee->id){
 								$result= array("status"=>"error","message"=>"You cannot select yourself as your Direct superior");
 								echo json_encode($result);
 							}else{
@@ -421,6 +421,7 @@ Class Itsharefoldermodule extends Application{
 									}
 									$joinx   = "LEFT JOIN tbl_approver ON (tbl_itsharefapproval.approver_id = tbl_approver.id) ";					
 									$Itsharefapproval = Itsharefapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and itsharef_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+									print_r($Itsharefapproval);
 									$username = $Itsharefapproval->approver->employee->loginname;
 									$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
 									$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Itsharef->employee->loginname)));
@@ -744,7 +745,7 @@ Class Itsharefoldermodule extends Application{
 						if (isset($mode) && ($mode=='approve')){
 							$Itsharef = Itsharef::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
 							$joinx   = "LEFT JOIN tbl_approver ON (tbl_itsharefapproval.approver_id = tbl_approver.id) ";					
-							$nTrapproval = Itsharefapproval::find('first',array('joins'=>$joinx,'conditions' => array("itsharef_id=? and ApprovalStatus=0 or ApprovalStatus=4",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+							$nTrapproval = Itsharefapproval::find('first',array('joins'=>$joinx,'conditions' => array("itsharef_id=? and (ApprovalStatus=0 or ApprovalStatus=4)",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 							$username = $nTrapproval->approver->employee->loginname;
 							$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
 							// $Itsharefschedule=Trschedule::find('all',array('conditions'=>array("itsharef_id=?",$doid),'include'=>array('itsharef'=>array('employee'=>array('company','department','designation','grade','location')))));

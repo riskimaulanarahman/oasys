@@ -975,7 +975,7 @@ Class Mmfmodule extends Application{
 								echo "Message sent!";
 							}
 						}
-						echo json_encode($Spklapproval);
+						echo json_encode($Trapproval);
 						break;
 					default:
 						$Trapproval = Mmfapproval::all();

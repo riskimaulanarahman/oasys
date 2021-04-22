@@ -918,7 +918,7 @@ Class Mmf30module extends Application{
 							$username = $nMmf30approval->approver->employee->loginname;
 							$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
 							// $Mmf30schedule=Trschedule::find('all',array('conditions'=>array("mmf30_id=?",$doid),'include'=>array('mmf'=>array('employee'=>array('company','department','designation','grade','location')))));
-							$Mmf30detail = Mmf30detail::find('all',array('conditions'=>array("mmf30_id=?",$id),'include'=>array('mmf30'=>array('employee'=>array('company','department','designation','grade')))));
+							$Mmf30detail = Mmf30detail::find('all',array('conditions'=>array("mmf30_id=?",$doid),'include'=>array('mmf30'=>array('employee'=>array('company','department','designation','grade')))));
 							// $Mmf30ticket=Trticket::find('all',array('conditions'=>array("mmf30_id=?",$doid),'include'=>array('mmf'=>array('employee'=>array('company','department','designation','grade','location')))));
 							$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Mmf30->employee->loginname)));
 							$email=$usr->email;
@@ -1113,7 +1113,7 @@ Class Mmf30module extends Application{
 								echo "Message sent!";
 							}
 						}
-						echo json_encode($Spklapproval);
+						echo json_encode($Mmf30approval);
 						break;
 					default:
 						$Mmf30approval = Mmf30approval::all();
