@@ -260,7 +260,7 @@ Class Itimailmodule extends Application{
 												}
 												
 											}
-										} else {
+										} else if(($formtype=='2') || ($formtype=='3') || ($formtype=='5')){
 											if(count($Itimailapproval)>0){
 												$dx = Itimailapproval::find('all',array('joins'=>$joins,'conditions' => array("itimail_id=? and tbl_approver.approvaltype_id=30",$id)));	
 												foreach ($dx as $result) {

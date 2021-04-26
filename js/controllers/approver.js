@@ -210,7 +210,7 @@ app.register.controller('approverCtrl', ['$rootScope','$scope', '$http', '$inter
             mode: "row",
             //allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
             //allowAdding: ($rootScope.isAdmin)?true:false, // Enables insertion
-            form:{colCount: 1,
+            form:{colCount: 2,
             },
             popup: {  
                 title: "Form Data Designation",  
