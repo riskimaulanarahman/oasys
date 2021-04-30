@@ -79,6 +79,12 @@
 							$rootScope.viewITIMAIL = access.allowview;
 							$rootScope.viewITSHAREF = access.allowview;
 						});
+						CrudService.checkAccess('Advance',$rootScope.curUser.username).then(function (access) {
+							$rootScope.viewAdvance = access.allowview;
+						});
+						CrudService.checkAccess('AdvPayment',$rootScope.curUser.username).then(function (access) {
+							$rootScope.viewAdvance = access.allowview;
+						});
 						if(!$rootScope.startRefresh) {
 							$rootScope.startRefresh = setInterval($scope.refreshUsers, 1000);
 						}

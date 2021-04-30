@@ -592,6 +592,15 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 									<li class="nav-item"><a href="" ng-click="TRApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
 								</ul>
 							</li>
+                            
+							<li ng-class="{'mm-active': (isActive('/rfc') || isActive('/rfcapproval'))}" >
+								<a href="#"  ><i class='metismenu-icon fas fa-marker'></i>RFC<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
+								<ul ng-class="{'mm-show': (isActive('/rfc') || isActive('/rfcapproval'))}">
+									<li class="nav-item"><a href="" ng-click="myRFC()" class="nav-link" ><i class='fa fa-calendar-alt'></i> My Request</a></li>
+									<li class="nav-item"><a href="" ng-click="RFCApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
+								</ul>
+							</li>
+
                             <li ng-class="{'mm-active': (isActive('/mmf') || isActive('/mmf30') || isActive('/mmfdetail') || isActive('/mmfapproval') || isActive('/mmf30approval'))}">
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>MMF<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
                                 <ul ng-class="{'mm-show': (isActive('/mmf') || isActive('/mmf30') || isActive('/mmfapproval') || isActive('/mmf30approval'))}">
@@ -694,22 +703,15 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 								</ul>
 							</li>
                             <!-- <li > -->
-                            <!-- <li ng-class="{'mm-active': (isActive('/advance') || isActive('/advanceApproval') )}">
+                            <!-- <li ng-class="{'mm-active': (isActive('/advance') || isActive('/advanceApproval') || isActive('/advancepayment') || isActive('/advancepaymentapproval') )}">
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>Advance<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
-								<ul  ng-class="{'mm-show': (isActive('/advance') || isActive('/advanceApproval') )}">
+								<ul  ng-class="{'mm-show': (isActive('/advance') || isActive('/advanceApproval') || isActive('/advancepayment') ||  isActive('/advancepaymentapproval') )}">
 									<li class="nav-item"><a href="" ng-click="myAdvance()" class="nav-link" ><i class='fa fa-calendar-alt'></i> Adv Related Request</a></li>
 									<li class="nav-item"><a href="" ng-click="advanceApproval()" class="nav-link" ><i class='fas fa-marker'></i> Adv Related Approval</a></li>
-									<li class="nav-item"><a href="" ng-click="" class="nav-link" ><i class='fa fa-calendar-alt'></i> Payment Request</a></li>
-									<li class="nav-item"><a href="" ng-click="" class="nav-link" ><i class='fas fa-marker'></i> Payment Approval</a></li>
+									<li class="nav-item"><a href="" ng-click="myAdvpayment()" class="nav-link" ><i class='fa fa-calendar-alt'></i> Payment Request</a></li>
+									<li class="nav-item"><a href="" ng-click="advpaymentApproval()" class="nav-link" ><i class='fas fa-marker'></i> Payment Approval</a></li>
 								</ul>
 							</li> -->
-							<li ng-class="{'mm-active': (isActive('/rfc') || isActive('/rfcapproval'))}" >
-								<a href="#"  ><i class='metismenu-icon fas fa-marker'></i>RFC<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
-								<ul ng-class="{'mm-show': (isActive('/rfc') || isActive('/rfcapproval'))}">
-									<li class="nav-item"><a href="" ng-click="myRFC()" class="nav-link" ><i class='fa fa-calendar-alt'></i> My Request</a></li>
-									<li class="nav-item"><a href="" ng-click="RFCApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
-								</ul>
-							</li>
                             
 							<li class="app-sidebar__heading">Data Master</li>
 							<li ng-class="{'mm-active': $route.current.activeTab == 'company'}">
@@ -735,6 +737,9 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 									<li class="nav-item"><a href="" ng-click="dataDayoff()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Employee Weekend Cov.</a></li>
 									<li class="nav-item"><a href="" ng-click="detailDayoff()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Detail Approved WPHC</a></li>
 									<li class="nav-item"><a href="" ng-click="dataTR()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> TR Report</a></li>
+                                    <li class="nav-item"><a href="" ng-click="dataRFC()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> RFC Record</a></li>
+									<li class="nav-item"><a href="" ng-click="dataSPKL()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Data SPKL</a></li>
+									<li class="nav-item"><a href="" ng-click="detailSPKL()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Detail OT Timesheet</a></li>
                                     <li class="">
                                         <a href="#" aria-expanded="false">
                                             <i class="metismenu-icon"></i><i class='fa fa-calendar-alt'></i> MMF
@@ -778,9 +783,21 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                             
                                         </ul>
                                     </li>
-									<li class="nav-item"><a href="" ng-click="dataRFC()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> RFC Record</a></li>
-									<li class="nav-item"><a href="" ng-click="dataSPKL()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Data SPKL</a></li>
-									<li class="nav-item"><a href="" ng-click="detailSPKL()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Detail OT Timesheet</a></li>
+                                    <!-- <li class="">
+                                        <a href="#" aria-expanded="false">
+                                            <i class="metismenu-icon"></i><i class='fa fa-calendar-alt'></i> HR
+                                            <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                                        </a>
+                                        <ul class="mm-collapse" style="height: 7.04px;">
+                                            <li>
+                                                <a href="" ng-click="dataAdvance()">
+                                                    <i class="metismenu-icon"></i>Advance
+                                                </a>
+                                            </li>
+                                            
+                                        </ul>
+                                    </li> -->
+									
 								</ul>
 							</li>
 						</ul>

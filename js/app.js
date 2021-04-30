@@ -143,6 +143,10 @@ app.config(function ($routeProvider, $controllerProvider) {
 	.when('/advancedetail', route.resolve("advancedetail"))
 	.when('/advanceapproval', route.resolve("advanceapproval"))
 	.when('/advancereport', route.resolve("advancereport"))
+	.when('/advancepayment', route.resolve("advancepayment"))
+	.when('/advancepaymentdetail', route.resolve("advancepaymentdetail"))
+	.when('/advancepaymentapproval', route.resolve("advancepaymentapproval"))
+	.when('/advancepaymentreport', route.resolve("advancepaymentreport"))
 
 	.otherwise({
 		redirectTo: '/'

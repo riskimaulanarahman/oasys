@@ -50,7 +50,8 @@ $page = array("login",
 	"itimailmodule",
 	"listmodmodule",
 	"itsharefoldermodule",
-	"advancemodule",
+	// "advancemodule",
+	// "advpaymentmodule"
 	// "itmailsizemodule",
 	// "itrdwebmodule",
 	// "itstoragetfmodule"

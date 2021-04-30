@@ -260,7 +260,7 @@ Class Itimailmodule extends Application{
 												}
 												
 											}
-										} else {
+										} else if(($formtype=='2') || ($formtype=='3') || ($formtype=='5')){
 											if(count($Itimailapproval)>0){
 												$dx = Itimailapproval::find('all',array('joins'=>$joins,'conditions' => array("itimail_id=? and tbl_approver.approvaltype_id=30",$id)));	
 												foreach ($dx as $result) {
@@ -416,7 +416,7 @@ Class Itimailmodule extends Application{
 									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 									$this->mail->addAddress($usr->email, $usr->fullname);
 									$this->mail->Subject = "Online Approval System -> Request Form Email Request Reschedule";
-									$fileName = $this->generatePDF($id);
+									$fileName = $this->generatePDFi($id);
 									$filePath = SITE_PATH.DS.$fileName;
 									$this->mail->addAttachment($filePath);
 									$this->mail->msgHTML($this->mailbody);
@@ -1721,7 +1721,7 @@ Class Itimailmodule extends Application{
 								echo "Message sent!";
 							}
 						}
-						echo json_encode($Spklapproval);
+						echo json_encode($Itimailapproval);
 						break;
 					default:
 						$Itimailapproval = Itimailapproval::all();

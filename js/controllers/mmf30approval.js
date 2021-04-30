@@ -82,6 +82,7 @@
                         }
                     },
                     {dataField:'createddate',caption: "Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 150},
+                    {dataField:'prno',caption: "PR No",width: 250},
                     {dataField:'fullname',caption: "Request by",width: 150},
                     {dataField:'department',caption: "Department",width: 150},
                     {dataField:'requeststatus',encodeHtml: false ,width: 200,
