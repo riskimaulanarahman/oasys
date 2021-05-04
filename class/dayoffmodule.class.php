@@ -121,14 +121,14 @@ Class DayoffModule extends Application{
 			$result['Dayoff']['Employee']['Company']=$comp;
 			$result['Dayoff']['Employee']['Department']=$dept;
 		}
-		$pdfContent="<h3 style='width:100%;text-align:center'>WEEKEND/PUBLIC HOLIDAY COVERAGE FORM</h3>";
+		$pdfContent='<h3 style="width:100%;text-align:center">WEEKEND/PUBLIC HOLIDAY COVERAGE FORM</h3>';
 		$pdfContent .= "Dengan ini diperintahkan agar melaksanakan kerja di waktu Weekend/Public Holiday kepada : <br>";
 		$pdfContent .= "<i>Herewith instructed to work on weekend/public holiday to ; </i>";
 		$pdfContent .= "<small><ol><li>This form is used based on superior's instruction only.</li>";
 		$pdfContent .= "<li>Employee should complete this form and submit to BG HR</li>";
 		$pdfContent .= "<li>Asteriks (*) indicates a mandatory field</li>";
 		$pdfContent .= "<li>Approving Superior/BU Head/Deputy MD is required to initial on every coverage date</li></ol></small>";
-		$pdfContent .= "<table border=0 cellspacing=3 cellpadding=3>";
+		$pdfContent .= '<table border=0 cellspacing=3 cellpadding=3>';
 		$pdfContent .= '<tr><td>*Personnel Number (SAP ID)</td><td>:</td><td style="border:solid windowtext 1.0pt;padding:2.5pt 5.4pt 2.5pt 5.4pt;">'.$emp['sapid'].'</td><td style="width=10px;"></td><td>*Superior Name</td><td>:</td><td style="border:solid windowtext 1.0pt;padding:2.5pt 5.4pt 2.5pt 5.4pt;">'.$supname.'</td></tr>
 						<tr><td>*Name</td><td>:</td><td style="border:solid windowtext 1.0pt;padding:2.5pt 5.4pt 2.5pt 5.4pt;">'.$emp['fullname'].'</td><td style="width=10px;"></td><td>*Superior Email</td><td>:</td><td style="border:solid windowtext 1.0pt;padding:2.5pt 5.4pt 2.5pt 5.4pt;">'.$supemail.'</td></tr>
 						<tr><td>Position</td><td>:</td><td style="border:solid windowtext 1.0pt;padding:2.5pt 5.4pt 2.5pt 5.4pt;">'.$des.'</td><td colspan=4></td></tr>
@@ -139,6 +139,7 @@ Class DayoffModule extends Application{
 						<tr><td><u>Coverage Details</u></td><td>:</td><td colspan=5></td></tr>
 						<tr><td>*Work Schedule Code</td><td>:</td><td style="border:solid windowtext 1.0pt;padding:2.5pt 5.4pt 2.5pt 5.4pt;"> </td><td colspan=4></td></tr>
 					</table><br>
+					<table border=0 cellspacing=0 cellpadding=0 width="100%"><tr><td colspan="9" style="border-bottom:solid windowtext 1.0pt;padding-bottom:8px;">
 					<table border=0 cellpadding=3 cellspacing=0>
 					<tr><td rowspan=5 style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;text-align:center;background:#F2F2F2;">Date (dd/mm/yyyy)</td>
 						<td colspan=2 style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;text-align:center;background:#F2F2F2;">Reason</td>
@@ -189,7 +190,11 @@ Class DayoffModule extends Application{
 							<td  style="width:100px;text-align:center;padding-right:0in 5.4px 0in 5.4px;border-bottom:solid windowtext 1.0pt">'.$datebg.'</td>
 						</tr>
 						<tr style="height:12.75pt"><td style="padding:0in 5.4pt 0in 5.4pt;height:12.75pt">Employee</td><td style="width:100px;text-align:center;">Date<br>dd/mm/yyyy</td><td></td><td>Superior</td><td style="width:100px;text-align:center;">Date<br>dd/mm/yyyy</td><td></td><td>BG HR</td><td style="width:100px;text-align:center;">Date<br>dd/mm/yyyy</td></tr>
-						</table>';
+						</table>
+						</td></tr>
+							<tr style="height:12.75pt"><td colspan="2"><small>Document ID No : IHM-HRD-9002-FM</small></td><td></td><td colspan="2"><small>Issue Date : 01 September 2019</small></td><td ></td><td><small>Revision:1</small></td><td><small>Page 1 of 1 </small></td></tr>
+						</table>
+						';
 						//echo $pdfContent;
 		try {
 			$html2pdf = new Html2Pdf('L', 'A4', 'fr');
@@ -622,6 +627,7 @@ Class DayoffModule extends Application{
 														<tr><td><u>Coverage Details</u></td><td>:</td><td colspan=5></td></tr>
 														<tr><td>*Work Schedule Code</td><td>:</td><td style="border:solid windowtext 1.0pt;padding:2.5pt 5.4pt 2.5pt 5.4pt;"> </td><td colspan=4></td></tr>
 													</table><br>
+													<table border=0 cellspacing=0 cellpadding=0 width="100%"><tr><td colspan="9" style="border-bottom:solid windowtext 1.0pt;padding-bottom:8px;">
 													<table border=0 cellpadding=3 cellspacing=0>
 													<tr><td rowspan=5 style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;text-align:center;background:#F2F2F2;">Date (dd/mm/yyyy)</td>
 														<td colspan=2 style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;text-align:center;background:#F2F2F2;">Reason</td>
@@ -671,6 +677,9 @@ Class DayoffModule extends Application{
 															<td  style="width:100px;text-align:center;padding-right:0in 5.4px 0in 5.4px;border-bottom:solid windowtext 1.0pt">'.$datebg.'</td>
 														</tr>
 														<tr style="height:12.75pt"><td style="padding:0in 5.4pt 0in 5.4pt;height:12.75pt">Employee</td><td style="width:100px;text-align:center;">Date<br>dd/mm/yyyy</td><td></td><td>Superior</td><td style="width:100px;text-align:center;">Date<br>dd/mm/yyyy</td><td></td><td>BG HR</td><td style="width:100px;text-align:center;">Date<br>dd/mm/yyyy</td></tr>
+														</table>
+														</td></tr>
+															<tr style="height:12.75pt"><td colspan="2"><small>Document ID No : IHM-HRD-9002-FM</small></td><td></td><td colspan="2"><small>Issue Date : 01 September 2019</small></td><td ></td><td><small>Revision:1</small></td><td><small>Page 1 of 1 </small></td></tr>
 														</table>';
 														//echo $pdfContent;
 										try {
