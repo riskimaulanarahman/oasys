@@ -463,6 +463,8 @@ Class Itimailmodule extends Application{
 							// $Itimailnew = Itimail::find('first',array('select' => "CONCAT('Itimail/','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(wonumber,-4,4)) is null then 1 else max(substring(wonumber,-4,4))+1 end,4,'0')) as wonumber","conditions"=>array("substring(wonumber,7,".strlen($Employee->companycode).")=? and substring(wonumber,".(strlen($Employee->companycode)+8).",4)=YEAR(CURDATE())",$Employee->companycode)));
 							// $data['wonumber']=$Itimailnew->wonumber;
 							$Itimail = Itimail::create($data);
+							$data['companycode']=$Employee->companycode;
+
 							$data=$Itimail->to_array();
 							$joinx   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
 
@@ -488,67 +490,82 @@ Class Itimailmodule extends Application{
 									$Itimailapproval->save();
 								}
 
-								if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
-									// $Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=30 and tbl_employee.location_id='1'")));
-									// if(count($Approver2)>0){
-									// 	$Itimailapproval = new Itimailapproval();
-									// 	$Itimailapproval->itimail_id = $Itimail->id;
-									// 	$Itimailapproval->approver_id = $Approver2->id;
-									// 	$Itimailapproval->save();
-									// }
-									
-									if(($Employee->department->sapcode!="13000090") && ($Employee->department->sapcode!="13000121") && ($Employee->company->sapcode!="NKF") && ($Employee->company->sapcode!="RND")  && ($Employee->company->companycode!="BCL")  && ($Employee->company->companycode!="LDU")){
-										if(($Employee->level_id!=4) && ($Employee->level_id!=6) ){
-											$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and tbl_employee.companycode='KPSI' and not(tbl_employee.id=?)",$Employee->id)));
-											if(count($Approver)>0){
-												$Itimailapproval = new Itimailapproval();
-												$Itimailapproval->itimail_id = $Itimail->id;
-												$Itimailapproval->approver_id = $Approver->id;
-												$Itimailapproval->save();
-											}
-										}
-									}else{
-										$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and tbl_employee.company_id=? and not tbl_employee.companycode='KPSI'  and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
-										if(count($Approver)>0){
-											$Itimailapproval = new Itimailapproval();
-											$Itimailapproval->itimail_id = $Itimail->id;
-											$Itimailapproval->approver_id = $Approver->id;
-											$Itimailapproval->save();
-										}else{
-											$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
-											if(count($Approver)>0){
-												$Itimailapproval = new Itimailapproval();
-												$Itimailapproval->itimail_id = $Itimail->id;
-												$Itimailapproval->approver_id = $Approver->id;
-												$Itimailapproval->save();
-											}
-										}
-									}	
+								$companyBU=( ($Employee->companycode=='KPA') || ($Employee->companycode=='AHL') )?"KPSI":$Employee->companycode;
+								if (($Employee->company->sapcode=='RND') || ($Employee->company->sapcode=='NKF')){
+									$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id='31' and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
 								}else{
-									$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and not tbl_employee.companycode='KPSI' and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
-									if(count($Approver)>0){
-										$Itimailapproval = new Itimailapproval();
-										$Itimailapproval->itimail_id = $Itimail->id;
-										$Itimailapproval->approver_id = $Approver->id;
-										$Itimailapproval->save();
-									}else{
-										$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
-										if(count($Approver)>0){
-											$Itimailapproval = new Itimailapproval();
-											$Itimailapproval->itimail_id = $Itimail->id;
-											$Itimailapproval->approver_id = $Approver->id;
-											$Itimailapproval->save();
-										}
-									}
-
-									// $Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=30 and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
-									// if(count($Approver2)>0){
-									// 	$Itimailapproval = new Itimailapproval();
-									// 	$Itimailapproval->itimail_id = $Itimail->id;
-									// 	$Itimailapproval->approver_id = $Approver2->id;
-									// 	$Itimailapproval->save();
-									// }
+									$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id='31' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$companyBU,$Employee->id)));
 								}
+								if(count($ApproverBU)>0){
+									$Itimailapproval = new Itimailapproval();
+									$Itimailapproval->itimail_id = $Itimail->id;
+									$Itimailapproval->approver_id = $ApproverBU->id;
+									$Itimailapproval->save();
+									$logger = new Datalogger("Itimailapproval","add","Add initial BU Head Approval ",json_encode($Itimailapproval->to_array()));
+									$logger->SaveData();
+								}
+
+								// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
+								// 	// $Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=30 and tbl_employee.location_id='1'")));
+								// 	// if(count($Approver2)>0){
+								// 	// 	$Itimailapproval = new Itimailapproval();
+								// 	// 	$Itimailapproval->itimail_id = $Itimail->id;
+								// 	// 	$Itimailapproval->approver_id = $Approver2->id;
+								// 	// 	$Itimailapproval->save();
+								// 	// }
+									
+								// 	if(($Employee->department->sapcode!="13000090") && ($Employee->department->sapcode!="13000121") && ($Employee->company->sapcode!="NKF") && ($Employee->company->sapcode!="RND")  && ($Employee->company->companycode!="BCL")  && ($Employee->company->companycode!="LDU")){
+								// 		if(($Employee->level_id!=4) && ($Employee->level_id!=6) ){
+								// 			$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and tbl_employee.companycode='KPSI' and not(tbl_employee.id=?)",$Employee->id)));
+								// 			if(count($Approver)>0){
+								// 				$Itimailapproval = new Itimailapproval();
+								// 				$Itimailapproval->itimail_id = $Itimail->id;
+								// 				$Itimailapproval->approver_id = $Approver->id;
+								// 				$Itimailapproval->save();
+								// 			}
+								// 		}
+								// 	}else{
+								// 		$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and tbl_employee.company_id=? and not tbl_employee.companycode='KPSI'  and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+								// 		if(count($Approver)>0){
+								// 			$Itimailapproval = new Itimailapproval();
+								// 			$Itimailapproval->itimail_id = $Itimail->id;
+								// 			$Itimailapproval->approver_id = $Approver->id;
+								// 			$Itimailapproval->save();
+								// 		}else{
+								// 			$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+								// 			if(count($Approver)>0){
+								// 				$Itimailapproval = new Itimailapproval();
+								// 				$Itimailapproval->itimail_id = $Itimail->id;
+								// 				$Itimailapproval->approver_id = $Approver->id;
+								// 				$Itimailapproval->save();
+								// 			}
+								// 		}
+								// 	}	
+								// }else{
+								// 	$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and not tbl_employee.companycode='KPSI' and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+								// 	if(count($Approver)>0){
+								// 		$Itimailapproval = new Itimailapproval();
+								// 		$Itimailapproval->itimail_id = $Itimail->id;
+								// 		$Itimailapproval->approver_id = $Approver->id;
+								// 		$Itimailapproval->save();
+								// 	}else{
+								// 		$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+								// 		if(count($Approver)>0){
+								// 			$Itimailapproval = new Itimailapproval();
+								// 			$Itimailapproval->itimail_id = $Itimail->id;
+								// 			$Itimailapproval->approver_id = $Approver->id;
+								// 			$Itimailapproval->save();
+								// 		}
+								// 	}
+
+								// 	// $Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=30 and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
+								// 	// if(count($Approver2)>0){
+								// 	// 	$Itimailapproval = new Itimailapproval();
+								// 	// 	$Itimailapproval->itimail_id = $Itimail->id;
+								// 	// 	$Itimailapproval->approver_id = $Approver2->id;
+								// 	// 	$Itimailapproval->save();
+								// 	// }
+								// }
 
 							$Iteihistory = new Itimailhistory();
 							$Iteihistory->date = date("Y-m-d h:i:s");
@@ -947,8 +964,8 @@ Class Itimailmodule extends Application{
 											<table border=1 cellspacing=0 cellpadding=3 width=683>
 											<tr>
 												<th><p class=MsoNormal>New Mailbox Size</p></th>
-												<th><p class=MsoNormal>Outgoing Size</p></th>
 												<th><p class=MsoNormal>Incoming Size</p></th>
+												<th><p class=MsoNormal>Outgoing Size</p></th>
 												<th><p class=MsoNormal>Valid From</p></th>
 												<th><p class=MsoNormal>Valid To</p></th>
 											</tr>
@@ -1596,8 +1613,8 @@ Class Itimailmodule extends Application{
 										<table border=1 cellspacing=0 cellpadding=3 width=683>
 										<tr>
 											<th><p class=MsoNormal>New Mailbox Size</p></th>
-											<th><p class=MsoNormal>Outgoing Size</p></th>
 											<th><p class=MsoNormal>Incoming Size</p></th>
+											<th><p class=MsoNormal>Outgoing Size</p></th>
 											<th><p class=MsoNormal>Valid From</p></th>
 											<th><p class=MsoNormal>Valid To</p></th>
 										</tr>

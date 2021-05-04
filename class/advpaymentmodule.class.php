@@ -157,12 +157,27 @@ Class Advpaymentmodule extends Application{
 					case 'byid':
 						$id = $this->post['id'];
 						$Advpayment = Advpayment::find($id, array('include' => array('employee'=>array('company','department','designation'))));
+						// echo json_encode($Advpayment->employee->id);
+						// exit;
+						$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=5",$Advpayment->employee->id)));
+						// foreach ($Advance as &$result) {
+						// 	$result = $result->to_array();
+						// }
+						$AdvanceDetail = AdvanceDetail::find('all',array('conditions'=> array("advance_id=?",$Advance->id)));
+						foreach ($AdvanceDetail as &$data) {
+							$val_tamount += $data->amount;
+							// $result = $result->to_array();
+						}
+						
+						// echo number_format($val_tamount);
+						// echo json_encode($AdvanceDetail, JSON_NUMERIC_CHECK);
 						if ($Advpayment){
 							$fullname = $Advpayment->employee->fullname;
 							$department = $Advpayment->employee->department->departmentname;
 							$data=$Advpayment->to_array();
 							$data['fullname']=$fullname;
-							$data['department']=$department;
+							$data['lessadvance']=number_format($val_tamount);
+							// $data['department']=$department;
 							echo json_encode($data, JSON_NUMERIC_CHECK);
 						}else{
 							$Advpayment = new Advpayment();
@@ -244,7 +259,7 @@ Class Advpaymentmodule extends Application{
 											if(count($Advpaymentapprovaldepmd)==0){
 
 												// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220")){
-													$ApproverDEPMD = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advpayment' and tbl_approver.isactive='1' and approvaltype_id='39' and tbl_employee.location_id='1'")));
+													$ApproverDEPMD = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='39' and tbl_employee.location_id='1'")));
 													print_r($ApproverDEPMD);
 													if(count($ApproverDEPMD)>0){
 														$Advpaymentapproval = new Advpaymentapproval();
@@ -255,7 +270,7 @@ Class Advpaymentmodule extends Application{
 														$logger->SaveData();
 													}
 												// }else{
-												// 	$ApproverDEPMD = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advpayment' and tbl_approver.isactive='1' and approvaltype_id='39'  and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
+												// 	$ApproverDEPMD = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='39'  and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
 												// 	if(count($ApproverDEPMD)>0){
 												// 		$Advpaymentapproval = new Advpaymentapproval();
 												// 		$Advpaymentapproval->advpayment_id = $Advpayment->id;
@@ -276,7 +291,7 @@ Class Advpaymentmodule extends Application{
 
 											if($advpayment_form == 2) {
 												if(count($Advpaymentapprovalproc)==0){
-													$ApproverPROC = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advpayment' and tbl_approver.isactive='1' and approvaltype_id='42' and tbl_employee.location_id='1'")));
+													$ApproverPROC = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='42' and tbl_employee.location_id='1'")));
 													print_r($ApproverPROC);
 													if(count($ApproverPROC)>0){
 														$Advpaymentapproval = new Advpaymentapproval();
@@ -294,7 +309,7 @@ Class Advpaymentmodule extends Application{
 											if(count($Advpaymentapprovaldepmd)==0){
 
 												// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220")){
-													$ApproverDEPMD = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advpayment' and tbl_approver.isactive='1' and approvaltype_id='39' and tbl_employee.location_id='1'")));
+													$ApproverDEPMD = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='39' and tbl_employee.location_id='1'")));
 													print_r($ApproverDEPMD);
 													if(count($ApproverDEPMD)>0){
 														$Advpaymentapproval = new Advpaymentapproval();
@@ -305,7 +320,7 @@ Class Advpaymentmodule extends Application{
 														$logger->SaveData();
 													}
 												// }else{
-												// 	$ApproverDEPMD = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advpayment' and tbl_approver.isactive='1' and approvaltype_id='39'  and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
+												// 	$ApproverDEPMD = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='39'  and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
 												// 	if(count($ApproverDEPMD)>0){
 												// 		$Advpaymentapproval = new Advpaymentapproval();
 												// 		$Advpaymentapproval->advpayment_id = $Advpayment->id;
@@ -319,7 +334,7 @@ Class Advpaymentmodule extends Application{
 
 											if(count($Advpaymentapprovalmd)==0){
 
-													$ApproverMD = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advpayment' and tbl_approver.isactive='1' and approvaltype_id='40' and tbl_employee.location_id='1'")));
+													$ApproverMD = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='40' and tbl_employee.location_id='1'")));
 													print_r($ApproverMD);
 													if(count($ApproverMD)>0){
 														$Advpaymentapproval = new Advpaymentapproval();
@@ -350,6 +365,7 @@ Class Advpaymentmodule extends Application{
 
 										$joins   = "LEFT JOIN tbl_approver ON (tbl_advpaymentapproval.approver_id = tbl_approver.id) LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id)";
 										$joinx   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";	
+
 										
 
 										$Advpaymentapprovalhrd = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id='36' ",$id)));	
@@ -367,7 +383,7 @@ Class Advpaymentmodule extends Application{
 
 										if($advpayment_form == 1) {
 											if(($data['companycode']=="IHM") || ($data['companycode']=='AHL') || ($data['companycode']=='KPS')|| ($data['companycode']=='KPA')){
-												$ApproverHRDFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advpayment' and tbl_approver.isactive='1' and approvaltype_id='36' and tbl_employee.companycode=?  and not(tbl_employee.id=?)",$Employee->companycode,$Employee->id)));
+												$ApproverHRDFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and tbl_employee.companycode=?  and not(tbl_employee.id=?)",$Employee->companycode,$Employee->id)));
 												$hrd = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=36",$id)));	
 												foreach ($hrd as $result) {
 													$result->delete();
@@ -380,16 +396,16 @@ Class Advpaymentmodule extends Application{
 													$Advpaymentapproval->advpayment_id = $Advpayment->id;
 													$Advpaymentapproval->approver_id = $ApproverHRDFU->id;
 													$Advpaymentapproval->save();
-													$logger = new Datalogger("Advpaymentapproval","add","Add initial HR BU Approval ",json_encode($Advpaymentapproval->to_array()));
+													$logger = new Datalogger("Advpaymentapproval","add","Add initial HRD Approval ",json_encode($Advpaymentapproval->to_array()));
 													$logger->SaveData();
 													
 												}
 											}
 
-											$proc = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=42",$id)));	
-											foreach ($proc as $result) {
+											$buhead = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=38",$id)));	
+											foreach ($buhead as $result) {
 												$result->delete();
-												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval PROC");
+												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval BU HEAD");
 												$logger->SaveData();
 											}
 
@@ -399,6 +415,21 @@ Class Advpaymentmodule extends Application{
 											foreach ($hrd as $result) {
 												$result->delete();
 												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval HRD");
+												$logger->SaveData();
+											}
+
+											$companyBU=( ($Employee->companycode=='KPA') || ($Employee->companycode=='AHL') )?"KPSI":$Employee->companycode;
+											if (($Employee->company->sapcode=='RND') || ($Employee->company->sapcode=='NKF')){
+												$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+											}else{
+												$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$companyBU,$Employee->id)));
+											}
+											if(count($ApproverBU)>0){
+												$Advpaymentapproval = new Advpaymentapproval();
+												$Advpaymentapproval->advpayment_id = $Advpayment->id;
+												$Advpaymentapproval->approver_id = $ApproverBU->id;
+												$Advpaymentapproval->save();
+												$logger = new Datalogger("Advpaymentapproval","add","Add initial BU Head Approval ",json_encode($Advpaymentapproval->to_array()));
 												$logger->SaveData();
 											}
 										}
@@ -435,7 +466,7 @@ Class Advpaymentmodule extends Application{
 								
 								$joins   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
 
-								// $ApproverFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advpayment' and tbl_approver.isactive='1' and approvaltype_id=41")));
+								// $ApproverFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=41")));
 								// if(count($ApproverFC)>0){
 								// 	$Advpaymentapproval = new Advpaymentapproval();
 								// 	$Advpaymentapproval->advpayment_id = $Advpayment->id;
@@ -443,23 +474,10 @@ Class Advpaymentmodule extends Application{
 								// 	$Advpaymentapproval->save();
 								// }
 
-								// $companyBU=( ($Employee->companycode=='KPA') || ($Employee->companycode=='AHL') )?"KPSI":$Employee->companycode;
-								// if (($Employee->company->sapcode=='RND') || ($Employee->company->sapcode=='NKF')){
-								// 	$ApproverBU = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advpayment' and tbl_approver.isactive='1' and approvaltype_id='38' and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
-								// }else{
-								// 	$ApproverBU = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advpayment' and tbl_approver.isactive='1' and approvaltype_id='38' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$companyBU,$Employee->id)));
-								// }
-								// if(count($ApproverBU)>0){
-								// 	$Advpaymentapproval = new Advpaymentapproval();
-								// 	$Advpaymentapproval->advpayment_id = $Advpayment->id;
-								// 	$Advpaymentapproval->approver_id = $ApproverBU->id;
-								// 	$Advpaymentapproval->save();
-								// 	$logger = new Datalogger("Advpaymentapproval","add","Add initial BU Head Approval ",json_encode($Advpaymentapproval->to_array()));
-								// 	$logger->SaveData();
-								// }
+								
 
 								$companyFC=(($data['companycode']=='BCL') || ($data['companycode']=='KPA'))?"KPSI":((($data['companycode']=='KPSI'))?"LDU":$Employee->companycode);
-								$ApproverBUFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advpayment' and tbl_approver.isactive='1' and approvaltype_id='37' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$companyFC,$Employee->id)));
+								$ApproverBUFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='37' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$companyFC,$Employee->id)));
 								if(count($ApproverBUFC)>0){
 									$Advpaymentapproval = new Advpaymentapproval();
 									$Advpaymentapproval->advpayment_id = $Advpayment->id;
@@ -470,7 +488,7 @@ Class Advpaymentmodule extends Application{
 								}
 
 								// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220")){
-								// 	$ApproverBU = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advpayment' and tbl_approver.isactive='1' and approvaltype_id='38' and tbl_employee.location_id='1'")));
+								// 	$ApproverBU = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and tbl_employee.location_id='1'")));
 								// 	if(count($ApproverBU)>0){
 								// 		$Advpaymentapproval = new Advpaymentapproval();
 								// 		$Advpaymentapproval->advpayment_id =$Advpayment->id;
@@ -480,7 +498,7 @@ Class Advpaymentmodule extends Application{
 								// 		$logger->SaveData();
 								// 	}
 									
-								// 	$ApproverBUFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advpayment' and tbl_approver.isactive='1' and approvaltype_id='37' and tbl_employee.location_id='1'")));
+								// 	$ApproverBUFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='37' and tbl_employee.location_id='1'")));
 								// 	if(count($ApproverBUFC)>0){
 								// 		$Advpaymentapproval = new Advpaymentapproval();
 								// 		$Advpaymentapproval->advpayment_id =$Advpayment->id;
@@ -491,7 +509,7 @@ Class Advpaymentmodule extends Application{
 								// 	}
 
 								// }else{
-								// 	$ApproverBU = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advpayment' and tbl_approver.isactive='1' and approvaltype_id='38'  and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
+								// 	$ApproverBU = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38'  and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
 								// 	if(count($ApproverBU)>0){
 								// 		$Advpaymentapproval = new Advpaymentapproval();
 								// 		$Advpaymentapproval->advpayment_id = $Advpayment->id;
@@ -501,7 +519,7 @@ Class Advpaymentmodule extends Application{
 								// 		$logger->SaveData();
 								// 	}
 
-								// 	$ApproverBUFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advpayment' and tbl_approver.isactive='1' and approvaltype_id='37'  and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
+								// 	$ApproverBUFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='37'  and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
 								// 	if(count($ApproverBUFC)>0){
 								// 		$Advpaymentapproval = new Advpaymentapproval();
 								// 		$Advpaymentapproval->advpayment_id = $Advpayment->id;
@@ -592,7 +610,8 @@ Class Advpaymentmodule extends Application{
 						//unset($data['employee']);
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 						foreach($data as $key=>$val){
-							$Advpayment->$key=$val;
+							$value=(($val===0) || ($val==='0') || ($val==='false'))?false:((($val===1) || ($val==='1') || ($val==='true'))?true:$val);
+							$Advpayment->$key=$value;
 						}
 						$Advpayment->save();
 						
@@ -610,7 +629,7 @@ Class Advpaymentmodule extends Application{
 								$result['no']=1;
 							}			
 							if(count($Advpaymentapproval)==0){ 
-								$Approver = Approver::find('first',array('conditions'=>array("module='Advpayment' and employee_id=? and approvaltype_id=35",$depthead)));
+								$Approver = Approver::find('first',array('conditions'=>array("module='Advance' and employee_id=? and approvaltype_id=35",$depthead)));
 								if(count($Approver)>0){
 									$Advpaymentapproval = new Advpaymentapproval();
 									$Advpaymentapproval->advpayment_id = $Advpayment->id;
@@ -658,7 +677,7 @@ Class Advpaymentmodule extends Application{
 										<br>
 
 										';
-							if($Advpayment->advpaymentform == 0) {
+							if($Advpayment->paymentform == 0) {
 								$form = "HR Related";
 							} else {
 								$form = "Ops Related";
@@ -725,7 +744,7 @@ Class Advpaymentmodule extends Application{
 								echo "Message sent!";
 							}
 
-							// if($Advpayment->advpaymentform == 2) {
+							// if($Advpayment->paymentform == 2) {
 
 							// 	$dx = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=36",$id)));	
 							// 	foreach ($dx as $result) {
@@ -736,7 +755,7 @@ Class Advpaymentmodule extends Application{
 
 							// 	if($val_tamount >= 5000000) {
 
-							// 		$ApproverProc = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advpayment' and tbl_approver.isactive='1' and approvaltype_id='42' and tbl_employee.location_id='1'")));
+							// 		$ApproverProc = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='42' and tbl_employee.location_id='1'")));
 							// 		if(count($ApproverProc)>0){
 							// 			$Advpaymentapproval = new Advpaymentapproval();
 							// 			$Advpaymentapproval->advpayment_id =$Advpayment->id;
@@ -944,7 +963,7 @@ Class Advpaymentmodule extends Application{
 							
 							$Advpayment->save();
 
-							unset($data['advpaymentform']);
+							unset($data['paymentform']);
 							unset($data['beneficiary']);
 							unset($data['accountname']);
 							unset($data['bank']);
@@ -1042,7 +1061,7 @@ Class Advpaymentmodule extends Application{
 								<tr><td><p class=MsoNormal>Location</p></td><td>:</td><td><p class=MsoNormal><b>'.$Advpayment->employee->location->location.'</b></p></td></tr>
 								<tr><td><p class=MsoNormal>Email</p></td><td>:</td><td><p class=MsoNormal><b>'.$email.'</b></p></td></tr>
 								</table>';
-						if($Advpayment->advpaymentform == 0) {
+						if($Advpayment->paymentform == 0) {
 							$form = "HR Related";
 						} else {
 							$form = "Ops Related";
@@ -1275,7 +1294,7 @@ Class Advpaymentmodule extends Application{
 			$excel = new COM("Excel.Application") or die ("ERROR: Unable to instantaniate COM!\r\n");
 			$excel->Visible = false;
 
-			if($Advpayment->advpaymentform == 1) {
+			if($Advpayment->paymentform == 1) {
 				$title = 'advpayment_hr';
 				$file= SITE_PATH."/doc/hr/advpaymenthr.xlsx";
 			} else {
@@ -1292,7 +1311,7 @@ Class Advpaymentmodule extends Application{
 				$Worksheet->Range("N8")->Value = date("d/m/Y",strtotime($duedate));
 				$Worksheet->Range("N7")->Value = date("d/m/Y",strtotime($expecteddate));
 
-			if($Advpayment->advpaymentform == 1) {
+			if($Advpayment->paymentform == 1) {
 				$Worksheet->Range("F6")->Value = $fullname;
 				$Worksheet->Range("F7")->Value = $department;
 				$Worksheet->Range("F8")->Value = $Advpayment->employee_id;
@@ -1366,7 +1385,7 @@ Class Advpaymentmodule extends Application{
 				$pic->Top = $excel->Cells(29, 1)->Top ;
 				$pic->Left = $excel->Cells(29, 1)->Left ;
 
-				if($Advpayment->advpaymentform == 1) {
+				if($Advpayment->paymentform == 1) {
 					if(!empty($deptheadname)) {
 						$Worksheet->Range("F32")->Value = $deptheadname;
 						$Worksheet->Range("F33")->Value = $deptheaddate;

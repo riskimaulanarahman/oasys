@@ -57,7 +57,8 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 				sort: "id"
 			}
 			$scope.AppAction = ($scope.data.approvalstep==2)?[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Verify"}]:[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
-			$scope.AdvanceForm =[{id:1,advpaymentform:"Payment Req HR"},{id:2,advpaymentform:"Payment Req OPR"}];
+			$scope.AdvanceForm =[{id:1,paymentform:"Payment Req HR"},{id:2,paymentform:"Payment Req OPR"}];
+			$scope.Paymentopt =[{id:1,payment:"Cash"},{id:2,payment:"Bank"}];
 			$scope.reqStatus = 0;
 			$scope.gridSelectedRowKeys =[];
 
@@ -81,8 +82,49 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 						colSpan :2,
 						items: [
 							{
-                                dataField:'advpaymentform',
-								name:'advpaymentform',
+                                dataField:'paymenttype',
+                                label:{text:"With Advance ?"},
+                                // visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                dataType:"boolean",
+                                editorType: "dxCheckBox",
+                                // validationRules: [{type: "required",message: "Declaration is required"}],
+                                editorOptions: { 
+                                    text:"Yes",
+									onValueChanged: function (e) {
+									// var newValue = (e.value == true ? 1 : 0) ;
+									alert(e.value);
+
+									// return newValue;
+								}
+                                },
+								
+                            },
+							{
+                                dataField:'lessadvance',
+                                label: {
+                                    text:"Less Advance",
+                                },
+                                name:'lessadvance',
+                                // disabled: true,                                                    
+                            },
+							{
+                                dataField:'payment',
+								name:'payment',
+                                editorType: "dxSelectBox",
+                                label:{text:"Payment Method"},
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                validationRules: [{type: "required",message: "Action is required"}],
+                                editorOptions: { 
+                                    dataSource:$scope.Paymentopt,  
+                                    valueExpr: 'id',
+                                    displayExpr: 'payment',
+                                },
+								
+                            },
+							{
+                                dataField:'paymentform',
+								name:'paymentform',
                                 editorType: "dxSelectBox",
                                 label:{text:"Advance Form"},
                                 disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
@@ -90,8 +132,8 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
                                 editorOptions: { 
                                     dataSource:$scope.AdvanceForm,  
                                     valueExpr: 'id',
-                                    displayExpr: 'advpaymentform',
-									value: "",
+                                    displayExpr: 'paymentform',
+									// value: "",
 									onValueChanged: function(e) {
 										criteria = {status:'appform',formtype:e.value,advpayment_id:$scope.Requestid,employee_id:$scope.data.employee_id};
 										CrudService.FindData('advpayment',criteria).then(function (response){
@@ -154,15 +196,15 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 						colSpan:2,
 						colCount : 2,
 						items: [
-							{dataField:'expecteddate',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,editorType: "dxDateBox",label: {text: "Expected Date"},editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now()},
-							validationRules: [{
-								type: "required",
-								message: "Please Expected Date"
-							}]},
 							{dataField:'duedate',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,editorType: "dxDateBox",label: {text: "Due Date"},editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now()},
 							validationRules: [{
 								type: "required",
 								message: "Please Due Date"
+							}]},
+							{dataField:'paymentdate',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,editorType: "dxDateBox",label: {text: "Payment Date"},editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now()},
+							validationRules: [{
+								type: "required",
+								message: "Please Payment Date"
 							}]},
 							
 							
@@ -1022,7 +1064,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 		delete data.approvalstatus;
 		// delete data.advpaymentform;
 		data.duedate = $filter("date")(data.duedate, "yyyy-MM-dd HH:mm")
-		data.expecteddate = $filter("date")(data.expecteddate, "yyyy-MM-dd HH:mm")
+		data.paymentdate = $filter("date")(data.paymentdate, "yyyy-MM-dd HH:mm")
 		//console.log(data);
 		CrudService.Update('advpayment',data.id,data).then(function (response) {
 			if(response.status=="error"){
@@ -1040,7 +1082,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 					   offset: '0 0' 
 				   }
 				});
-				$location.path( "/advpayment" );
+				$location.path( "/advancepayment" );
 			}
 			
 		});
