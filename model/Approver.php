@@ -7,6 +7,7 @@ class Approver extends ActiveRecord\Model
 		array('approvaltype'),
 	);
 	static $has_many = array(
-		array('dayoffapproval')
+		array('dayoffapproval'),
+		array('advpaymentapproval'),
 	);
 }

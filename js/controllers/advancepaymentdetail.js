@@ -75,58 +75,18 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 				minColWidth  :800,
 				colCount : 2,
 				formData:$scope.data,	
-				items: [{	
+				items: [
+					{	
 						itemType: "group",
 						caption: "Request by : "+$scope.data.fullname+" / Dept : "+$scope.data.department,
+						colSpan:2,
 						colCount : 2,
-						colSpan :2,
 						items: [
-							{
-                                dataField:'paymenttype',
-                                label:{text:"With Advance ?"},
-                                // visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                                dataType:"boolean",
-                                editorType: "dxCheckBox",
-                                // validationRules: [{type: "required",message: "Declaration is required"}],
-                                editorOptions: { 
-                                    text:"Yes",
-									onValueChanged: function (e) {
-									// var newValue = (e.value == true ? 1 : 0) ;
-									alert(e.value);
-
-									// return newValue;
-								}
-                                },
-								
-                            },
-							{
-                                dataField:'lessadvance',
-                                label: {
-                                    text:"Less Advance",
-                                },
-                                name:'lessadvance',
-                                // disabled: true,                                                    
-                            },
-							{
-                                dataField:'payment',
-								name:'payment',
-                                editorType: "dxSelectBox",
-                                label:{text:"Payment Method"},
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                                validationRules: [{type: "required",message: "Action is required"}],
-                                editorOptions: { 
-                                    dataSource:$scope.Paymentopt,  
-                                    valueExpr: 'id',
-                                    displayExpr: 'payment',
-                                },
-								
-                            },
 							{
                                 dataField:'paymentform',
 								name:'paymentform',
                                 editorType: "dxSelectBox",
-                                label:{text:"Advance Form"},
+                                label:{text:"Payment Form"},
                                 disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
                                 validationRules: [{type: "required",message: "Action is required"}],
                                 editorOptions: { 
@@ -147,6 +107,67 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
                                 },
 								
                             },
+							{
+                                dataField:'paymenttype',
+                                label:{text:"With Advance ?"},
+                                // visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                dataType:"boolean",
+                                editorType: "dxCheckBox",
+                                // validationRules: [{type: "required",message: "Declaration is required"}],
+                                editorOptions: { 
+                                    text:"Yes",
+									onValueChanged: function (e) {
+									// var newValue = (e.value == true ? 1 : 0) ;
+									// alert(e.value);
+									var vis1 =(e.value==1)?true:false;
+
+
+									$scope.formInstance.itemOption('subgroup.lessadvance', 'visible', vis1);
+									$scope.formInstance.itemOption('subgroup.lessadvance', 'visibleIndex', 0);
+
+									// return newValue;
+								}
+                                },
+								
+                            },
+							
+							
+						]
+						
+					},{	
+						itemType: "group",
+						name: "subgroup",
+						caption: "",
+						colCount : 2,
+						colSpan :2,
+						items: [
+							
+							
+							{
+                                dataField:'lessadvance',
+                                label: {
+                                    text:"Less Advance",
+                                },
+                                name:'lessadvance',
+								visible:($scope.data.paymenttype==1)?true:false,
+                                // disabled: true,                                                    
+                            },
+							{
+                                dataField:'payment',
+								name:'payment',
+                                editorType: "dxSelectBox",
+                                label:{text:"Payment Method"},
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                validationRules: [{type: "required",message: "Action is required"}],
+                                editorOptions: { 
+                                    dataSource:$scope.Paymentopt,  
+                                    valueExpr: 'id',
+                                    displayExpr: 'payment',
+                                },
+								
+                            },
+							
 						{dataField:'createddate',editorType: "dxDateBox",label: {text: "Creation Date"},editorOptions: {displayFormat:"dd/MM/yyyy",disabled: true}},
 						
 						
@@ -970,13 +991,16 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 			delete data.employee_id;
 			delete data.requeststatus;
 			delete data.depthead;
-			delete data.advpaymentform;
+			delete data.paymentform;
+			delete data.paymenttype;
+			delete data.lessadvance;
+			delete data.payment;
 			delete data.beneficiary;
 			delete data.accountName;
 			delete data.bank;
 			delete data.accountnumber;
 			delete data.duedate;
-			delete data.expecteddate;
+			delete data.paymentdate;
 			CrudService.Update('advpaymentapp',data.id,data).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.dialog.alert(response.message,"Error");
@@ -1011,13 +1035,16 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 					delete data.employee_id;
 					delete data.requeststatus;
 					delete data.depthead;
-					delete data.advpaymentform;
+					delete data.paymentform;
+					delete data.paymenttype;
+					delete data.lessadvance;
+					delete data.payment;
 					delete data.beneficiary;
 					delete data.accountName;
 					delete data.bank;
 					delete data.accountnumber;
 					delete data.duedate;
-					delete data.expecteddate;
+					delete data.paymentdate;
 					CrudService.Update('advpaymentapp',data.id,data).then(function (response) {
 						if(response.status=="error"){
 							DevExpress.ui.dialog.alert(response.message,"Error");
@@ -1034,7 +1061,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 								   offset: '0 0' 
 							   }
 							});
-							$location.path( "/advpaymentapproval" );
+							$location.path( "/advancepaymentapproval" );
 						}
 						
 					});
@@ -1115,7 +1142,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 								data.requeststatus = 1;
 								delete data.approvalstatus;
 								data.duedate = $filter("date")(data.duedate, "yyyy-MM-dd HH:mm")
-								data.expecteddate = $filter("date")(data.expecteddate, "yyyy-MM-dd HH:mm")
+								data.paymentdate = $filter("date")(data.paymentdate, "yyyy-MM-dd HH:mm")
 								CrudService.Update('advpayment',data.id,data).then(function (response) {
 									if(response.status=="error"){
 										DevExpress.ui.notify(response.message,"error");
@@ -1132,7 +1159,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 											offset: '0 0' 
 										}
 										});
-										$location.path( "/advpayment" );
+										$location.path( "/advancepayment" );
 									}
 									
 								});
