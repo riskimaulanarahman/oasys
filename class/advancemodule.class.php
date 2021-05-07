@@ -837,7 +837,7 @@ Class Advancemodule extends Application{
 							$Advance = Advance::find('all', array('conditions' => array("RequestStatus =1"),'include' => array('employee')));
 							foreach ($Advance as $result) {
 								$joinx   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";					
-								$Advanceapproval = Advanceapproval::find('all',array('joins'=>$joinx,'conditions' => array("advance_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+								$Advanceapproval = Advanceapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and advance_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 								if($Advanceapproval->approver->employee_id==$emp_id){
 									$request[]=$result->id;
 								}

@@ -1489,7 +1489,7 @@ Class Mmf30module extends Application{
 
 		</tr>
 		<tr>
-			<td colspan="5" style="border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="left" valign=middle><u>'.$Mmf30->remarksu.'</u></td>
+			<td colspan="5" style="border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="left" valign=middle><u>'.wordwrap($Mmf30->remarksu,50,"<br>\n").'</u></td>
 			<td colspan="3" style="border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle></td>
 			<td colspan="2" style="border-top: 1px solid #000000;border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000" align="center" valign=middle></td>
 		</tr>

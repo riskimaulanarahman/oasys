@@ -703,7 +703,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 								</ul>
 							</li>
                             <!-- <li > -->
-                            <li ng-class="{'mm-active': (isActive('/advance') || isActive('/advanceapproval') || isActive('/advancepayment') || isActive('/advancepaymentapproval') )}">
+                            <!-- <li ng-class="{'mm-active': (isActive('/advance') || isActive('/advanceapproval') || isActive('/advancepayment') || isActive('/advancepaymentapproval') )}">
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>Advance<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul  ng-class="{'mm-show': (isActive('/advance') || isActive('/advanceapproval') || isActive('/advancepayment') ||  isActive('/advancepaymentapproval') )}">
 									<li class="nav-item"><a href="" ng-click="myAdvance()" class="nav-link" ><i class='fa fa-calendar-alt'></i> Adv Related Request</a></li>
@@ -711,7 +711,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 									<li class="nav-item"><a href="" ng-click="myAdvpayment()" class="nav-link" ><i class='fa fa-calendar-alt'></i> Payment Request</a></li>
 									<li class="nav-item"><a href="" ng-click="advpaymentApproval()" class="nav-link" ><i class='fas fa-marker'></i> Payment Approval</a></li>
 								</ul>
-							</li>
+							</li> -->
                             
 							<li class="app-sidebar__heading">Data Master</li>
 							<li ng-class="{'mm-active': $route.current.activeTab == 'company'}">
@@ -783,7 +783,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                             
                                         </ul>
                                     </li>
-                                    <li class="">
+                                    <!-- <li class="">
                                         <a href="#" aria-expanded="false">
                                             <i class="metismenu-icon"></i><i class='fa fa-calendar-alt'></i> HR
                                             <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
@@ -796,7 +796,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                             </li>
                                             
                                         </ul>
-                                    </li>
+                                    </li> -->
 									
 								</ul>
 							</li>

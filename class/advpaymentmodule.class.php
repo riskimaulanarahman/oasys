@@ -875,7 +875,7 @@ Class Advpaymentmodule extends Application{
 							// print_r($Advpayment);
 							foreach ($Advpayment as $result) {
 								$joinx   = "LEFT JOIN tbl_approver ON (tbl_advpaymentapproval.approver_id = tbl_approver.id) ";					
-								$Advpaymentapproval = Advpaymentapproval::find('all',array('joins'=>$joinx,'conditions' => array("advpayment_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+								$Advpaymentapproval = Advpaymentapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and advpayment_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 								// echo $Advpaymentapproval;
 								if($Advpaymentapproval->approver->employee_id==$emp_id){
 									$request[]=$result->id;
