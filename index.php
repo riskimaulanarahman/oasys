@@ -703,9 +703,9 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 								</ul>
 							</li>
                             <!-- <li > -->
-                            <!-- <li ng-class="{'mm-active': (isActive('/advance') || isActive('/advanceApproval') || isActive('/advancepayment') || isActive('/advancepaymentapproval') )}">
+                            <!-- <li ng-class="{'mm-active': (isActive('/advance') || isActive('/advanceapproval') || isActive('/advancepayment') || isActive('/advancepaymentapproval') )}">
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>Advance<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
-								<ul  ng-class="{'mm-show': (isActive('/advance') || isActive('/advanceApproval') || isActive('/advancepayment') ||  isActive('/advancepaymentapproval') )}">
+								<ul  ng-class="{'mm-show': (isActive('/advance') || isActive('/advanceapproval') || isActive('/advancepayment') ||  isActive('/advancepaymentapproval') )}">
 									<li class="nav-item"><a href="" ng-click="myAdvance()" class="nav-link" ><i class='fa fa-calendar-alt'></i> Adv Related Request</a></li>
 									<li class="nav-item"><a href="" ng-click="advanceApproval()" class="nav-link" ><i class='fas fa-marker'></i> Adv Related Approval</a></li>
 									<li class="nav-item"><a href="" ng-click="myAdvpayment()" class="nav-link" ><i class='fa fa-calendar-alt'></i> Payment Request</a></li>

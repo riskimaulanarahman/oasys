@@ -64,7 +64,7 @@
             rowAlternationEnabled: true,
             allowColumnResizing: true,
             columnResizingMode: "widget",
-            columnAutoWidth: true,
+            // columnAutoWidth: true,
             showBorders: true,
             height: 600,
             headerFilter: {

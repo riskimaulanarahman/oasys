@@ -176,8 +176,8 @@ Class Advpaymentmodule extends Application{
 							$department = $Advpayment->employee->department->departmentname;
 							$data=$Advpayment->to_array();
 							$data['fullname']=$fullname;
-							$data['lessadvance']=number_format($val_tamount);
-							// $data['department']=$department;
+							$data['lessadvance']=$val_tamount;
+							$data['department']=$department;
 							echo json_encode($data, JSON_NUMERIC_CHECK);
 						}else{
 							$Advpayment = new Advpayment();
@@ -661,7 +661,7 @@ Class Advpaymentmodule extends Application{
 							$username = $Advpaymentapproval->approver->employee->loginname;
 							$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
 							$email = $adb->email;
-							$title = 'Advpayment';
+							$title = 'Payment';
 							// $Advpaymentdetail=Advpaymentdetail::find('all',array('conditions'=>array("advpayment_id=?",$id),'include'=>array('advpayment','employee'=>array('company','department','designation','grade'))));
 							$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$adb->fullname.',</span></p>
 										<p class=MsoNormal><span style="color:#1F497D">new '.$title.' Request is awaiting for your approval:</span></p>
@@ -678,32 +678,47 @@ Class Advpaymentmodule extends Application{
 
 										';
 							if($Advpayment->paymentform == 0) {
-								$form = "HR Related";
+								$form = "Payment Req HR";
 							} else {
-								$form = "Ops Related";
+								$form = "Payment Req OPR";
 							}
+
+							if($Advpayment->paymenttype == 0) {
+								$less = 0;
+							} else {
+								$less = $Advpayment->lessadvance;
+							}
+
+							if($Advpayment->payment == 1) {
+								$paymentM = "Cash";
+							} else if($Advpayment->payment == 2) {
+								$paymentM = "Bank";
+							}
+
 							$Advpaymentdetail = Advpaymentdetail::find('all',array('conditions'=>array("advpayment_id=?",$id),'include'=>array('advpayment'=>array('employee'=>array('company','department','designation','grade','location')))));	
 
 							$this->mailbody .='
 								<table border=1 cellspacing=0 cellpadding=3 width=683>
 								<tr>
-									<th><p class=MsoNormal>Advpayment Form</p></th>
+									<th><p class=MsoNormal>Payment Form</p></th>
+									<th><p class=MsoNormal>Payment Method</p></th>
 									<th><p class=MsoNormal>Beneficiary</p></th>
 									<th><p class=MsoNormal>Account Name</p></th>
 									<th><p class=MsoNormal>Bank</p></th>
 									<th><p class=MsoNormal>Account Number</p></th>
 									<th><p class=MsoNormal>Due Date</p></th>
-									<th><p class=MsoNormal>Expected Date</p></th>
+									<th><p class=MsoNormal>Payment Date</p></th>
 									<th><p class=MsoNormal>Remarks</p></th>
 								</tr>
 								<tr style="height:22.5pt">
 									<td><p class=MsoNormal> '.$form.'</p></td>
+									<td><p class=MsoNormal> '.$paymentM.'</p></td>
 									<td><p class=MsoNormal> '.$Advpayment->beneficiary.'</p></td>
 									<td><p class=MsoNormal> '.$Advpayment->accountname.'</p></td>
 									<td><p class=MsoNormal> '.$Advpayment->bank.'</p></td>
 									<td><p class=MsoNormal> '.$Advpayment->accountnumber.'</p></td>
 									<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Advpayment->duedate)).'</p></td>
-									<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Advpayment->expecteddate)).'</p></td>
+									<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Advpayment->paymentdate)).'</p></td>
 									<td><p class=MsoNormal> '.$Advpayment->remarks.'</p></td>
 								</tr>
 								</table>
@@ -726,7 +741,10 @@ Class Advpaymentmodule extends Application{
 								$no++;
 							}
 							$this->mailbody .='</table>
-							<p><b><span>Total Amount : '.number_format($val_tamount).'</span></b></p><br>
+							<ul>
+								<li><b><span>Total Amount : '.number_format($val_tamount).'</span></b></li>
+								<li><b><span>Less Advance : '.number_format($less).'</span></b></li>
+							</ul>
 							<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 							$this->mail->addAddress($adb->email, $adb->fullname);
 							$this->mail->Subject = "Online Approval System -> Advpayment";
@@ -851,12 +869,14 @@ Class Advpaymentmodule extends Application{
 						} else if(isset($query['pending'])){						
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$emp_id = $Employee->id;
+
 							// $Advpayment = Advpayment::find('all', array('conditions' => array("RequestStatus !=0"),'include' => array('employee')));
+							$Advpayment = Advpayment::find('all', array('conditions' => array("RequestStatus=1"),'include' => array('employee')));
 							// print_r($Advpayment);
-							$Advpayment = Advpayment::find('all', array('conditions' => array("RequestStatus =1"),'include' => array('employee')));
 							foreach ($Advpayment as $result) {
 								$joinx   = "LEFT JOIN tbl_approver ON (tbl_advpaymentapproval.approver_id = tbl_approver.id) ";					
-								$Advpaymentapproval = Advpaymentapproval::find('all',array('joins'=>$joinx,'conditions' => array("advpayment_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+								$Advpaymentapproval = Advpaymentapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and advpayment_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+								// echo $Advpaymentapproval;
 								if($Advpaymentapproval->approver->employee_id==$emp_id){
 									$request[]=$result->id;
 								}
@@ -1005,7 +1025,7 @@ Class Advpaymentmodule extends Application{
 										$Advpayment->requeststatus = 2;
 										$emto=$email;$emname=$Advpayment->employee->fullname;
 										$this->mail->Subject = "Online Approval System -> Need Rework";
-										$red = 'Your Advpayment request require some rework : <br>Remarks from Approver : <font color="red">'.$data['remarks']."</font>";
+										$red = 'Your Payment request require some rework : <br>Remarks from Approver : <font color="red">'.$data['remarks']."</font>";
 										$Advpaymenthistory->actiontype = 3;
 										break;
 									case '2':
@@ -1013,7 +1033,7 @@ Class Advpaymentmodule extends Application{
 											$Advpayment->requeststatus = 5;
 											$emto=$email;$emname=$Advpayment->employee->fullname;
 											$this->mail->Subject = "Online Approval System -> Approval Completed";
-											$red = 'Your Advpayment request has been approved';
+											$red = 'Your Payment request has been approved';
 											//delete unnecessary approver
 											$Advpaymentapproval = Advpaymentapproval::find('all', array('joins'=>$join,'conditions' => array("advpayment_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
 											foreach ($Advpaymentapproval as $data) {
@@ -1028,8 +1048,8 @@ Class Advpaymentmodule extends Application{
 										else{
 											$Advpayment->requeststatus = 1;
 											$emto=$adb->email;$emname=$adb->fullname;
-											$this->mail->Subject = "Online Approval System -> New Advpayment Submission";
-											$red = 'New Advpayment request awaiting for your approval:';
+											$this->mail->Subject = "Online Approval System -> New Payment Submission";
+											$red = 'New Payment request awaiting for your approval:';
 										}
 										$Advpaymenthistory->actiontype = 4;							
 										break;
@@ -1038,7 +1058,7 @@ Class Advpaymentmodule extends Application{
 										$emto=$email;$emname=$Advpayment->employee->fullname;
 										$Advpaymenthistory->actiontype = 5;
 										$this->mail->Subject = "Online Approval System -> Request Rejected";
-										$red = 'Your Advpayment request has been rejected <br>Remarks from Approver : <font color="red">'.$data['remarks']."</font>";
+										$red = 'Your Payment request has been rejected <br>Remarks from Approver : <font color="red">'.$data['remarks']."</font>";
 										break;
 									default:
 										break;
@@ -1062,16 +1082,29 @@ Class Advpaymentmodule extends Application{
 								<tr><td><p class=MsoNormal>Email</p></td><td>:</td><td><p class=MsoNormal><b>'.$email.'</b></p></td></tr>
 								</table>';
 						if($Advpayment->paymentform == 0) {
-							$form = "HR Related";
+							$form = "Payment Req HR";
 						} else {
-							$form = "Ops Related";
+							$form = "Payment Req OPR";
+						}
+
+						if($Advpayment->paymenttype == 0) {
+							$less = 0;
+						} else {
+							$less = $Advpayment->lessadvance;
+						}
+
+						if($Advpayment->payment == 1) {
+							$paymentM = "Cash";
+						} else if($Advpayment->payment == 2) {
+							$paymentM = "Bank";
 						}
 						$Advpaymentdetail = Advpaymentdetail::find('all',array('conditions'=>array("advpayment_id=?",$doid),'include'=>array('advpayment'=>array('employee'=>array('company','department','designation','grade','location')))));	
 
 						$this->mailbody .='
 							<table border=1 cellspacing=0 cellpadding=3 width=683>
 							<tr>
-								<th><p class=MsoNormal>Advpayment Form</p></th>
+								<th><p class=MsoNormal>Payment Form</p></th>
+								<th><p class=MsoNormal>Payment Method</p></th>
 								<th><p class=MsoNormal>Beneficiary</p></th>
 								<th><p class=MsoNormal>Account Name</p></th>
 								<th><p class=MsoNormal>Bank</p></th>
@@ -1082,12 +1115,13 @@ Class Advpaymentmodule extends Application{
 							</tr>
 							<tr style="height:22.5pt">
 								<td><p class=MsoNormal> '.$form.'</p></td>
+								<td><p class=MsoNormal> '.$paymentM.'</p></td>
 								<td><p class=MsoNormal> '.$Advpayment->beneficiary.'</p></td>
 								<td><p class=MsoNormal> '.$Advpayment->accountname.'</p></td>
 								<td><p class=MsoNormal> '.$Advpayment->bank.'</p></td>
 								<td><p class=MsoNormal> '.$Advpayment->accountnumber.'</p></td>
 								<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Advpayment->duedate)).'</p></td>
-								<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Advpayment->expecteddate)).'</p></td>
+								<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Advpayment->paymentdate)).'</p></td>
 								<td><p class=MsoNormal> '.$Advpayment->remarks.'</p></td>
 							</tr>
 							</table>
@@ -1111,6 +1145,7 @@ Class Advpaymentmodule extends Application{
 						}
 						$this->mailbody .='</table>
 						<p><b><span>Total Amount : '.number_format($val_tamount).'</span></b></p><br>
+						<p><b><span>Less Advance : '.number_format($less).'</span></b></p><br>
 						<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 						
 								
