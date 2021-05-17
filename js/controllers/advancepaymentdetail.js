@@ -151,6 +151,8 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
                                 },
                                 name:'lessadvance',
 								visible:($scope.data.paymenttype==1)?true:false,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+
                                 // disabled: true,                                                    
                             },
 							{

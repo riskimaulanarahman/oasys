@@ -31,7 +31,7 @@
                 
             }
         });
-        $scope.$on("initAdvance", function(event, name) {
+        $scope.$on("initAdvPayment", function(event, name) {
             $scope.dataGrid.refresh();
         });
         var myData = new DevExpress.data.DataSource({
@@ -69,7 +69,7 @@
                                 .text('')
                                 .on('dxclick', function () {
                                     DevExpress.ui.notify("Loading detail data for "+options.data.requestdate,"info",600);
-                                    $scope.loadAdvance(options.data,'approve',true);
+                                    $scope.loadAdvpayment(options.data,'approve',true);
                                 })
                                 .appendTo(container);
                         }
