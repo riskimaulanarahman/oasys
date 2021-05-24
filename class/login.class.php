@@ -224,7 +224,7 @@ Class Login extends Application{
 				$err->ip = $this->ip;
 				$err->save();
 				http_response_code(401);
-				echo json_encode(array("message" => "Login Failed : Invalid Credentials or Server Error"));
+				echo json_encode(array("message" => "Login Failed : User not found"));
 			}
 		}
 	}
