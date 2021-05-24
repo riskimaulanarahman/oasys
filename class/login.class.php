@@ -35,6 +35,9 @@ Class Login extends Application{
 		$ldap=new LDAP();
 		$ldap->server = LDAP_SERVER;
 		$ldap->domain = DOMAIN;
+		$ldap2=new LDAP();
+		$ldap2->server = '172.24.8.2';
+		$ldap2->domain = 'NS' ;
 		$data = json_decode(file_get_contents("php://input"));
 		$username = isset($this->post['username'])?$this->post['username']:"";
 		$password = isset($this->post['password'])?$this->post['password']:"";
@@ -47,6 +50,8 @@ Class Login extends Application{
 		}else {
 			$ldap->username = $username;
 			$ldap->password = $password;
+			$ldap2->username = $username;
+			$ldap2->password = $password;
 			$user = User::find('first', array('conditions' => array("UserName=?",$username)));
 			if ($user){
 					if(password_verify($password, $user->password)){
@@ -87,8 +92,8 @@ Class Login extends Application{
 						$err->save();
 						echo json_encode(array("message" => "Login Error : Invalid Credentials"));
 					}					
-			}else if ($ldap->connect()){
-				if($ldap->bind()){
+			}else if (($ldap->connect()) && ($ldap->bind())){
+				//if($ldap->bind()){
 					$log = Userlog::find('first', array('conditions' => array("ldap_userid=? and isActive='1'",$ldap->username )));
 					$adb = Addressbook::find('first', array('conditions' => array("username=?",$ldap->username)));
 					$emp = Employee::find('first', array('conditions' => array("loginname=?",$ldap->username)));
@@ -141,7 +146,7 @@ Class Login extends Application{
 						}
 					}			
 									
-				}else{
+				/*}else{
 					$err = new Errorlog();
 					$err->errortype = "LDAPLogin";
 					$err->errordate = date("Y-m-d h:i:s");
@@ -151,17 +156,61 @@ Class Login extends Application{
 					$err->save();
 					http_response_code(401);
 					echo json_encode(array("message" => "Login Error : ".$ldap->error));
-				}
+				}*/
+			}else if (($ldap2->connect()) && ($ldap2->bind())){
+					$log = Userlog::find('first', array('conditions' => array("ldap_userid=? and isActive='1'",$ldap->username )));
+					$adb = Addressbook::find('first', array('conditions' => array("username=?",$ldap->username)));
+					$emp = Employee::find('first', array('conditions' => array("loginname=?",$ldap->username)));
+					$jml=($emp)?count($emp->to_array()):0;
+					if($jml==0){
+						http_response_code(401);
+						echo json_encode(array("message" => "Login Error : Your login is not linked to the Employee data, please contact System Administrator"));
+					}else{
+						$d1=new DateTime(date("Y-m-d H:i:s"));
+						$d2=($log)?new DateTime($log->lastaccess):new DateTime(date("Y-m-d H:i:s"));
+						$diff=abs($d1->getTimestamp() - $d2->getTimestamp())/60;
+						if(($log->isactive) && ($diff<=60) && ($log->loginip!=$this->ip)){
+							echo json_encode(array("message" => "Login is used by IP :".$log->loginip));
+						}else if(($log->isactive) && ($log->loginip==$this->ip)){
+							$log->lastaccess =date("Y-m-d H:i:s");
+							$log->save();
+							http_response_code(200);
+							$this->jwt->data = array("id"=>"4","usertype"=>"ldap_user",'isadmin'=>false,"username"=>$ldap->username,"firstname"=>$adb->fullname,"lastname"=>"",'email'=>$adb->email);
+							$jwt = $this->jwt->generateToken();
+							echo json_encode(array("message" => "Successful re login.","jwt" => $jwt));
+						}else{
+							if (($diff>60) || ($log->loginip==$this->ip)){
+								$log->isactive = false;
+								$log->save();
+							}							
+							Userlog::create(array(
+								'user_id'		=>'4',
+								'ldap_userid'	=>$ldap->username,
+								'displayname'	=>$adb->fullname,
+								'LoginTime'		=>date("Y-m-d H:i:s"),
+								'LoginIP'		=>$this->ip,
+								'isActive'		=>true,
+								'LastAccess'	=>date("Y-m-d H:i:s"),
+								'LoginApp'		=>'Web'
+							));	
+							
+							http_response_code(200);	
+							
+							$this->jwt->data = array("id"=>"4","usertype"=>"ldap_user",'isadmin'=>false,"username"=>$ldap->username,"firstname"=>$adb->fullname,"lastname"=>"",'email'=>$adb->email);
+							$jwt = $this->jwt->generateToken();
+							echo json_encode(array("message" => "Successful login. ok","jwt" => $jwt));								
+						}
+					}			
 			}else{
 				$err = new Errorlog();
 				$err->errortype = "GlobalLogin";
 				$err->errordate = date("Y-m-d h:i:s");
-				$err->errormessage = "Username not found";
+				$err->errormessage = "Login Failed ";
 				$err->user = $username;
 				$err->ip = $this->ip;
 				$err->save();
 				http_response_code(401);
-				echo json_encode(array("message" => "Login Error : Username not found"));
+				echo json_encode(array("message" => "Login Failed : Invalid Credentials or Server Error"));
 			}
 		}
 	}
