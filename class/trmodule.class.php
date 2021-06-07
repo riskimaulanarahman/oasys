@@ -952,7 +952,7 @@ Class TrModule extends Application{
 		$Tr = Tr::find($doid);
 		$Trschedule=Trschedule::find('all',array('conditions'=>array("tr_id=?",$doid),'include'=>array('tr'=>array('employee'=>array('company','department','designation','grade','location')))));
 		$Trticket=Trticket::find('all',array('conditions'=>array("tr_id=?",$doid),'include'=>array('tr'=>array('employee'=>array('company','department','designation','grade','location')))));					
-		$superiorId=$Tr->depthead;
+		$superiorId=$Tr->superior;
 		$Superior = Employee::find($superiorId);
 		$supAdb = Addressbook::find('first',array('conditions'=>array("username=?",$Superior->loginname)));
 		$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Tr->employee->loginname)));
