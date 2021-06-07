@@ -397,6 +397,7 @@ Class TrModule extends Application{
 							$data = $this->post['data'];
 							$Tr = Tr::find($id,array('include'=>array('employee'=>array('company','department','designation','grade'))));
 							$olddata = $Tr->to_array();
+							$superior = $data['superior'];
 							$depthead = $data['depthead'];
 							unset($data['fullname']);
 							unset($data['department']);
@@ -439,6 +440,44 @@ Class TrModule extends Application{
 											$approver->employee_id=$depthead;
 											$approver->sequence=1;
 											$approver->approvaltype_id = 16;
+											$approver->isfinal = false;
+											$approver->save();
+											$Trapproval = new Trapproval();
+											$Trapproval->tr_id = $Tr->id;
+											$Trapproval->approver_id = $approver->id;
+											$Trapproval->save();
+										}
+									}
+									
+								}
+
+								if (isset($data['superior'])){
+									$joins   = "LEFT JOIN tbl_approver ON (tbl_trapproval.approver_id = tbl_approver.id) ";					
+									$dx = Trapproval::find('all',array('joins'=>$joins,'conditions' => array("tr_id=? and tbl_approver.approvaltype_id=43 and not(tbl_approver.employee_id=?)",$id,$superior)));	
+									foreach ($dx as $result) {
+										//delete same type dept head approver
+										$result->delete();
+										$logger = new Datalogger("Trapproval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
+									}
+									$joins   = "LEFT JOIN tbl_approver ON (tbl_trapproval.approver_id = tbl_approver.id) ";					
+									$Trapproval = Trapproval::find('all',array('joins'=>$joins,'conditions' => array("tr_id=? and tbl_approver.employee_id=?",$id,$superior)));	
+									foreach ($Trapproval as &$result) {
+										$result		= $result->to_array();
+										$result['no']=1;
+									}			
+									if(count($Trapproval)==0){ 
+										$Approver = Approver::find('first',array('conditions'=>array("module='TR' and employee_id=? and approvaltype_id=43",$superior)));
+										if(count($Approver)>0){
+											$Trapproval = new Trapproval();
+											$Trapproval->tr_id = $Tr->id;
+											$Trapproval->approver_id = $Approver->id;
+											$Trapproval->save();
+										}else{
+											$approver = new Approver();
+											$approver->module = "TR";
+											$approver->employee_id=$superior;
+											$approver->sequence=0;
+											$approver->approvaltype_id = 43;
 											$approver->isfinal = false;
 											$approver->save();
 											$Trapproval = new Trapproval();
@@ -1220,6 +1259,10 @@ Class TrModule extends Application{
 														$deptheadname = $data->approver->employee->fullname;
 														$datedepthead = date("d/m/Y",strtotime($data->approvaldate));
 													}
+													if(($data->approver->approvaltype->id==43) || ($data->approver->employee_id==$Tr->superior)){
+														$superiorname = $data->approver->employee->fullname;
+														$datesuperior = date("d/m/Y",strtotime($data->approvaldate));
+													}
 													if($data->approver->approvaltype->id==17) {
 														$hrbuname = $data->approver->employee->fullname;
 														$hrbudate = date("d/m/Y",strtotime($data->approvaldate));
@@ -1236,14 +1279,15 @@ Class TrModule extends Application{
 												$pdfContent .='</table><br>
 												<table style="width:800px;max-width:800px" cellspacing="0" border="0"  width="100%"><tr>
 													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000;" height="20" align="center" valign=bottom >Prepared By (Dipersiapkan Oleh)</td>
-													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=4 align="center" valign=bottom >Approved By (Disetujui Oleh)</td>
+													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=5 align="center" valign=bottom >Approved By (Disetujui Oleh)</td>
 													</tr>
 												<tr>
 													<td style="width:140px;max-width:160px;border-bottom: 1px solid #000000; border-left: 1px solid #000000; " height="60" align="center" valign=bottom ><br><img src="images/approved.png" style="height:25pt" alt="Approved from System"></td>
-													<td style="width:140px;max-width:160px;border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=bottom ><br>'.(($deptheadname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
-													<td style="width:140px;max-width:160px;border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=bottom ><br>'.(($hrbuname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
-													<td style="width:140px;max-width:160px;border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=bottom ><br>'.(($hrmoname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
-													<td style="width:140px;max-width:160px;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="center" valign=bottom ><br>'.(($mdname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
+													<td style="width:110px;max-width:160px;border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=bottom ><br>'.(($superiorname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
+													<td style="width:110px;max-width:160px;border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=bottom ><br>'.(($deptheadname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
+													<td style="width:110px;max-width:160px;border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=bottom ><br>'.(($hrbuname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
+													<td style="width:110px;max-width:160px;border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=bottom ><br>'.(($hrmoname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
+													<td style="width:110px;max-width:160px;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="center" valign=bottom ><br>'.(($mdname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
 													</tr>
 												<tr>
 													</tr>
@@ -1251,6 +1295,7 @@ Class TrModule extends Application{
 													</tr>
 												<tr>
 													<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" height="25"  valign=bottom>'.$Tr->employee->fullname.'<br><small>'.date("d/m/Y",strtotime($Tr->createddate)).'</small></td>
+													<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=bottom>'.$superiorname.'<br><small>'.(($superiorname=="")?"":$datesuperior).'</small></td>
 													<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=bottom>'.$deptheadname.'<br><small>'.(($deptheadname=="")?"":$datedepthead).'</small></td>
 													<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=bottom>'.$hrbuname.'<br><small>'.(($hrbuname=="")?"":$hrbudate).'</small></td>
 													<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=bottom>'.$hrmoname.'<br><small>'.(($hrmoname=="")?"":$hrmodate).'</small></td>
@@ -1258,13 +1303,14 @@ Class TrModule extends Application{
 													</tr>
 												<tr>
 													<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" height="15" align="center" valign=bottom >Applicant (Pemohon)</td>
+													<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=bottom>Superior</td>
 													<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=bottom>Department Head</td>
 													<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=bottom>HR BU</td>
 													<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=bottom>HR HO</td>
 													<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="center" valign=bottom>Deputy MD</td>
 													</tr>
 												<tr>
-													<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=5 height="15" align="left" valign=bottom ><small>Copy 1 (Asli) - HRD/KTU    Copy 2 (dua) - AVERIS (Melalui scan)</small></td>
+													<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=6 height="15" align="left" valign=bottom ><small>Copy 1 (Asli) - HRD/KTU    Copy 2 (dua) - AVERIS (Melalui scan)</small></td>
 													</tr>
 											</table>';
 											echo $pdfContent;

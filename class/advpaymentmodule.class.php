@@ -157,17 +157,13 @@ Class Advpaymentmodule extends Application{
 					case 'byid':
 						$id = $this->post['id'];
 						$Advpayment = Advpayment::find($id, array('include' => array('employee'=>array('company','department','designation'))));
-						// echo json_encode($Advpayment->employee->id);
-						// exit;
-						$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=5",$Advpayment->employee->id)));
-						// foreach ($Advance as &$result) {
-						// 	$result = $result->to_array();
+
+						// $Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=5",$Advpayment->employee->id)));
+				
+						// $AdvanceDetail = AdvanceDetail::find('all',array('conditions'=> array("advance_id=?",$Advance->id)));
+						// foreach ($AdvanceDetail as &$data) {
+						// 	$val_tamount += $data->amount;
 						// }
-						$AdvanceDetail = AdvanceDetail::find('all',array('conditions'=> array("advance_id=?",$Advance->id)));
-						foreach ($AdvanceDetail as &$data) {
-							$val_tamount += $data->amount;
-							// $result = $result->to_array();
-						}
 						
 						// echo number_format($val_tamount);
 						// echo json_encode($AdvanceDetail, JSON_NUMERIC_CHECK);
@@ -176,7 +172,7 @@ Class Advpaymentmodule extends Application{
 							$department = $Advpayment->employee->department->departmentname;
 							$data=$Advpayment->to_array();
 							$data['fullname']=$fullname;
-							$data['lessadvance']=$val_tamount;
+							// $data['lessadvance']=$val_tamount;
 							$data['department']=$department;
 							echo json_encode($data, JSON_NUMERIC_CHECK);
 						}else{
@@ -229,125 +225,6 @@ Class Advpaymentmodule extends Application{
 											$result['no']=1;
 
 										}
-										
-
-										if (($valamount<=5000000)){
-
-											$dx = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=39",$id)));	
-											foreach ($dx as $result) {
-												$result->delete();
-												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval Deputy");
-												$logger->SaveData();
-											}
-
-											$md = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=40",$id)));	
-											foreach ($md as $result) {
-												$result->delete();
-												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval MD");
-												$logger->SaveData();
-											}
-
-											$proc = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=42",$id)));	
-											foreach ($proc as $result) {
-												$result->delete();
-												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval Proc");
-												$logger->SaveData();
-											}
-													
-										} else if(($valamount>5000000 && $valamount<10000000)){
-
-											if(count($Advpaymentapprovaldepmd)==0){
-
-												// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220")){
-													$ApproverDEPMD = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='39' and tbl_employee.location_id='1'")));
-													print_r($ApproverDEPMD);
-													if(count($ApproverDEPMD)>0){
-														$Advpaymentapproval = new Advpaymentapproval();
-														$Advpaymentapproval->advpayment_id =$Advpayment->id;
-														$Advpaymentapproval->approver_id = $ApproverDEPMD->id;
-														$Advpaymentapproval->save();
-														$logger = new Datalogger("Advpaymentapproval","add","Add initial Deputy Approval",json_encode($Advpaymentapproval->to_array()));
-														$logger->SaveData();
-													}
-												// }else{
-												// 	$ApproverDEPMD = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='39'  and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
-												// 	if(count($ApproverDEPMD)>0){
-												// 		$Advpaymentapproval = new Advpaymentapproval();
-												// 		$Advpaymentapproval->advpayment_id = $Advpayment->id;
-												// 		$Advpaymentapproval->approver_id = $ApproverDEPMD->id;
-												// 		$Advpaymentapproval->save();
-												// 		$logger = new Datalogger("Advpaymentapproval","add","Add initial Deputy Approval",json_encode($Advpaymentapproval->to_array()));
-												// 		$logger->SaveData();
-												// 	}
-												// }
-											}
-
-											$md = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=40",$id)));	
-											foreach ($md as $result) {
-												$result->delete();
-												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval MD");
-												$logger->SaveData();
-											}
-
-											if($advpayment_form == 2) {
-												if(count($Advpaymentapprovalproc)==0){
-													$ApproverPROC = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='42' and tbl_employee.location_id='1'")));
-													print_r($ApproverPROC);
-													if(count($ApproverPROC)>0){
-														$Advpaymentapproval = new Advpaymentapproval();
-														$Advpaymentapproval->advpayment_id =$Advpayment->id;
-														$Advpaymentapproval->approver_id = $ApproverPROC->id;
-														$Advpaymentapproval->save();
-														$logger = new Datalogger("Advpaymentapproval","add","Add initial PROC",json_encode($Advpaymentapproval->to_array()));
-														$logger->SaveData();
-													}
-												}
-											}
-
-										} else if(($valamount>=10000000)){
-
-											if(count($Advpaymentapprovaldepmd)==0){
-
-												// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220")){
-													$ApproverDEPMD = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='39' and tbl_employee.location_id='1'")));
-													print_r($ApproverDEPMD);
-													if(count($ApproverDEPMD)>0){
-														$Advpaymentapproval = new Advpaymentapproval();
-														$Advpaymentapproval->advpayment_id =$Advpayment->id;
-														$Advpaymentapproval->approver_id = $ApproverDEPMD->id;
-														$Advpaymentapproval->save();
-														$logger = new Datalogger("Advpaymentapproval","add","Add initial Deputy Approval",json_encode($Advpaymentapproval->to_array()));
-														$logger->SaveData();
-													}
-												// }else{
-												// 	$ApproverDEPMD = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='39'  and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
-												// 	if(count($ApproverDEPMD)>0){
-												// 		$Advpaymentapproval = new Advpaymentapproval();
-												// 		$Advpaymentapproval->advpayment_id = $Advpayment->id;
-												// 		$Advpaymentapproval->approver_id = $ApproverDEPMD->id;
-												// 		$Advpaymentapproval->save();
-												// 		$logger = new Datalogger("Advpaymentapproval","add","Add initial Deputy Approval",json_encode($Advpaymentapproval->to_array()));
-												// 		$logger->SaveData();
-												// 	}
-												// }
-											}
-
-											if(count($Advpaymentapprovalmd)==0){
-
-													$ApproverMD = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='40' and tbl_employee.location_id='1'")));
-													print_r($ApproverMD);
-													if(count($ApproverMD)>0){
-														$Advpaymentapproval = new Advpaymentapproval();
-														$Advpaymentapproval->advpayment_id =$Advpayment->id;
-														$Advpaymentapproval->approver_id = $ApproverMD->id;
-														$Advpaymentapproval->save();
-														$logger = new Datalogger("Advpaymentapproval","add","Add initial Deputy Approval",json_encode($Advpaymentapproval->to_array()));
-														$logger->SaveData();
-													}
-												
-											}
-
-										} 
 
 									break;
 
@@ -356,8 +233,10 @@ Class Advpaymentmodule extends Application{
 										$employee_id = $query['employee_id'];
 										$id= $query['advpayment_id'];
 
-										$Advpayment = Advpayment::find($id);
+										
+										$Advpayment = Advpayment::find($id, array('include' => array('employee'=>array('company','department','designation'))));
 
+										
 										$Employee = Employee::find('first', array('conditions' => array("id=?",$employee_id),"include"=>array("location","department","company")));
 
 										// print_r($advpayment_form);
@@ -382,6 +261,26 @@ Class Advpaymentmodule extends Application{
 										}
 
 										if($advpayment_form == 1) {
+
+											//check lessadvance
+											$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=5 AND advanceform=1",$Advpayment->employee->id)));
+
+											$AdvanceDetail = AdvanceDetail::find('all',array('conditions'=> array("advance_id=?",$Advance->id)));
+											foreach ($AdvanceDetail as $val) {
+												$val_tamount += $val->amount;
+											}
+
+											if($Advance) {
+												$item['message']=200;
+												$item['lessadvance']=$val_tamount;
+												
+												echo json_encode($item, JSON_NUMERIC_CHECK);
+											} else {
+												$item['message']=404;
+												echo json_encode($item, JSON_NUMERIC_CHECK);
+											}
+
+											//add approver
 											if(($data['companycode']=="IHM") || ($data['companycode']=='AHL') || ($data['companycode']=='KPS')|| ($data['companycode']=='KPA')){
 												$ApproverHRDFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and tbl_employee.companycode=?  and not(tbl_employee.id=?)",$Employee->companycode,$Employee->id)));
 												$hrd = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=36",$id)));	
@@ -410,6 +309,23 @@ Class Advpaymentmodule extends Application{
 											}
 
 										} else if($advpayment_form == 2) {
+
+											//check lessadvance
+											$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=5 AND advanceform=2",$Advpayment->employee->id)));
+
+											$AdvanceDetail = AdvanceDetail::find('all',array('conditions'=> array("advance_id=?",$Advance->id)));
+											foreach ($AdvanceDetail as $val) {
+												$val_tamount += $val->amount;
+											}
+
+											if($Advance) {
+												$item['message']=200;
+												$item['lessadvance']=$val_tamount;
+												echo json_encode($item, JSON_NUMERIC_CHECK);
+											} else {
+												$item['message']=404;
+												echo json_encode($item, JSON_NUMERIC_CHECK);
+											}
 
 											$hrd = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=36",$id)));	
 											foreach ($hrd as $result) {
@@ -450,7 +366,7 @@ Class Advpaymentmodule extends Application{
 						} else{
 							$data=array();
 						}
-						echo json_encode($data, JSON_NUMERIC_CHECK);
+						// echo json_encode($data, JSON_NUMERIC_CHECK);
 						break;
 					case 'create':		
 						$data = $this->post['data'];
@@ -677,9 +593,9 @@ Class Advpaymentmodule extends Application{
 										<br>
 
 										';
-							if($Advpayment->paymentform == 0) {
+							if($Advpayment->paymentform == 1) {
 								$form = "Payment Req HR";
-							} else {
+							} else if($Advpayment->paymentform == 2){
 								$form = "Payment Req OPR";
 							}
 
@@ -744,6 +660,7 @@ Class Advpaymentmodule extends Application{
 							<ul>
 								<li><b><span>Total Amount : '.number_format($val_tamount).'</span></b></li>
 								<li><b><span>Less Advance : '.number_format($less).'</span></b></li>
+								<li><b><span>Balance To Be Paid : '.number_format($val_tamount-$less).'</span></b></li>
 							</ul>
 							<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 							$this->mail->addAddress($adb->email, $adb->fullname);
@@ -854,7 +771,8 @@ Class Advpaymentmodule extends Application{
 							$dx = Advpaymentapproval::find('first', array('joins'=>$join,'conditions' => array("advpayment_id=? and tbl_approver.employee_id = ?",$query['advpayment_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
 							// print_r($dx);
 							$Advpayment = Advpayment::find($query['advpayment_id']);
-							if($dx->approver->isfinal==1){
+							// if($dx->approver->isfinal==1){
+							if (($Advpayment->paymentform == 1 && $dx->approver->approvaltype_id == 37) || ($Advpayment->paymentform == 2 && $dx->approver->approvaltype_id == 38)){
 								$data=array("jml"=>1);
 							}else{
 								$join   = "LEFT JOIN tbl_approver ON (tbl_advpaymentapproval.approver_id = tbl_approver.id) ";
@@ -1029,8 +947,8 @@ Class Advpaymentmodule extends Application{
 										$Advpaymenthistory->actiontype = 3;
 										break;
 									case '2':
-										if ($Advpaymentapproval->approver->isfinal == 1){
-											$Advpayment->requeststatus = 5;
+										if (($Advpayment->paymentform == 1 && $Advpaymentapproval->approver->approvaltype_id == 37) || ($Advpayment->paymentform == 2 && $Advpaymentapproval->approver->approvaltype_id == 38)){
+											$Advpayment->requeststatus = 3;
 											$emto=$email;$emname=$Advpayment->employee->fullname;
 											$this->mail->Subject = "Online Approval System -> Approval Completed";
 											$red = 'Your Payment request has been approved';
@@ -1043,6 +961,14 @@ Class Advpaymentmodule extends Application{
 													$data->delete();
 												}
 											}
+
+											if($Advpayment->lessadvance !== null || $Advpayment->lessadvance !== 0) {
+												$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=5",$Advpayment->employee->id)));
+												$Advance->requeststatus=3;
+												$Advance->save();
+											}
+
+
 											$complete =true;
 										}
 										else{
@@ -1081,9 +1007,9 @@ Class Advpaymentmodule extends Application{
 								<tr><td><p class=MsoNormal>Location</p></td><td>:</td><td><p class=MsoNormal><b>'.$Advpayment->employee->location->location.'</b></p></td></tr>
 								<tr><td><p class=MsoNormal>Email</p></td><td>:</td><td><p class=MsoNormal><b>'.$email.'</b></p></td></tr>
 								</table>';
-						if($Advpayment->paymentform == 0) {
+						if($Advpayment->paymentform == 1) {
 							$form = "Payment Req HR";
-						} else {
+						} else if($Advpayment->paymentform == 2){
 							$form = "Payment Req OPR";
 						}
 
@@ -1144,8 +1070,11 @@ Class Advpaymentmodule extends Application{
 							$no++;
 						}
 						$this->mailbody .='</table>
-						<p><b><span>Total Amount : '.number_format($val_tamount).'</span></b></p><br>
-						<p><b><span>Less Advance : '.number_format($less).'</span></b></p><br>
+						<ul>
+								<li><b><span>Total Amount : '.number_format($val_tamount).'</span></b></li>
+								<li><b><span>Less Advance : '.number_format($less).'</span></b></li>
+								<li><b><span>Balance To Be Paid : '.number_format($val_tamount-$less).'</span></b></li>
+						</ul>
 						<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 						
 								
@@ -1314,8 +1243,10 @@ Class Advpaymentmodule extends Application{
 		$fullname=$Advpayment->employee->fullname;
 		$department = $Advpayment->employee->department->departmentname;
 
-		$duedate = date("d/m/Y",strtotime($Advpayment->duedate));
-		$expecteddate = date("d/m/Y",strtotime($Advpayment->expecteddate));
+		// $duedate = date("d/m/Y",strtotime($Advpayment->duedate));
+		$duedate = $Advpayment->duedate;
+		// $paymentdate = date("d/m/Y",strtotime($Advpayment->paymentdate));
+		$paymentdate = $Advpayment->paymentdate;
 
 		$joinx   = "LEFT JOIN tbl_approver ON (tbl_advpaymentapproval.approver_id = tbl_approver.id) ";					
 		$Advpaymentapproval = Advpaymentapproval::find('all',array('joins'=>$joinx,'conditions' => array("advpayment_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
@@ -1330,11 +1261,11 @@ Class Advpaymentmodule extends Application{
 			$excel->Visible = false;
 
 			if($Advpayment->paymentform == 1) {
-				$title = 'advpayment_hr';
-				$file= SITE_PATH."/doc/hr/advpaymenthr.xlsx";
+				$title = 'payment_hr';
+				$file= SITE_PATH."/doc/hr/paymenthr.xlsx";
 			} else {
-				$title = 'advpayment_ops';
-				$file= SITE_PATH."/doc/hr/advpaymentops.xlsx";
+				$title = 'payment_ops';
+				$file= SITE_PATH."/doc/hr/paymentops.xlsx";
 			}
 
 				
@@ -1342,29 +1273,36 @@ Class Advpaymentmodule extends Application{
 				$Worksheet = $Workbook->Worksheets(1);
 				$Worksheet->Activate;
 
-				$Worksheet->Range("N6")->Value = date("d/m/Y",strtotime($Advpayment->createddate));
-				$Worksheet->Range("N8")->Value = date("d/m/Y",strtotime($duedate));
-				$Worksheet->Range("N7")->Value = date("d/m/Y",strtotime($expecteddate));
+				if($Advpayment->payment == 1) {
+					$payment = 'Cash';
+				} else if($Advpayment->payment == 2) {
+					$payment = 'Bank';
+				}
 
-			if($Advpayment->paymentform == 1) {
-				$Worksheet->Range("F6")->Value = $fullname;
-				$Worksheet->Range("F7")->Value = $department;
-				$Worksheet->Range("F8")->Value = $Advpayment->employee_id;
+				// $Worksheet->Range("N6")->Value = date("d/m/Y",strtotime($Advpayment->createddate));
+				$Worksheet->Range("M15")->Value = date("d/m/Y",strtotime($duedate));
+				$Worksheet->Range("M16")->Value = date("d/m/Y",strtotime($paymentdate));
 
-				$Worksheet->Range("F10")->Value = $Advpayment->beneficiary;
-				$Worksheet->Range("F11")->Value = $Advpayment->accountname;
-				$Worksheet->Range("F12")->Value = $Advpayment->bank;
-				$Worksheet->Range("F13")->Value = $Advpayment->accountnumber;
-			} else {
-				$Worksheet->Range("E6")->Value = $fullname;
-				$Worksheet->Range("E7")->Value = $department;
-				$Worksheet->Range("E8")->Value = $Advpayment->employee_id;
+			// if($Advpayment->paymentform == 1) {
+				$Worksheet->Range("E10")->Value = $fullname;
+				$Worksheet->Range("E11")->Value = $department;
+				$Worksheet->Range("E12")->Value = $Advpayment->employee_id;
 
-				$Worksheet->Range("E10")->Value = $Advpayment->beneficiary;
-				$Worksheet->Range("E11")->Value = $Advpayment->accountname;
-				$Worksheet->Range("E12")->Value = $Advpayment->bank;
-				$Worksheet->Range("E13")->Value = $Advpayment->accountnumber;
-			}
+				$Worksheet->Range("M10")->Value = $payment;
+				$Worksheet->Range("E14")->Value = $Advpayment->beneficiary;
+				$Worksheet->Range("E15")->Value = $Advpayment->accountname;
+				$Worksheet->Range("E16")->Value = $Advpayment->bank;
+				$Worksheet->Range("E17")->Value = $Advpayment->accountnumber;
+			// } else {
+			// 	$Worksheet->Range("E6")->Value = $fullname;
+			// 	$Worksheet->Range("E7")->Value = $department;
+			// 	$Worksheet->Range("E8")->Value = $Advpayment->employee_id;
+
+			// 	$Worksheet->Range("E10")->Value = $Advpayment->beneficiary;
+			// 	$Worksheet->Range("E11")->Value = $Advpayment->accountname;
+			// 	$Worksheet->Range("E12")->Value = $Advpayment->bank;
+			// 	$Worksheet->Range("E13")->Value = $Advpayment->accountnumber;
+			// }
 
 
 
@@ -1412,159 +1350,165 @@ Class Advpaymentmodule extends Application{
 				}
 				$picpath= SITE_PATH."/images/approved.png";
 				
-				$Worksheet->Range("A32")->Value = $fullname;
-				$Worksheet->Range("A33")->Value = 'Date : '.date("d/m/Y",strtotime($Advpayment->createddate));
+				$Worksheet->Range("A34")->Value = $fullname;
+				$Worksheet->Range("A35")->Value = 'Date : '.date("d/m/Y",strtotime($Advpayment->createddate));
 
 				$pic=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 				$pic->Height  = 20;
-				$pic->Top = $excel->Cells(29, 1)->Top ;
-				$pic->Left = $excel->Cells(29, 1)->Left ;
+				$pic->Top = $excel->Cells(30, 1)->Top ;
+				$pic->Left = $excel->Cells(30, 1)->Left ;
 
 				if($Advpayment->paymentform == 1) {
 					if(!empty($deptheadname)) {
-						$Worksheet->Range("F32")->Value = $deptheadname;
-						$Worksheet->Range("F33")->Value = $deptheaddate;
+						$Worksheet->Range("E34")->Value = $deptheadname;
+						$Worksheet->Range("E35")->Value = $deptheaddate;
 						$pic1=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 						$pic1->Height  = 20;
-						$pic1->Top = $excel->Cells(29, 6)->Top ;
-						$pic1->Left = $excel->Cells(29, 6)->Left ;
+						$pic1->Top = $excel->Cells(30, 5)->Top ;
+						$pic1->Left = $excel->Cells(30, 5)->Left ;
 					}
 	
 					if(!empty($hrdheadname)) {
-						$Worksheet->Range("I32")->Value = $hrdheadname;
-						$Worksheet->Range("I33")->Value = $hrdheaddate;
+						$Worksheet->Range("H34")->Value = $hrdheadname;
+						$Worksheet->Range("H35")->Value = $hrdheaddate;
 						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 						$pic2->Height  = 20;
-						$pic2->Top = $excel->Cells(29, 9)->Top ;
-						$pic2->Left = $excel->Cells(29, 9)->Left ;
+						$pic2->Top = $excel->Cells(30, 8)->Top ;
+						$pic2->Left = $excel->Cells(30, 8)->Left ;
 					}
 	
 					if(!empty($bufcname)) {
-						$Worksheet->Range("L32")->Value = $bufcname;
-						$Worksheet->Range("L33")->Value = $bufcdate;
+						$Worksheet->Range("K34")->Value = $bufcname;
+						$Worksheet->Range("K35")->Value = $bufcdate;
 						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 						$pic2->Height  = 20;
-						$pic2->Top = $excel->Cells(29, 12)->Top ;
-						$pic2->Left = $excel->Cells(29, 12)->Left ;
+						$pic2->Top = $excel->Cells(30, 11)->Top ;
+						$pic2->Left = $excel->Cells(30, 11)->Left ;
 					}
 	
-					if(!empty($buheadname)) {
-						$Worksheet->Range("A45")->Value = $buheadname;
-						$Worksheet->Range("A46")->Value = $buheaddate;
-						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-						$pic2->Height  = 20;
-						$pic2->Top = $excel->Cells(42, 1)->Top ;
-						$pic2->Left = $excel->Cells(42, 1)->Left ;
-					}
+					// if(!empty($buheadname)) {
+					// 	$Worksheet->Range("A45")->Value = $buheadname;
+					// 	$Worksheet->Range("A46")->Value = $buheaddate;
+					// 	$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+					// 	$pic2->Height  = 20;
+					// 	$pic2->Top = $excel->Cells(42, 1)->Top ;
+					// 	$pic2->Left = $excel->Cells(42, 1)->Left ;
+					// }
 	
-					if(!empty($financename)) {
-						$Worksheet->Range("F45")->Value = $financename;
-						$Worksheet->Range("F46")->Value = $financedate;
-						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-						$pic2->Height  = 20;
-						$pic2->Top = $excel->Cells(42, 6)->Top ;
-						$pic2->Left = $excel->Cells(42, 6)->Left ;
-					}
+					// if(!empty($financename)) {
+					// 	$Worksheet->Range("F45")->Value = $financename;
+					// 	$Worksheet->Range("F46")->Value = $financedate;
+					// 	$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+					// 	$pic2->Height  = 20;
+					// 	$pic2->Top = $excel->Cells(42, 6)->Top ;
+					// 	$pic2->Left = $excel->Cells(42, 6)->Left ;
+					// }
 	
-					if(!empty($depmdname)) {
-						$Worksheet->Range("I45")->Value = $depmdname;
-						$Worksheet->Range("I46")->Value = $depmddate;
-						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-						$pic2->Height  = 20;
-						$pic2->Top = $excel->Cells(42, 9)->Top ;
-						$pic2->Left = $excel->Cells(42, 9)->Left ;
-					}
+					// if(!empty($depmdname)) {
+					// 	$Worksheet->Range("I45")->Value = $depmdname;
+					// 	$Worksheet->Range("I46")->Value = $depmddate;
+					// 	$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+					// 	$pic2->Height  = 20;
+					// 	$pic2->Top = $excel->Cells(42, 9)->Top ;
+					// 	$pic2->Left = $excel->Cells(42, 9)->Left ;
+					// }
 	
-					if(!empty($mdname)) {
-						$Worksheet->Range("L45")->Value = $mdname;
-						$Worksheet->Range("L46")->Value = $mddate;
-						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-						$pic2->Height  = 20;
-						$pic2->Top = $excel->Cells(42, 12)->Top ;
-						$pic2->Left = $excel->Cells(42, 12)->Left ;
-					}
+					// if(!empty($mdname)) {
+					// 	$Worksheet->Range("L45")->Value = $mdname;
+					// 	$Worksheet->Range("L46")->Value = $mddate;
+					// 	$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+					// 	$pic2->Height  = 20;
+					// 	$pic2->Top = $excel->Cells(42, 12)->Top ;
+					// 	$pic2->Left = $excel->Cells(42, 12)->Left ;
+					// }
 				} else {
 					if(!empty($deptheadname)) {
-						$Worksheet->Range("I32")->Value = $deptheadname;
-						$Worksheet->Range("I33")->Value = $deptheaddate;
+						$Worksheet->Range("E34")->Value = $deptheadname;
+						$Worksheet->Range("E35")->Value = $deptheaddate;
 						$pic1=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 						$pic1->Height  = 20;
-						$pic1->Top = $excel->Cells(29, 9)->Top ;
-						$pic1->Left = $excel->Cells(29, 9)->Left ;
+						$pic1->Top = $excel->Cells(30, 5)->Top ;
+						$pic1->Left = $excel->Cells(30, 5)->Left ;
 					}
 
-					if(!empty($procname)) {
-						$Worksheet->Range("L32")->Value = $procname;
-						$Worksheet->Range("L33")->Value = $procdate;
-						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-						$pic2->Height  = 20;
-						$pic2->Top = $excel->Cells(29, 12)->Top ;
-						$pic2->Left = $excel->Cells(29, 12)->Left ;
-					}
+					// if(!empty($procname)) {
+					// 	$Worksheet->Range("L32")->Value = $procname;
+					// 	$Worksheet->Range("L33")->Value = $procdate;
+					// 	$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+					// 	$pic2->Height  = 20;
+					// 	$pic2->Top = $excel->Cells(29, 12)->Top ;
+					// 	$pic2->Left = $excel->Cells(29, 12)->Left ;
+					// }
 	
 					if(!empty($bufcname)) {
-						$Worksheet->Range("A45")->Value = $bufcname;
-						$Worksheet->Range("A46")->Value = $bufcdate;
+						$Worksheet->Range("H34")->Value = $bufcname;
+						$Worksheet->Range("H35")->Value = $bufcdate;
 						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 						$pic2->Height  = 20;
-						$pic2->Top = $excel->Cells(42, 1)->Top ;
-						$pic2->Left = $excel->Cells(42, 1)->Left ;
+						$pic2->Top = $excel->Cells(30, 8)->Top ;
+						$pic2->Left = $excel->Cells(30, 8)->Left ;
 					}
 	
 					if(!empty($buheadname)) {
-						$Worksheet->Range("E45")->Value = $buheadname;
-						$Worksheet->Range("E46")->Value = $buheaddate;
+						$Worksheet->Range("K34")->Value = $buheadname;
+						$Worksheet->Range("K35")->Value = $buheaddate;
 						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 						$pic2->Height  = 20;
-						$pic2->Top = $excel->Cells(42, 5)->Top ;
-						$pic2->Left = $excel->Cells(42, 5)->Left ;
+						$pic2->Top = $excel->Cells(30, 11)->Top ;
+						$pic2->Left = $excel->Cells(30, 11)->Left ;
 					}
 	
-					if(!empty($financename)) {
-						$Worksheet->Range("H45")->Value = $financename;
-						$Worksheet->Range("H46")->Value = $financedate;
-						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-						$pic2->Height  = 20;
-						$pic2->Top = $excel->Cells(42, 8)->Top ;
-						$pic2->Left = $excel->Cells(42, 8)->Left ;
-					}
+					// if(!empty($financename)) {
+					// 	$Worksheet->Range("H45")->Value = $financename;
+					// 	$Worksheet->Range("H46")->Value = $financedate;
+					// 	$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+					// 	$pic2->Height  = 20;
+					// 	$pic2->Top = $excel->Cells(42, 8)->Top ;
+					// 	$pic2->Left = $excel->Cells(42, 8)->Left ;
+					// }
 
-					if(!empty($depmdname)) {
-						$Worksheet->Range("K45")->Value = $depmdname;
-						$Worksheet->Range("K46")->Value = $depmddate;
-						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-						$pic2->Height  = 20;
-						$pic2->Top = $excel->Cells(42, 11)->Top ;
-						$pic2->Left = $excel->Cells(42, 11)->Left ;
-					}
+					// if(!empty($depmdname)) {
+					// 	$Worksheet->Range("K45")->Value = $depmdname;
+					// 	$Worksheet->Range("K46")->Value = $depmddate;
+					// 	$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+					// 	$pic2->Height  = 20;
+					// 	$pic2->Top = $excel->Cells(42, 11)->Top ;
+					// 	$pic2->Left = $excel->Cells(42, 11)->Left ;
+					// }
 	
-					if(!empty($mdname)) {
-						$Worksheet->Range("N45")->Value = $mdname;
-						$Worksheet->Range("N46")->Value = $mddate;
-						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-						$pic2->Height  = 20;
-						$pic2->Top = $excel->Cells(42, 14)->Top ;
-						$pic2->Left = $excel->Cells(42, 14)->Left ;
-					}
+					// if(!empty($mdname)) {
+					// 	$Worksheet->Range("N45")->Value = $mdname;
+					// 	$Worksheet->Range("N46")->Value = $mddate;
+					// 	$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+					// 	$pic2->Height  = 20;
+					// 	$pic2->Top = $excel->Cells(42, 14)->Top ;
+					// 	$pic2->Left = $excel->Cells(42, 14)->Left ;
+					// }
 				}
-
-				
 
 				foreach ($Advpaymentdetail as $data){
 					$val_tamount += $data->amount;
 				}
-
-				$Worksheet->Range("L18")->Value = $val_tamount;
+				
+				if($Advpayment->paymenttype == 0) {
+					$lessadvance = 0;
+				} else if($Advpayment->paymenttype == 1) {
+					$lessadvance = $Advpayment->lessadvance;
+				}
+				$Worksheet->Range("K22")->Value = $val_tamount;
+				$Worksheet->Range("K23")->Value = $lessadvance;
+				$Worksheet->Range("K24")->Value = ($val_tamount-$lessadvance);
 
 	
 				$xlShiftDown=-4121;
-
-				for ($a=16;$a<16+count($Advpaymentdetail);$a++){
+				$no = 1;
+				for ($a=20;$a<20+count($Advpaymentdetail);$a++){
 					$Worksheet->Rows($a+1)->Copy();
 					$Worksheet->Rows($a+1)->Insert($xlShiftDown);
-					$Worksheet->Range("B".$a)->Value = $Advpaymentdetail[$a-16]->description;
-					$Worksheet->Range("J".$a)->Value = $Advpaymentdetail[$a-16]->accountcode;
-					$Worksheet->Range("L".$a)->Value = $Advpaymentdetail[$a-16]->amount;
+					$Worksheet->Range("A".$a)->Value = $no++;
+					$Worksheet->Range("B".$a)->Value = $Advpaymentdetail[$a-20]->description;
+					$Worksheet->Range("I".$a)->Value = $Advpaymentdetail[$a-20]->accountcode;
+					$Worksheet->Range("K".$a)->Value = $Advpaymentdetail[$a-20]->amount;
 				}
 		
 

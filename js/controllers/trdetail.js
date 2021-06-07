@@ -337,6 +337,49 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 								{dataField:'iscommercialairline',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,name:'iscommercialairline',label:{text:"",visible:false},visible:($scope.data.isairtransport==1)?true:false,dataType:"boolean",editorType: "dxCheckBox",editorOptions: { text:"Commercial Airline (Pesawat Komersial)"}},
 								{dataField:'iscompanyaircraft',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,name:'iscompanyaircraft',label:{text:"",visible:false},visible:($scope.data.isairtransport==1)?true:false,dataType:"boolean",editorType: "dxCheckBox",editorOptions: { text:"Company Aircraft (Pesawat Perusahaan)"}},
 								{label: {
+									text: "Direct Superior"
+									},
+									dataField:"superior",
+									editorType: "dxDropDownBox",
+									disabled: (($scope.mode=='approve') || ($scope.mode=='view') || ($scope.mode=='report'))?true:false,
+									editorOptions: { 
+										dataSource:$scope.allEmpDataSource,  
+										valueExpr: 'id',
+										displayExpr: 'fullname',
+										searchEnabled: true,
+										contentTemplate: function(e){
+											var $dataGrid = $("<div>").dxDataGrid({
+												dataSource: e.component.option("dataSource"),
+												columns: [{dataField:"fullname",width:100},{dataField:"company",width:50}, {dataField:"department",width:200}],
+												height: 265,
+												selection: { mode: "single" },
+												selectedRowKeys: [e.component.option("value")],
+												focusedRowEnabled: true,
+												focusedRowKey: e.component.option("value"),
+												searchPanel: {
+													visible: true,
+													width: 265,
+													placeholder: "Search..."
+												},
+												onSelectionChanged: function(selectedItems){
+													var keys = selectedItems.selectedRowKeys,
+														hasSelection = keys.length;
+													if (hasSelection){
+														e.component.option("value", hasSelection ? keys[0] : null); 
+														e.component.close();
+													}
+													
+												}
+											});
+											return $dataGrid;
+										}
+									},
+									validationRules: [{
+										type: "required",
+										message: "Please select your Superior"
+									}]
+								},
+								{label: {
 										text: "Department Head"
 									},
 									dataField:"depthead",
@@ -990,6 +1033,7 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 				delete data.createddate;
 				delete data.employee_id;
 				delete data.requeststatus;
+				delete data.superior;
 				delete data.depthead;
 				delete data.fullname;
 				delete data.department;
@@ -1055,6 +1099,7 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 						delete data.createddate;
 						delete data.employee_id;
 						delete data.requeststatus;
+						delete data.superior;
 						delete data.depthead;
 						delete data.fullname;
 						delete data.department;

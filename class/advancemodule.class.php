@@ -103,7 +103,7 @@ Class Advancemodule extends Application{
 						if(isset($query['status'])){
 							switch ($query['status']){
 								case 'waiting':
-									$Advance = Advance::find('all', array('conditions' => array("employee_id=? and RequestStatus<3 and id<>?",$query['username'],$query['id']),'include' => array('employee')));
+									$Advance = Advance::find('all', array('conditions' => array("employee_id=? and RequestStatus!=3 and id<>?",$query['username'],$query['id']),'include' => array('employee')));
 									foreach ($Advance as &$result) {
 										$fullname	= $result->employee->fullname;		
 										$result		= $result->to_array();
@@ -658,9 +658,9 @@ Class Advancemodule extends Application{
 										<br>
 
 										';
-							if($Advance->advanceform == 0) {
+							if($Advance->advanceform == 1) {
 								$form = "HR Related";
-							} else {
+							} else if($Advance->advanceform == 2){
 								$form = "Ops Related";
 							}
 							$Advancedetail = Advancedetail::find('all',array('conditions'=>array("advance_id=?",$id),'include'=>array('advance'=>array('employee'=>array('company','department','designation','grade','location')))));	
@@ -922,7 +922,7 @@ Class Advancemodule extends Application{
 							// if ($appstatus=='4' || $appstatus==4 ){
 							// 	$data['approvalstatus'] == 0;
 							// }
-							print_r($data);
+							// print_r($data);
 
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$Advance = Advance::find($doid);
@@ -967,6 +967,7 @@ Class Advancemodule extends Application{
 								$Advance = Advance::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
 								$joinx   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";					
 								$nAdvanceapproval = Advanceapproval::find('first',array('joins'=>$joinx,'conditions' => array("advance_id=? and ApprovalStatus=0",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+								print_r($nAdvanceapproval);
 								$username = $nAdvanceapproval->approver->employee->loginname;
 								$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
 
@@ -1042,9 +1043,9 @@ Class Advancemodule extends Application{
 								<tr><td><p class=MsoNormal>Location</p></td><td>:</td><td><p class=MsoNormal><b>'.$Advance->employee->location->location.'</b></p></td></tr>
 								<tr><td><p class=MsoNormal>Email</p></td><td>:</td><td><p class=MsoNormal><b>'.$email.'</b></p></td></tr>
 								</table>';
-						if($Advance->advanceform == 0) {
+						if($Advance->advanceform == 1) {
 							$form = "HR Related";
-						} else {
+						} else if($Advance->advanceform == 2){
 							$form = "Ops Related";
 						}
 						$Advancedetail = Advancedetail::find('all',array('conditions'=>array("advance_id=?",$doid),'include'=>array('advance'=>array('employee'=>array('company','department','designation','grade','location')))));	
@@ -1260,8 +1261,10 @@ Class Advancemodule extends Application{
 		$fullname=$Advance->employee->fullname;
 		$department = $Advance->employee->department->departmentname;
 
-		$duedate = date("d/m/Y",strtotime($Advance->duedate));
-		$expecteddate = date("d/m/Y",strtotime($Advance->expecteddate));
+		// $duedate = date("d/m/Y",strtotime($Advance->duedate));
+		$duedate = $Advance->duedate;
+		// $expecteddate = date("d/m/Y",strtotime($Advance->expecteddate));
+		$expecteddate = $Advance->expecteddate;
 
 		$joinx   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";					
 		$Advanceapproval = Advanceapproval::find('all',array('joins'=>$joinx,'conditions' => array("advance_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
@@ -1504,10 +1507,11 @@ Class Advancemodule extends Application{
 
 	
 				$xlShiftDown=-4121;
-
+				$no = 1;
 				for ($a=16;$a<16+count($Advancedetail);$a++){
 					$Worksheet->Rows($a+1)->Copy();
 					$Worksheet->Rows($a+1)->Insert($xlShiftDown);
+					$Worksheet->Range("A".$a)->Value = $no++;
 					$Worksheet->Range("B".$a)->Value = $Advancedetail[$a-16]->description;
 					$Worksheet->Range("J".$a)->Value = $Advancedetail[$a-16]->accountcode;
 					$Worksheet->Range("L".$a)->Value = $Advancedetail[$a-16]->amount;
