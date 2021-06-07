@@ -55,7 +55,7 @@ app.factory('CrudService', CrudService);
         }
 		
         function handleSuccess(res) {
-            return res.data;          
+            return res.data;
         }
 		
 		function checkAccess(module,username){
