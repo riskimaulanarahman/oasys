@@ -280,6 +280,8 @@ Class Advpaymentmodule extends Application{
 												echo json_encode($item, JSON_NUMERIC_CHECK);
 											}
 
+											// $companyBU=( ($Employee->companycode=='KPA') || ($Employee->companycode=='AHL') )?"KPSI":$Employee->companycode;
+
 											//add approver
 											if(($data['companycode']=="IHM") || ($data['companycode']=='AHL') || ($data['companycode']=='KPS')|| ($data['companycode']=='KPA')){
 												$ApproverHRDFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and tbl_employee.companycode=?  and not(tbl_employee.id=?)",$Employee->companycode,$Employee->id)));
@@ -555,7 +557,7 @@ Class Advpaymentmodule extends Application{
 									$approver = new Approver();
 									$approver->module = "Advpayment";
 									$approver->employee_id=$depthead;
-									$approver->sequence=1;
+									$approver->sequence=0;
 									$approver->approvaltype_id = 35;
 									$approver->isfinal = false;
 									$approver->save();

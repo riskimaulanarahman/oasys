@@ -31,7 +31,7 @@ app.register.controller('dashboardCtrl', ['$rootScope','$scope', '$http', '$inte
 	$scope.pendingITIMAILReq=0;
 	$scope.pendingITIMAIL=0;
     function initController() {
-		setTimeout(function(){ 
+		// setTimeout(function(){ 
 			criteria = {status:'pending'};
 			CrudService.FindData('dayoffbyemp',criteria).then(function (response){
 				$scope.pendingDayoffReq=response.jml;
@@ -112,7 +112,7 @@ app.register.controller('dashboardCtrl', ['$rootScope','$scope', '$http', '$inte
 			CrudService.FindData('itsharefapp',criteria).then(function (response){
 				$scope.pendingITSHAREF=response.jml;
 			});
-		}, 1000);
+		// }, 1000);
 		
         // DevExpress.ui.notify({
             // message: "Welcome \r\n ",
