@@ -52,9 +52,6 @@ $page = array("login",
 	"itsharefoldermodule",
 	// "advancemodule",
 	// "advpaymentmodule"
-	// "itmailsizemodule",
-	// "itrdwebmodule",
-	// "itstoragetfmodule"
 );
 
 foreach ($page as $class){

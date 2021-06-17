@@ -280,35 +280,99 @@ Class Advpaymentmodule extends Application{
 												echo json_encode($item, JSON_NUMERIC_CHECK);
 											}
 
-											// $companyBU=( ($Employee->companycode=='KPA') || ($Employee->companycode=='AHL') )?"KPSI":$Employee->companycode;
-
-											//add approver
-											if(($data['companycode']=="IHM") || ($data['companycode']=='AHL') || ($data['companycode']=='KPS')|| ($data['companycode']=='KPA')){
-												$ApproverHRDFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and tbl_employee.companycode=?  and not(tbl_employee.id=?)",$Employee->companycode,$Employee->id)));
-												$hrd = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=36",$id)));	
-												foreach ($hrd as $result) {
-													$result->delete();
-													$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval HRD");
-													$logger->SaveData();
-												}
-												if(count($ApproverHRDFU)>0){
-
-													$Advpaymentapproval = new Advpaymentapproval();
-													$Advpaymentapproval->advpayment_id = $Advpayment->id;
-													$Advpaymentapproval->approver_id = $ApproverHRDFU->id;
-													$Advpaymentapproval->save();
-													$logger = new Datalogger("Advpaymentapproval","add","Add initial HRD Approval ",json_encode($Advpaymentapproval->to_array()));
-													$logger->SaveData();
-													
-												}
+											// $companyHRV=( ($Employee->companycode=='KPA') || ($Employee->companycode=='AHL') )?"KPSI":$Employee->companycode;
+											// if (($Employee->company->sapcode=='RND') || ($Employee->company->sapcode=='NKF')){
+											// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
+											$hrverifikator = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=44",$id)));	
+											foreach ($hrverifikator as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval HR Verifikator");
+												$logger->SaveData();
+											}
+											
+											if(($data['companycode']=="IHM" || $Employee->company->sapcode=='RND' || $Employee->company->sapcode=='NKF')  && (substr(strtolower($Employee->location->sapcode),0,4)=="0250")){
+												$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and tbl_employee.location_id='8'")));
+											}else if(($data['companycode']=="AHL" || $Employee->company->sapcode=='RND' || $Employee->company->sapcode=='NKF') && (substr(strtolower($Employee->location->sapcode),0,4)=="0210")){
+												$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and tbl_employee.location_id='3'")));
+											}else {
+												$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and tbl_employee.location_id='1'")));
 											}
 
+											
+
+											if(count($ApproverHRV)>0){
+												$Advpaymentapproval = new Advpaymentapproval();
+												$Advpaymentapproval->advpayment_id = $Advpayment->id;
+												$Advpaymentapproval->approver_id = $ApproverHRV->id;
+												$Advpaymentapproval->save();
+												$logger = new Datalogger("Advpaymentapproval","add","Add initial HR Verifikator Approval ",json_encode($Advpaymentapproval->to_array()));
+												$logger->SaveData();
+											}
+
+											//add approver
+											// if(($data['companycode']=="IHM") || ($data['companycode']=='AHL') || ($data['companycode']=='KPS') || ($data['companycode']=='KPSI') || ($data['companycode']=='KPA')){
+
+											// 	if((substr(strtolower($Employee->location->sapcode),0,4)=="0200")) {
+											// 		$ApproverHRDFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and tbl_employee.location_id='1' and not(tbl_employee.id=?)",$Employee->id)));
+											// 	} else {
+											// 		$ApproverHRDFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and tbl_employee.companycode=?  and not(tbl_employee.id=?)",$Employee->companycode,$Employee->id)));
+											// 	}
+											// 	$hrd = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=36",$id)));	
+											// 	foreach ($hrd as $result) {
+											// 		$result->delete();
+											// 		$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval HRD");
+											// 		$logger->SaveData();
+											// 	}
+													
+											// 	if(count($ApproverHRDFU)>0){
+
+											// 		$Advpaymentapproval = new Advpaymentapproval();
+											// 		$Advpaymentapproval->advpayment_id = $Advpayment->id;
+											// 		$Advpaymentapproval->approver_id = $ApproverHRDFU->id;
+											// 		$Advpaymentapproval->save();
+											// 		$logger = new Datalogger("Advpaymentapproval","add","Add initial HRD Approval ",json_encode($Advpaymentapproval->to_array()));
+											// 		$logger->SaveData();
+													
+											// 	}
+											// }
 											$buhead = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=38",$id)));	
 											foreach ($buhead as $result) {
 												$result->delete();
 												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval BU HEAD");
 												$logger->SaveData();
 											}
+
+											$hrd = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=36",$id)));	
+											foreach ($hrd as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval HRD");
+												$logger->SaveData();
+											}
+
+											if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
+												
+												
+												$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=36 and tbl_employee.location_id='1'")));
+												if(count($Approver2)>0){
+													$Advpaymentapproval = new Advpaymentapproval();
+													$Advpaymentapproval->advpayment_id = $Advpayment->id;
+													$Advpaymentapproval->approver_id = $Approver2->id;
+													$Advpaymentapproval->save();
+												}
+													
+											}else{
+												
+												$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=36 and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
+												if(count($Approver2)>0){
+													$Advpaymentapproval = new Advpaymentapproval();
+													$Advpaymentapproval->advpayment_id = $Advpayment->id;
+													$Advpaymentapproval->approver_id = $Approver2->id;
+													$Advpaymentapproval->save();
+												}
+											}
+											
+
+											
 
 										} else if($advpayment_form == 2) {
 
@@ -333,6 +397,13 @@ Class Advpaymentmodule extends Application{
 											foreach ($hrd as $result) {
 												$result->delete();
 												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval HRD");
+												$logger->SaveData();
+											}
+
+											$hrv = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=44",$id)));	
+											foreach ($hrv as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval HR Verifikator");
 												$logger->SaveData();
 											}
 

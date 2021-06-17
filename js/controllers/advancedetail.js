@@ -57,7 +57,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 				sort: "id"
 			}
 			$scope.AppAction = ($scope.data.approvalstep==2)?[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Verify"}]:[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
-			$scope.AdvanceForm =[{id:1,advanceform:"HR Related"},{id:2,advanceform:"Ops Related"}];
+			$scope.AdvanceForm =[{id:0,advanceform:"- Select -"},{id:1,advanceform:"HR Related"},{id:2,advanceform:"Ops Related"}];
 			$scope.reqStatus = 0;
 			$scope.gridSelectedRowKeys =[];
 
@@ -570,7 +570,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 			// onContentReady: function(e){
 			// 	$scope.grid1Component = e.component;
 			// },
-			onRowInserting: function(e) {
+			onRowInserted: function(e) {
 				var amount = e.component.getTotalSummaryValue("amount");
 				var formadv = $('#advformtype').val();
 
@@ -583,7 +583,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 				$scope.grid2Component.refresh();
 
 			},
-			onRowUpdating: function (e) {
+			onRowUpdated: function (e) {
 				var amount = e.component.getTotalSummaryValue("amount");
 				var formadv = $('#advformtype').val();
 

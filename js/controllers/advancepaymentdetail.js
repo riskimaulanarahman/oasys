@@ -105,7 +105,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 												$scope.formInstance.updateData('paymenttype', 1);
 
 											} else if(response.message == 404) {
-												alert('data tidak di temukan');
+												// alert('data tidak di temukan');
 												$scope.formInstance.itemOption('group.paymenttype', 'visible', false);
 												$scope.formInstance.updateData('lessadvance', "");
 												$scope.formInstance.updateData('paymenttype', 0);
