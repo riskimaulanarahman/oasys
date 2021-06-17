@@ -345,12 +345,31 @@ Class Mmf30module extends Application{
 							// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="022") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
 								
 							// }else{
-								$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='MMF30' and tbl_approver.isactive='1' and approvaltype_id=27")));
-								if(count($Approver)>0){
-									$Mmf30approval = new Mmf30approval();
-									$Mmf30approval->mmf30_id = $Mmf30->id;
-									$Mmf30approval->approver_id = $Approver->id;
-									$Mmf30approval->save();
+								// $Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='MMF30' and tbl_approver.isactive='1' and approvaltype_id=27")));
+								// if(count($Approver)>0){
+								// 	$Mmf30approval = new Mmf30approval();
+								// 	$Mmf30approval->mmf30_id = $Mmf30->id;
+								// 	$Mmf30approval->approver_id = $Approver->id;
+								// 	$Mmf30approval->save();
+								// }
+
+								if(($Employee->companycode=="LDU" || $Employee->companycode=="BCL")){
+							
+									$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='MMF30' and tbl_approver.isactive='1' and approvaltype_id=27")));
+									if(count($Approver)>0){
+										$Mmf30approval = new Mmf30approval();
+										$Mmf30approval->mmf30_id = $Mmf30->id;
+										$Mmf30approval->approver_id = $Approver->id;
+										$Mmf30approval->save();
+									}
+								}else{
+									$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='MMF30' and tbl_approver.isactive='1' and approvaltype_id=27 and tbl_employee.location_id='1'")));
+									if(count($Approver)>0){
+										$Mmf30approval = new Mmf30approval();
+										$Mmf30approval->mmf30_id = $Mmf30->id;
+										$Mmf30approval->approver_id = $Approver->id;
+										$Mmf30approval->save();
+									}
 								}
 							// }
 							// $Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='MMF' and tbl_approver.isactive='1' and approvaltype_id=24")));
