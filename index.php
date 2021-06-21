@@ -1,7 +1,7 @@
 <?php
 session_start();
 $_SESSION['previous_location'] = 'oasys';
-if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_match('/Edge/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_match('/Trident/i', @$_SERVER['HTTP_USER_AGENT'], $B)) {
+if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_match('/Trident/i', @$_SERVER['HTTP_USER_AGENT'], $B)) {
     header("location:/outdatedbrowser");
 }
 ?>
@@ -710,6 +710,8 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 									<li class="nav-item"><a href="" ng-click="advanceApproval()" class="nav-link" ><i class='fas fa-marker'></i> Adv Related Approval</a></li>
 									<li class="nav-item"><a href="" ng-click="myAdvpayment()" class="nav-link" ><i class='fa fa-calendar-alt'></i> Payment Request</a></li>
 									<li class="nav-item"><a href="" ng-click="advpaymentApproval()" class="nav-link" ><i class='fas fa-marker'></i> Payment Approval</a></li>
+                                    <li class="nav-item"><a href="" ng-click="myAdvexpense()" class="nav-link" ><i class='fa fa-calendar-alt'></i> Expense Request</a></li>
+									<li class="nav-item"><a href="" ng-click="expenseApproval()" class="nav-link" ><i class='fas fa-marker'></i> Expense Approval</a></li>
 								</ul>
 							</li> -->
                             
@@ -852,14 +854,14 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 	<script language="JavaScript" src="js/lib/FileSaver.min.js" type="text/javascript"></script>
     <!-- <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/globalize/0.1.1/globalize.min.js"></script> -->
 
-	<script language="JavaScript" src="js/app.js?v=5.11" type="text/javascript"></script>
-	<script language="JavaScript" src="js/directive.js?v=5.11" type="text/javascript"></script>
-	<script language="JavaScript" src="js/services.js?v=5.11" type="text/javascript"></script>
-	<script language="JavaScript" src="js/filter.js?v=5.11" type="text/javascript"></script>
-	<script language="JavaScript" src="js/factory.js?v=5.11" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/maincontroller.js?v=5.11" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/login.js?v=5.11" type="text/javascript"></script>
-	<script language="JavaScript" src="js/script.js?v=5.11" type="text/javascript"></script>
+	<script language="JavaScript" src="js/app.js?v=5.12" type="text/javascript"></script>
+	<script language="JavaScript" src="js/directive.js?v=5.12" type="text/javascript"></script>
+	<script language="JavaScript" src="js/services.js?v=5.12" type="text/javascript"></script>
+	<script language="JavaScript" src="js/filter.js?v=5.12" type="text/javascript"></script>
+	<script language="JavaScript" src="js/factory.js?v=5.12" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/maincontroller.js?v=5.12" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/login.js?v=5.12" type="text/javascript"></script>
+	<script language="JavaScript" src="js/script.js?v=5.12" type="text/javascript"></script>
 
 	<script type="text/javascript" src="assets/scripts/main.js"></script>
 </body>
