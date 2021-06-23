@@ -733,7 +733,7 @@ Class Itimailmodule extends Application{
 									if($Itimail->formtype == 1) {
 
 										if($Itimail->accessrequested == 1) {
-											$accessR = 'Exchange (non-Internet) Email';
+											$accessR = 'Email Request';
 										}else if($Itimail->accessrequested == 2) {
 											$accessR = 'Internet Email';
 										}else if($Itimail->accessrequested == 3) {
@@ -1382,7 +1382,7 @@ Class Itimailmodule extends Application{
 								if($Itimail->formtype == 1) {
 
 									if($Itimail->accessrequested == 1) {
-										$accessR = 'Exchange (non-Internet) Email';
+										$accessR = 'Email Request';
 									}else if($Itimail->accessrequested == 2) {
 										$accessR = 'Internet Email';
 									}else if($Itimail->accessrequested == 3) {
@@ -1805,7 +1805,7 @@ Class Itimailmodule extends Application{
 			$excel->Visible = false;
 
 			if($form == 1) {
-				$title = 'EXINETMAIL';
+				$title = 'EMAILREQUEST';
 
 				$file= SITE_PATH."/doc/it/template_inetmail.xlsx";
 				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
