@@ -162,7 +162,7 @@
 
             today = yyyy+'-'+mm+'-'+dd;
 
-            $scope.FormType =[{id:0,formtype:"- Select -"},{id:1,formtype:"Exchange - Internet Email"},{id:2,formtype:"Internet Access"},{id:3,formtype:"Increase Mailbox Size"},{id:4,formtype:"RD Web Access"},{id:5,formtype:"Email Group"}];
+            $scope.FormType =[{id:0,formtype:"- Select -"},{id:1,formtype:"Email Request"},{id:2,formtype:"Internet Access"},{id:3,formtype:"Increase Mailbox Size"},{id:4,formtype:"RD Web Access"},{id:5,formtype:"Email Group"}];
 
             $scope.AccessRequested =[{id:0,accessrequested:"- Select -"},{id:1,accessrequested:"Exchange (non-Internet) Email"},{id:2,accessrequested:"Internet Email"},{id:3,accessrequested:"Change Domain"}];
             $scope.AccessType =[{id:0,accesstype:"- Select -"},{id:1,accesstype:"Terminal Server (TS) User Account"},{id:2,accesstype:"Non-TS Account"}];

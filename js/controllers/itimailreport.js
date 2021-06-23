@@ -125,7 +125,7 @@
                     {dataField:'formtype',caption:"Form Type",width: 200,
                     customizeText: function (e) {
                         // console.log(e);
-                        var rform = ["","Exchange (non-Internet) Email","Internet Access","Increase Mailbox Size","RD Web Access","Email Group"];
+                        var rform = ["","Email Request","Internet Access","Increase Mailbox Size","RD Web Access","Email Group"];
                         return rform[e.value];
                     }},
                     {dataField:'fullname',caption:"Request For Employee",width: 200, editorOptions: { 

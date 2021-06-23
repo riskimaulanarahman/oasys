@@ -1,5 +1,5 @@
 (function (app) {
-    app.register.controller('itimailCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
+    app.register.controller('advpaymentCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
         $scope.ds={};
         $scope.test=[];
         $scope.disabled= true;
@@ -7,7 +7,7 @@
         var myStore = new DevExpress.data.CustomStore({
             load: function() {			
                 $scope.isLoaded =true;
-                return CrudService.GetAll('itimailbyemp').then(function (response) {
+                return CrudService.GetAll('advpaymentbyemp').then(function (response) {
                     if(response.status=="error"){
                         DevExpress.ui.notify(response.message,"error");
                     }else{
@@ -17,12 +17,12 @@
             },
          
             byKey: function(key) {
-                CrudService.GetById('itimail',encodeURIComponent(key)).then(function (response) {
+                CrudService.GetById('advpayment',encodeURIComponent(key)).then(function (response) {
                     return response;
                 });
             },
             insert: function(values) {
-                CrudService.Create('itimail',values).then(function (response) {
+                CrudService.Create('advpayment',values).then(function (response) {
                     if(response.status=="error"){
                          DevExpress.ui.notify(response.message,"error");
                     }
@@ -30,7 +30,7 @@
                 });
             },
             update: function(key, values) {
-                CrudService.Update('itimail',key.id,values).then(function (response) {
+                CrudService.Update('advpayment',key.id,values).then(function (response) {
                     if(response.status=="error"){
                          DevExpress.ui.notify(response.message,"error");
                     }
@@ -38,7 +38,7 @@
                 });
             },
             remove: function(key) {
-                CrudService.Delete('itimail',key.id).then(function (response) {
+                CrudService.Delete('advpayment',key.id).then(function (response) {
                     if(response.status=="error"){
                          DevExpress.ui.notify(response.message,"error");
                     }
@@ -71,7 +71,7 @@
                 visible: true
             },
             columns: [{
-                        caption: "Actions",
+                        caption: "Action",
                         fixed: true,
                         fixedPosition: "left",
                         width: 120,
@@ -79,21 +79,21 @@
                         allowSorting: false,
                         formItem: { visible: false},
                         cellTemplate: function (container, options) {
-                            $('<div style="padding:2px 15px 2px 15px;" title="View Detail" />').addClass('dx-icon-detailslayout btn-pill btn-shadow btn btn-primary')
+                            $('<div style="padding:2px 15px 2px 15px;"/>').addClass('dx-icon-detailslayout btn-pill btn-shadow btn btn-primary')
                                 .text('')
                                 .on('dxclick', function () {
                                     DevExpress.ui.notify("Loading detail data for "+options.data.requestdate,"info",600);
-                                    $scope.loadITIMAIL(options.data,"view",true);
+                                    $scope.loadAdvpayment(options.data,"view",true);
                                 })
                                 .appendTo(container);
-                            if((options.data.requeststatus=='0') || (options.data.requeststatus=='2')){
-                                $('<div style="padding:2px 15px 2px 15px;" title="Edit" />').addClass('dx-icon-edit btn-pill btn-shadow btn btn-success')
+                            if((options.data.requeststatus=='0') || (options.data.requeststatus=='2')){	
+                                $('<div style="padding:2px 15px 2px 15px;"/>').addClass('dx-icon-edit btn-pill btn-shadow btn btn-success')
                                 .text('')
                                 .on('dxclick', function () {
                                     // if (!$scope.allowEdit){
                                         // DevExpress.ui.notify("You don't have authority to edit data","error");
                                     // } else{
-                                        $scope.loadITIMAIL(options.data,"edit",true);
+                                        $scope.loadAdvpayment(options.data,"edit",true);
                                     // }
                                 })
                                 .appendTo(container);
@@ -108,16 +108,10 @@
                         }
                     },
                     {dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200},
-                    {dataField:'formtype',caption:"Form Type",width: 200,
-                    customizeText: function (e) {
-                        // console.log(e);
-                        var rform = ["","Email Request","Internet Access","Increase Mailbox Size","RD Web Access","Email Group"];
-                        return rform[e.value];
-                    }},
                     {dataField:'fullname',caption:"Request For Employee",width: 200},
                     {dataField:'requeststatus',encodeHtml: false ,width: 300,
                         customizeText: function (e) {
-                            var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Saved as Draft</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
+                            var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Saved as Draft</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Payment</span>",""];
                             return rDesc[e.value];
                         }},
                     {dataField:'remarks',encodeHtml: false },
@@ -178,7 +172,7 @@
                 form:{colCount: 1,
                 },
                 popup: {  
-                    title: "Form Data TR",  
+                    title: "Form Data Advpayment",  
                     showTitle: true  
                 }, 
             },
@@ -250,7 +244,7 @@
                         onClick: function() {
                             var date = new Date();
                             var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
-                            $scope.loadITIMAIL({createddate:d,username:$rootScope.curUser.username},"add",true);
+                            $scope.loadAdvpayment({createddate:d,username:$rootScope.curUser.username},"add",true);
                         }
                     }
                 });
