@@ -51,7 +51,8 @@ $page = array("login",
 	"listmodmodule",
 	"itsharefoldermodule",
 	// "advancemodule",
-	// "advpaymentmodule"
+	// "advpaymentmodule",
+	// "advexpensemodule",
 );
 
 foreach ($page as $class){

@@ -1,5 +1,5 @@
 (function (app) {
-    app.register.controller('advancepaymentapprovalCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
+    app.register.controller('advexpenseapprovalCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
         $scope.ds={};
         $scope.test=[];
         $scope.disabled= true;

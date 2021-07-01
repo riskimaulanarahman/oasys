@@ -1,5 +1,5 @@
 (function (app) {
-app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
+app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
     $scope.ds={};
     $scope.test=[];
 	$scope.disabled= true;
@@ -8,7 +8,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 		$location.path( "/" );
 	}
 	var d = new Date();
-	CrudService.GetById('advpayment',$scope.Requestid).then(function(response){
+	CrudService.GetById('advexpense',$scope.Requestid).then(function(response){
 		if(response.status=="autherror"){
 			$scope.logout();
 		}else{
@@ -95,8 +95,8 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
                                     displayExpr: 'paymentform',
 									// value: "",
 									onValueChanged: function(e) {
-										criteria = {status:'appform',formtype:e.value,advpayment_id:$scope.Requestid,employee_id:$scope.data.employee_id};
-										CrudService.FindData('advpayment',criteria).then(function (response){
+										criteria = {status:'appform',formtype:e.value,advexpense_id:$scope.Requestid,employee_id:$scope.data.employee_id};
+										CrudService.FindData('advexpense',criteria).then(function (response){
 											console.log(response);
 											if(response.message == 200) {
 												// alert('less advance : '+response.lessadvance);
@@ -351,7 +351,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 								text: "Back",
 								type: "danger",
 								onClick: function(){
-									var path = ($scope.mode=='report') ? "advancepaymentreport" :"advancepayment";
+									var path = ($scope.mode=='report') ? "advexpensereport" :"advexpense";
 									$location.path( "/"+path );
 								},
 								visible: (($scope.mode=='approve'))  ?false:true,
@@ -364,7 +364,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 								text: "Back",
 								type: "danger",
 								onClick: function(){
-									$scope.advpaymentApproval();							
+									$scope.advexpenseApproval();							
 								},
 								visible: ($scope.mode=='approve') ?true:false,
 								useSubmitBehavior: false
@@ -452,16 +452,16 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 		var myStore = new DevExpress.data.CustomStore({
 			load: function() {			
 				$scope.isLoaded =true;
-				return CrudService.GetById('advpaymentdetail',$scope.Requestid);         		
+				return CrudService.GetById('advexpensedetail',$scope.Requestid);         		
 			},
 			byKey: function(key) {
-				CrudService.GetById('advpaymentdetail',encodeURIComponent(key)).then(function (response) {
+				CrudService.GetById('advexpensedetail',encodeURIComponent(key)).then(function (response) {
 					return response;
 				});
 			},
 			insert: function(values) {
-				values.advpayment_id=$scope.Requestid;
-				CrudService.Create('advpaymentdetail',values).then(function (response) {
+				values.advexpense_id=$scope.Requestid;
+				CrudService.Create('advexpensedetail',values).then(function (response) {
 					if(response.status=="error"){
 						DevExpress.ui.dialog.alert(response.message,"Error");
 					}
@@ -469,7 +469,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 				});
 			},
 			update: function(key, values) {
-				CrudService.Update('advpaymentdetail',key.id,values).then(function (response) {
+				CrudService.Update('advexpensedetail',key.id,values).then(function (response) {
 					if(response.status=="error"){
 						DevExpress.ui.dialog.alert(response.message,"Error");
 					}
@@ -478,7 +478,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 				});
 			},
 			remove: function(key) {
-				CrudService.Delete('advpaymentdetail',key.id).then(function (response) {
+				CrudService.Delete('advexpensedetail',key.id).then(function (response) {
 					if(response.status=="error"){
 						DevExpress.ui.dialog.alert(response.message,"Error");
 					}
@@ -492,17 +492,17 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 		var myStore2 = new DevExpress.data.CustomStore({
 			load: function() {			
 				$scope.isLoaded =true;
-				return CrudService.GetById('advpaymentapp',$scope.Requestid);         		
+				return CrudService.GetById('advexpenseapp',$scope.Requestid);         		
 			},
 			byKey: function(key) {
-				CrudService.GetById('advpaymentapp',encodeURIComponent(key)).then(function (response) {
+				CrudService.GetById('advexpenseapp',encodeURIComponent(key)).then(function (response) {
 					return response;
 				});
 			},
 			insert: function(values) {
 				values.approvaldate = $filter("date")(values.approvaldate, "yyyy-MM-dd HH:mm")
-				values.advpayment_id=$scope.Requestid;
-				CrudService.Create('advpaymentapp',values).then(function (response) {
+				values.advexpense_id=$scope.Requestid;
+				CrudService.Create('advexpenseapp',values).then(function (response) {
 					if(response.status=="error"){
 						DevExpress.ui.dialog.alert(response.message,"Error");
 					}
@@ -511,7 +511,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 			},
 			update: function(key, values) {
 				values.approvaldate = $filter("date")(values.approvaldate, "yyyy-MM-dd HH:mm")
-				CrudService.Update('advpaymentapp',key.id,values).then(function (response) {
+				CrudService.Update('advexpenseapp',key.id,values).then(function (response) {
 					if(response.status=="error"){
 						DevExpress.ui.dialog.alert(response.message,"Error");
 					}
@@ -519,7 +519,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 				});
 			},
 			remove: function(key) {
-				CrudService.Delete('advpaymentapp',key.id).then(function (response) {
+				CrudService.Delete('advexpenseapp',key.id).then(function (response) {
 					if(response.status=="error"){
 						DevExpress.ui.dialog.alert(response.message,"Error");
 					}
@@ -530,7 +530,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 		var myStore3 = new DevExpress.data.CustomStore({
 			load: function() {			
 				$scope.isLoaded =true;
-				return CrudService.GetById('advpaymenthist',$scope.Requestid);         		
+				return CrudService.GetById('advexpensehist',$scope.Requestid);         		
 			},
 			byKey: function(key) {
 				//
@@ -548,18 +548,18 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 		var myStore4 = new DevExpress.data.CustomStore({
 			load: function() {			
 				$scope.isLoaded =true;
-				return CrudService.GetById('advpaymentfile',$scope.Requestid);         		
+				return CrudService.GetById('advexpensefile',$scope.Requestid);         		
 			},
 			byKey: function(key) {
-				CrudService.GetById('advpaymentfile',encodeURIComponent(key)).then(function (response) {
+				CrudService.GetById('advexpensefile',encodeURIComponent(key)).then(function (response) {
 					return response;
 				});
 			},
 			insert: function(values) {
 				values.upload_date = $filter("date")(values.upload_date, "yyyy-MM-dd HH:mm")
-				values.advpayment_id=$scope.Requestid;
+				values.advexpense_id=$scope.Requestid;
 				values.file_loc =$scope.path;
-				CrudService.Create('advpaymentfile',values).then(function (response) {
+				CrudService.Create('advexpensefile',values).then(function (response) {
 					if(response.status=="error"){
 						 DevExpress.ui.notify(response.message,"error");
 					}
@@ -571,7 +571,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 					values.upload_date = $filter("date")(values.upload_date, "yyyy-MM-dd HH:mm");
 					values.file_loc =$scope.path;
 				}
-				CrudService.Update('advpaymentfile',key.id,values).then(function (response) {
+				CrudService.Update('advexpensefile',key.id,values).then(function (response) {
 					if(response.status=="error"){
 						 DevExpress.ui.notify(response.message,"error");
 					}
@@ -579,7 +579,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 				});
 			},
 			remove: function(key) {
-				CrudService.Delete('advpaymentfile',key.id).then(function (response) {
+				CrudService.Delete('advexpensefile',key.id).then(function (response) {
 					if(response.status=="error"){
 						 DevExpress.ui.notify(response.message,"error");
 					}
@@ -660,8 +660,8 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 			// 	console.log(amount);
 			// 	console.log(formadv);
 
-			// 	criteria = {status:'appcon',formtype:formadv,valamount:amount,advpayment_id:$scope.Requestid,employee_id:$scope.data.employee_id};
-			// 	CrudService.FindData('advpayment',criteria).then(function (response){
+			// 	criteria = {status:'appcon',formtype:formadv,valamount:amount,advexpense_id:$scope.Requestid,employee_id:$scope.data.employee_id};
+			// 	CrudService.FindData('advexpense',criteria).then(function (response){
 			// 	})
 			// 	$scope.grid2Component.refresh();
 
@@ -674,8 +674,8 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 			// 	console.log(formadv);
 
 
-			// 	criteria = {status:'appcon',formtype:formadv,valamount:amount,advpayment_id:$scope.Requestid,employee_id:$scope.data.employee_id};
-			// 	CrudService.FindData('advpayment',criteria).then(function (response){
+			// 	criteria = {status:'appcon',formtype:formadv,valamount:amount,advexpense_id:$scope.Requestid,employee_id:$scope.data.employee_id};
+			// 	CrudService.FindData('advexpense',criteria).then(function (response){
 			// 	})
 			// 	$scope.grid2Component.refresh();
 			// },
@@ -686,8 +686,8 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 			// 	console.log(formadv);
 			// 	console.log(amount);
 
-			// 	criteria = {status:'appcon',formtype:formadv,valamount:amount,advpayment_id:$scope.Requestid,employee_id:$scope.data.employee_id};
-			// 	CrudService.FindData('advpayment',criteria).then(function (response){
+			// 	criteria = {status:'appcon',formtype:formadv,valamount:amount,advexpense_id:$scope.Requestid,employee_id:$scope.data.employee_id};
+			// 	CrudService.FindData('advexpense',criteria).then(function (response){
 			// 	})
 			// 	$scope.grid2Component.refresh();
 			// },
@@ -925,7 +925,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 					e.editorOptions.uploadMode = "useButtons";
 					e.editorOptions.name = "myFile";
 					e.editorOptions.accept = "image/*,application/pdf,application/msword,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-					e.editorOptions.uploadUrl= "api.php?action=uploadadvpaymentfile&id="+$scope.Requestid;
+					e.editorOptions.uploadUrl= "api.php?action=uploadadvexpensefile&id="+$scope.Requestid;
 					e.editorOptions.onUploaded= function (e) {						
 						$scope.path = e.request.response;
 						console.log(e);
@@ -1021,7 +1021,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 			delete data.accountnumber;
 			delete data.duedate;
 			delete data.paymentdate;
-			CrudService.Update('advpaymentapp',data.id,data).then(function (response) {
+			CrudService.Update('advexpenseapp',data.id,data).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.dialog.alert(response.message,"Error");
 				}else{
@@ -1037,13 +1037,13 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 						   offset: '0 0' 
 					   }
 					});
-					$location.path( "/advpaymentapproval" );
+					$location.path( "/advexpenseapproval" );
 				}
 				
 			});
 		}else{
-			criteria = {status:'approver',advpayment_id:$scope.Requestid};
-			CrudService.FindData('advpaymentapp',criteria).then(function (response){
+			criteria = {status:'approver',advexpense_id:$scope.Requestid};
+			CrudService.FindData('advexpenseapp',criteria).then(function (response){
 				console.log(response.jml);
 				if(response.jml>0){
 					var data = $scope.formInstance.option("formData");
@@ -1065,7 +1065,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 					delete data.accountnumber;
 					delete data.duedate;
 					delete data.paymentdate;
-					CrudService.Update('advpaymentapp',data.id,data).then(function (response) {
+					CrudService.Update('advexpenseapp',data.id,data).then(function (response) {
 						if(response.status=="error"){
 							DevExpress.ui.dialog.alert(response.message,"Error");
 						}else{
@@ -1081,7 +1081,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 								   offset: '0 0' 
 							   }
 							});
-							$location.path( "/advancepaymentapproval" );
+							$location.path( "/advexpenseapproval" );
 						}
 						
 					});
@@ -1109,11 +1109,11 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 		delete data.fullname;
 		delete data.department;
 		delete data.approvalstatus;
-		// delete data.advpaymentform;
+		// delete data.advexpenseform;
 		data.duedate = $filter("date")(data.duedate, "yyyy-MM-dd HH:mm")
 		data.paymentdate = $filter("date")(data.paymentdate, "yyyy-MM-dd HH:mm")
 		//console.log(data);
-		CrudService.Update('advpayment',data.id,data).then(function (response) {
+		CrudService.Update('advexpense',data.id,data).then(function (response) {
 			if(response.status=="error"){
 				DevExpress.ui.dialog.alert(response.message,"Error");
 			}else{
@@ -1129,7 +1129,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 					   offset: '0 0' 
 				   }
 				});
-				$location.path( "/advancepayment" );
+				$location.path( "/advexpense" );
 			}
 			
 		});
@@ -1137,7 +1137,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 	$scope.onFormSubmit = function(e) {
 		e.preventDefault();
 		criteria = {status:'waiting',username:$scope.formInstance.option("formData").employee_id,id:$scope.Requestid};
-		CrudService.FindData('advpaymentbyemp',criteria).then(function (response){
+		CrudService.FindData('advexpensebyemp',criteria).then(function (response){
 			if(response.jml>0){
 				DevExpress.ui.notify({
 					message: "Cannot add more request, You still have waiting approval request",
@@ -1152,18 +1152,18 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 				   }
 				});
 			}else{
-				criteria = {status:'approver',advpayment_id:$scope.Requestid};
-				CrudService.FindData('advpaymentapp',criteria).then(function (response){
+				criteria = {status:'approver',advexpense_id:$scope.Requestid};
+				CrudService.FindData('advexpenseapp',criteria).then(function (response){
 					if(response.jml>0){
-						criteria = {status:'approver',advpayment_id:$scope.Requestid};
-						CrudService.FindData('advpaymentdetail',criteria).then(function (response){
+						criteria = {status:'approver',advexpense_id:$scope.Requestid};
+						CrudService.FindData('advexpensedetail',criteria).then(function (response){
 							if(response.jml>0){
 								var data = $scope.formInstance.option("formData");;
 								data.requeststatus = 1;
 								delete data.approvalstatus;
 								data.duedate = $filter("date")(data.duedate, "yyyy-MM-dd HH:mm")
 								data.paymentdate = $filter("date")(data.paymentdate, "yyyy-MM-dd HH:mm")
-								CrudService.Update('advpayment',data.id,data).then(function (response) {
+								CrudService.Update('advexpense',data.id,data).then(function (response) {
 									if(response.status=="error"){
 										DevExpress.ui.notify(response.message,"error");
 									}else{
@@ -1179,7 +1179,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 											offset: '0 0' 
 										}
 										});
-										$location.path( "/advancepayment" );
+										$location.path( "/advexpense" );
 									}
 									
 								});

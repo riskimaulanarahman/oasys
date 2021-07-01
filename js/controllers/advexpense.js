@@ -1,5 +1,5 @@
 (function (app) {
-    app.register.controller('advpaymentCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
+    app.register.controller('advexpenseCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$filter', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$filter)  {
         $scope.ds={};
         $scope.test=[];
         $scope.disabled= true;
@@ -7,7 +7,7 @@
         var myStore = new DevExpress.data.CustomStore({
             load: function() {			
                 $scope.isLoaded =true;
-                return CrudService.GetAll('advpaymentbyemp').then(function (response) {
+                return CrudService.GetAll('advexpensebyemp').then(function (response) {
                     if(response.status=="error"){
                         DevExpress.ui.notify(response.message,"error");
                     }else{
@@ -17,12 +17,12 @@
             },
          
             byKey: function(key) {
-                CrudService.GetById('advpayment',encodeURIComponent(key)).then(function (response) {
+                CrudService.GetById('advexpense',encodeURIComponent(key)).then(function (response) {
                     return response;
                 });
             },
             insert: function(values) {
-                CrudService.Create('advpayment',values).then(function (response) {
+                CrudService.Create('advexpense',values).then(function (response) {
                     if(response.status=="error"){
                          DevExpress.ui.notify(response.message,"error");
                     }
@@ -30,7 +30,7 @@
                 });
             },
             update: function(key, values) {
-                CrudService.Update('advpayment',key.id,values).then(function (response) {
+                CrudService.Update('advexpense',key.id,values).then(function (response) {
                     if(response.status=="error"){
                          DevExpress.ui.notify(response.message,"error");
                     }
@@ -38,7 +38,7 @@
                 });
             },
             remove: function(key) {
-                CrudService.Delete('advpayment',key.id).then(function (response) {
+                CrudService.Delete('advexpense',key.id).then(function (response) {
                     if(response.status=="error"){
                          DevExpress.ui.notify(response.message,"error");
                     }
@@ -83,7 +83,7 @@
                                 .text('')
                                 .on('dxclick', function () {
                                     DevExpress.ui.notify("Loading detail data for "+options.data.requestdate,"info",600);
-                                    $scope.loadAdvpayment(options.data,"view",true);
+                                    $scope.loadAdvexpense(options.data,"view",true);
                                 })
                                 .appendTo(container);
                             if((options.data.requeststatus=='0') || (options.data.requeststatus=='2')){	
@@ -93,7 +93,7 @@
                                     // if (!$scope.allowEdit){
                                         // DevExpress.ui.notify("You don't have authority to edit data","error");
                                     // } else{
-                                        $scope.loadAdvpayment(options.data,"edit",true);
+                                        $scope.loadAdvexpense(options.data,"edit",true);
                                     // }
                                 })
                                 .appendTo(container);
@@ -172,7 +172,7 @@
                 form:{colCount: 1,
                 },
                 popup: {  
-                    title: "Form Data Advpayment",  
+                    title: "Form Data AdvExpense",  
                     showTitle: true  
                 }, 
             },
@@ -244,7 +244,7 @@
                         onClick: function() {
                             var date = new Date();
                             var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
-                            $scope.loadAdvpayment({createddate:d,username:$rootScope.curUser.username},"add",true);
+                            $scope.loadAdvexpense({createddate:d,username:$rootScope.curUser.username},"add",true);
                         }
                     }
                 });
