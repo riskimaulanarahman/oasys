@@ -112,7 +112,7 @@ app.register.controller('dashboardCtrl', ['$rootScope','$scope', '$http', '$inte
 			CrudService.FindData('itsharefapp',criteria).then(function (response){
 				$scope.pendingITSHAREF=response.jml;
 			});
-		}, 1000);
+		}, 3000);
 		
         // DevExpress.ui.notify({
             // message: "Welcome \r\n ",
