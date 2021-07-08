@@ -169,11 +169,17 @@ Class Advexpensemodule extends Application{
 						// echo json_encode($AdvanceDetail, JSON_NUMERIC_CHECK);
 						if ($Advexpense){
 							$fullname = $Advexpense->employee->fullname;
+							$costcenter = $Advexpense->employee->costcenter;
+							$bg = $Advexpense->employee->companycode;
 							$department = $Advexpense->employee->department->departmentname;
+							$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Advexpense->employee->loginname)));
+
 							$data=$Advexpense->to_array();
-							$data['fullname']=$fullname;
-							// $data['lessadvance']=$val_tamount;
-							$data['department']=$department;
+							$data['name']=$fullname;
+							$data['email']=$usr->email;
+							$data['costcenter']=$costcenter;
+							$data['bg']=$bg;
+
 							echo json_encode($data, JSON_NUMERIC_CHECK);
 						}else{
 							$Advexpense = new Advexpense();
