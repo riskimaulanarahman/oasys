@@ -105,7 +105,7 @@
 			});
 			CrudService.GetAll('currency').then(function (currency) {
 				$scope.currencys=currency;
-				console.log($scope.currencys);
+				// console.log($scope.currencys);
 			});
 
             $scope.PRType =[{id:0,prtype:"- Select -"},{id:1,prtype:"Normal PR"},{id:2,prtype:"Urgent PR"},{id:3,prtype:"Minor Purchase"},{id:4,prtype:"Request For Sourcing (RFS) Only"}];
@@ -944,7 +944,7 @@
 				valueExpr: 'nama',
 				},setCellValue: function(rowData, value) {
 					rowData.unit = value;
-					rowData.approvaltype_id = null;
+					// rowData.approvaltype_id = null;
 				},
 			},
 			{dataField: "currency",caption: "currency", lookup: { 
@@ -952,7 +952,7 @@
 				valueExpr: 'nama',
 				},setCellValue: function(rowData, value) {
 					rowData.currency = value;
-					rowData.approvaltype_id = null;
+					// rowData.approvaltype_id = null;
 				},
 			},  
             // {

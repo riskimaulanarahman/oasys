@@ -614,7 +614,6 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 			},
 			columns: [
 				{dataField:'description',width:150,dataType: "string" , editorOptions: {
-					format: "fixedPoint",
                     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }},	
 				{dataField:'accountcode',caption: "Account Code",width:150,dataType: "string", editorOptions: {

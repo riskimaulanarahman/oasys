@@ -156,7 +156,7 @@ Class Advexpensemodule extends Application{
 				switch ($this->post['criteria']){
 					case 'byid':
 						$id = $this->post['id'];
-						$Advexpense = Advexpense::find($id, array('include' => array('employee'=>array('company','department','designation'))));
+						$Advexpense = Advexpense::find($id, array('include' => array('employee'=>array('company','department','designation','location'))));
 
 						// $Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=5",$Advexpense->employee->id)));
 				
@@ -171,6 +171,7 @@ Class Advexpensemodule extends Application{
 							$fullname = $Advexpense->employee->fullname;
 							$costcenter = $Advexpense->employee->costcenter;
 							$bg = $Advexpense->employee->companycode;
+							$location = $Advexpense->employee->location->location;
 							$department = $Advexpense->employee->department->departmentname;
 							$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Advexpense->employee->loginname)));
 
@@ -179,6 +180,7 @@ Class Advexpensemodule extends Application{
 							$data['email']=$usr->email;
 							$data['costcenter']=$costcenter;
 							$data['bg']=$bg;
+							$data['location']=$location;
 
 							echo json_encode($data, JSON_NUMERIC_CHECK);
 						}else{
@@ -455,11 +457,14 @@ Class Advexpensemodule extends Application{
 							$data['employee_id']=$Employee->id;
 							$data['RequestStatus']=0;
 							try{
+								$code = Advexpense::find('first',array('select' => "CONCAT('Expense/','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(expenseno,-4,4)) is null then 1 else max(substring(expenseno,-4,4))+1 end,4,'0')) as expenseno","conditions"=>array("substring(expenseno,7,".strlen($Employee->companycode).")=? and substring(expenseno,".(strlen($Employee->companycode)+8).",4)=YEAR(CURDATE())",$Employee->companycode)));
+								$data['expenseno']=$code->expenseno;
 								$Advexpense = Advexpense::create($data);
 								$data['companycode']=$Employee->companycode;
 								$data=$Advexpense->to_array();
 								
 								$joins   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
+								$joinx   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
 
 								// $ApproverFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=41")));
 								// if(count($ApproverFC)>0){
@@ -469,18 +474,38 @@ Class Advexpensemodule extends Application{
 								// 	$Advexpenseapproval->save();
 								// }
 
-								
-
-								$companyFC=(($data['companycode']=='BCL') || ($data['companycode']=='KPA'))?"KPSI":((($data['companycode']=='KPSI'))?"LDU":$Employee->companycode);
-								$ApproverBUFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='37' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$companyFC,$Employee->id)));
-								if(count($ApproverBUFC)>0){
-									$Advexpenseapproval = new Advexpenseapproval();
-									$Advexpenseapproval->advexpense_id = $Advexpense->id;
-									$Advexpenseapproval->approver_id = $ApproverBUFC->id;
-									$Advexpenseapproval->save();
-									$logger = new Datalogger("Advexpenseapproval","add","Add initial BU FC Approval",json_encode($Advexpenseapproval->to_array()));
-									$logger->SaveData();
+								if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
+												
+												
+									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=36 and tbl_employee.location_id='1'")));
+									if(count($Approver2)>0){
+										$Advexpenseapproval = new Advexpenseapproval();
+										$Advexpenseapproval->advexpense_id = $Advexpense->id;
+										$Advexpenseapproval->approver_id = $Approver2->id;
+										$Advexpenseapproval->save();
+									}
+										
+								}else{
+									
+									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=36 and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
+									if(count($Approver2)>0){
+										$Advexpenseapproval = new Advexpenseapproval();
+										$Advexpenseapproval->advexpense_id = $Advexpense->id;
+										$Advexpenseapproval->approver_id = $Approver2->id;
+										$Advexpenseapproval->save();
+									}
 								}
+
+								// $companyFC=(($data['companycode']=='BCL') || ($data['companycode']=='KPA'))?"KPSI":((($data['companycode']=='KPSI'))?"LDU":$Employee->companycode);
+								// $ApproverBUFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='37' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$companyFC,$Employee->id)));
+								// if(count($ApproverBUFC)>0){
+								// 	$Advexpenseapproval = new Advexpenseapproval();
+								// 	$Advexpenseapproval->advexpense_id = $Advexpense->id;
+								// 	$Advexpenseapproval->approver_id = $ApproverBUFC->id;
+								// 	$Advexpenseapproval->save();
+								// 	$logger = new Datalogger("Advexpenseapproval","add","Add initial BU FC Approval",json_encode($Advexpenseapproval->to_array()));
+								// 	$logger->SaveData();
+								// }
 
 								// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220")){
 								// 	$ApproverBU = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and tbl_employee.location_id='1'")));
@@ -672,56 +697,52 @@ Class Advexpensemodule extends Application{
 										<br>
 
 										';
-							if($Advexpense->expenseform == 1) {
-								$form = "Expense Req HR";
-							} else if($Advexpense->expenseform == 2){
-								$form = "Expense Req OPR";
-							}
+							// if($Advexpense->expenseform == 1) {
+							// 	$form = "Expense Req HR";
+							// } else if($Advexpense->expenseform == 2){
+							// 	$form = "Expense Req OPR";
+							// }
 
-							if($Advexpense->expensetype == 0) {
-								$less = 0;
-							} else {
-								$less = $Advexpense->lessadvance;
-							}
+							// if($Advexpense->expensetype == 0) {
+							// 	$less = 0;
+							// } else {
+							// 	$less = $Advexpense->lessadvance;
+							// }
 
-							if($Advexpense->expense == 1) {
-								$expenseM = "Cash";
-							} else if($Advexpense->expense == 2) {
-								$expenseM = "Bank";
-							}
+							// if($Advexpense->expense == 1) {
+							// 	$expenseM = "Cash";
+							// } else if($Advexpense->expense == 2) {
+							// 	$expenseM = "Bank";
+							// }
 
 							$Advexpensedetail = Advexpensedetail::find('all',array('conditions'=>array("advexpense_id=?",$id),'include'=>array('advexpense'=>array('employee'=>array('company','department','designation','grade','location')))));	
 
 							$this->mailbody .='
 								<table border=1 cellspacing=0 cellpadding=3 width=683>
 								<tr>
-									<th><p class=MsoNormal>Expense Form</p></th>
-									<th><p class=MsoNormal>Expense Method</p></th>
-									<th><p class=MsoNormal>Beneficiary</p></th>
-									<th><p class=MsoNormal>Account Name</p></th>
-									<th><p class=MsoNormal>Bank</p></th>
-									<th><p class=MsoNormal>Account Number</p></th>
-									<th><p class=MsoNormal>Due Date</p></th>
-									<th><p class=MsoNormal>Expense Date</p></th>
+									<th><p class=MsoNormal>Start Date</p></th>
+									<th><p class=MsoNormal>End Date</p></th>
 									<th><p class=MsoNormal>Remarks</p></th>
 								</tr>
 								<tr style="height:22.5pt">
-									<td><p class=MsoNormal> '.$form.'</p></td>
-									<td><p class=MsoNormal> '.$expenseM.'</p></td>
-									<td><p class=MsoNormal> '.$Advexpense->beneficiary.'</p></td>
-									<td><p class=MsoNormal> '.$Advexpense->accountname.'</p></td>
-									<td><p class=MsoNormal> '.$Advexpense->bank.'</p></td>
-									<td><p class=MsoNormal> '.$Advexpense->accountnumber.'</p></td>
-									<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Advexpense->duedate)).'</p></td>
-									<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Advexpense->expensedate)).'</p></td>
-									<td><p class=MsoNormal> '.$Advexpense->remarks.'</p></td>
+									<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Advexpense->startdate)).'</p></td>
+									<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Advexpense->enddate)).'</p></td>
+									<td><p class=MsoNormal> '.$Advexpense->reason.'</p></td>
 								</tr>
 								</table>
 								<table border=1 cellspacing=0 cellpadding=3 width=683>
 										<tr><th><p class=MsoNormal>No</p></th>
-											<th><p class=MsoNormal>Description</p></th>
-											<th><p class=MsoNormal>Account Code</p></th>
+											<th><p class=MsoNormal>Expense Type</p></th>
+											<th><p class=MsoNormal>Purpose/Description</p></th>
+											<th><p class=MsoNormal>Receipt Date</p></th>
 											<th><p class=MsoNormal>Amount</p></th>
+											<th><p class=MsoNormal>Currency</p></th>
+											<th><p class=MsoNormal>Exchange rate</p></th>
+											<th><p class=MsoNormal>Payment Amount in Local Currency</p></th>
+											<th><p class=MsoNormal>Cost Centre</p></th>
+											<th><p class=MsoNormal>Negara</p></th>
+											<th><p class=MsoNormal>Location/City</p></th>
+											<th><p class=MsoNormal>Remarks</p></th>
 										</tr>
 							';
 							$no=1;
@@ -729,17 +750,24 @@ Class Advexpensemodule extends Application{
 								$val_tamount += $data->amount;
 								$this->mailbody .='<tr style="height:22.5pt">
 											<td><p class=MsoNormal> '.$no.'</p></td>
-											<td><p class=MsoNormal> '.$data->description.'</p></td>
-											<td><p class=MsoNormal> '.$data->accountcode.'</p></td>
+											<td><p class=MsoNormal> '.$data->expensetype.'</p></td>
+											<td><p class=MsoNormal> '.$data->purpose.'</p></td>
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->receiptdate)).'</p></td>
 											<td><p class=MsoNormal> '.number_format($data->amount).'</p></td>
+											<td><p class=MsoNormal> '.$data->currency.'</p></td>
+											<td><p class=MsoNormal> '.number_format($data->exchangerate).'</p></td>
+											<td><p class=MsoNormal> '.number_format($data->paymentamount).'</p></td>
+											<td><p class=MsoNormal> '.$data->costcentre.'</p></td>
+											<td><p class=MsoNormal> '.$data->country.'</p></td>
+											<td><p class=MsoNormal> '.$data->location.'</p></td>
+											<td><p class=MsoNormal> '.$data->remarks.'</p></td>
+
 								</tr>';
 								$no++;
 							}
 							$this->mailbody .='</table>
 							<ul>
 								<li><b><span>Total Amount : '.number_format($val_tamount).'</span></b></li>
-								<li><b><span>Less Advance : '.number_format($less).'</span></b></li>
-								<li><b><span>Balance To Be Paid : '.number_format($val_tamount-$less).'</span></b></li>
 							</ul>
 							<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 							$this->mail->addAddress($adb->email, $adb->fullname);
@@ -851,9 +879,9 @@ Class Advexpensemodule extends Application{
 							// print_r($dx);
 							$Advexpense = Advexpense::find($query['advexpense_id']);
 							// if($dx->approver->isfinal==1){
-							if (($Advexpense->expenseform == 1 && $dx->approver->approvaltype_id == 37) || ($Advexpense->expenseform == 2 && $dx->approver->approvaltype_id == 38)){
-								$data=array("jml"=>1);
-							}else{
+							// if (($Advexpense->expenseform == 1 && $dx->approver->approvaltype_id == 37) || ($Advexpense->expenseform == 2 && $dx->approver->approvaltype_id == 38)){
+							// 	$data=array("jml"=>1);
+							// }else{
 								$join   = "LEFT JOIN tbl_approver ON (tbl_advexpenseapproval.approver_id = tbl_approver.id) ";
 								$Advexpenseapproval = Advexpenseapproval::find('all', array('joins'=>$join,'conditions' => array("advexpense_id=? and ApprovalStatus<=1 and not tbl_approver.employee_id=?",$query['advexpense_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
 								foreach ($Advexpenseapproval as &$result) {
@@ -862,7 +890,7 @@ Class Advexpensemodule extends Application{
 									$result['fullname']=$fullname;
 								}
 								$data=array("jml"=>count($Advexpenseapproval));
-							}						
+							// }						
 						} else if(isset($query['pending'])){						
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$emp_id = $Employee->id;
@@ -980,14 +1008,8 @@ Class Advexpensemodule extends Application{
 							
 							$Advexpense->save();
 
-							unset($data['expenseform']);
-							unset($data['beneficiary']);
-							unset($data['accountname']);
-							unset($data['bank']);
-							unset($data['accountnumber']);
-
-							unset($data['duedate']);
-							unset($data['expecteddate']);
+							unset($data['startdate']);
+							unset($data['enddate']);
 
 							
 							$olddata = $Advexpenseapproval->to_array();

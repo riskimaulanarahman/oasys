@@ -56,6 +56,46 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 				}),
 				sort: "id"
 			}
+
+			$scope.ExpenseTypes = {
+				store: new DevExpress.data.CustomStore({
+					key: "id",
+					loadMode: "raw",
+					load: function() {
+						return CrudService.GetAll('expensetype').then(function (response) {
+							if(response.status=="error"){
+								DevExpress.ui.notify(response.message,"error");
+							}else{
+								return response;
+							}
+						});
+					},
+				}),
+				sort: "id"
+			}
+
+			$scope.Currencys = {
+				store: new DevExpress.data.CustomStore({
+					key: "id",
+					loadMode: "raw",
+					load: function() {
+						return CrudService.GetAll('currency').then(function (response) {
+							if(response.status=="error"){
+								DevExpress.ui.notify(response.message,"error");
+							}else{
+								return response;
+							}
+						});
+					},
+				}),
+				sort: "id"
+			}
+
+			// CrudService.GetAll('currency').then(function (currency) {
+			// 	$scope.currencys=currency;
+			// 	// console.log($scope.currencys);
+			// });
+
 			$scope.AppAction = ($scope.data.approvalstep==2)?[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Verify"}]:[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
 			$scope.AdvanceForm =[{id:0,paymentform:"- Select -"},{id:1,paymentform:"Payment Req HR"},{id:2,paymentform:"Payment Req OPR"}];
 			$scope.Paymentopt =[{id:1,payment:"Cash"},{id:2,payment:"Bank"}];
@@ -79,7 +119,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 					{	
 						itemType: "group",
 						name: "subgroup",
-						caption: "",
+						caption: "Expense No : "+$scope.data.expenseno,
 						colCount : 2,
 						colSpan :2,
 						items: [
@@ -93,7 +133,10 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								text:"Name",
 							},
 							name:'name',
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							editorOptions: {
+								disabled: true
+							}
 						},
 						{
 							dataField:'email',
@@ -101,7 +144,10 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								text:"Email",
 							},
 							name:'email',
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							editorOptions: {
+								disabled: true
+							}
 						},
 						{
 							dataField:'costcenter',
@@ -109,7 +155,10 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								text:"Cost Center",
 							},
 							name:'costcenter',
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							editorOptions: {
+								disabled: true
+							}
 						},
 						{
 							dataField:'bg',
@@ -117,7 +166,10 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								text:"BG",
 							},
 							name:'bg',
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							editorOptions: {
+								disabled: true
+							}
 						},
 						{
 							dataField:'location',
@@ -125,7 +177,10 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								text:"Location",
 							},
 							name:'location',
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							editorOptions: {
+								disabled: true
+							}
 						},
 						
 						
@@ -234,7 +289,9 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 							}]
 						},
 						{
-							dataField:'remarks',colSpan:2,editorType:"dxHtmlEditor",editorOptions: {height: 190,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}
+							dataField:'reason',label: {
+								text:"Reason for request/Remarks",
+							},colSpan:2,editorType:"dxHtmlEditor",editorOptions: {height: 190,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}
 						},
 
 
@@ -364,6 +421,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 				});
 			},
 			insert: function(values) {
+				values.receiptdate = $filter("date")(values.receiptdate, "yyyy-MM-dd HH:mm")
 				values.advexpense_id=$scope.Requestid;
 				CrudService.Create('advexpensedetail',values).then(function (response) {
 					if(response.status=="error"){
@@ -373,12 +431,14 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 				});
 			},
 			update: function(key, values) {
+				values.receiptdate = $filter("date")(values.receiptdate, "yyyy-MM-dd HH:mm")
+
 				CrudService.Update('advexpensedetail',key.id,values).then(function (response) {
 					if(response.status=="error"){
 						DevExpress.ui.dialog.alert(response.message,"Error");
 					}
 					$scope.grid1Component.refresh();
-					$scope.grid2Component.refresh();
+					// $scope.grid2Component.refresh();
 				});
 			},
 			remove: function(key) {
@@ -512,24 +572,74 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 			columnResizingMode : "widget",
 			columnMinWidth: 50,
 			columnAutoWidth: true,
-			customizeText: function(arg) {  
-				Globalize.culture().numberFormat.currency.symbol = "Rp";  
-				return Globalize.format(arg.value, "c")  
-			},
+			// customizeText: function(arg) {  
+			// 	Globalize.culture().numberFormat.currency.symbol = "Rp";  
+			// 	return Globalize.format(arg.value, "c")  
+			// },
 			columns: [
-				{dataField:'description',width:150,dataType: "string" , editorOptions: {
-					format: "fixedPoint",
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
-                }},	
-				{dataField:'accountcode',caption: "Account Code",width:150,dataType: "string", editorOptions: {
-					format: "fixedPoint",
+				{
+					dataField: "expensetype",
+					name:'expensetype',
+                    editorType: "dxSelectBox",
+					disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
+                    validationRules: [{type: "required", message: "Please select Expense Type" }],
+					editorOptions: { 
+						dataSource:$scope.ExpenseTypes,  
+						valueExpr: 'type',
+						displayExpr: 'type',
+					},
+				},
+				{dataField:'purpose',width:150,dataType: "string", 
+				validationRules: [{type: "required"}],
+				editorOptions: {
                     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }},
-				{dataField:'amount',caption: "Amount",width:150,dataType: "number" ,format: "fixedPoint",
+				{dataField:'receiptdate',width:150,dataType: "date" ,
+				format: 'dd/MM/yyyy',editorType: "dxDateBox",
+                editorOptions: {
+					displayFormat:"dd/MM/yyyy",
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                }},
+				{dataField:'amount',caption: "Amount", validationRules: [{type: "required"}], width:150,dataType: "number" ,format: "fixedPoint",
                 editorOptions: {
 					format: "fixedPoint",
                     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }},
+				// {dataField: "currency",caption: "currency", lookup: { 
+				// 	displayExpr: 'nama',  
+				// 	valueExpr: 'nama',
+				// 	},setCellValue: function(rowData, value) {
+				// 		rowData.currency = value;
+				// 		// rowData.approvaltype_id = null;
+				// 	},
+				// }, 
+				{
+					dataField: "currency",
+					name:'currency',
+                    editorType: "dxSelectBox",
+					disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
+					editorOptions: { 
+						dataSource:$scope.Currencys,  
+						valueExpr: 'nama',
+						displayExpr: 'nama',
+					},
+				},
+				{dataField:'exchangerate',caption: "Exchange Rate",dataType: "number" ,format: "fixedPoint",
+                editorOptions: {
+					format: "fixedPoint",
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                }},
+				{dataField:'paymentamount',caption: "Amount in local currency",dataType: "number" ,format: "fixedPoint",
+                editorOptions: {
+					format: "fixedPoint",
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                }},
+				// {dataField:'exchangerate'},
+				// {dataField:'paymentamount'},
+				{dataField:'costcentre', caption: 'Cost Centre'},
+				{dataField:'country'},
+				{dataField:'location',validationRules: [{type: "required"}]},
+				{dataField:'remarks'},
 			],
 			summary: {
 				recalculateWhileEditing: true,
@@ -540,9 +650,12 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 					displayFormat: "Total: {0}",	
 				}]
 			},
+			// bindingOptions :{
+			// 	"columns[0].lookup.dataSource":"expensetypes",
+			// },
 			editing: {
 				useIcons:true,
-				mode: "row",
+				mode: "cell",
 				allowUpdating:(($scope.mode=='approve') || ($scope.mode=='view') ||($scope.mode=='report') )?(($rootScope.isAdmin)?true:false):true,
 				allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 				allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
@@ -554,47 +667,6 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 			onInitialized:function (e){
 				$scope.grid1Component = e.component;
 			},
-			// onContentReady: function(e){
-			// 	$scope.grid1Component = e.component;
-			// },
-			// onRowInserting: function(e) {
-			// 	var amount = e.component.getTotalSummaryValue("amount");
-			// 	var formadv = $('#advformtype').val();
-
-			// 	console.log(amount);
-			// 	console.log(formadv);
-
-			// 	criteria = {status:'appcon',formtype:formadv,valamount:amount,advexpense_id:$scope.Requestid,employee_id:$scope.data.employee_id};
-			// 	CrudService.FindData('advexpense',criteria).then(function (response){
-			// 	})
-			// 	$scope.grid2Component.refresh();
-
-			// },
-			// onRowUpdating: function (e) {
-			// 	var amount = e.component.getTotalSummaryValue("amount");
-			// 	var formadv = $('#advformtype').val();
-
-			// 	console.log(amount);
-			// 	console.log(formadv);
-
-
-			// 	criteria = {status:'appcon',formtype:formadv,valamount:amount,advexpense_id:$scope.Requestid,employee_id:$scope.data.employee_id};
-			// 	CrudService.FindData('advexpense',criteria).then(function (response){
-			// 	})
-			// 	$scope.grid2Component.refresh();
-			// },
-			// onRowRemoved: function(e) {
-			// 	var amount = e.component.getTotalSummaryValue("amount");
-			// 	var formadv = $('#advformtype').val();
-
-			// 	console.log(formadv);
-			// 	console.log(amount);
-
-			// 	criteria = {status:'appcon',formtype:formadv,valamount:amount,advexpense_id:$scope.Requestid,employee_id:$scope.data.employee_id};
-			// 	CrudService.FindData('advexpense',criteria).then(function (response){
-			// 	})
-			// 	$scope.grid2Component.refresh();
-			// },
 			onEditorPreparing: function (e) {  
 				$scope.grid1Component = e.component;
 			},
@@ -914,17 +986,10 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 			delete data.createddate;
 			delete data.employee_id;
 			delete data.requeststatus;
-			delete data.depthead;
-			delete data.paymentform;
-			delete data.paymenttype;
-			delete data.lessadvance;
-			delete data.payment;
-			delete data.beneficiary;
-			delete data.accountName;
-			delete data.bank;
-			delete data.accountnumber;
-			delete data.duedate;
-			delete data.paymentdate;
+			delete data.superior;
+			delete data.startdate;
+			delete data.enddate;
+			delete data.reason;
 			CrudService.Update('advexpenseapp',data.id,data).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.dialog.alert(response.message,"Error");
@@ -958,17 +1023,10 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 					delete data.createddate;
 					delete data.employee_id;
 					delete data.requeststatus;
-					delete data.depthead;
-					delete data.paymentform;
-					delete data.paymenttype;
-					delete data.lessadvance;
-					delete data.payment;
-					delete data.beneficiary;
-					delete data.accountName;
-					delete data.bank;
-					delete data.accountnumber;
-					delete data.duedate;
-					delete data.paymentdate;
+					delete data.superior;
+					delete data.startdate;
+					delete data.enddate;
+					delete data.reason;
 					CrudService.Update('advexpenseapp',data.id,data).then(function (response) {
 						if(response.status=="error"){
 							DevExpress.ui.dialog.alert(response.message,"Error");
@@ -1013,10 +1071,8 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 		delete data.fullname;
 		delete data.department;
 		delete data.approvalstatus;
-		// delete data.advexpenseform;
-		data.duedate = $filter("date")(data.duedate, "yyyy-MM-dd HH:mm")
-		data.paymentdate = $filter("date")(data.paymentdate, "yyyy-MM-dd HH:mm")
-		//console.log(data);
+		data.startdate = $filter("date")(data.startdate, "yyyy-MM-dd HH:mm")
+		data.enddate = $filter("date")(data.enddate, "yyyy-MM-dd HH:mm")
 		CrudService.Update('advexpense',data.id,data).then(function (response) {
 			if(response.status=="error"){
 				DevExpress.ui.dialog.alert(response.message,"Error");
@@ -1065,8 +1121,8 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								var data = $scope.formInstance.option("formData");;
 								data.requeststatus = 1;
 								delete data.approvalstatus;
-								data.duedate = $filter("date")(data.duedate, "yyyy-MM-dd HH:mm")
-								data.paymentdate = $filter("date")(data.paymentdate, "yyyy-MM-dd HH:mm")
+								data.startdate = $filter("date")(data.startdate, "yyyy-MM-dd HH:mm")
+								data.enddate = $filter("date")(data.enddate, "yyyy-MM-dd HH:mm")
 								CrudService.Update('advexpense',data.id,data).then(function (response) {
 									if(response.status=="error"){
 										DevExpress.ui.notify(response.message,"error");
