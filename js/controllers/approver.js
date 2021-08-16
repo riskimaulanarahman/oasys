@@ -170,6 +170,7 @@ app.register.controller('approverCtrl', ['$rootScope','$scope', '$http', '$inter
 							displayExpr: 'approvaltype'
 						}},
 					{dataField: "sequence",caption: "Sequence",  },  
+					{dataField: "companylist",caption: "Company",  },  
 					{dataField:'isfinal',dataType: "boolean", showEditorAlways: true },
 					{dataField:'isactive',dataType: "boolean", showEditorAlways: true }
                   
