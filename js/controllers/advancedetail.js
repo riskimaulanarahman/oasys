@@ -76,7 +76,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 				formData:$scope.data,	
 				items: [{	
 						itemType: "group",
-						caption: "Request by : "+$scope.data.fullname+" / Dept : "+$scope.data.department,
+						caption: "Request by : "+$scope.data.fullname+" / Dept : "+$scope.data.department+" / Advance No : "+$scope.data.advanceno,
 						colCount : 2,
 						colSpan :2,
 						items: [
@@ -571,39 +571,39 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 			// 	$scope.grid1Component = e.component;
 			// },
 			onRowInserted: function(e) {
-				var amount = e.component.getTotalSummaryValue("amount");
+				// var amount = e.component.getTotalSummaryValue("amount");
 				var formadv = $('#advformtype').val();
 
-				console.log(amount);
+				// console.log(amount);
 				console.log(formadv);
 
-				criteria = {status:'appcon',formtype:formadv,valamount:amount,advance_id:$scope.Requestid,employee_id:$scope.data.employee_id};
+				criteria = {status:'appcon',formtype:formadv,advance_id:$scope.Requestid,employee_id:$scope.data.employee_id};
 				CrudService.FindData('advance',criteria).then(function (response){
 				})
 				$scope.grid2Component.refresh();
 
 			},
 			onRowUpdated: function (e) {
-				var amount = e.component.getTotalSummaryValue("amount");
+				// var amount = e.component.getTotalSummaryValue("amount");
 				var formadv = $('#advformtype').val();
 
-				console.log(amount);
+				// console.log(amount);
 				console.log(formadv);
 
 
-				criteria = {status:'appcon',formtype:formadv,valamount:amount,advance_id:$scope.Requestid,employee_id:$scope.data.employee_id};
+				criteria = {status:'appcon',formtype:formadv,advance_id:$scope.Requestid,employee_id:$scope.data.employee_id};
 				CrudService.FindData('advance',criteria).then(function (response){
 				})
 				$scope.grid2Component.refresh();
 			},
 			onRowRemoved: function(e) {
-				var amount = e.component.getTotalSummaryValue("amount");
+				// var amount = e.component.getTotalSummaryValue("amount");
 				var formadv = $('#advformtype').val();
 
 				console.log(formadv);
-				console.log(amount);
+				// console.log(amount);
 
-				criteria = {status:'appcon',formtype:formadv,valamount:amount,advance_id:$scope.Requestid,employee_id:$scope.data.employee_id};
+				criteria = {status:'appcon',formtype:formadv,advance_id:$scope.Requestid,employee_id:$scope.data.employee_id};
 				CrudService.FindData('advance',criteria).then(function (response){
 				})
 				$scope.grid2Component.refresh();
@@ -925,6 +925,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 			data.approvaldate = d;
 			data.mode="approve";
 			delete data.createddate;
+			delete data.advanceno;
 			delete data.employee_id;
 			delete data.requeststatus;
 			delete data.depthead;
@@ -966,6 +967,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 					data.approvaldate = d;
 					data.mode="approve";
 					delete data.createddate;
+					delete data.advanceno;
 					delete data.employee_id;
 					delete data.requeststatus;
 					delete data.depthead;
@@ -1048,21 +1050,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 	$scope.onFormSubmit = function(e) {
 		e.preventDefault();
 		criteria = {status:'waiting',username:$scope.formInstance.option("formData").employee_id,id:$scope.Requestid};
-		CrudService.FindData('advancebyemp',criteria).then(function (response){
-			if(response.jml>0){
-				DevExpress.ui.notify({
-					message: "Cannot add more request, You still have waiting approval request",
-					type: "warning",
-					displayTime: 5000,
-					height: 80,
-					position: {
-					   my: 'top center', 
-					   at: 'center center', 
-					   of: window, 
-					   offset: '0 0' 
-				   }
-				});
-			}else{
+		
 				criteria = {status:'approver',advance_id:$scope.Requestid};
 				CrudService.FindData('advanceapp',criteria).then(function (response){
 					if(response.jml>0){
@@ -1124,8 +1112,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 						});
 					}			
 				})	
-			}
-		})	   
+   
     };
 	$scope.initDropDownBoxEditor = function(data) {
         return {

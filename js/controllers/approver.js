@@ -245,7 +245,12 @@ app.register.controller('approverCtrl', ['$rootScope','$scope', '$http', '$inter
                 e.editorName = "dxSwitch";
                 e.editorOptions.switchedOnText = "Yes";
                 e.editorOptions.switchedOffText = "No";
-            }			
+            }
+			if(e.row.isNewRow) {
+
+                console.log('ada')
+            }
+
         },
         onInitNewRow: function (e) {
             e.component.columnOption("id", "allowEditing", false);

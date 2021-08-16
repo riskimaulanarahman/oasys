@@ -52,6 +52,9 @@ Class Advexpensemodule extends Application{
 				case 'apiadvexpensedetail':
 					$this->advexpenseDetail();
 					break;
+				case 'apiadvexpensedetailbt':
+					$this->advexpenseDetailbt();
+					break;
 				case 'apiadvexpenseapp':
 					$this->advexpenseApproval();
 					break;
@@ -452,15 +455,22 @@ Class Advexpensemodule extends Application{
 					case 'create':		
 						$data = $this->post['data'];
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$data['username']),"include"=>array("location","company","department")));
+
 							unset($data['__KEY__']);
 							unset($data['username']);
 							$data['employee_id']=$Employee->id;
 							$data['RequestStatus']=0;
 							try{
 								$code = Advexpense::find('first',array('select' => "CONCAT('Expense/','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(expenseno,-4,4)) is null then 1 else max(substring(expenseno,-4,4))+1 end,4,'0')) as expenseno","conditions"=>array("substring(expenseno,7,".strlen($Employee->companycode).")=? and substring(expenseno,".(strlen($Employee->companycode)+8).",4)=YEAR(CURDATE())",$Employee->companycode)));
+								$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=5 AND advanceform=1",$Employee->id)));
+								
+								$AdvanceDetail = AdvanceDetail::find('all',array('conditions'=> array("advance_id=?",$Advance->id)));
+								foreach ($AdvanceDetail as $val) {
+									$tamount += $val->amount;
+								}
 								$data['expenseno']=$code->expenseno;
+								$data['lessadvance']=$tamount;
 								$Advexpense = Advexpense::create($data);
-								$data['companycode']=$Employee->companycode;
 								$data=$Advexpense->to_array();
 								
 								$joins   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
@@ -627,6 +637,7 @@ Class Advexpensemodule extends Application{
 						unset($data['approvalstatus']);
 						unset($data['fullname']);
 						unset($data['department']);
+						unset($data['expenseno']);
 						//unset($data['employee']);
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 						foreach($data as $key=>$val){
@@ -697,25 +708,9 @@ Class Advexpensemodule extends Application{
 										<br>
 
 										';
-							// if($Advexpense->expenseform == 1) {
-							// 	$form = "Expense Req HR";
-							// } else if($Advexpense->expenseform == 2){
-							// 	$form = "Expense Req OPR";
-							// }
-
-							// if($Advexpense->expensetype == 0) {
-							// 	$less = 0;
-							// } else {
-							// 	$less = $Advexpense->lessadvance;
-							// }
-
-							// if($Advexpense->expense == 1) {
-							// 	$expenseM = "Cash";
-							// } else if($Advexpense->expense == 2) {
-							// 	$expenseM = "Bank";
-							// }
-
+		
 							$Advexpensedetail = Advexpensedetail::find('all',array('conditions'=>array("advexpense_id=?",$id),'include'=>array('advexpense'=>array('employee'=>array('company','department','designation','grade','location')))));	
+							$Advexpensedetailbt = Advexpensedetailbt::find('all',array('conditions'=>array("advexpense_id=?",$id),'include'=>array('advexpense'=>array('employee'=>array('company','department','designation','grade','location')))));	
 
 							$this->mailbody .='
 								<table border=1 cellspacing=0 cellpadding=3 width=683>
@@ -765,9 +760,75 @@ Class Advexpensemodule extends Application{
 								</tr>';
 								$no++;
 							}
+							$this->mailbody .= '</table>
+							<ul>
+								<li><b><span>Total Amount Detail : '.number_format($val_tamount).'</span></b></li>
+							</ul>
+							<table border=1 cellspacing=0 cellpadding=3 width=683>
+										<tr><th><p class=MsoNormal>No</p></th>
+											<th><p class=MsoNormal>Depart Date</p></th>
+											<th><p class=MsoNormal>Depart Time</p></th>
+											<th><p class=MsoNormal>Return Date</p></th>
+											<th><p class=MsoNormal>Return Time</p></th>
+											<th><p class=MsoNormal>Breakfast</p></th>
+											<th><p class=MsoNormal>Lunch</p></th>
+											<th><p class=MsoNormal>Dinner</p></th>
+											<th><p class=MsoNormal>Pocket</p></th>
+											<th><p class=MsoNormal>isPapua ?</p></th>
+											<th><p class=MsoNormal>Remarks</p></th>
+										</tr>
+							';
+							foreach ($Advexpensedetailbt as $data){
+								if($data->ispapua == 0) {
+									$sppd = Advexpsppd::find('first',
+										array(
+											'conditions'=>array("level=? and ispapua=0",$Employee->level_id)
+										)
+									);
+
+								} else if($data->ispapua == 1) {
+									$sppd = Advexpsppd::find('first',
+										array(
+											'conditions'=>array("level=? and ispapua=1",$Employee->level_id)
+										)
+									);
+
+									
+								}
+
+								$breakfast = ($data->breakfast == 0) ? $data->breakfast : $sppd->breakfast;
+								$lunch = ($data->lunch == 0) ? $data->lunch : $sppd->lunch;
+								$dinner = ($data->dinner == 0) ? $data->dinner : $sppd->dinner;
+								$pocket = ($data->pocket == 0) ? $data->pocket : $sppd->pocket;
+
+								$jml_breakfast += $breakfast;
+								$jml_lunch += $lunch;
+								$jml_dinner += $dinner;
+								$jml_pocket += $pocket;
+
+								$totalbt = $jml_breakfast+$jml_lunch+$jml_dinner+$jml_pocket;
+
+								$papua = ($data->ispapua == 0) ? "TIDAK" : "YA";
+
+								$this->mailbody .='<tr style="height:22.5pt">
+											<td><p class=MsoNormal> '.$no.'</p></td>
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->departdate)).'</p></td>
+											<td><p class=MsoNormal> '.$data->departtime.'</p></td>
+											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->returndate)).'</p></td>
+											<td><p class=MsoNormal> '.$data->returntime.'</p></td>
+											<td><p class=MsoNormal> '.number_format($breakfast).'</p></td>
+											<td><p class=MsoNormal> '.number_format($lunch).'</p></td>
+											<td><p class=MsoNormal> '.number_format($dinner).'</p></td>
+											<td><p class=MsoNormal> '.number_format($pocket).'</p></td>
+											<td><p class=MsoNormal> '.$papua.'</p></td>
+											<td><p class=MsoNormal> '.$data->remarks.'</p></td>
+
+								</tr>';
+								$no++;
+							}
 							$this->mailbody .='</table>
 							<ul>
-								<li><b><span>Total Amount : '.number_format($val_tamount).'</span></b></li>
+								<li><b><span>Total : '.number_format($totalbt).'</span></b></li>
 							</ul>
 							<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 							$this->mail->addAddress($adb->email, $adb->fullname);
@@ -785,33 +846,6 @@ Class Advexpensemodule extends Application{
 							} else {
 								echo "Message sent!";
 							}
-
-							// if($Advexpense->expenseform == 2) {
-
-							// 	$dx = Advexpenseapproval::find('all',array('joins'=>$joins,'conditions' => array("advexpense_id=? and tbl_approver.approvaltype_id=36",$id)));	
-							// 	foreach ($dx as $result) {
-							// 		$result->delete();
-							// 		$logger = new Datalogger("Advexpenseapproval","delete",json_encode($result->to_array()),"delete Approval Advexpense");
-							// 		$logger->SaveData();
-							// 	}
-
-							// 	if($val_tamount >= 5000000) {
-
-							// 		$ApproverProc = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='42' and tbl_employee.location_id='1'")));
-							// 		if(count($ApproverProc)>0){
-							// 			$Advexpenseapproval = new Advexpenseapproval();
-							// 			$Advexpenseapproval->advexpense_id =$Advexpense->id;
-							// 			$Advexpenseapproval->approver_id = $ApproverProc->id;
-							// 			$Advexpenseapproval->save();
-							// 			$logger = new Datalogger("Advexpenseapproval","add","Add initial Proc Approval",json_encode($Advexpenseapproval->to_array()));
-							// 			$logger->SaveData();
-							// 		}
-									
-							// 	}
-
-
-								
-							// }
 
 							$Advexpensehistory = new Advexpensehistory();
 							$Advexpensehistory->date = date("Y-m-d h:i:s");
@@ -1063,11 +1097,11 @@ Class Advexpensemodule extends Application{
 												}
 											}
 
-											if($Advexpense->lessadvance !== null || $Advexpense->lessadvance !== 0) {
-												$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=5",$Advexpense->employee->id)));
-												$Advance->requeststatus=3;
-												$Advance->save();
-											}
+											// if($Advexpense->lessadvance !== null || $Advexpense->lessadvance !== 0) {
+											// 	$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=5",$Advexpense->employee->id)));
+											// 	$Advance->requeststatus=3;
+											// 	$Advance->save();
+											// }
 
 
 											$complete =true;
@@ -1075,7 +1109,7 @@ Class Advexpensemodule extends Application{
 										else{
 											$Advexpense->requeststatus = 1;
 											$emto=$adb->email;$emname=$adb->fullname;
-											$this->mail->Subject = "Online Approval System -> New Expense Submission";
+											$this->mail->Subject = "Online Approval System -> New Expense";
 											$red = 'New Expense request awaiting for your approval:';
 										}
 										$Advexpensehistory->actiontype = 4;							
@@ -1108,73 +1142,127 @@ Class Advexpensemodule extends Application{
 								<tr><td><p class=MsoNormal>Location</p></td><td>:</td><td><p class=MsoNormal><b>'.$Advexpense->employee->location->location.'</b></p></td></tr>
 								<tr><td><p class=MsoNormal>Email</p></td><td>:</td><td><p class=MsoNormal><b>'.$email.'</b></p></td></tr>
 								</table>';
-						if($Advexpense->expenseform == 1) {
-							$form = "Expense Req HR";
-						} else if($Advexpense->expenseform == 2){
-							$form = "Expense Req OPR";
-						}
 
-						if($Advexpense->expensetype == 0) {
-							$less = 0;
-						} else {
-							$less = $Advexpense->lessadvance;
-						}
-
-						if($Advexpense->expense == 1) {
-							$expenseM = "Cash";
-						} else if($Advexpense->expense == 2) {
-							$expenseM = "Bank";
-						}
 						$Advexpensedetail = Advexpensedetail::find('all',array('conditions'=>array("advexpense_id=?",$doid),'include'=>array('advexpense'=>array('employee'=>array('company','department','designation','grade','location')))));	
+						$Advexpensedetailbt = Advexpensedetailbt::find('all',array('conditions'=>array("advexpense_id=?",$doid),'include'=>array('advexpense'=>array('employee'=>array('company','department','designation','grade','location')))));	
 
 						$this->mailbody .='
-							<table border=1 cellspacing=0 cellpadding=3 width=683>
-							<tr>
-								<th><p class=MsoNormal>Expense Form</p></th>
-								<th><p class=MsoNormal>Expense Method</p></th>
-								<th><p class=MsoNormal>Beneficiary</p></th>
-								<th><p class=MsoNormal>Account Name</p></th>
-								<th><p class=MsoNormal>Bank</p></th>
-								<th><p class=MsoNormal>Account Number</p></th>
-								<th><p class=MsoNormal>Due Date</p></th>
-								<th><p class=MsoNormal>Expected Date</p></th>
-								<th><p class=MsoNormal>Remarks</p></th>
-							</tr>
-							<tr style="height:22.5pt">
-								<td><p class=MsoNormal> '.$form.'</p></td>
-								<td><p class=MsoNormal> '.$expenseM.'</p></td>
-								<td><p class=MsoNormal> '.$Advexpense->beneficiary.'</p></td>
-								<td><p class=MsoNormal> '.$Advexpense->accountname.'</p></td>
-								<td><p class=MsoNormal> '.$Advexpense->bank.'</p></td>
-								<td><p class=MsoNormal> '.$Advexpense->accountnumber.'</p></td>
-								<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Advexpense->duedate)).'</p></td>
-								<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Advexpense->expensedate)).'</p></td>
-								<td><p class=MsoNormal> '.$Advexpense->remarks.'</p></td>
-							</tr>
-							</table>
-							<table border=1 cellspacing=0 cellpadding=3 width=683>
-									<tr><th><p class=MsoNormal>No</p></th>
-										<th><p class=MsoNormal>Description</p></th>
-										<th><p class=MsoNormal>Account Code</p></th>
-										<th><p class=MsoNormal>Amount</p></th>
-									</tr>
+						<table border=1 cellspacing=0 cellpadding=3 width=683>
+						<tr>
+							<th><p class=MsoNormal>Start Date</p></th>
+							<th><p class=MsoNormal>End Date</p></th>
+							<th><p class=MsoNormal>Remarks</p></th>
+						</tr>
+						<tr style="height:22.5pt">
+							<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Advexpense->startdate)).'</p></td>
+							<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Advexpense->enddate)).'</p></td>
+							<td><p class=MsoNormal> '.$Advexpense->reason.'</p></td>
+						</tr>
+						</table>
+						<table border=1 cellspacing=0 cellpadding=3 width=683>
+								<tr><th><p class=MsoNormal>No</p></th>
+									<th><p class=MsoNormal>Expense Type</p></th>
+									<th><p class=MsoNormal>Purpose/Description</p></th>
+									<th><p class=MsoNormal>Receipt Date</p></th>
+									<th><p class=MsoNormal>Amount</p></th>
+									<th><p class=MsoNormal>Currency</p></th>
+									<th><p class=MsoNormal>Exchange rate</p></th>
+									<th><p class=MsoNormal>Payment Amount in Local Currency</p></th>
+									<th><p class=MsoNormal>Cost Centre</p></th>
+									<th><p class=MsoNormal>Negara</p></th>
+									<th><p class=MsoNormal>Location/City</p></th>
+									<th><p class=MsoNormal>Remarks</p></th>
+								</tr>
 						';
 						$no=1;
 						foreach ($Advexpensedetail as $data){
 							$val_tamount += $data->amount;
 							$this->mailbody .='<tr style="height:22.5pt">
 										<td><p class=MsoNormal> '.$no.'</p></td>
-										<td><p class=MsoNormal> '.$data->description.'</p></td>
-										<td><p class=MsoNormal> '.$data->accountcode.'</p></td>
+										<td><p class=MsoNormal> '.$data->expensetype.'</p></td>
+										<td><p class=MsoNormal> '.$data->purpose.'</p></td>
+										<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->receiptdate)).'</p></td>
 										<td><p class=MsoNormal> '.number_format($data->amount).'</p></td>
+										<td><p class=MsoNormal> '.$data->currency.'</p></td>
+										<td><p class=MsoNormal> '.number_format($data->exchangerate).'</p></td>
+										<td><p class=MsoNormal> '.number_format($data->paymentamount).'</p></td>
+										<td><p class=MsoNormal> '.$data->costcentre.'</p></td>
+										<td><p class=MsoNormal> '.$data->country.'</p></td>
+										<td><p class=MsoNormal> '.$data->location.'</p></td>
+										<td><p class=MsoNormal> '.$data->remarks.'</p></td>
+
+							</tr>';
+							$no++;
+						}
+						$this->mailbody .= '</table>
+							<ul>
+								<li><b><span>Total Amount Detail : '.number_format($val_tamount).'</span></b></li>
+							</ul>
+							<table border=1 cellspacing=0 cellpadding=3 width=683>
+										<tr><th><p class=MsoNormal>No</p></th>
+											<th><p class=MsoNormal>Depart Date</p></th>
+											<th><p class=MsoNormal>Depart Time</p></th>
+											<th><p class=MsoNormal>Return Date</p></th>
+											<th><p class=MsoNormal>Return Time</p></th>
+											<th><p class=MsoNormal>Breakfast</p></th>
+											<th><p class=MsoNormal>Lunch</p></th>
+											<th><p class=MsoNormal>Dinner</p></th>
+											<th><p class=MsoNormal>Pocket</p></th>
+											<th><p class=MsoNormal>isPapua ?</p></th>
+											<th><p class=MsoNormal>Remarks</p></th>
+										</tr>
+						';
+						foreach ($Advexpensedetailbt as $data){
+							if($data->ispapua == 0) {
+								$sppd = Advexpsppd::find('first',
+									array(
+										'conditions'=>array("level=? and ispapua=0",$Employee->level_id)
+									)
+								);
+
+							} else if($data->ispapua == 1) {
+								$sppd = Advexpsppd::find('first',
+									array(
+										'conditions'=>array("level=? and ispapua=1",$Employee->level_id)
+									)
+								);
+
+								
+							}
+
+							$breakfast = ($data->breakfast == 0) ? $data->breakfast : $sppd->breakfast;
+							$lunch = ($data->lunch == 0) ? $data->lunch : $sppd->lunch;
+							$dinner = ($data->dinner == 0) ? $data->dinner : $sppd->dinner;
+							$pocket = ($data->pocket == 0) ? $data->pocket : $sppd->pocket;
+
+							$jml_breakfast += $breakfast;
+							$jml_lunch += $lunch;
+							$jml_dinner += $dinner;
+							$jml_pocket += $pocket;
+
+							$totalbt = $jml_breakfast+$jml_lunch+$jml_dinner+$jml_pocket;
+
+							$papua = ($data->ispapua == 0) ? "TIDAK" : "YA";
+
+							$this->mailbody .='<tr style="height:22.5pt">
+										<td><p class=MsoNormal> '.$no.'</p></td>
+										<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->departdate)).'</p></td>
+										<td><p class=MsoNormal> '.$data->departtime.'</p></td>
+										<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->returndate)).'</p></td>
+										<td><p class=MsoNormal> '.$data->returntime.'</p></td>
+										<td><p class=MsoNormal> '.number_format($breakfast).'</p></td>
+										<td><p class=MsoNormal> '.number_format($lunch).'</p></td>
+										<td><p class=MsoNormal> '.number_format($dinner).'</p></td>
+										<td><p class=MsoNormal> '.number_format($pocket).'</p></td>
+										<td><p class=MsoNormal> '.$papua.'</p></td>
+										<td><p class=MsoNormal> '.$data->remarks.'</p></td>
+
 							</tr>';
 							$no++;
 						}
 						$this->mailbody .='</table>
 						<ul>
-								<li><b><span>Total Amount : '.number_format($val_tamount).'</span></b></li>
-								<li><b><span>Less Advance : '.number_format($less).'</span></b></li>
-								<li><b><span>Balance To Be Paid : '.number_format($val_tamount-$less).'</span></b></li>
+								<li><b><span>Total : '.number_format($totalbt).'</span></b></li>
 						</ul>
 						<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 						
@@ -1307,6 +1395,97 @@ Class Advexpensemodule extends Application{
 		}
 	}
 
+	function advexpenseDetailbt(){
+		if (count($this->post)==0){
+			http_response_code(405);
+    		echo json_encode(array("message" => "Method not Allowed"));
+		}else{
+			$auth = $this->jwt->checkAuth();
+			if($auth){
+				switch ($this->post['criteria']){
+					case 'byid':
+						$id = $this->post['id'];
+						if ($id!=""){
+							// $join = "LEFT JOIN vwadvexpensereport ON tbl_advexpensedetail.advexpense_id = vwadvexpensereport.id";
+							// $select = "tbl_advexpensedetail.*,vwadvexpensereport.apprstatuscode";
+							// $Advexpensedetailbt = Advexpensedetailbt::find('all', array('joins'=>$join,'select'=>$select,'conditions' => array("advexpense_id=?",$id)));
+							$Advexpensedetailbt = Advexpensedetailbt::find('all', array('conditions' => array("advexpense_id=?",$id)));
+							foreach ($Advexpensedetailbt as &$result) {
+								$result	= $result->to_array();
+							}
+	
+							echo json_encode($Advexpensedetailbt, JSON_NUMERIC_CHECK);
+						}else{
+							$Advexpensedetailbt = new Advexpensedetailbt();
+							echo json_encode($Advexpensedetailbt);
+						}
+						break;
+					case 'find':
+						$query=$this->post['query'];
+						if(isset($query['status'])){
+							$Advexpensedetailbt = Advexpensedetailbt::find('all', array('conditions' => array("advexpense_id=?",$query['advexpense_id'])));
+							$data=array("jml"=>count($Advexpensedetailbt));
+						}else{
+							$data=array();
+						}
+						echo json_encode($data, JSON_NUMERIC_CHECK);
+						break;
+					case 'create':			
+						$data = $this->post['data'];
+						unset($data['__KEY__']);
+
+						$Advexpensedetailbt = Advexpensedetailbt::create($data);
+						$logger = new Datalogger("Advexpensedetailbt","create",null,json_encode($data));
+						$logger->SaveData();
+						break;
+					case 'delete':				
+						$id = $this->post['id'];
+						$Advexpensedetailbt = Advexpensedetailbt::find($id);
+						$data=$Advexpensedetailbt->to_array();
+						$Advexpensedetailbt->delete();
+						$logger = new Datalogger("Advexpensedetailbt","delete",json_encode($data),null);
+						$logger->SaveData();
+						echo json_encode($Advexpensedetailbt);
+						break;
+					case 'update':				
+						$id = $this->post['id'];
+						$data = $this->post['data'];
+						
+						$Advexpensedetailbt = Advexpensedetailbt::find($id);
+						$olddata = $Advexpensedetailbt->to_array();
+						// foreach($data as $key=>$val){
+						// 	$Advexpensedetailbt->$key=$val;
+						// }
+						foreach($data as $key=>$val){
+							// $val=($val=='true')?1:0;
+							if($val=='true') {
+								$val = 1;
+							}else if($val=='false') {
+								$val = 0;
+							}
+							$Advexpensedetailbt->$key=$val;
+							
+						}
+						// $exprice = $Advexpensedetailbt->unitprice * $Advexpensedetailbt->qty;
+						// $Advexpensedetailbt->extendedprice = $exprice;
+						$Advexpensedetailbt->save();
+						$logger = new Datalogger("Advexpensedetailbt","update",json_encode($olddata),json_encode($data));
+						$logger->SaveData();
+						echo json_encode($Advexpensedetailbt);
+						
+						break;
+					default:
+						$Advexpensedetailbt = Advexpensedetailbt::all();
+						foreach ($Advexpensedetailbt as &$result) {
+							$result = $result->to_array();
+						}
+						echo json_encode($Advexpensedetailbt, JSON_NUMERIC_CHECK);
+						break;
+				}
+			}
+		}
+	}
+
 	function advexpenseHistory(){
 		if (count($this->post)==0){
 			http_response_code(405);
@@ -1335,8 +1514,11 @@ Class Advexpensemodule extends Application{
 	function generatePDFi($id){
 		$Advexpense = Advexpense::find($id);
 		$Advexpensedetail = Advexpensedetail::find('all',array('conditions'=>array("advexpense_id=?",$id),'include'=>array('advexpense'=>array('employee'=>array('company','department','designation','grade','location')))));	
+		$Advexpensedetailbt = Advexpensedetailbt::find('all',array('conditions'=>array("advexpense_id=?",$id),'include'=>array('advexpense'=>array('employee'=>array('company','department','designation','grade','location')))));	
 		
+		$creatorId=$Advexpense->employee_id;
 		$superiorId=$Advexpense->superior;
+		$Employee = Employee::find($creatorId);
 		$Superior = Employee::find($superiorId);
 		$supAdb = Addressbook::find('first',array('conditions'=>array("username=?",$Superior->loginname)));
 		$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Advexpense->employee->loginname)));
@@ -1344,272 +1526,178 @@ Class Advexpensemodule extends Application{
 		$fullname=$Advexpense->employee->fullname;
 		$department = $Advexpense->employee->department->departmentname;
 
-		// $duedate = date("d/m/Y",strtotime($Advexpense->duedate));
-		$duedate = $Advexpense->duedate;
-		// $expensedate = date("d/m/Y",strtotime($Advexpense->expensedate));
-		$expensedate = $Advexpense->expensedate;
+		$startdate = $Advexpense->startdate;
+		$enddate = $Advexpense->enddate;
 
 		$joinx   = "LEFT JOIN tbl_approver ON (tbl_advexpenseapproval.approver_id = tbl_approver.id) ";					
 		$Advexpenseapproval = Advexpenseapproval::find('all',array('joins'=>$joinx,'conditions' => array("advexpense_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
 		
-		//condition
-			
-			
-		//end condition
-
 		try {
 			$excel = new COM("Excel.Application") or die ("ERROR: Unable to instantaniate COM!\r\n");
 			$excel->Visible = false;
 
-			if($Advexpense->expenseform == 1) {
-				$title = 'expense_hr';
-				$file= SITE_PATH."/doc/hr/expensehr.xlsx";
-			} else {
-				$title = 'expense_ops';
-				$file= SITE_PATH."/doc/hr/expenseops.xlsx";
-			}
-
+				$title = 'advexpense';
+				$file= SITE_PATH."/doc/hr/advexpense.xls";
 				
 				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
 				$Worksheet = $Workbook->Worksheets(1);
 				$Worksheet->Activate;
 
-				if($Advexpense->expense == 1) {
-					$expense = 'Cash';
-				} else if($Advexpense->expense == 2) {
-					$expense = 'Bank';
-				}
+				$Worksheet->Range("D6")->Value = $Advexpense->employee->sapid;
+				$Worksheet->Range("D8")->Value = $Advexpense->name;
+				$Worksheet->Range("D10")->Value = $Advexpense->email;
+				$Worksheet->Range("D12")->Value = $Advexpense->costcenter;
+				$Worksheet->Range("D14")->Value = date("d/m/Y",strtotime($startdate));
 
-				// $Worksheet->Range("N6")->Value = date("d/m/Y",strtotime($Advexpense->createddate));
-				$Worksheet->Range("M15")->Value = date("d/m/Y",strtotime($duedate));
-				$Worksheet->Range("M16")->Value = date("d/m/Y",strtotime($expensedate));
-
-			// if($Advexpense->expenseform == 1) {
-				$Worksheet->Range("E10")->Value = $fullname;
-				$Worksheet->Range("E11")->Value = $department;
-				$Worksheet->Range("E12")->Value = $Advexpense->employee_id;
-
-				$Worksheet->Range("M10")->Value = $expense;
-				$Worksheet->Range("E14")->Value = $Advexpense->beneficiary;
-				$Worksheet->Range("E15")->Value = $Advexpense->accountname;
-				$Worksheet->Range("E16")->Value = $Advexpense->bank;
-				$Worksheet->Range("E17")->Value = $Advexpense->accountnumber;
-			// } else {
-			// 	$Worksheet->Range("E6")->Value = $fullname;
-			// 	$Worksheet->Range("E7")->Value = $department;
-			// 	$Worksheet->Range("E8")->Value = $Advexpense->employee_id;
-
-			// 	$Worksheet->Range("E10")->Value = $Advexpense->beneficiary;
-			// 	$Worksheet->Range("E11")->Value = $Advexpense->accountname;
-			// 	$Worksheet->Range("E12")->Value = $Advexpense->bank;
-			// 	$Worksheet->Range("E13")->Value = $Advexpense->accountnumber;
-			// }
+				$Worksheet->Range("I10")->Value = $Advexpense->bg;
+				$Worksheet->Range("I12")->Value = $Advexpense->location;
+				$Worksheet->Range("I14")->Value = date("d/m/Y",strtotime($enddate));
 
 
-
+				// $Worksheet->Range("M10")->Value = $expense;
+				// $Worksheet->Range("E14")->Value = $Advexpense->beneficiary;
+				// $Worksheet->Range("E15")->Value = $Advexpense->accountname;
+				// $Worksheet->Range("E16")->Value = $Advexpense->bank;
+				// $Worksheet->Range("E17")->Value = $Advexpense->accountnumber;
 
 				foreach ($Advexpenseapproval as $data){
 					if(($data->approver->approvaltype->id==35) || ($data->approver->employee_id==$Advexpense->superior)){
 						$superiorname = $data->approver->employee->fullname;
-						$superiordate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
+						// $superiordate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
+						$superiordate = date("d/m/Y",strtotime($data->approvaldate));
 					}
 				
 					if($data->approver->approvaltype->id==36) {
 						$hrdheadname = $data->approver->employee->fullname;
-						$hrdheaddate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
+						$hrdheaddate = date("d/m/Y",strtotime($data->approvaldate));
 					}
 					
-					if($data->approver->approvaltype->id==37) {
-						$bufcname = $data->approver->employee->fullname;
-						$bufcdate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
-					}
-
-					if($data->approver->approvaltype->id==38) {
-						$buheadname = $data->approver->employee->fullname;
-						$buheaddate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
-					}
-
-					if($data->approver->approvaltype->id==39) {
-						$depmdname = $data->approver->employee->fullname;
-						$depmddate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
-					}
-
-					if($data->approver->approvaltype->id==40) {
-						$mdname = $data->approver->employee->fullname;
-						$mddate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
-					}
-
-					if($data->approver->approvaltype->id==41) {
-						$financename = $data->approver->employee->fullname;
-						$financedate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
-					}
-
-					if($data->approver->approvaltype->id==42) {
-						$procname = $data->approver->employee->fullname;
-						$procdate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
-					}
 				}
 				$picpath= SITE_PATH."/images/approved.png";
 				
-				$Worksheet->Range("A34")->Value = $fullname;
-				$Worksheet->Range("A35")->Value = 'Date : '.date("d/m/Y",strtotime($Advexpense->createddate));
+				$Worksheet->Range("B35")->Value = $Advexpense->name;
+				$Worksheet->Range("D35")->Value = date("d/m/Y",strtotime($Advexpense->createddate));
 
 				$pic=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 				$pic->Height  = 20;
-				$pic->Top = $excel->Cells(30, 1)->Top ;
-				$pic->Left = $excel->Cells(30, 1)->Left ;
+				$pic->Top = $excel->Cells(35, 1)->Top ;
+				$pic->Left = $excel->Cells(35, 1)->Left ;
 
-				if($Advexpense->expenseform == 1) {
 					if(!empty($superiorname)) {
-						$Worksheet->Range("E34")->Value = $superiorname;
-						$Worksheet->Range("E35")->Value = $superiordate;
+						$Worksheet->Range("F35")->Value = $superiorname;
+						$Worksheet->Range("H35")->Value = $superiordate;
 						$pic1=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 						$pic1->Height  = 20;
-						$pic1->Top = $excel->Cells(30, 5)->Top ;
-						$pic1->Left = $excel->Cells(30, 5)->Left ;
+						$pic1->Top = $excel->Cells(35, 6)->Top ;
+						$pic1->Left = $excel->Cells(35, 6)->Left ;
 					}
 	
 					if(!empty($hrdheadname)) {
-						$Worksheet->Range("H34")->Value = $hrdheadname;
-						$Worksheet->Range("H35")->Value = $hrdheaddate;
+						$Worksheet->Range("K35")->Value = $hrdheadname;
+						$Worksheet->Range("L35")->Value = $hrdheaddate;
 						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 						$pic2->Height  = 20;
-						$pic2->Top = $excel->Cells(30, 8)->Top ;
-						$pic2->Left = $excel->Cells(30, 8)->Left ;
+						$pic2->Top = $excel->Cells(35, 11)->Top ;
+						$pic2->Left = $excel->Cells(35, 11)->Left ;
 					}
 	
-					if(!empty($bufcname)) {
-						$Worksheet->Range("K34")->Value = $bufcname;
-						$Worksheet->Range("K35")->Value = $bufcdate;
-						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-						$pic2->Height  = 20;
-						$pic2->Top = $excel->Cells(30, 11)->Top ;
-						$pic2->Left = $excel->Cells(30, 11)->Left ;
-					}
-	
-					// if(!empty($buheadname)) {
-					// 	$Worksheet->Range("A45")->Value = $buheadname;
-					// 	$Worksheet->Range("A46")->Value = $buheaddate;
-					// 	$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-					// 	$pic2->Height  = 20;
-					// 	$pic2->Top = $excel->Cells(42, 1)->Top ;
-					// 	$pic2->Left = $excel->Cells(42, 1)->Left ;
-					// }
-	
-					// if(!empty($financename)) {
-					// 	$Worksheet->Range("F45")->Value = $financename;
-					// 	$Worksheet->Range("F46")->Value = $financedate;
-					// 	$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-					// 	$pic2->Height  = 20;
-					// 	$pic2->Top = $excel->Cells(42, 6)->Top ;
-					// 	$pic2->Left = $excel->Cells(42, 6)->Left ;
-					// }
-	
-					// if(!empty($depmdname)) {
-					// 	$Worksheet->Range("I45")->Value = $depmdname;
-					// 	$Worksheet->Range("I46")->Value = $depmddate;
-					// 	$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-					// 	$pic2->Height  = 20;
-					// 	$pic2->Top = $excel->Cells(42, 9)->Top ;
-					// 	$pic2->Left = $excel->Cells(42, 9)->Left ;
-					// }
-	
-					// if(!empty($mdname)) {
-					// 	$Worksheet->Range("L45")->Value = $mdname;
-					// 	$Worksheet->Range("L46")->Value = $mddate;
-					// 	$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-					// 	$pic2->Height  = 20;
-					// 	$pic2->Top = $excel->Cells(42, 12)->Top ;
-					// 	$pic2->Left = $excel->Cells(42, 12)->Left ;
-					// }
-				} else {
-					if(!empty($superiorname)) {
-						$Worksheet->Range("E34")->Value = $superiorname;
-						$Worksheet->Range("E35")->Value = $superiordate;
-						$pic1=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-						$pic1->Height  = 20;
-						$pic1->Top = $excel->Cells(30, 5)->Top ;
-						$pic1->Left = $excel->Cells(30, 5)->Left ;
-					}
-
-					// if(!empty($procname)) {
-					// 	$Worksheet->Range("L32")->Value = $procname;
-					// 	$Worksheet->Range("L33")->Value = $procdate;
-					// 	$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-					// 	$pic2->Height  = 20;
-					// 	$pic2->Top = $excel->Cells(29, 12)->Top ;
-					// 	$pic2->Left = $excel->Cells(29, 12)->Left ;
-					// }
-	
-					if(!empty($bufcname)) {
-						$Worksheet->Range("H34")->Value = $bufcname;
-						$Worksheet->Range("H35")->Value = $bufcdate;
-						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-						$pic2->Height  = 20;
-						$pic2->Top = $excel->Cells(30, 8)->Top ;
-						$pic2->Left = $excel->Cells(30, 8)->Left ;
-					}
-	
-					if(!empty($buheadname)) {
-						$Worksheet->Range("K34")->Value = $buheadname;
-						$Worksheet->Range("K35")->Value = $buheaddate;
-						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-						$pic2->Height  = 20;
-						$pic2->Top = $excel->Cells(30, 11)->Top ;
-						$pic2->Left = $excel->Cells(30, 11)->Left ;
-					}
-	
-					// if(!empty($financename)) {
-					// 	$Worksheet->Range("H45")->Value = $financename;
-					// 	$Worksheet->Range("H46")->Value = $financedate;
-					// 	$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-					// 	$pic2->Height  = 20;
-					// 	$pic2->Top = $excel->Cells(42, 8)->Top ;
-					// 	$pic2->Left = $excel->Cells(42, 8)->Left ;
-					// }
-
-					// if(!empty($depmdname)) {
-					// 	$Worksheet->Range("K45")->Value = $depmdname;
-					// 	$Worksheet->Range("K46")->Value = $depmddate;
-					// 	$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-					// 	$pic2->Height  = 20;
-					// 	$pic2->Top = $excel->Cells(42, 11)->Top ;
-					// 	$pic2->Left = $excel->Cells(42, 11)->Left ;
-					// }
-	
-					// if(!empty($mdname)) {
-					// 	$Worksheet->Range("N45")->Value = $mdname;
-					// 	$Worksheet->Range("N46")->Value = $mddate;
-					// 	$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-					// 	$pic2->Height  = 20;
-					// 	$pic2->Top = $excel->Cells(42, 14)->Top ;
-					// 	$pic2->Left = $excel->Cells(42, 14)->Left ;
-					// }
-				}
-
 				foreach ($Advexpensedetail as $data){
 					$val_tamount += $data->amount;
 				}
 				
-				if($Advexpense->expensetype == 0) {
-					$lessadvance = 0;
-				} else if($Advexpense->expensetype == 1) {
-					$lessadvance = $Advexpense->lessadvance;
-				}
-				$Worksheet->Range("K22")->Value = $val_tamount;
-				$Worksheet->Range("K23")->Value = $lessadvance;
-				$Worksheet->Range("K24")->Value = ($val_tamount-$lessadvance);
-
+				// if($Advexpense->expensetype == 0) {
+				// 	$lessadvance = 0;
+				// } else if($Advexpense->expensetype == 1) {
+				// 	$lessadvance = $Advexpense->lessadvance;
+				// }
+				$Worksheet->Range("E21")->Value = $val_tamount;
+				// $Worksheet->Range("K23")->Value = $lessadvance;
+				// $Worksheet->Range("K24")->Value = ($val_tamount-$lessadvance);
+				
 	
 				$xlShiftDown=-4121;
 				$no = 1;
-				for ($a=20;$a<20+count($Advexpensedetail);$a++){
+				for ($a=19;$a<19+count($Advexpensedetail);$a++){
 					$Worksheet->Rows($a+1)->Copy();
 					$Worksheet->Rows($a+1)->Insert($xlShiftDown);
-					$Worksheet->Range("A".$a)->Value = $no++;
-					$Worksheet->Range("B".$a)->Value = $Advexpensedetail[$a-20]->description;
-					$Worksheet->Range("I".$a)->Value = $Advexpensedetail[$a-20]->accountcode;
-					$Worksheet->Range("K".$a)->Value = $Advexpensedetail[$a-20]->amount;
+					// $Worksheet->Range("A".$a)->Value = $no++;
+					$Worksheet->Range("B".$a)->Value = $Advexpensedetail[$a-19]->expensetype;
+					$Worksheet->Range("C".$a)->Value = $Advexpensedetail[$a-19]->purpose;
+					$Worksheet->Range("D".$a)->Value = $Advexpensedetail[$a-19]->receiptdate;
+					$Worksheet->Range("E".$a)->Value = $Advexpensedetail[$a-19]->amount;
+					$Worksheet->Range("F".$a)->Value = $Advexpensedetail[$a-19]->currency;
+					$Worksheet->Range("G".$a)->Value = $Advexpensedetail[$a-19]->exchangerate;
+					$Worksheet->Range("H".$a)->Value = $Advexpensedetail[$a-19]->paymentamount;
+					$Worksheet->Range("I".$a)->Value = $Advexpensedetail[$a-19]->costcentre;
+					$Worksheet->Range("J".$a)->Value = $Advexpensedetail[$a-19]->country;
+					$Worksheet->Range("K".$a)->Value = $Advexpensedetail[$a-19]->location;
+					$Worksheet->Range("L".$a)->Value = $Advexpensedetail[$a-19]->remarks;
+				}
+
+				foreach ($Advexpensedetailbt as $data){
+					// if($data->ispapua == 0) {
+					// 	$sppd = Advexpsppd::find('first',
+					// 		array(
+					// 			'conditions'=>array("level=? and ispapua=0",$Employee->level_id)
+					// 		)
+					// 	);
+
+					// } else if($data->ispapua == 1) {
+					// 	$sppd = Advexpsppd::find('first',
+					// 		array(
+					// 			'conditions'=>array("level=? and ispapua=1",$Employee->level_id)
+					// 		)
+					// 	);
+
+						
+					// }
+
+					// $breakfast = ($data->breakfast == 0) ? $data->breakfast : $sppd->breakfast;
+					// $lunch = ($data->lunch == 0) ? $data->lunch : $sppd->lunch;
+					// $dinner = ($data->dinner == 0) ? $data->dinner : $sppd->dinner;
+					// $pocket = ($data->pocket == 0) ? $data->pocket : $sppd->pocket;
+
+					// $jml_breakfast += $breakfast;
+					// $jml_lunch += $lunch;
+					// $jml_dinner += $dinner;
+					// $jml_pocket += $pocket;
+				}
+
+				for ($b=53;$b<53+count($Advexpensedetailbt);$b++){
+					if($Advexpensedetailbt[$b-53]->ispapua == 0) {
+						$sppd = Advexpsppd::find('first',
+							array(
+								'conditions'=>array("level=? and ispapua=0",$Employee->level_id)
+							)
+						);
+
+					} else if($Advexpensedetailbt[$b-53]->ispapua == 1) {
+						$sppd = Advexpsppd::find('first',
+							array(
+								'conditions'=>array("level=? and ispapua=1",$Employee->level_id)
+							)
+						);
+
+						
+					}
+
+					$breakfast = ($Advexpensedetailbt[$b-53]->breakfast == 0) ? $Advexpensedetailbt[$b-53]->breakfast : $sppd->breakfast;
+					$lunch = ($Advexpensedetailbt[$b-53]->lunch == 0) ? $Advexpensedetailbt[$b-53]->lunch : $sppd->lunch;
+					$dinner = ($Advexpensedetailbt[$b-53]->dinner == 0) ? $Advexpensedetailbt[$b-53]->dinner : $sppd->dinner;
+					$pocket = ($Advexpensedetailbt[$b-53]->pocket == 0) ? $Advexpensedetailbt[$b-53]->pocket : $sppd->pocket;
+
+					$Worksheet->Rows($b+1)->Copy();
+					$Worksheet->Rows($b+1)->Insert($xlShiftDown);
+					// $Worksheet->Range("A".$b)->Value = $no++;
+					$Worksheet->Range("C".$b)->Value = $Advexpensedetailbt[$b-53]->departdate;
+					$Worksheet->Range("D".$b)->Value = $Advexpensedetailbt[$b-53]->departtime;
+					$Worksheet->Range("E".$b)->Value = $Advexpensedetailbt[$b-53]->returndate;
+					$Worksheet->Range("F".$b)->Value = $Advexpensedetailbt[$b-53]->returntime;
+					$Worksheet->Range("G".$b)->Value = $breakfast;
+					// $Worksheet->Range("G".$b)->Value = $Advexpensedetailbt[$b-53]->breakfast;
+					$Worksheet->Range("H".$b)->Value = $lunch;
+					$Worksheet->Range("I".$b)->Value = $dinner;
+					$Worksheet->Range("J".$b)->Value = $pocket;
 				}
 		
 
@@ -1641,7 +1729,7 @@ Class Advexpensemodule extends Application{
 
 		} catch(com_exception $e) {  
 			$err = new Errorlog();
-			$err->errortype = "AdvexpenseFPDFGenerator";
+			$err->errortype = "AdvexpensePDFGenerator";
 			$err->errordate = date("Y-m-d h:i:s");
 			$err->errormessage = $e->getMessage();
 			$err->user = $this->currentUser->username;
