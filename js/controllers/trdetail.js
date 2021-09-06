@@ -97,15 +97,15 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 						colSpan :2,
 						items: [
 						
-						{dataField:'createddate',editorType: "dxDateBox",label: {text: "Creation Date"},editorOptions: {displayFormat:"dd/MM/yyyy",disabled: true}},
+						{dataField:'createddate',editorType: "dxDateBox",label: {text: "Creation Date"},editorOptions: {displayFormat:"dd/MM/yyyy",readOnly: true}},
 						{label: {
 								text: "Created By"
 							},
 							dataField:"createdby",
 							editorType: "dxDropDownBox",
 							visible: true,
-							disabled: true,
-							editorOptions: { 
+							editorOptions: {
+								readOnly:true,
 								dataSource:(($scope.mode=='add')||($scope.mode=='edit'))?$scope.deptEmpDataSource:$scope.allDeptEmpDataSource,  
 								valueExpr: 'id',
 								displayExpr: 'fullname',
@@ -145,8 +145,8 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 							dataField:"employee_id",
 							editorType: "dxDropDownBox",
 							visible: true,
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							editorOptions: { 
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 								dataSource:$scope.allDeptEmpDataSource,  //(($scope.mode=='add')||($scope.mode=='edit'))?$scope.deptEmpDataSource:$scope.allDeptEmpDataSource,    
 								valueExpr: 'id',
 								displayExpr: 'fullname',
@@ -204,7 +204,7 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 							},
 							validationRules: [{
 								type: "required",
-								message: "Please select your direct superior"
+								message: "Please select employee"
 							}]
 						},
 						{dataField:'requeststatus',label: {text: "Request Status"},template: function(data, itemElement) {  
@@ -215,8 +215,9 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 							var rDesc = ["Saved as Draft","Waiting Approval","Require Rework","Approved","Rejected","Not Saved"];
 							$('<span>').appendTo(itemElement).addClass(rClass[val]).text(rDesc[val]);
 						}},
-						{dataField:'islandtransport',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,label:{text:"",visible:false},dataType:"boolean",editorType: "dxCheckBox",
-							editorOptions: { 
+						{dataField:'islandtransport',label:{text:"",visible:false},dataType:"boolean",editorType: "dxCheckBox",
+							editorOptions: {
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 								text:"VIA LAND TRANSPORTATION (VIA DARAT)",
 								onValueChanged: function(e){
 									var vis1 =(e.value==1)?true:false;
@@ -248,8 +249,9 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 									$scope.formInstance.updateData('isother',  "");
 								}}
 							},
-						{dataField:'isairtransport',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,label:{text:"",visible:false},dataType:"boolean",editorType: "dxCheckBox",
+						{dataField:'isairtransport',label:{text:"",visible:false},dataType:"boolean",editorType: "dxCheckBox",
 							editorOptions: { 
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 								text:"VIA AIR TRANSPORTATION (VIA UDARA)",
 								onValueChanged: function(e){
 									var vis2 =(e.value==1)?true:false;
@@ -269,10 +271,11 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 							colSpan:1,
 							colCount : 1,
 							items: [
-								{dataField:'ispersonalvehicle',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,name:'ispersonalvehicle',label:{text:"",visible:false},visible:($scope.data.islandtransport==1)?true:false,dataType:"boolean",editorType: "dxCheckBox",editorOptions: { text:"Personal Vehicle (Dengan Mobil Sendiri - BK)"}},
-								{dataField:'ispoolcar',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,name:'ispoolcar',label:{text:"",visible:false},visible:($scope.data.islandtransport==1)?true:false,dataType:"boolean",editorType: "dxCheckBox",
+								{dataField:'ispersonalvehicle',name:'ispersonalvehicle',label:{text:"",visible:false},visible:($scope.data.islandtransport==1)?true:false,dataType:"boolean",editorType: "dxCheckBox",editorOptions: { readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,text:"Personal Vehicle (Dengan Mobil Sendiri - BK)"}},
+								{dataField:'ispoolcar', name:'ispoolcar',label:{text:"",visible:false},visible:($scope.data.islandtransport==1)?true:false,dataType:"boolean",editorType: "dxCheckBox",
 									editorOptions: { 
 										text:"Pool Car (Dengan Mobil Pool)",
+										readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 										onValueChanged: function(e){
 											var vis4 =(e.value==1)?true:false;
 											$scope.formInstance.itemOption('group1.group2.group4.isdropoffonly', 'visible', vis4);
@@ -296,9 +299,10 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 								colSpan:1,
 								colCount : 1,
 								items: [
-									{dataField:'isdropoffonly',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,name:'isdropoffonly',label:{text:"",visible:false},visible:($scope.data.ispoolcar==1)?true:false,dataType:"boolean",editorType: "dxCheckBox",editorOptions: { text:"Drop Off Only (Drop Saja)"}},
-									{dataField:'isuntiljobfinish',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,name:'isuntiljobfinish',label:{text:"",visible:false},visible:($scope.data.ispoolcar==1)?true:false,dataType:"boolean",editorType: "dxCheckBox",
+									{dataField:'isdropoffonly',name:'isdropoffonly',label:{text:"",visible:false},visible:($scope.data.ispoolcar==1)?true:false,dataType:"boolean",editorType: "dxCheckBox",editorOptions: { readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,text:"Drop Off Only (Drop Saja)"}},
+									{dataField:'isuntiljobfinish',name:'isuntiljobfinish',label:{text:"",visible:false},visible:($scope.data.ispoolcar==1)?true:false,dataType:"boolean",editorType: "dxCheckBox",
 										editorOptions: { 
+											readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 											text:"Until Job Finished (Sampai Tugas Selesai)",
 											onValueChanged: function(e){
 												var vis5 =(e.value==1)?true:false;
@@ -308,13 +312,14 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 											}
 										}
 									},
-									{dataField:'jobfinishdate',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,name:'jobfinishdate',label:{text:"",visible:false},visible:($scope.data.ispoolcar==1)?true:false,editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy"}},
+									{dataField:'jobfinishdate',name:'jobfinishdate',label:{text:"",visible:false},visible:($scope.data.ispoolcar==1)?true:false,editorType: "dxDateBox",editorOptions: {readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,displayFormat:"dd/MM/yyyy"}},
 									]
 								},
-								{dataField:'isbytrain',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,name:'isbytrain',label:{text:"",visible:false},visible:($scope.data.islandtransport==1)?true:false,dataType:"boolean",editorType: "dxCheckBox",editorOptions: { text:"By Train (Dengan Kereta Api)"}},
-								{dataField:'isother',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,name:'isother',label:{text:"",visible:false},visible:($scope.data.islandtransport==1)?true:false,dataType:"boolean",editorType: "dxCheckBox",
+								{dataField:'isbytrain', name:'isbytrain',label:{text:"",visible:false},visible:($scope.data.islandtransport==1)?true:false,dataType:"boolean",editorType: "dxCheckBox",editorOptions: { readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,text:"By Train (Dengan Kereta Api)"}},
+								{dataField:'isother', name:'isother',label:{text:"",visible:false},visible:($scope.data.islandtransport==1)?true:false,dataType:"boolean",editorType: "dxCheckBox",
 									editorOptions: { 
 										text:"Other (Please specify):",
+										readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 										onValueChanged: function(e){
 											var vis6 =(e.value==1)?true:false;
 											$scope.formInstance.itemOption('group1.group2.otherlandtransportdesc', 'visible', vis6);
@@ -323,7 +328,7 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 										}
 									}
 								},
-								{dataField:'otherlandtransportdesc',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,name:'otherlandtransportdesc',dataType:"string",label:{text:"",visible:false},visible:($scope.data.isother==1)?true:false},
+								{dataField:'otherlandtransportdesc', name:'otherlandtransportdesc',dataType:"string",label:{text:"",visible:false},visible:($scope.data.isother==1)?true:false,editorOptions:{readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,}},
 									
 								]
 						},
@@ -334,16 +339,16 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 							colSpan:1,
 							colCount : 1,
 							items: [
-								{dataField:'iscommercialairline',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,name:'iscommercialairline',label:{text:"",visible:false},visible:($scope.data.isairtransport==1)?true:false,dataType:"boolean",editorType: "dxCheckBox",editorOptions: { text:"Commercial Airline (Pesawat Komersial)"}},
-								{dataField:'iscompanyaircraft',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,name:'iscompanyaircraft',label:{text:"",visible:false},visible:($scope.data.isairtransport==1)?true:false,dataType:"boolean",editorType: "dxCheckBox",editorOptions: { text:"Company Aircraft (Pesawat Perusahaan)"}},
+								{dataField:'iscommercialairline',name:'iscommercialairline',label:{text:"",visible:false},visible:($scope.data.isairtransport==1)?true:false,dataType:"boolean",editorType: "dxCheckBox",editorOptions: { readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,text:"Commercial Airline (Pesawat Komersial)"}},
+								{dataField:'iscompanyaircraft',name:'iscompanyaircraft',label:{text:"",visible:false},visible:($scope.data.isairtransport==1)?true:false,dataType:"boolean",editorType: "dxCheckBox",editorOptions: { readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,text:"Company Aircraft (Pesawat Perusahaan)"}},
 								{label: {
 									text: "Direct Superior"
 									},
 									dataField:"superior",
 									editorType: "dxDropDownBox",
-									disabled: (($scope.mode=='approve') || ($scope.mode=='view') || ($scope.mode=='report'))?true:false,
 									editorOptions: { 
 										dataSource:$scope.allEmpDataSource,  
+										readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 										valueExpr: 'id',
 										displayExpr: 'fullname',
 										searchEnabled: true,
@@ -385,8 +390,8 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 									dataField:"depthead",
 									editorType: "dxDropDownBox",
 									visible: true,
-									disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 									editorOptions: { 
+										readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 										dataSource:$scope.allEmpDataSource,  
 										valueExpr: 'id',
 										displayExpr: 'fullname',
