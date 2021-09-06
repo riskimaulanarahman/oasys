@@ -182,6 +182,7 @@ Class Advancemodule extends Application{
 										$id= $query['advance_id'];
 
 										$Advance = Advance::find($id);
+										
 										$amountdetail = Advancedetail::find('all', array('conditions' => array("advance_id=?",$Advance->id)));
 
 										foreach($amountdetail as $val) {
@@ -280,7 +281,7 @@ Class Advancemodule extends Application{
 												$logger->SaveData();
 											}
 
-											if($advance_form == 2) {
+											if($Advance->advanceform == 2) {
 												if(count($Advanceapprovalproc)==0){
 													$ApproverPROC = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='42' and tbl_employee.location_id='1'")));
 													print_r($ApproverPROC);
@@ -346,6 +347,21 @@ Class Advancemodule extends Application{
 												
 											}
 
+											if($Advance->advanceform == 2) {
+												if(count($Advanceapprovalproc)==0){
+													$ApproverPROC = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='42' and tbl_employee.location_id='1'")));
+													print_r($ApproverPROC);
+													if(count($ApproverPROC)>0){
+														$Advanceapproval = new Advanceapproval();
+														$Advanceapproval->advance_id =$Advance->id;
+														$Advanceapproval->approver_id = $ApproverPROC->id;
+														$Advanceapproval->save();
+														$logger = new Datalogger("Advanceapproval","add","Add initial PROC",json_encode($Advanceapproval->to_array()));
+														$logger->SaveData();
+													}
+												}
+											}
+
 										} 
 
 									break;
@@ -356,6 +372,13 @@ Class Advancemodule extends Application{
 										$id= $query['advance_id'];
 
 										$Advance = Advance::find($id);
+										$Advance->advanceform = $advance_form;
+										$Advance->save();
+										
+										$amountdetail = Advancedetail::find('all', array('conditions' => array("advance_id=?",$Advance->id)));
+										foreach($amountdetail as $val) {
+											$tdetailamount += $val->amount;
+										}
 
 										$Employee = Employee::find('first', array('conditions' => array("id=?",$employee_id),"include"=>array("location","department","company")));
 
@@ -379,7 +402,7 @@ Class Advancemodule extends Application{
 
 										}
 
-										if($advance_form == 1) {
+										if($Advance->advanceform == 1) {
 											
 											$hrverifikator = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=44",$id)));	
 											foreach ($hrverifikator as $result) {
@@ -440,7 +463,7 @@ Class Advancemodule extends Application{
 												$logger->SaveData();
 											}
 
-										} else if($advance_form == 2) {
+										} else if($Advance->advanceform == 2) {
 
 											$hrv = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=44",$id)));	
 											foreach ($hrv as $result) {
@@ -454,6 +477,23 @@ Class Advancemodule extends Application{
 												$result->delete();
 												$logger = new Datalogger("Advanceapproval","delete",json_encode($result->to_array()),"delete Approval HRD");
 												$logger->SaveData();
+											}
+
+											if(($tdetailamount>=5000000)){
+
+													if(count($Advanceapprovalproc)==0){
+														$ApproverPROC = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='42' and tbl_employee.location_id='1'")));
+														print_r($ApproverPROC);
+														if(count($ApproverPROC)>0){
+															$Advanceapproval = new Advanceapproval();
+															$Advanceapproval->advance_id =$Advance->id;
+															$Advanceapproval->approver_id = $ApproverPROC->id;
+															$Advanceapproval->save();
+															$logger = new Datalogger("Advanceapproval","add","Add initial PROC",json_encode($Advanceapproval->to_array()));
+															$logger->SaveData();
+														}
+													}
+	
 											}
 										}
 
@@ -678,7 +718,7 @@ Class Advancemodule extends Application{
 									$approver = new Approver();
 									$approver->module = "Advance";
 									$approver->employee_id=$depthead;
-									$approver->sequence=1;
+									$approver->sequence=0;
 									$approver->approvaltype_id = 35;
 									$approver->isfinal = false;
 									$approver->save();
@@ -1042,7 +1082,7 @@ Class Advancemodule extends Application{
 										break;
 									case '2':
 										if ($Advanceapproval->approver->isfinal == 1){
-											$Advance->requeststatus = 4;
+											$Advance->requeststatus = 3;
 											$emto=$email;$emname=$Advance->employee->fullname;
 											$this->mail->Subject = "Online Approval System -> Approval Completed";
 											$red = 'Your Advance request has been approved';

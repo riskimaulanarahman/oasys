@@ -91,7 +91,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
                                     dataSource:$scope.AdvanceForm,  
                                     valueExpr: 'id',
                                     displayExpr: 'advanceform',
-									value: "",
+									// value: "",
 									onValueChanged: function(e) {
 										criteria = {status:'appform',formtype:e.value,advance_id:$scope.Requestid,employee_id:$scope.data.employee_id};
 										CrudService.FindData('advance',criteria).then(function (response){
@@ -249,6 +249,18 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 						{
 							dataField:'remarks',colSpan:2,editorType:"dxHtmlEditor",editorOptions: {height: 190,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}
 						},
+						{
+							dataField:'isdeclaration',
+							label:{text:"Declaration"},
+							// visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
+							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							dataType:"boolean",
+							editorType: "dxCheckBox",
+							validationRules: [{type: "required",message: "Declaration is required"}],
+							editorOptions: { 
+								text:"Please Check Your Detail & Approval list, before submit this form. Any Problem Contact Developer",
+							}
+						}
 
 
 						]
@@ -579,8 +591,8 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 
 				criteria = {status:'appcon',formtype:formadv,advance_id:$scope.Requestid,employee_id:$scope.data.employee_id};
 				CrudService.FindData('advance',criteria).then(function (response){
+					$scope.grid2Component.refresh();
 				})
-				$scope.grid2Component.refresh();
 
 			},
 			onRowUpdated: function (e) {
@@ -593,8 +605,8 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 
 				criteria = {status:'appcon',formtype:formadv,advance_id:$scope.Requestid,employee_id:$scope.data.employee_id};
 				CrudService.FindData('advance',criteria).then(function (response){
+					$scope.grid2Component.refresh();
 				})
-				$scope.grid2Component.refresh();
 			},
 			onRowRemoved: function(e) {
 				// var amount = e.component.getTotalSummaryValue("amount");
@@ -605,8 +617,8 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 
 				criteria = {status:'appcon',formtype:formadv,advance_id:$scope.Requestid,employee_id:$scope.data.employee_id};
 				CrudService.FindData('advance',criteria).then(function (response){
+					$scope.grid2Component.refresh();
 				})
-				$scope.grid2Component.refresh();
 			},
 			onEditorPreparing: function (e) {  
 				$scope.grid1Component = e.component;
@@ -669,7 +681,8 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 				// allowAdding:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 				allowUpdating:($rootScope.isAdmin)?true:false,
 				allowAdding:($rootScope.isAdmin)?true:false,
-				allowDeleting:($rootScope.isAdmin)?true:false,
+				// allowDeleting:($rootScope.isAdmin)?true:false,
+				allowDeleting:true,
 				form:{colCount: 1,
 				},
 			},
@@ -936,6 +949,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 			delete data.accountnumber;
 			delete data.duedate;
 			delete data.expecteddate;
+			delete data.isdeclaration;
 			CrudService.Update('advanceapp',data.id,data).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.dialog.alert(response.message,"Error");
@@ -978,6 +992,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 					delete data.accountnumber;
 					delete data.duedate;
 					delete data.expecteddate;
+					delete data.isdeclaration;
 					CrudService.Update('advanceapp',data.id,data).then(function (response) {
 						if(response.status=="error"){
 							DevExpress.ui.dialog.alert(response.message,"Error");

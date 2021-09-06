@@ -262,69 +262,8 @@
                                 },
                                 dataField:"employee_id",
                                 editorType: "dxDropDownBox",
-                                visible: true,
-                                // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                visible: false,
                                 disabled: true,
-                                editorOptions: { 
-                                    dataSource:(($scope.mode=='add')||($scope.mode=='edit'))?$scope.deptEmpDataSource:$scope.allDeptEmpDataSource,    
-                                    valueExpr: 'id',
-                                    displayExpr: 'fullname',
-                                    searchEnabled: true,
-                                    contentTemplate: function(e){
-                                        var $dataGrid = $("<div>").dxDataGrid({
-                                            dataSource: e.component.option("dataSource"),
-                                            columns: [{dataField:"fullname",width:100},{dataField:"company",width:50}, {dataField:"department",width:200}],
-                                            height: 265,
-                                            selection: { mode: "single" },
-                                            selectedRowKeys: [e.component.option("value")],
-                                            focusedRowEnabled: true,
-                                            focusedRowKey: e.component.option("value"),
-                                            searchPanel: {
-                                                visible: true,
-                                                width: 265,
-                                                placeholder: "Search..."
-                                            },
-                                            onSelectionChanged: function(selectedItems){
-                                                var keys = selectedItems.selectedRowKeys,
-                                                    hasSelection = keys.length;
-                                                if(hasSelection){
-                                                    criteria = {status:'pending',username:keys[0],id:$scope.Requestid};
-                                                    CrudService.FindData('trbyemp',criteria).then(function (response){
-                                                        if(response.jml>0){
-                                                            DevExpress.ui.notify({
-                                                                message: "Cannot add more request, Selected employee still have unsubmitted draft or pending request",
-                                                                type: "warning",
-                                                                displayTime: 5000,
-                                                                height: 80,
-                                                                position: {
-                                                                my: 'top center', 
-                                                                at: 'center center', 
-                                                                of: window, 
-                                                                offset: '0 0' 
-                                                            }
-                                                            });
-                                                        }else{
-                                                            
-                                                            e.component.option("value", keys[0]); 
-                                                            e.component.close();
-                                                        }
-                                                    })
-                                                }
-                                            }
-                                        });
-                                        return $dataGrid;
-                                    },onValueChanged: function(e){
-                                        console.log(e);
-                                        criteria = {status:'chemp',employee_id:e.value,mmf30_id:$scope.Requestid};
-                                        CrudService.FindData('mmf',criteria).then(function (response){
-                                            $scope.grid2Component.refresh();
-                                        })
-                                    }
-                                },
-                                validationRules: [{
-                                    type: "required",
-                                    message: "Please select your direct superior"
-                                }]
                             },
                             {
                                 dataField:'deliverto',

@@ -12,10 +12,42 @@ Class ListmodModule extends Application{
 			switch ($this->get['action']){
 				case 'apilistmod':
 					$this->ModManager();
-					break;				
+					break;
+				case 'apilistadvance':
+					$this->getadvance();
+					break;
 				default:
 					break;
 			}
+		}
+	}
+
+	public function getadvance(){
+		if (count($this->post)==0){
+			http_response_code(405);
+    		echo json_encode(array("message" => "Method not Allowed"));
+		}else{
+			$auth = $this->jwt->checkAuth();
+			if($auth){
+				switch ($this->post['criteria']){
+					case 'byid':
+						$id = $this->post['id'];
+						$Advance = Advance::find('all', array('conditions' => array("employee_id=? and RequestStatus=3 and isused=0",$id),'include' => array('employee')));
+						foreach ($Advance as &$result) {
+							$result = $result->to_array();
+						}
+						// print_r($Advance);					
+						echo json_encode($Advance, JSON_NUMERIC_CHECK);
+						break;
+					default:
+						$Advance = Advance::all();
+						foreach ($Advance as &$result) {
+							$result = $result->to_array();
+						}					
+						echo json_encode($Advance, JSON_NUMERIC_CHECK);
+						break;					
+				}
+			}	
 		}
 	}
 	

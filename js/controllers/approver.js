@@ -247,10 +247,6 @@ app.register.controller('approverCtrl', ['$rootScope','$scope', '$http', '$inter
                 e.editorOptions.switchedOnText = "Yes";
                 e.editorOptions.switchedOffText = "No";
             }
-			if(e.row.isNewRow) {
-
-                console.log('ada')
-            }
 
         },
         onInitNewRow: function (e) {
