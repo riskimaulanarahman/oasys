@@ -206,6 +206,7 @@
                 if(e.parentType === "dataRow" && e.dataField === "designation_id") {
                     e.editorOptions.disabled = (typeof e.row.data.division_id !== "number");
                 }
+
             },
             onEditorPrepared: function(e) {
             },

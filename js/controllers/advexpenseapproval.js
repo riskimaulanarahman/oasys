@@ -7,7 +7,7 @@
             load: function() {			
                 $scope.isLoaded =true;
                 criteria = {pending:'true'};
-                return CrudService.FindData('advpaymentapp',criteria).then(function (response) {
+                return CrudService.FindData('advexpenseapp',criteria).then(function (response) {
                     if(response.status=="error"){
                         DevExpress.ui.notify(response.message,"error");
                     }else{
@@ -17,7 +17,7 @@
             },
          
             byKey: function(key) {
-                CrudService.GetById('advpaymentapp',encodeURIComponent(key)).then(function (response) {
+                CrudService.GetById('advexpenseapp',encodeURIComponent(key)).then(function (response) {
                     return response;
                 });
             },
@@ -31,7 +31,7 @@
                 
             }
         });
-        $scope.$on("initAdvPayment", function(event, name) {
+        $scope.$on("initAdvExpense", function(event, name) {
             $scope.dataGrid.refresh();
         });
         var myData = new DevExpress.data.DataSource({
@@ -69,7 +69,7 @@
                                 .text('')
                                 .on('dxclick', function () {
                                     DevExpress.ui.notify("Loading detail data for "+options.data.requestdate,"info",600);
-                                    $scope.loadAdvpayment(options.data,'approve',true);
+                                    $scope.loadAdvexpense(options.data,'approve',true);
                                 })
                                 .appendTo(container);
                         }
@@ -80,11 +80,8 @@
                         }
                     },
                     {dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200},
-                    {dataField:'paymentform',encodeHtml: false ,width: 300,
-                        customizeText: function (e) {
-                            var rDesc = ["","<span class='mb-2 mr-2 badge badge-pill badge-info'>Payment Req HR</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Payment Req OPS</span>",""];
-                            return rDesc[e.value];
-                    }},
+                    {dataField:'expenseno',caption:"Expense No",width: 200},
+
                     // {dataField:'datework',caption:"Date Work",dataType:"date", format:"dd/MM/yyyy",width: 200},
                     {dataField:'fullname',caption: "Request by",width: 150},
                     {dataField:'requeststatus',encodeHtml: false ,width: 300,

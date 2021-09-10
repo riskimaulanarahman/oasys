@@ -25,6 +25,17 @@
 					</div>
 					</div>
 				</div>
+				<div data-options="dxTemplate: { name: 'tab5' }" style="padding:10px;">
+					<div dx-data-grid="grid5Options" style="min-height:400px;max-height:430px" dx-item-alias="row" >
+					  <div data-options="dxTemplate:{ name: 'dropDownBoxEditorTemplate'}">
+						 <div dx-drop-down-box="initDropDownBoxEditor(row)" dx-item-alias="item">
+							 <div data-options="dxTemplate:{ name: 'contentTemplate'}">
+								 <div dx-data-grid="initContent(row, item.component)"></div>
+							 </div>
+						 </div>
+					 </div>
+					 </div>
+				 </div>
 				<div data-options="dxTemplate: { name: 'tab4' }" style="padding:10px;">
 					<div dx-data-grid="grid4Options" style="min-height:400px;max-height:430px" dx-item-alias="row" >
 					  <div data-options="dxTemplate:{ name: 'dropDownBoxEditorTemplate'}">

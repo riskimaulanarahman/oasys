@@ -270,6 +270,14 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 							var rDesc = ["Saved as Draft","Waiting Approval","Require Rework","Approved","Rejected","Waiting Payment","Not Saved"];
 							$('<span>').appendTo(itemElement).addClass(rClass[val]).text(rDesc[val]);
 						}},
+						{
+							dataField:'reason',label: {
+								text:"Reason for request/Remarks",
+							},
+							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true   ,
+							colSpan:2,editorType:"dxHtmlEditor",editorOptions: {height: 190,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}
+						},
+
 						{label: {
 							text: "Approval Action"
 						},
@@ -288,11 +296,8 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								message: "Action is required"
 							}]
 						},
-						{
-							dataField:'reason',label: {
-								text:"Reason for request/Remarks",
-							},colSpan:2,editorType:"dxHtmlEditor",editorOptions: {height: 190,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}
-						},
+						{dataField:'remarks',colSpan:2,editorType:"dxHtmlEditor",visible: ($scope.mode=='approve') ?true:false,editorOptions: {height: 90,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}},
+						
 
 
 						]
@@ -551,6 +556,51 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 				});
 			}
 		});
+		var myStore5 = new DevExpress.data.CustomStore({
+			load: function() {			
+				$scope.isLoaded =true;
+				return CrudService.GetById('advexpensedetailbt',$scope.Requestid);         		
+			},
+			byKey: function(key) {
+				CrudService.GetById('advexpensedetailbt',encodeURIComponent(key)).then(function (response) {
+					return response;
+				});
+			},
+			insert: function(values) {
+				values.departdate = $filter("date")(values.departdate, "yyyy-MM-dd HH:mm")
+				values.departtime = $filter("date")(values.departtime, "HH:mm")
+				values.returndate = $filter("date")(values.returndate, "yyyy-MM-dd HH:mm")
+				values.returntime = $filter("date")(values.returntime, "HH:mm")
+				values.advexpense_id=$scope.Requestid;
+				CrudService.Create('advexpensedetailbt',values).then(function (response) {
+					if(response.status=="error"){
+						DevExpress.ui.dialog.alert(response.message,"Error");
+					}
+					$scope.grid1Component.refresh();
+				});
+			},
+			update: function(key, values) {
+				values.departdate = $filter("date")(values.departdate, "yyyy-MM-dd HH:mm")
+				values.departtime = $filter("date")(values.departtime, "HH:mm")
+				values.returndate = $filter("date")(values.returndate, "yyyy-MM-dd HH:mm")
+				values.returntime = $filter("date")(values.returntime, "HH:mm")
+				CrudService.Update('advexpensedetailbt',key.id,values).then(function (response) {
+					if(response.status=="error"){
+						DevExpress.ui.dialog.alert(response.message,"Error");
+					}
+					$scope.grid1Component.refresh();
+					// $scope.grid2Component.refresh();
+				});
+			},
+			remove: function(key) {
+				CrudService.Delete('advexpensedetailbt',key.id).then(function (response) {
+					if(response.status=="error"){
+						DevExpress.ui.dialog.alert(response.message,"Error");
+					}
+					$scope.grid1Component.refresh();
+				});
+			}
+		});
 		var myData2 = new DevExpress.data.DataSource({
 			store: myStore2
 		});
@@ -559,6 +609,9 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 		});
 		var myData4 = new DevExpress.data.DataSource({
 			store: myStore4
+		});
+		var myData5 = new DevExpress.data.DataSource({
+			store: myStore5
 		});
 
 		// Globalize.culture().numberFormat.currency.symbol = "Rp";
@@ -945,10 +998,178 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 				});
 			},
 		};
+
+		$scope.grid5Options = {
+			dataSource: myData5,
+			allowColumnResizing: true,
+			wordWrapEnabled: true,
+			columnResizingMode : "widget",
+			columnMinWidth: 50,
+			columnAutoWidth: true,
+			// customizeText: function(arg) {  
+			// 	Globalize.culture().numberFormat.currency.symbol = "Rp";  
+			// 	return Globalize.format(arg.value, "c")  
+			// },
+			columns: [
+				// {
+				// 	dataField: "expensetype",
+				// 	name:'expensetype',
+                //     editorType: "dxSelectBox",
+				// 	disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
+                //     validationRules: [{type: "required", message: "Please select Expense Type" }],
+				// 	editorOptions: { 
+				// 		dataSource:$scope.ExpenseTypes,  
+				// 		valueExpr: 'type',
+				// 		displayExpr: 'type',
+				// 	},
+				// },
+				// {dataField:'purpose',width:150,dataType: "string", 
+				// validationRules: [{type: "required"}],
+				// editorOptions: {
+                //     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                // }},
+				{dataField:'departdate',width:150,dataType: "date" ,
+				format: 'dd/MM/yyyy',editorType: "dxDateBox",
+                editorOptions: {
+					displayFormat:"dd/MM/yyyy",
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                }},
+				{dataField:'departtime',width:150,dataType: "date" ,
+				format: 'HH:mm',editorType: "dxDateBox",
+                editorOptions: {
+					displayFormat:"HH:mm",
+					type:"time",
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                }},
+				{dataField:'returndate',width:150,dataType: "date" ,
+				format: 'dd/MM/yyyy',editorType: "dxDateBox",
+                editorOptions: {
+					displayFormat:"dd/MM/yyyy",
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                }},
+				{dataField:'returntime',width:150,dataType: "date" ,
+				format: 'HH:mm',editorType: "dxDateBox",
+                editorOptions: {
+					displayFormat:"HH:mm",
+					type:"time",
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                }},
+				// {
+				// 	dataField:'accom',
+				// 	dataType: "boolean",
+				// },
+				{
+					dataField:'breakfast',
+					dataType: "boolean",
+				},
+				{
+					dataField:'lunch',
+					dataType: "boolean",
+				},
+				{
+					dataField:'dinner',
+					dataType: "boolean",
+				},
+				{
+					dataField:'pocket',
+					dataType: "boolean",
+				},
+				{
+					dataField:'ispapua',
+					caption:'isPapua ?',
+					dataType: "boolean",
+				},
+				// {dataField:'amount',caption: "Amount", validationRules: [{type: "required"}], width:150,dataType: "number" ,format: "fixedPoint",
+                // editorOptions: {
+				// 	format: "fixedPoint",
+                //     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                // }},
+				// {dataField: "currency",caption: "currency", lookup: { 
+				// 	displayExpr: 'nama',  
+				// 	valueExpr: 'nama',
+				// 	},setCellValue: function(rowData, value) {
+				// 		rowData.currency = value;
+				// 		// rowData.approvaltype_id = null;
+				// 	},
+				// }, 
+				// {
+				// 	dataField: "currency",
+				// 	name:'currency',
+                //     editorType: "dxSelectBox",
+				// 	disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
+				// 	editorOptions: { 
+				// 		dataSource:$scope.Currencys,  
+				// 		valueExpr: 'nama',
+				// 		displayExpr: 'nama',
+				// 	},
+				// },
+				// {dataField:'exchangerate',caption: "Exchange Rate",dataType: "number" ,format: "fixedPoint",
+                // editorOptions: {
+				// 	format: "fixedPoint",
+                //     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                // }},
+				// {dataField:'paymentamount',caption: "Amount in local currency",dataType: "number" ,format: "fixedPoint",
+                // editorOptions: {
+				// 	format: "fixedPoint",
+                //     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                // }},
+				// {dataField:'exchangerate'},
+				// {dataField:'paymentamount'},
+				// {dataField:'costcentre', caption: 'Cost Centre'},
+				// {dataField:'country'},
+				// {dataField:'location',validationRules: [{type: "required"}]},
+				{dataField:'remarks'},
+			],
+			// summary: {
+			// 	recalculateWhileEditing: true,
+			// 	totalItems: [{
+			// 		column: "amount",
+			// 		summaryType: "sum",
+			// 		valueFormat: "fixedPoint",
+			// 		displayFormat: "Total: {0}",	
+			// 	}]
+			// },
+			// bindingOptions :{
+			// 	"columns[0].lookup.dataSource":"expensetypes",
+			// },
+			editing: {
+				useIcons:true,
+				mode: "cell",
+				allowUpdating:(($scope.mode=='approve') || ($scope.mode=='view') ||($scope.mode=='report') )?(($rootScope.isAdmin)?true:false):true,
+				allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+				allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+				//allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
+				//allowAdding: ($rootScope.isAdmin)?true:false, // Enables insertion
+				form:{colCount: 1,
+				},
+			},
+			onInitialized:function (e){
+				$scope.grid1Component = e.component;
+			},
+			onEditorPreparing: function (e) {  
+				$scope.grid1Component = e.component;
+			},
+			onToolbarPreparing: function(e) {   
+				$scope.grid1Component = e.component;
+
+				e.toolbarOptions.items.unshift({						
+					location: "after",
+					widget: "dxButton",
+					options: {
+						hint: "Refresh Data",
+						icon: "refresh",
+						onClick: function() {
+							$scope.grid1Component.refresh();
+						}
+					}
+				});
+			},
+		};
 		
 	});
 	$scope.tabs = [
 		{ id:1, TabName : "Detail Advance", title: 'Detail Advance / Employee List', template: "tab1"   },
+		{ id:5, TabName : "Bisnis Trip", title: 'Bisnis Trip', template: "tab5"   },
 		{ id:4, TabName : "SupportDoc", title: 'Supporting Document', template: "tab4"   },
 		{ id:2, TabName : "Approver List", title: 'Approver List', template: "tab2"   },
 		{ id:3, TabName : "History Tracking", title: 'History Tracking', template: "tab3"   },
@@ -986,6 +1207,12 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 			delete data.createddate;
 			delete data.employee_id;
 			delete data.requeststatus;
+			delete data.expenseno;
+			delete data.name;
+			delete data.email;
+			delete data.costcenter;
+			delete data.bg;
+			delete data.location;
 			delete data.superior;
 			delete data.startdate;
 			delete data.enddate;
@@ -1023,6 +1250,12 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 					delete data.createddate;
 					delete data.employee_id;
 					delete data.requeststatus;
+					delete data.expenseno;
+					delete data.name;
+					delete data.email;
+					delete data.costcenter;
+					delete data.bg;
+					delete data.location;
 					delete data.superior;
 					delete data.startdate;
 					delete data.enddate;

@@ -108,6 +108,12 @@ app.register.controller('advanceCtrl', ['$rootScope','$scope', '$http', '$interv
 					}
                 },
 				{dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200},
+                {dataField:'advanceform',encodeHtml: false ,width: 100,
+					customizeText: function (e) {
+						var rDesc = ["","HR Related","OPS Related",""];
+						return rDesc[e.value];
+					}},
+				{dataField:'advanceno',caption:"Advance No",width: 200},
 				{dataField:'fullname',caption:"Request For Employee",width: 200},
 				{dataField:'requeststatus',encodeHtml: false ,width: 300,
 					customizeText: function (e) {

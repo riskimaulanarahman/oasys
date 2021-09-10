@@ -246,7 +246,8 @@ app.register.controller('approverCtrl', ['$rootScope','$scope', '$http', '$inter
                 e.editorName = "dxSwitch";
                 e.editorOptions.switchedOnText = "Yes";
                 e.editorOptions.switchedOffText = "No";
-            }			
+            }
+
         },
         onInitNewRow: function (e) {
             e.component.columnOption("id", "allowEditing", false);

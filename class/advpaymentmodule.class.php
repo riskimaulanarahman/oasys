@@ -172,7 +172,7 @@ Class Advpaymentmodule extends Application{
 							$department = $Advpayment->employee->department->departmentname;
 							$data=$Advpayment->to_array();
 							$data['fullname']=$fullname;
-							// $data['lessadvance']=$val_tamount;
+							$data['paymentform']=$Advpayment->paymentform;
 							$data['department']=$department;
 							echo json_encode($data, JSON_NUMERIC_CHECK);
 						}else{
@@ -227,15 +227,107 @@ Class Advpaymentmodule extends Application{
 										}
 
 									break;
+									case 'savelessadv':
+										$id= $query['advpayment_id'];
+										$advanceno = $query['advanceno'];
+										$paymenttype = $query['paymenttype'];
+										$employee_id = $query['employee_id'];
 
+										$Advpayment = Advpayment::find($id, array('include' => array('employee'=>array('company','department','designation'))));
+
+										//check lessadvance
+										
+										if($advanceno !== null) {
+
+											$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND advanceno=?",$Advpayment->employee_id,$advanceno)));
+											
+											$AdvanceDetail = AdvanceDetail::find('all',array('conditions'=> array("advance_id=?",$Advance->id)));
+											foreach ($AdvanceDetail as $val) {
+												$val_tamount += $val->amount;
+											}
+											
+											$Advpayment->advanceno = $advanceno;
+											$Advpayment->lessadvance = $val_tamount;
+											$Advpayment->save();
+
+										} else {
+											$Advpayment->advanceno = null;
+											$Advpayment->lessadvance = null;
+											$Advpayment->save();
+										}
+
+										
+
+
+										if($Advpayment) {
+											$item['message']=200;
+											echo json_encode($item, JSON_NUMERIC_CHECK);
+										} else {
+											$item['message']=404;
+											echo json_encode($item, JSON_NUMERIC_CHECK);
+										}
+									break;
+									case 'checkform':
+										$advpayment_form = $query['formtype'];
+										$employee_id = $query['employee_id'];
+										$id= $query['advpayment_id'];
+										
+										$Advpayment = Advpayment::find($id, array('include' => array('employee'=>array('company','department','designation'))));
+										$Advpayment->paymentform = $advpayment_form;
+										$Advpayment->save();
+										
+										$Employee = Employee::find('first', array('conditions' => array("id=?",$employee_id),"include"=>array("location","department","company")));
+
+										// print_r($advpayment_form);
+										$data['companycode']=$Employee->companycode;
+
+										if($advpayment_form == 1) {
+
+											//check lessadvance
+											$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=3 AND advanceform=1 AND isused=0",$Advpayment->employee_id)));
+
+											if($Advance) {
+												$item['message']=200;
+												echo json_encode($item, JSON_NUMERIC_CHECK);
+											} else {
+												$Advpayment = Advpayment::find($id, array('include' => array('employee'=>array('company','department','designation'))));
+												$Advpayment->paymenttype = 0;
+												$Advpayment->advanceno = null;
+												$Advpayment->lessadvance = null;
+												$Advpayment->save();
+												$item['message']=404;
+												echo json_encode($item, JSON_NUMERIC_CHECK);
+											}
+
+										} else if($advpayment_form == 2) {
+
+											//check lessadvance
+											$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=3 AND advanceform=2 AND isused=0",$Advpayment->employee_id)));
+
+											if($Advance) {
+												$item['message']=200;
+												// $item['lessadvance']=$val_tamount;
+												echo json_encode($item, JSON_NUMERIC_CHECK);
+											} else {
+												$Advpayment = Advpayment::find($id, array('include' => array('employee'=>array('company','department','designation'))));
+												$Advpayment->paymenttype = 0;
+												$Advpayment->advanceno = null;
+												$Advpayment->lessadvance = null;
+												$Advpayment->save();
+												$item['message']=404;
+												echo json_encode($item, JSON_NUMERIC_CHECK);
+											}
+
+										}
+									break;
 									case 'appform':
 										$advpayment_form = $query['formtype'];
 										$employee_id = $query['employee_id'];
 										$id= $query['advpayment_id'];
-
 										
 										$Advpayment = Advpayment::find($id, array('include' => array('employee'=>array('company','department','designation'))));
-
+										$Advpayment->paymentform = $advpayment_form;
+										$Advpayment->save();
 										
 										$Employee = Employee::find('first', array('conditions' => array("id=?",$employee_id),"include"=>array("location","department","company")));
 
@@ -244,8 +336,6 @@ Class Advpaymentmodule extends Application{
 
 										$joins   = "LEFT JOIN tbl_approver ON (tbl_advpaymentapproval.approver_id = tbl_approver.id) LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id)";
 										$joinx   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";	
-
-										
 
 										$Advpaymentapprovalhrd = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id='36' ",$id)));	
 										foreach ($Advpaymentapprovalhrd as &$result) {
@@ -259,30 +349,25 @@ Class Advpaymentmodule extends Application{
 											$result['no']=1;
 
 										}
-
+										
 										if($advpayment_form == 1) {
 
 											//check lessadvance
-											$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=5 AND advanceform=1",$Advpayment->employee->id)));
-
-											$AdvanceDetail = AdvanceDetail::find('all',array('conditions'=> array("advance_id=?",$Advance->id)));
-											foreach ($AdvanceDetail as $val) {
-												$val_tamount += $val->amount;
-											}
+											$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=3 AND advanceform=1 AND isused=0",$Advpayment->employee->id)));
 
 											if($Advance) {
 												$item['message']=200;
-												$item['lessadvance']=$val_tamount;
-												
 												echo json_encode($item, JSON_NUMERIC_CHECK);
 											} else {
+												$Advpayment = Advpayment::find($id, array('include' => array('employee'=>array('company','department','designation'))));
+												$Advpayment->paymenttype = 0;
+												$Advpayment->advanceno = null;
+												$Advpayment->lessadvance = null;
+												$Advpayment->save();
 												$item['message']=404;
 												echo json_encode($item, JSON_NUMERIC_CHECK);
 											}
 
-											// $companyHRV=( ($Employee->companycode=='KPA') || ($Employee->companycode=='AHL') )?"KPSI":$Employee->companycode;
-											// if (($Employee->company->sapcode=='RND') || ($Employee->company->sapcode=='NKF')){
-											// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
 											$hrverifikator = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=44",$id)));	
 											foreach ($hrverifikator as $result) {
 												$result->delete();
@@ -298,8 +383,6 @@ Class Advpaymentmodule extends Application{
 												$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and tbl_employee.location_id='1'")));
 											}
 
-											
-
 											if(count($ApproverHRV)>0){
 												$Advpaymentapproval = new Advpaymentapproval();
 												$Advpaymentapproval->advpayment_id = $Advpayment->id;
@@ -309,32 +392,6 @@ Class Advpaymentmodule extends Application{
 												$logger->SaveData();
 											}
 
-											//add approver
-											// if(($data['companycode']=="IHM") || ($data['companycode']=='AHL') || ($data['companycode']=='KPS') || ($data['companycode']=='KPSI') || ($data['companycode']=='KPA')){
-
-											// 	if((substr(strtolower($Employee->location->sapcode),0,4)=="0200")) {
-											// 		$ApproverHRDFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and tbl_employee.location_id='1' and not(tbl_employee.id=?)",$Employee->id)));
-											// 	} else {
-											// 		$ApproverHRDFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and tbl_employee.companycode=?  and not(tbl_employee.id=?)",$Employee->companycode,$Employee->id)));
-											// 	}
-											// 	$hrd = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=36",$id)));	
-											// 	foreach ($hrd as $result) {
-											// 		$result->delete();
-											// 		$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval HRD");
-											// 		$logger->SaveData();
-											// 	}
-													
-											// 	if(count($ApproverHRDFU)>0){
-
-											// 		$Advpaymentapproval = new Advpaymentapproval();
-											// 		$Advpaymentapproval->advpayment_id = $Advpayment->id;
-											// 		$Advpaymentapproval->approver_id = $ApproverHRDFU->id;
-											// 		$Advpaymentapproval->save();
-											// 		$logger = new Datalogger("Advpaymentapproval","add","Add initial HRD Approval ",json_encode($Advpaymentapproval->to_array()));
-											// 		$logger->SaveData();
-													
-											// 	}
-											// }
 											$buhead = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=38",$id)));	
 											foreach ($buhead as $result) {
 												$result->delete();
@@ -350,7 +407,6 @@ Class Advpaymentmodule extends Application{
 											}
 
 											if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
-												
 												
 												$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=36 and tbl_employee.location_id='1'")));
 												if(count($Approver2)>0){
@@ -377,18 +433,18 @@ Class Advpaymentmodule extends Application{
 										} else if($advpayment_form == 2) {
 
 											//check lessadvance
-											$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=5 AND advanceform=2",$Advpayment->employee->id)));
-
-											$AdvanceDetail = AdvanceDetail::find('all',array('conditions'=> array("advance_id=?",$Advance->id)));
-											foreach ($AdvanceDetail as $val) {
-												$val_tamount += $val->amount;
-											}
+											$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=3 AND advanceform=2 AND isused=0",$Advpayment->employee->id)));
 
 											if($Advance) {
 												$item['message']=200;
-												$item['lessadvance']=$val_tamount;
+												// $item['lessadvance']=$val_tamount;
 												echo json_encode($item, JSON_NUMERIC_CHECK);
 											} else {
+												$Advpayment = Advpayment::find($id, array('include' => array('employee'=>array('company','department','designation'))));
+												$Advpayment->paymenttype = 0;
+												$Advpayment->advanceno = null;
+												$Advpayment->lessadvance = null;
+												$Advpayment->save();
 												$item['message']=404;
 												echo json_encode($item, JSON_NUMERIC_CHECK);
 											}
@@ -449,21 +505,15 @@ Class Advpaymentmodule extends Application{
 							$data['employee_id']=$Employee->id;
 							$data['RequestStatus']=0;
 							try{
+								$code = Advpayment::find('first',array('select' => "CONCAT('Advance/','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(paymentno,-4,4)) is null then 1 else max(substring(paymentno,-4,4))+1 end,4,'0')) as paymentno","conditions"=>array("substring(paymentno,9,".strlen($Employee->companycode).")=? and substring(paymentno,".(strlen($Employee->companycode)+10).",4)=YEAR(CURDATE())",$Employee->companycode)));
+
+								$data['paymentno']=$code->paymentno;
+
 								$Advpayment = Advpayment::create($data);
 								$data['companycode']=$Employee->companycode;
 								$data=$Advpayment->to_array();
 								
 								$joins   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
-
-								// $ApproverFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=41")));
-								// if(count($ApproverFC)>0){
-								// 	$Advpaymentapproval = new Advpaymentapproval();
-								// 	$Advpaymentapproval->advpayment_id = $Advpayment->id;
-								// 	$Advpaymentapproval->approver_id = $ApproverFC->id;
-								// 	$Advpaymentapproval->save();
-								// }
-
-								
 
 								$companyFC=(($data['companycode']=='BCL') || ($data['companycode']=='KPA'))?"KPSI":((($data['companycode']=='KPSI'))?"LDU":$Employee->companycode);
 								$ApproverBUFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='37' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$companyFC,$Employee->id)));
@@ -475,50 +525,6 @@ Class Advpaymentmodule extends Application{
 									$logger = new Datalogger("Advpaymentapproval","add","Add initial BU FC Approval",json_encode($Advpaymentapproval->to_array()));
 									$logger->SaveData();
 								}
-
-								// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220")){
-								// 	$ApproverBU = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and tbl_employee.location_id='1'")));
-								// 	if(count($ApproverBU)>0){
-								// 		$Advpaymentapproval = new Advpaymentapproval();
-								// 		$Advpaymentapproval->advpayment_id =$Advpayment->id;
-								// 		$Advpaymentapproval->approver_id = $ApproverBU->id;
-								// 		$Advpaymentapproval->save();
-								// 		$logger = new Datalogger("Advpaymentapproval","add","Add initial BU Approval",json_encode($Advpaymentapproval->to_array()));
-								// 		$logger->SaveData();
-								// 	}
-									
-								// 	$ApproverBUFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='37' and tbl_employee.location_id='1'")));
-								// 	if(count($ApproverBUFC)>0){
-								// 		$Advpaymentapproval = new Advpaymentapproval();
-								// 		$Advpaymentapproval->advpayment_id =$Advpayment->id;
-								// 		$Advpaymentapproval->approver_id = $ApproverBUFC->id;
-								// 		$Advpaymentapproval->save();
-								// 		$logger = new Datalogger("Advpaymentapproval","add","Add initial BUFC Approval",json_encode($Advpaymentapproval->to_array()));
-								// 		$logger->SaveData();
-								// 	}
-
-								// }else{
-								// 	$ApproverBU = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38'  and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
-								// 	if(count($ApproverBU)>0){
-								// 		$Advpaymentapproval = new Advpaymentapproval();
-								// 		$Advpaymentapproval->advpayment_id = $Advpayment->id;
-								// 		$Advpaymentapproval->approver_id = $ApproverBU->id;
-								// 		$Advpaymentapproval->save();
-								// 		$logger = new Datalogger("Advpaymentapproval","add","Add initial BU Approval",json_encode($Advpaymentapproval->to_array()));
-								// 		$logger->SaveData();
-								// 	}
-
-								// 	$ApproverBUFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='37'  and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
-								// 	if(count($ApproverBUFC)>0){
-								// 		$Advpaymentapproval = new Advpaymentapproval();
-								// 		$Advpaymentapproval->advpayment_id = $Advpayment->id;
-								// 		$Advpaymentapproval->approver_id = $ApproverBUFC->id;
-								// 		$Advpaymentapproval->save();
-								// 		$logger = new Datalogger("Advpaymentapproval","add","Add initial BUFC Approval",json_encode($Advpaymentapproval->to_array()));
-								// 		$logger->SaveData();
-								// 	}
-
-								// }
 
 								$Advpaymenthistory = new Advpaymenthistory();
 								$Advpaymenthistory->date = date("Y-m-d h:i:s");
@@ -974,7 +980,9 @@ Class Advpaymentmodule extends Application{
 							
 							$Advpayment->save();
 
+							unset($data['advanceno']);
 							unset($data['paymentform']);
+							unset($data['lessadvance']);
 							unset($data['beneficiary']);
 							unset($data['accountname']);
 							unset($data['bank']);
@@ -1013,6 +1021,7 @@ Class Advpaymentmodule extends Application{
 								
 								switch ($data['approvalstatus']){
 									case '1':
+										echo 1;
 										$Advpayment->requeststatus = 2;
 										$emto=$email;$emname=$Advpayment->employee->fullname;
 										$this->mail->Subject = "Online Approval System -> Need Rework";
@@ -1020,6 +1029,10 @@ Class Advpaymentmodule extends Application{
 										$Advpaymenthistory->actiontype = 3;
 										break;
 									case '2':
+
+										print_r($Advpayment->paymentform);
+										print_r($Advpaymentapproval->approver->approvaltype_id);
+
 										if (($Advpayment->paymentform == 1 && $Advpaymentapproval->approver->approvaltype_id == 37) || ($Advpayment->paymentform == 2 && $Advpaymentapproval->approver->approvaltype_id == 38)){
 											$Advpayment->requeststatus = 3;
 											$emto=$email;$emname=$Advpayment->employee->fullname;
@@ -1035,16 +1048,19 @@ Class Advpaymentmodule extends Application{
 												}
 											}
 
-											if($Advpayment->lessadvance !== null || $Advpayment->lessadvance !== 0) {
-												$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=5",$Advpayment->employee->id)));
-												$Advance->requeststatus=3;
+											if($Advpayment->advanceno !== null) {
+												$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND advanceno=?",$Advpayment->employee->id,$Advpayment->advanceno)));
+												$Advance->isused=1;
 												$Advance->save();
 											}
 
+											echo 2;
 
 											$complete =true;
 										}
 										else{
+											echo 22;
+
 											$Advpayment->requeststatus = 1;
 											$emto=$adb->email;$emname=$adb->fullname;
 											$this->mail->Subject = "Online Approval System -> New Payment Submission";
@@ -1053,6 +1069,8 @@ Class Advpaymentmodule extends Application{
 										$Advpaymenthistory->actiontype = 4;							
 										break;
 									case '3':
+										echo 3;
+
 										$Advpayment->requeststatus = 4;
 										$emto=$email;$emname=$Advpayment->employee->fullname;
 										$Advpaymenthistory->actiontype = 5;
