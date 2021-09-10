@@ -89,7 +89,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 			
 			sort: "skno"
 		}
-		$scope.rfcType =[{id:0,rfctype:"New"},{id:1,rfctype:"Amendment"}];
+		$scope.rfcType =[{id:0,rfctype:"New"},{id:1,rfctype:"Amendment"},{id:2,rfctype:"Replacement"}];
 		$scope.contractorDatasource = {
 			store: new DevExpress.data.CustomStore({
 				key: "id",
@@ -422,6 +422,9 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 								$scope.formInstance.itemOption('group1.group2.oldcontractno', 'visible', vis);
 								$scope.formInstance.itemOption('group1.group2.oldcontractno', 'visibleIndex', 0);
 								$scope.formInstance.updateData('oldcontractno',  "");
+								$scope.formInstance.itemOption('group1.group2.replacement', 'visible', vis2);
+								$scope.formInstance.itemOption('group1.group2.replacement', 'visibleIndex', 1);
+								$scope.formInstance.updateData('replacement',  "");
 								
 							}
 						},
@@ -436,6 +439,10 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 							{dataField:'oldcontractno',name:'oldcontractno',label:{text:"Old Contract No"},visible:($scope.data.rfctype==1)?true:false,editorOptions:{readOnly: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,},validationRules: [{
 								type: "required",
 								message: "please input Old Contract No"
+							}]},
+							{dataField:'replacement',name:'replacement',label:{text:"Replacement"},visible:($scope.data.rfctype==2)?true:false,editorOptions:{readOnly: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,},validationRules: [{
+								type: "required",
+								message: "please input Replacement Description"
 							}]},
 							{dataField:'capexno',name:'capexno',editorOptions:{readOnly: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,},label:{text:"Capex No"},visible:($scope.data.isprojectcapex==1)?true:false,validationRules: [{
 									type: "required",
@@ -1031,7 +1038,6 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 				e.editorOptions.uploadUrl= "api.php?action=uploadrfcfile&id="+$scope.Requestid;
 				e.editorOptions.onUploaded= function (e) {						
 					$scope.path = e.request.response;
-					console.log(e);
 					$scope.adaFile =false;
 				}
 				e.editorOptions.onUploadError= function(e) {

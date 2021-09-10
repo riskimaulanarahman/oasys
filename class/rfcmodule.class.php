@@ -103,15 +103,15 @@ Class RfcModule extends Application{
 		$Rfcterm=Rfcterm::find('all',array('conditions'=>array("rfc_id=?",$id)));
 		$compx = Company::find('first',array('conditions'=>array("companycode=?",$RfcJ->companycode)));
 		$standard = ($RfcJ->ratetype=="SK")?"Standard Contract":"Non Standard Contract";
-		$rfctype=array("New","Addendum","Project Capex");
+		$rfctype=array("New","Addendum","Replacement");
 		$pdfContent = "<table border=0 cellspacing=0 cellpadding=3 ><tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;'>".$standard."</td></tr>";
 		if ($RfcJ->isprojectcapex==1){
 			$pdfContent .= "<tr><td style='padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-top:none'>Project / CAPEX Related Activities</td></tr>";
 		}
-		$red = ($RfcJ->rfctype==0)?"We request the following work to be carried out on contract :":"We request the following Amendments to be made for Contract No : ".$RfcJ->oldcontractno;
+		$red = ($RfcJ->rfctype==1)?"We request the following Amendments to be made for Contract No : ".$RfcJ->oldcontractno :"We request the following work to be carried out on contract :";
 		$pdfContent .= "</table>";
 		$pdfContent .="<p><h2 style='width:100%;text-align:center'>".$compx->companyname."</h2>";
-		$neworam = ($RfcJ->rfctype=="0")?"NEW CONTRACT":"CONTRACT AMANDMENTS";
+		$neworam = ($RfcJ->rfctype=="0")?"NEW CONTRACT":(($RfcJ->rfctype=="1")?"CONTRACT AMANDMENTS":"REPLACEMENT CONTRACT");
 		$pdfContent .="<h4 style='width:100%;text-align:center'><u>REQUEST FOR ".$neworam."</u></h4>";
 		$pdfContent .="<h4 style='width:100%;text-align:center'><u>RFC NO: ".$RfcJ->rfcno."</u></h4></p>";
 		
@@ -130,8 +130,14 @@ Class RfcModule extends Application{
 						</tr>
 						<tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;'>Payment Term</td>
 							<td style='padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;'> : ".$RfcJ->paymentterm."</td>
+						</tr>";
+		if ($RfcJ->rfctype=="2"){
+			$pdfContent .= "<tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;'>Replacement</td>
+							<td style='padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;'> : ".$RfcJ->replacement."</td>
 						</tr>
-						<tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;'>Scope of Work</td>
+						";
+		}
+		$pdfContent .= "<tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;'>Scope of Work</td>
 							<td style='padding:0in 5.4pt 0in 5.4pt;'> : <b><u> Description of Work</u></b></td>
 						</tr>
 						";
@@ -518,6 +524,7 @@ Class RfcModule extends Application{
 							unset($data['rfctype']);
 							unset($data['isprojectcapex']);
 							unset($data['oldcontractno']);
+							unset($data['replacement']);
 							unset($data['periodstart']);
 							unset($data['periodend']);
 							unset($data['ratetype']);
@@ -646,7 +653,7 @@ Class RfcModule extends Application{
 								$Rfchistory->save();
 								echo "email to :".$emto." ->".$emname;
 								$this->mail->addAddress($emto, $emname);
-								$rfctype=array("New","Addendum","Project Capex");
+								$rfctype=array("New","Addendum","Replacement");
 								$joins   = "LEFT JOIN tbl_rfccontractor ON (tbl_rfc.contractor_id = tbl_rfccontractor.id) LEFT JOIN tbl_rfccontractor as c ON (tbl_rfc.contractor_id2 = c.id) LEFT JOIN tbl_rfcactivity ON (tbl_rfc.activity_id = tbl_rfcactivity.id) ";
 								$sel = 'tbl_rfc.*, tbl_rfccontractor.contractorname AS contractorname,c.contractorname as contractorname2, tbl_rfcactivity.activitydescr as activitydescr ';
 								$RfcJ = Rfc::find($doid,array('joins'=>$joins,'select'=>$sel,'include'=>array('employee'=>array('company','department','designation','grade','location'))));
@@ -670,6 +677,9 @@ Class RfcModule extends Application{
 														
 														if($RfcJ->rfctype==1){
 															$this->mailbody .='<tr><td><p class=MsoNormal>Old Contract No</td><td>:</td><td><p class=MsoNormal><b>'.$RfcJ->oldcontractno.'</b></p></td></tr>';
+														}
+														if($RfcJ->rfctype==2){
+															$this->mailbody .='<tr><td><p class=MsoNormal>Replacement</td><td>:</td><td><p class=MsoNormal><b>'.$RfcJ->replacement.'</b></p></td></tr>';
 														}
 														if($RfcJ->isprojectcapex==1){
 															$this->mailbody .='<tr><td colspan=3><p class=MsoNormal><b>Capex Information</b></p></td></tr>
@@ -706,10 +716,10 @@ Class RfcModule extends Application{
 									if ($RfcJ->isprojectcapex==1){
 										$pdfContent .= "<tr><td style='padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-top:none'>Project / CAPEX Related Activities</td></tr>";
 									}
-									$red = ($RfcJ->rfctype==0)?"We request the following work to be carried out on contract :":"We request the following Amendments to be made for Contract No : ".$RfcJ->oldcontractno;
+									$red = ($RfcJ->rfctype==1)?"We request the following Amendments to be made for Contract No : ".$RfcJ->oldcontractno:"We request the following work to be carried out on contract :";
 									$pdfContent .= "</table>";
 									$pdfContent .="<p><h2 style='width:100%;text-align:center'>".$compx->companyname."</h2>";
-									$neworam = ($RfcJ->rfctype=="0")?"NEW CONTRACT":"CONTRACT AMANDMENTS";
+									$neworam = ($RfcJ->rfctype=="0")?"NEW CONTRACT":(($RfcJ->rfctype=="1")?"CONTRACT AMANDMENTS":"REPLACEMENT CONTRACT");
 									$pdfContent .="<h4 style='width:100%;text-align:center'><u>REQUEST FOR ".$neworam."</u></h4>";
 									$pdfContent .="<h4 style='width:100%;text-align:center'><u>RFC NO: ".$RfcJ->rfcno."</u></h4></p>";
 									
@@ -728,8 +738,13 @@ Class RfcModule extends Application{
 													</tr>
 													<tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;'>Payment Term</td>
 														<td style='padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;'> : ".$RfcJ->paymentterm."</td>
-													</tr>
-													<tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;'>Scope of Work</td>
+													</tr>";
+									if ($RfcJ->rfctype=="2"){
+										$pdfContent .= "<tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;'>Replacement</td>
+														<td style='padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;'> : ".$RfcJ->replacement."</td>
+													</tr>";
+									}				
+									$pdfContent .= "<tr><td style='width:250px;padding:0in 5.4pt 0in 5.4pt;'>Scope of Work</td>
 														<td style='padding:0in 5.4pt 0in 5.4pt;'> : <b><u> Description of Work</u></b></td>
 													</tr>
 													";
@@ -1776,7 +1791,7 @@ Class RfcModule extends Application{
 									$result['rfc']=$Rfc->to_array();
 								}
 								$Rfcterm=Rfcterm::find('all',array('conditions'=>array("rfc_id=?",$id)));
-								$rfctype=array("New","Addendum","Project Capex");
+								$rfctype=array("New","Addendum","Replacement");
 								$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$adb->fullname.',</span></p>
 													<p class=MsoNormal><span style="color:#1F497D">New RFC request is awaiting for your approval:</span></p>
 													<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
@@ -1796,6 +1811,9 @@ Class RfcModule extends Application{
 															$this->mailbody .='<tr><td><p class=MsoNormal>Old Contract No</td><td>:</td><td><p class=MsoNormal><b>'.$RfcJ->oldcontractno.'</b></p></td></tr>';
 														}
 														if($RfcJ->rfctype==2){
+															$this->mailbody .='<tr><td><p class=MsoNormal>Replacement</td><td>:</td><td><p class=MsoNormal><b>'.$RfcJ->replacement.'</b></p></td></tr>';
+														}
+														if($RfcJ->isprojectcapex==1){
 															$this->mailbody .='<tr><td colspan=3><p class=MsoNormal><b>Capex Information</b></p></td></tr>
 																<tr><td><p class=MsoNormal>Capex No</p></td><td>:</td><td><p class=MsoNormal><b>'.$RfcJ->capexno.'</b></p></td></tr>
 																<tr><td><p class=MsoNormal>Capex Ammount</p></td><td>:</td><td><p class=MsoNormal><b> Rp.'.number_format($RfcJ->capexammount).'</b></p></td></tr>
