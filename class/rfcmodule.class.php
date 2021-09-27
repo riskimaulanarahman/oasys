@@ -696,7 +696,7 @@ Class RfcModule extends Application{
 													';
 								$no=1;
 								foreach ($Rfcdetail as $data){
-									$this->mailbody .='<tr style="height:22.5pt"><td><p class=MsoNormal>'.$no.'. '.$data['description'].'</p></td></tr>';
+									$this->mailbody .='<tr style="height:22.5pt"><td><p class=MsoNormal>'.$no.'. '.$data['description'].'</p></td></tr>';http://172.18.83.18/oasys
 									$no++;
 								}
 								$this->mailbody .='<tr><td></td></tr>';
@@ -1820,7 +1820,7 @@ Class RfcModule extends Application{
 																<tr><td><p class=MsoNormal>Capex Spent</p></td><td>:</td><td><p class=MsoNormal><b> Rp.'.number_format($RfcJ->capexspent).'</b></p></td></tr>
 																<tr><td><p class=MsoNormal>Capex Balance</p></td><td>:</td><td><p class=MsoNormal><b> Rp.'.number_format($RfcJ->capexbalance).'</b></p></td></tr>
 																<tr><td><p class=MsoNormal>RFC Ammount</p></td><td>:</td><td><p class=MsoNormal><b> Rp.'.number_format($RfcJ->rfcammount).'</b></p></td></tr>
-																<tr><td><p class=MsoNormal>Balance after this RFC</p></td><td>:</td><td><p class=MsoNormal><b> Rp.'.number_format($RfcJ->balance).'</b></p></td></tr>';
+																<tr><td><p class=MsoNormal>Balance after this RFC</p></td><td>:</td><td><p class=MsoNormal><b> Rp.'.number_format($RfcJ->balance).'</b></p></td></tr>';http://172.18.83.18/oasys
 														}
 								$this->mailbody .='</table>
 													<p class=MsoNormal><b>Contract Detail :</b></p>
