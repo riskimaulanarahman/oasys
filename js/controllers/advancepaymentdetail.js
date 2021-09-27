@@ -137,9 +137,10 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 								name:'paymentform',
                                 editorType: "dxSelectBox",
                                 label:{text:"Payment Form"},
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
                                 validationRules: [{type: "required",message: "Action is required"}],
                                 editorOptions: { 
+									readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
                                     dataSource:$scope.AdvanceForm,  
                                     valueExpr: 'id',
                                     displayExpr: 'paymentform',
@@ -179,17 +180,24 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
                                 label:{text:"With Advance ?"},
                                 // visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
 								visible: false,
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
                                 dataType:"boolean",
                                 editorType: "dxCheckBox",
                                 // validationRules: [{type: "required",message: "Declaration is required"}],
                                 editorOptions: { 
+									readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
                                     text:"Yes",
 									onValueChanged: function (e) {
 									var vis1 =(e.value==1)?true:false;
 
 									// $scope.formInstance.itemOption('group.paymenttype', 'visibleIndex', 0);
 									$scope.formInstance.itemOption('subgroup.advanceno', 'visible', vis1);
+
+									criteria = {status:'savelessadv',paymenttype:e.value,advpayment_id:$scope.Requestid,employee_id:$scope.data.employee_id};
+									CrudService.FindData('advpayment',criteria).then(function (response){
+										console.log(response);
+			
+									})
 									if(e.value==1) {
 
 										var paymentform = $scope.formInstance.getEditor('paymentform');
@@ -198,15 +206,9 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 										lessadv.getDataSource().filter('advanceform','=',$scope.data.paymentform);
 										lessadv.getDataSource().load();
 									} else {
-										criteria = {status:'savelessadv',paymenttype:e.value,advpayment_id:$scope.Requestid,employee_id:$scope.data.employee_id};
-										CrudService.FindData('advpayment',criteria).then(function (response){
-											console.log(response);
-											// $scope.getadvance = response;
-											// 	var lessadv = $scope.formInstance.getEditor('lessadvance');
-											// 	lessadv.getDataSource().filter('advanceform','=',e.value);
-											// 	lessadv.getDataSource().load();
-				
-										})
+										
+										$scope.formInstance.updateData('advanceno',  "");
+
 									}
 
 									// $scope.formInstance.itemOption('subgroup.advanceno', 'visibleIndex', 0);
@@ -234,9 +236,10 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
                                 editorType: "dxSelectBox",
                                 label:{text:"Less Advance"},
 								visible:($scope.data.paymenttype==1)?true:false,
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
                                 validationRules: [{type: "required",message: "Action is required"}],
                                 editorOptions: { 
+									readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
                                     dataSource:$scope.getlessadv,  
                                     valueExpr: 'advanceno',
                                     displayExpr: 'advanceno',
@@ -262,9 +265,10 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 								name:'payment',
                                 editorType: "dxSelectBox",
                                 label:{text:"Payment Method"},
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
                                 validationRules: [{type: "required",message: "Action is required"}],
                                 editorOptions: { 
+									readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
                                     dataSource:$scope.Paymentopt,  
                                     valueExpr: 'id',
                                     displayExpr: 'payment',
@@ -272,7 +276,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 								
                             },
 							
-						{dataField:'createddate',editorType: "dxDateBox",label: {text: "Creation Date"},editorOptions: {displayFormat:"dd/MM/yyyy",disabled: true}},
+						{dataField:'createddate',editorType: "dxDateBox",label: {text: "Creation Date"},editorOptions: {displayFormat:"dd/MM/yyyy",readOnly: true}},
 						
 						
 						{
@@ -281,7 +285,10 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 								text:"Beneficiary",
 							},
 							name:'beneficiary',
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+							editorOptions: {
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							}
 						},
 						{
 							dataField:'accountname',
@@ -289,7 +296,10 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 								text:"Account Name",
 							},
 							name:'accountname',
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true         
+							editorOptions: {
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							}                   
 						},
 						{
 							dataField:'bank',
@@ -297,7 +307,10 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 								text:"Bank",
 							},
 							name:'bank',
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true 
+							editorOptions: {
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							}                           
 						},
 						{
 							dataField:'accountnumber',
@@ -305,7 +318,10 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 								text:"Bank Account No",
 							},
 							name:'accountnumber',
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true 
+							editorOptions: {
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							}                           
 						},
 						
 						
@@ -321,12 +337,22 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 						colSpan:2,
 						colCount : 2,
 						items: [
-							{dataField:'duedate',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,editorType: "dxDateBox",label: {text: "Due Date"},editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now()},
+							{dataField:'duedate',
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							editorType: "dxDateBox",label: {text: "Due Date"},
+							editorOptions: {
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+								displayFormat:"dd/MM/yyyy",min:Date.now()},
 							validationRules: [{
 								type: "required",
 								message: "Please Due Date"
 							}]},
-							{dataField:'paymentdate',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,editorType: "dxDateBox",label: {text: "Payment Date"},editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now()},
+							{dataField:'paymentdate',
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							editorType: "dxDateBox",label: {text: "Payment Date"},
+							editorOptions: {
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+								displayFormat:"dd/MM/yyyy",min:Date.now()},
 							validationRules: [{
 								type: "required",
 								message: "Please Payment Date"
@@ -349,8 +375,9 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 							dataField:"depthead",
 							editorType: "dxDropDownBox",
 							visible: true,
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							editorOptions: { 
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 								dataSource:$scope.allEmpDataSource,  
 								valueExpr: 'id',
 								displayExpr: 'fullname',
@@ -420,11 +447,12 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 							dataField:'isdeclaration',
 							label:{text:"Declaration"},
 							// visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							dataType:"boolean",
 							editorType: "dxCheckBox",
 							validationRules: [{type: "required",message: "Declaration is required"}],
 							editorOptions: { 
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 								text:"Please Check Your Detail & Approval list, before submit this form. Any Problem Contact Developer",
 							}
 						}

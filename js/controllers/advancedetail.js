@@ -85,9 +85,10 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 								name:'advanceform',
                                 editorType: "dxSelectBox",
                                 label:{text:"Advance Form"},
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
                                 validationRules: [{type: "required",message: "Action is required"}],
                                 editorOptions: { 
+									readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
                                     dataSource:$scope.AdvanceForm,  
                                     valueExpr: 'id',
                                     displayExpr: 'advanceform',
@@ -105,7 +106,12 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
                                 },
 								
                             },
-						{dataField:'createddate',editorType: "dxDateBox",label: {text: "Creation Date"},editorOptions: {displayFormat:"dd/MM/yyyy",disabled: true}},
+						{dataField:'createddate',editorType: "dxDateBox",label: {text: "Creation Date"},
+						editorOptions: {
+							displayFormat:"dd/MM/yyyy",
+							// disabled: true
+							readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+						}},
 						
 						
 						{
@@ -114,7 +120,10 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 								text:"Beneficiary",
 							},
 							name:'beneficiary',
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true 
+							editorOptions: {
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							}                           
 						},
 						{
 							dataField:'accountname',
@@ -122,7 +131,10 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 								text:"Account Name",
 							},
 							name:'accountname',
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true    
+							editorOptions: {
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							}                        
 						},
 						{
 							dataField:'bank',
@@ -130,7 +142,10 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 								text:"Bank",
 							},
 							name:'bank',
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true     
+							editorOptions: {
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							}                       
 						},
 						{
 							dataField:'accountnumber',
@@ -138,7 +153,10 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 								text:"Bank Account No",
 							},
 							name:'accountnumber',
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true                            
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true      
+							editorOptions: {
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							}                      
 						},
 						
 						
@@ -154,12 +172,22 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 						colSpan:2,
 						colCount : 2,
 						items: [
-							{dataField:'expecteddate',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,editorType: "dxDateBox",label: {text: "Expected Date"},editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now()},
+							{dataField:'expecteddate',
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							editorType: "dxDateBox",label: {text: "Expected Date"},
+							editorOptions: {
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+								displayFormat:"dd/MM/yyyy",min:Date.now()},
 							validationRules: [{
 								type: "required",
 								message: "Please Expected Date"
 							}]},
-							{dataField:'duedate',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,editorType: "dxDateBox",label: {text: "Due Date"},editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now()},
+							{dataField:'duedate',
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							editorType: "dxDateBox",label: {text: "Due Date"},
+							editorOptions: {
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+								displayFormat:"dd/MM/yyyy",min:Date.now()},
 							validationRules: [{
 								type: "required",
 								message: "Please Due Date"
@@ -182,8 +210,9 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 							dataField:"depthead",
 							editorType: "dxDropDownBox",
 							visible: true,
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							editorOptions: { 
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 								dataSource:$scope.allEmpDataSource,  
 								valueExpr: 'id',
 								displayExpr: 'fullname',
@@ -253,11 +282,12 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 							dataField:'isdeclaration',
 							label:{text:"Declaration"},
 							// visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							dataType:"boolean",
 							editorType: "dxCheckBox",
 							validationRules: [{type: "required",message: "Declaration is required"}],
 							editorOptions: { 
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 								text:"Please Check Your Detail & Approval list, before submit this form. Any Problem Contact Developer",
 							}
 						}

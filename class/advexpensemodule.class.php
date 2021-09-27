@@ -197,6 +197,58 @@ Class Advexpensemodule extends Application{
 							switch ($query['status']){
 								case "last":
 									break;
+									case 'savelessadv':
+										$id= $query['advexpense_id'];
+										$advanceno = $query['advanceno'];
+										$paymenttype = $query['paymenttype'];
+										$employee_id = $query['employee_id'];
+
+										$Advexpense = Advexpense::find($id, array('include' => array('employee'=>array('company','department','designation'))));
+
+										//check lessadvance
+										if($paymenttype == false || $paymenttype == 'false') {
+											$valpaymenttype = 0;
+										} else if ($paymenttype == true || $paymenttype == 'true') {
+											$valpaymenttype = 1;
+										}
+
+										if($paymenttype !== null) {
+											$Advexpense->paymenttype = $valpaymenttype;
+										}
+
+
+										
+										if($advanceno !== null) {
+
+											$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND advanceno=?",$Advexpense->employee_id,$advanceno)));
+											
+											$AdvanceDetail = AdvanceDetail::find('all',array('conditions'=> array("advance_id=?",$Advance->id)));
+											foreach ($AdvanceDetail as $val) {
+												$val_tamount += $val->amount;
+											}
+											
+											$Advexpense->advanceno = $advanceno;
+											$Advexpense->lessadvance = $val_tamount;
+											$Advexpense->save();
+
+										} else {
+
+											$Advexpense->advanceno = null;
+											$Advexpense->lessadvance = null;
+											$Advexpense->save();
+										}
+
+										
+
+
+										if($Advexpense) {
+											$item['message']=200;
+											echo json_encode($item, JSON_NUMERIC_CHECK);
+										} else {
+											$item['message']=404;
+											echo json_encode($item, JSON_NUMERIC_CHECK);
+										}
+									break;
 									case 'appcon':
 										$valamount = $query['valamount'];
 										$advexpense_form = $query['formtype'];
@@ -484,26 +536,38 @@ Class Advexpensemodule extends Application{
 								// 	$Advexpenseapproval->save();
 								// }
 
-								if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
+								// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
 												
 												
-									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=36 and tbl_employee.location_id='1'")));
-									if(count($Approver2)>0){
-										$Advexpenseapproval = new Advexpenseapproval();
-										$Advexpenseapproval->advexpense_id = $Advexpense->id;
-										$Advexpenseapproval->approver_id = $Approver2->id;
-										$Advexpenseapproval->save();
-									}
+								// 	$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=36 and tbl_employee.location_id='1'")));
+								// 	if(count($Approver2)>0){
+								// 		$Advexpenseapproval = new Advexpenseapproval();
+								// 		$Advexpenseapproval->advexpense_id = $Advexpense->id;
+								// 		$Advexpenseapproval->approver_id = $Approver2->id;
+								// 		$Advexpenseapproval->save();
+								// 	}
 										
-								}else{
+								// }else{
 									
-									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=36 and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
-									if(count($Approver2)>0){
-										$Advexpenseapproval = new Advexpenseapproval();
-										$Advexpenseapproval->advexpense_id = $Advexpense->id;
-										$Advexpenseapproval->approver_id = $Approver2->id;
-										$Advexpenseapproval->save();
-									}
+								// 	$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=36 and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
+								// 	if(count($Approver2)>0){
+								// 		$Advexpenseapproval = new Advexpenseapproval();
+								// 		$Advexpenseapproval->advexpense_id = $Advexpense->id;
+								// 		$Advexpenseapproval->approver_id = $Approver2->id;
+								// 		$Advexpenseapproval->save();
+								// 	}
+								// }
+
+								if($Employee->companycode == 'BCL') {
+									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and tbl_employee.companycode='BCL'")));
+								}else {
+									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and not(tbl_employee.companycode='BCL')")));
+								}
+								if(count($Approver2)>0){
+									$Advexpenseapproval = new Advexpenseapproval();
+									$Advexpenseapproval->advexpense_id = $Advexpense->id;
+									$Advexpenseapproval->approver_id = $Approver2->id;
+									$Advexpenseapproval->save();
 								}
 
 								// $companyFC=(($data['companycode']=='BCL') || ($data['companycode']=='KPA'))?"KPSI":((($data['companycode']=='KPSI'))?"LDU":$Employee->companycode);
@@ -711,7 +775,11 @@ Class Advexpensemodule extends Application{
 		
 							$Advexpensedetail = Advexpensedetail::find('all',array('conditions'=>array("advexpense_id=?",$id),'include'=>array('advexpense'=>array('employee'=>array('company','department','designation','grade','location')))));	
 							$Advexpensedetailbt = Advexpensedetailbt::find('all',array('conditions'=>array("advexpense_id=?",$id),'include'=>array('advexpense'=>array('employee'=>array('company','department','designation','grade','location')))));	
-
+							if($Advexpense->paymenttype == 0) {
+								$less = 0;
+							} else {
+								$less = $Advexpense->lessadvance;
+							}
 							$this->mailbody .='
 								<table border=1 cellspacing=0 cellpadding=3 width=683>
 								<tr>
@@ -763,6 +831,8 @@ Class Advexpensemodule extends Application{
 							$this->mailbody .= '</table>
 							<ul>
 								<li><b><span>Total Amount Detail : '.number_format($val_tamount).'</span></b></li>
+								<li><b><span>Less Advance : '.number_format($less).'</span></b></li>
+								<li><b><span>Balance To Be Paid : '.number_format($val_tamount-$less).'</span></b></li>
 							</ul>
 							<table border=1 cellspacing=0 cellpadding=3 width=683>
 										<tr><th><p class=MsoNormal>No</p></th>
@@ -828,9 +898,9 @@ Class Advexpensemodule extends Application{
 							}
 							$this->mailbody .='</table>
 							<ul>
-								<li><b><span>Total : '.number_format($totalbt).'</span></b></li>
+								<li><b><span>Total Bisnis Trip : '.number_format($totalbt).'</span></b></li>
 							</ul>
-							<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+							<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.83.18/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 							$this->mail->addAddress($adb->email, $adb->fullname);
 							$this->mail->Subject = "Online Approval System -> Advexpense";
 							$this->mail->msgHTML($this->mailbody);
@@ -913,9 +983,9 @@ Class Advexpensemodule extends Application{
 							// print_r($dx);
 							$Advexpense = Advexpense::find($query['advexpense_id']);
 							// if($dx->approver->isfinal==1){
-							// if (($Advexpense->expenseform == 1 && $dx->approver->approvaltype_id == 37) || ($Advexpense->expenseform == 2 && $dx->approver->approvaltype_id == 38)){
-							// 	$data=array("jml"=>1);
-							// }else{
+							if ($dx->approver->approvaltype_id == 36){
+								$data=array("jml"=>1);
+							}else{
 								$join   = "LEFT JOIN tbl_approver ON (tbl_advexpenseapproval.approver_id = tbl_approver.id) ";
 								$Advexpenseapproval = Advexpenseapproval::find('all', array('joins'=>$join,'conditions' => array("advexpense_id=? and ApprovalStatus<=1 and not tbl_approver.employee_id=?",$query['advexpense_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
 								foreach ($Advexpenseapproval as &$result) {
@@ -924,7 +994,7 @@ Class Advexpensemodule extends Application{
 									$result['fullname']=$fullname;
 								}
 								$data=array("jml"=>count($Advexpenseapproval));
-							// }						
+							}						
 						} else if(isset($query['pending'])){						
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$emp_id = $Employee->id;
@@ -972,11 +1042,11 @@ Class Advexpensemodule extends Application{
 							$sel = 'tbl_advexpense.*,v.personholding ';
 							$Advexpense = Advexpense::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
 							
-							if($Employee->location->sapcode=='0200' || $this->currentUser->isadmin){
+							// if($Employee->location->sapcode=='0200' || $this->currentUser->isadmin){
 								$Advexpense = Advexpense::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee'=>array('company','department'))));
-							}else{
-								$Advexpense = Advexpense::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_advexpense.RequestStatus=3 or tbl_advexpense.RequestStatus=5 and tbl_employee.company_id=?',$Employee->company_id ),'include' => array('employee'=>array('company','department'))));
-							}
+							// }else{
+							// 	$Advexpense = Advexpense::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_advexpense.RequestStatus=3 or tbl_advexpense.RequestStatus=5 and tbl_employee.company_id=?',$Employee->company_id ),'include' => array('employee'=>array('company','department'))));
+							// }
 							
 							foreach ($Advexpense as &$result) {
 								$fullname	= $result->employee->fullname;		
@@ -1041,6 +1111,8 @@ Class Advexpensemodule extends Application{
 							}
 							
 							$Advexpense->save();
+							unset($data['advanceno']);
+							unset($data['lessadvance']);
 
 							unset($data['startdate']);
 							unset($data['enddate']);
@@ -1082,7 +1154,7 @@ Class Advexpensemodule extends Application{
 										$Advexpensehistory->actiontype = 3;
 										break;
 									case '2':
-										if (($Advexpense->expenseform == 1 && $Advexpenseapproval->approver->approvaltype_id == 37) || ($Advexpense->expenseform == 2 && $Advexpenseapproval->approver->approvaltype_id == 38)){
+										if ($Advexpenseapproval->approver->approvaltype_id == 36){
 											$Advexpense->requeststatus = 3;
 											$emto=$email;$emname=$Advexpense->employee->fullname;
 											$this->mail->Subject = "Online Approval System -> Approval Completed";
@@ -1103,10 +1175,20 @@ Class Advexpensemodule extends Application{
 											// 	$Advance->save();
 											// }
 
+											if($Advexpense->advanceno !== null) {
+												$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND advanceno=?",$Advexpense->employee->id,$Advexpense->advanceno)));
+												$Advance->isused=1;
+												$Advance->save();
+											}
+
 
 											$complete =true;
+											echo 2;
+
 										}
 										else{
+											echo 22;
+
 											$Advexpense->requeststatus = 1;
 											$emto=$adb->email;$emname=$adb->fullname;
 											$this->mail->Subject = "Online Approval System -> New Expense";
@@ -1145,7 +1227,11 @@ Class Advexpensemodule extends Application{
 
 						$Advexpensedetail = Advexpensedetail::find('all',array('conditions'=>array("advexpense_id=?",$doid),'include'=>array('advexpense'=>array('employee'=>array('company','department','designation','grade','location')))));	
 						$Advexpensedetailbt = Advexpensedetailbt::find('all',array('conditions'=>array("advexpense_id=?",$doid),'include'=>array('advexpense'=>array('employee'=>array('company','department','designation','grade','location')))));	
-
+						if($Advexpense->paymenttype == 0) {
+							$less = 0;
+						} else {
+							$less = $Advexpense->lessadvance;
+						}
 						$this->mailbody .='
 						<table border=1 cellspacing=0 cellpadding=3 width=683>
 						<tr>
@@ -1197,6 +1283,8 @@ Class Advexpensemodule extends Application{
 						$this->mailbody .= '</table>
 							<ul>
 								<li><b><span>Total Amount Detail : '.number_format($val_tamount).'</span></b></li>
+								<li><b><span>Less Advance : '.number_format($less).'</span></b></li>
+								<li><b><span>Balance To Be Paid : '.number_format($val_tamount-$less).'</span></b></li>
 							</ul>
 							<table border=1 cellspacing=0 cellpadding=3 width=683>
 										<tr><th><p class=MsoNormal>No</p></th>
@@ -1262,9 +1350,9 @@ Class Advexpensemodule extends Application{
 						}
 						$this->mailbody .='</table>
 						<ul>
-								<li><b><span>Total : '.number_format($totalbt).'</span></b></li>
+								<li><b><span>Total Bisnis Trip : '.number_format($totalbt).'</span></b></li>
 						</ul>
-						<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+						<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.83.18/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 						
 								
 								$this->mail->msgHTML($this->mailbody);
@@ -1605,14 +1693,14 @@ Class Advexpensemodule extends Application{
 					$val_tamount += $data->amount;
 				}
 				
-				// if($Advexpense->expensetype == 0) {
-				// 	$lessadvance = 0;
-				// } else if($Advexpense->expensetype == 1) {
-				// 	$lessadvance = $Advexpense->lessadvance;
-				// }
-				$Worksheet->Range("E21")->Value = $val_tamount;
-				// $Worksheet->Range("K23")->Value = $lessadvance;
-				// $Worksheet->Range("K24")->Value = ($val_tamount-$lessadvance);
+				if($Advexpense->paymenttype == 0) {
+					$lessadvance = 0;
+				} else {
+					$lessadvance = $Advexpense->lessadvance;
+				}
+				$Worksheet->Range("E21")->Value = number_format($val_tamount);
+				$Worksheet->Range("E23")->Value = number_format($lessadvance);
+				$Worksheet->Range("E25")->Value = number_format($val_tamount-$lessadvance);
 				
 	
 				$xlShiftDown=-4121;
@@ -1624,7 +1712,7 @@ Class Advexpensemodule extends Application{
 					$Worksheet->Range("B".$a)->Value = $Advexpensedetail[$a-19]->expensetype;
 					$Worksheet->Range("C".$a)->Value = $Advexpensedetail[$a-19]->purpose;
 					$Worksheet->Range("D".$a)->Value = $Advexpensedetail[$a-19]->receiptdate;
-					$Worksheet->Range("E".$a)->Value = $Advexpensedetail[$a-19]->amount;
+					$Worksheet->Range("E".$a)->Value = number_format($Advexpensedetail[$a-19]->amount);
 					$Worksheet->Range("F".$a)->Value = $Advexpensedetail[$a-19]->currency;
 					$Worksheet->Range("G".$a)->Value = $Advexpensedetail[$a-19]->exchangerate;
 					$Worksheet->Range("H".$a)->Value = $Advexpensedetail[$a-19]->paymentamount;
@@ -1661,6 +1749,36 @@ Class Advexpensemodule extends Application{
 					// $jml_lunch += $lunch;
 					// $jml_dinner += $dinner;
 					// $jml_pocket += $pocket;
+
+					if($data->ispapua == 0) {
+						$sppd = Advexpsppd::find('first',
+							array(
+								'conditions'=>array("level=? and ispapua=0",$Employee->level_id)
+							)
+						);
+
+					} else if($data->ispapua == 1) {
+						$sppd = Advexpsppd::find('first',
+							array(
+								'conditions'=>array("level=? and ispapua=1",$Employee->level_id)
+							)
+						);
+
+						
+					}
+
+					$breakfast = ($data->breakfast == 0) ? $data->breakfast : $sppd->breakfast;
+					$lunch = ($data->lunch == 0) ? $data->lunch : $sppd->lunch;
+					$dinner = ($data->dinner == 0) ? $data->dinner : $sppd->dinner;
+					$pocket = ($data->pocket == 0) ? $data->pocket : $sppd->pocket;
+
+					$jml_breakfast += $breakfast;
+					$jml_lunch += $lunch;
+					$jml_dinner += $dinner;
+					$jml_pocket += $pocket;
+
+					$totalbt = $jml_breakfast+$jml_lunch+$jml_dinner+$jml_pocket;
+
 				}
 
 				for ($b=53;$b<53+count($Advexpensedetailbt);$b++){

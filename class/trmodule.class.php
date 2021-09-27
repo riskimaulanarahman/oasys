@@ -64,6 +64,12 @@ Class TrModule extends Application{
 				case 'apitrhist':
 					$this->trHistory();
 					break;
+				case 'apitrfile':
+					$this->trAttachment();
+					break;
+				case 'uploadtrfile':
+					$this->uploadTrFile();
+					break;
 				
 				default:
 					break;
@@ -245,7 +251,7 @@ Class TrModule extends Application{
 											</tr>';
 										$no++;
 									}
-									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.83.18/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 									$this->mail->addAddress($usr->email, $usr->fullname);
 									$this->mail->Subject = "Online Approval System -> Travel Request Reschedule";
 									$fileName = $this->generatePDF($id);
@@ -571,7 +577,7 @@ Class TrModule extends Application{
 											</tr>';
 										$no++;
 									}
-									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.83.18/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 									$this->mail->addAddress($adb->email, $adb->fullname);
 									$this->mail->Subject = "Online Approval System -> New Travel Request Submission";
 									$this->mail->msgHTML($this->mailbody);
@@ -913,7 +919,7 @@ Class TrModule extends Application{
 									</tr>';
 								$no++;
 							}
-							$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+							$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.83.18/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 							$this->mail->msgHTML($this->mailbody);
 							if ($complete){
 								$fileName = $this->generatePDF($doid);
@@ -1509,5 +1515,114 @@ Class TrModule extends Application{
 				}
 			}
 		}
+	}
+
+	function trAttachment(){
+		if (count($this->post)==0){
+			http_response_code(405);
+    		echo json_encode(array("message" => "Method not Allowed"));
+		}else{
+			$auth = $this->jwt->checkAuth();
+			if($auth){
+				switch ($this->post['criteria']){
+					case 'byid':
+						$id = $this->post['id'];
+						if ($id!=""){
+							$Trattachment = Trattachment::find('all', array('conditions' => array("tr_id=?",$id)));
+							foreach ($Trattachment as &$result) {
+								$result		= $result->to_array();
+							}
+							echo json_encode($Trattachment, JSON_NUMERIC_CHECK);
+						}else{
+							$Trattachment = new Trattachment();
+							echo json_encode($Trattachment);
+						}
+						break;
+					case 'find':
+						$query=$this->post['query'];
+						if(isset($query['status'])){
+							$Trattachment = Trattachment::find('all', array('conditions' => array("tr_id=?",$query['tr_id'])));
+							$data=array("jml"=>count($Trattachment));
+						}else{
+							$data=array();
+						}
+						echo json_encode($data, JSON_NUMERIC_CHECK);
+						break;
+					case 'create':			
+						$data = $this->post['data'];
+						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+						$data['employee_id']=$Employee->id;
+						unset($data['__KEY__']);
+						
+						$Trattachment = Trattachment::create($data);
+						$logger = new Datalogger("Trattachment","create",null,json_encode($data));
+						$logger->SaveData();
+						break;
+					case 'delete':				
+						$id = $this->post['id'];
+						$Trattachment = Trattachment::find($id);
+						$data=$Trattachment->to_array();
+						$Trattachment->delete();
+						$logger = new Datalogger("Trattachment","delete",json_encode($data),null);
+						$logger->SaveData();
+						echo json_encode($Trattachment);
+						break;
+					case 'update':				
+						$id = $this->post['id'];
+						$data = $this->post['data'];
+						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+						$data['employee_id']=$Employee->id;
+						$Trattachment = Trattachment::find($id);
+						$olddata = $Trattachment->to_array();
+						foreach($data as $key=>$val){					
+							$val=($val=='No')?false:(($val=='Yes')?true:$val);
+							$Trattachment->$key=$val;
+						}
+						$Trattachment->save();
+						$logger = new Datalogger("Trattachment","update",json_encode($olddata),json_encode($data));
+						$logger->SaveData();
+						echo json_encode($Trattachment);
+						
+						break;
+					default:
+						$Trattachment = Trattachment::all();
+						foreach ($Trattachment as &$result) {
+							$result = $result->to_array();
+						}
+						echo json_encode($Trattachment, JSON_NUMERIC_CHECK);
+						break;
+				}
+			}
+		}
+	}
+
+	public function uploadTrFile(){
+		$id= $this->get['id'];
+		if(!isset($_FILES['myFile'])) {
+			http_response_code(400);
+			echo "There is no file to upload";
+			exit;
+		}
+		$max_image_size = 5242880;
+		if(!is_uploaded_file($_FILES['myFile']['tmp_name'])) {
+			http_response_code(400);
+			echo "Unable to upload File";
+			exit;
+		}
+		if($_FILES['myFile']['size'] > $max_image_size) {
+			http_response_code(413);
+			echo "File Size too Large, Maximum 5MB";
+			exit;
+		}
+		if((strpos($_FILES['myFile']['type'], "image") === false) && (strpos($_FILES['myFile']['type'], "pdf") === false) && (strpos($_FILES['myFile']['type'], "officedocument") === false)  && (strpos($_FILES['myFile']['type'], "msword") === false) && (strpos($_FILES['myFile']['type'], "excel") === false)){
+			http_response_code(415);
+			echo "Only Accept Image File, pdf or Office Document (Excel & Word) ";
+			exit;
+		}
+		$path_to_file = "upload/tr/".$id."_".time()."_".$_FILES['myFile']['name'];
+		$path_to_file = str_replace("%","_",$path_to_file);
+		$path_to_file = str_replace(" ","_",$path_to_file);
+		echo $path_to_file;
+        move_uploaded_file($_FILES['myFile']['tmp_name'], $path_to_file);
 	}
 }
