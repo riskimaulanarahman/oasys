@@ -122,6 +122,9 @@
                     {dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200, editorOptions: { 
                         disabled: true,
                     }},
+                    {dataField:'advanceno',caption:"Advance No",width: 200, editorOptions: { 
+                        disabled: true,
+                    }},
                     {dataField:'fullname',caption:"Name",width: 200, editorOptions: { 
                         disabled: true,
                     }},

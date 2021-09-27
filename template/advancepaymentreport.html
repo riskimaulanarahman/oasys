@@ -1,8 +1,13 @@
 <div  ng-controller="advpaymentreportCtrl as advancepaymentreport">
-  <div class='panel panel-default'>
-    <div class='panel-heading'> <i class="fas fa-file-signature"></i> Data Approved Advance Payment </div>
-    <div class='panel-body' id="maincontainer">
-      <div ng-include src="'template/panel.html'"></div>
-    </div>
-  </div>
+	<div class="mb3 card">
+		<div class="card-header-tab card-header">
+			<div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+				<i class="header-icon fa fa-file-signature "></i>
+				Advance Payment Data
+			</div>
+		</div>
+		<div  style="width:100%" class="row widget-chart widget-chart2 border-primary" >	
+			<div style="width:100%" ng-include src="'template/panel.html'"></div>
+		</div>
+	</div>
 </div>

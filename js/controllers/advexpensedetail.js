@@ -96,6 +96,25 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 			// 	// console.log($scope.currencys);
 			// });
 
+			$scope.getlessadv = {
+                store: new DevExpress.data.CustomStore({
+                    key: "id",
+                    loadMode: "raw",
+                    load: function() {
+                        return CrudService.GetById('listadvance',$scope.data.employee_id).then(function (response) {
+                            if(response.status=="error"){
+                                DevExpress.ui.notify(response.message,"error");
+                            }else{
+								console.log(response);
+                                return response;
+                            }
+                        });
+                    },
+                }),
+                
+                sort: "id"
+            }
+
 			$scope.AppAction = ($scope.data.approvalstep==2)?[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Verify"}]:[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
 			$scope.AdvanceForm =[{id:0,paymentform:"- Select -"},{id:1,paymentform:"Payment Req HR"},{id:2,paymentform:"Payment Req OPR"}];
 			$scope.Paymentopt =[{id:1,payment:"Cash"},{id:2,payment:"Bank"}];
@@ -109,6 +128,11 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 				},
 				onContentReady:function(e){
 					$scope.formInstance = e.component;
+
+					// criteria = {status:'savelessadv',advanceno:null,advexpense_id:$scope.Requestid,employee_id:$scope.data.employee_id};
+					// CrudService.FindData('advexpense',criteria).then(function (response){
+					// 	console.log('ok');
+					// })
 				},
 				readOnly : (($scope.mode=='view')||($scope.mode=='report'))?true:false,
 				labelLocation : "top",
@@ -124,7 +148,12 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 						colSpan :2,
 						items: [
 		
-						{dataField:'createddate',editorType: "dxDateBox",label: {text: "Creation Date"},editorOptions: {displayFormat:"dd/MM/yyyy",disabled: true}},
+						{dataField:'createddate',editorType: "dxDateBox",label: {text: "Creation Date"},
+						editorOptions: {
+							readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							displayFormat:"dd/MM/yyyy",
+							// disabled: true
+						}},
 						
 						
 						{
@@ -133,9 +162,10 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								text:"Name",
 							},
 							name:'name',
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							editorOptions: {
-								disabled: true
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+								// disabled: true
 							}
 						},
 						{
@@ -144,9 +174,10 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								text:"Email",
 							},
 							name:'email',
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							editorOptions: {
-								disabled: true
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+								// disabled: true
 							}
 						},
 						{
@@ -155,9 +186,10 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								text:"Cost Center",
 							},
 							name:'costcenter',
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							editorOptions: {
-								disabled: true
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+								// disabled: true
 							}
 						},
 						{
@@ -166,9 +198,10 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								text:"BG",
 							},
 							name:'bg',
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							editorOptions: {
-								disabled: true
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+								// disabled: true
 							}
 						},
 						{
@@ -177,10 +210,56 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								text:"Location",
 							},
 							name:'location',
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							editorOptions: {
-								disabled: true
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+								// disabled: true
 							}
+						},
+						{
+							dataField:'paymenttype',
+							name:'paymenttype',
+							label:{text:"With Advance ?"},
+							visible: true,
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							dataType:"boolean",
+							editorType: "dxCheckBox",
+							editorOptions: { 
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+								text:"Yes",
+								onValueChanged: function (e) {
+								var vis1 =(e.value==1)?true:false;
+
+								$scope.formInstance.itemOption('subgroup.advanceno', 'visible', vis1);
+
+								criteria = {status:'savelessadv',paymenttype:e.value,advexpense_id:$scope.Requestid,employee_id:$scope.data.employee_id};
+									CrudService.FindData('advexpense',criteria).then(function (response){
+										console.log(response);
+								})
+
+								if(e.value == 0) {
+									$scope.formInstance.updateData('advanceno',  "");
+								}
+
+								// 	var paymentform = $scope.formInstance.getEditor('paymentform');
+								// 	console.log(paymentform);
+								// 	var lessadv = $scope.formInstance.getEditor('advanceno');
+								// 	lessadv.getDataSource().filter('advanceform','=',$scope.data.paymentform);
+								// 	lessadv.getDataSource().load();
+								// } else {
+									
+										
+										
+										// $scope.getadvance = response;
+										// 	var lessadv = $scope.formInstance.getEditor('lessadvance');
+										// 	lessadv.getDataSource().filter('advanceform','=',e.value);
+										// 	lessadv.getDataSource().load();
+			
+								// }
+
+							}
+							},
+							
 						},
 						
 						
@@ -192,16 +271,65 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 					{	
 						itemType: "group",
 						caption: "",
+						name:"subgroup",
+						colSpan:2,
+						colCount : 2,
+						items: [
+							{
+                                dataField:'advanceno',
+								name:'Advance No',
+                                editorType: "dxSelectBox",
+                                label:{text:"Less Advance"},
+								visible:($scope.data.paymenttype==1)?true:false,
+                                // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                validationRules: [{type: "required",message: "Action is required"}],
+                                editorOptions: { 
+									readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                    dataSource:$scope.getlessadv,  
+                                    valueExpr: 'advanceno',
+                                    displayExpr: 'advanceno',
+                                    // value: '',
+									onValueChanged: function(e) {
+										console.log(e.value);
+										criteria = {status:'savelessadv',advanceno:e.value,advexpense_id:$scope.Requestid,employee_id:$scope.data.employee_id};
+										CrudService.FindData('advexpense',criteria).then(function (response){
+											console.log(response);
+										})
+
+									}
+                                },
+								
+                            },
+							
+							
+						]
+						
+					},
+					{	
+						itemType: "group",
+						caption: "",
 						// name:"reqisition",
 						colSpan:2,
 						colCount : 2,
 						items: [
-							{dataField:'startdate',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,editorType: "dxDateBox",label: {text: "Start Date"},editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now()},
+							{dataField:'startdate',
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							editorType: "dxDateBox",label: {text: "Start Date"},
+							editorOptions: {
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+								displayFormat:"dd/MM/yyyy",min:Date.now()
+							},
 							validationRules: [{
 								type: "required",
 								message: "Please Due Date"
 							}]},
-							{dataField:'enddate',disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,editorType: "dxDateBox",label: {text: "End Date"},editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now()},
+							{dataField:'enddate',
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							editorType: "dxDateBox",label: {text: "End Date"},
+							editorOptions: {
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+								displayFormat:"dd/MM/yyyy",min:Date.now()
+							},
 							validationRules: [{
 								type: "required",
 								message: "Please Payment Date"
@@ -224,8 +352,9 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 							dataField:"superior",
 							editorType: "dxDropDownBox",
 							visible: true,
-							disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							editorOptions: { 
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 								dataSource:$scope.allEmpDataSource,  
 								valueExpr: 'id',
 								displayExpr: 'fullname',
@@ -636,9 +765,9 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
                     editorType: "dxSelectBox",
 					disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
                     validationRules: [{type: "required", message: "Please select Expense Type" }],
-					editorOptions: { 
+					lookup: { 
 						dataSource:$scope.ExpenseTypes,  
-						valueExpr: 'type',
+						valueExpr: 'code',
 						displayExpr: 'type',
 					},
 				},
@@ -1204,6 +1333,8 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 			var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
 			data.approvaldate = d;
 			data.mode="approve";
+			delete data.paymenttype;
+
 			delete data.createddate;
 			delete data.employee_id;
 			delete data.requeststatus;
@@ -1247,6 +1378,8 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 					var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
 					data.approvaldate = d;
 					data.mode="approve";
+					delete data.paymenttype;
+
 					delete data.createddate;
 					delete data.employee_id;
 					delete data.requeststatus;

@@ -69,13 +69,13 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 				});
 				CrudService.checkAccess('Advance',$rootScope.curUser.username).then(function (access) {
 					$rootScope.viewAdvance = access.allowview;
-				});
-				CrudService.checkAccess('AdvPayment',$rootScope.curUser.username).then(function (access) {
 					$rootScope.viewAdvPayment = access.allowview;
-				});
-				CrudService.checkAccess('AdvExpense',$rootScope.curUser.username).then(function (access) {
 					$rootScope.viewAdvExpense = access.allowview;
 				});
+				// CrudService.checkAccess('AdvPayment',$rootScope.curUser.username).then(function (access) {
+				// });
+				// CrudService.checkAccess('AdvExpense',$rootScope.curUser.username).then(function (access) {
+				// });
 				if(!$rootScope.startRefresh) {
 					$rootScope.startRefresh = setInterval($scope.refreshUsers, 1000);
 				}
@@ -134,7 +134,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 		$rootScope.$broadcast("initAdvance", "");
 	}
 	$scope.dataAdvPayment= function(){	
-		loadModule($rootScope.viewAdvPayment,"advpaymentreport",false);
+		loadModule($rootScope.viewAdvPayment,"advancepaymentreport",false);
 		$rootScope.$broadcast("initAdvPayment", "");
 	}
 	$scope.dataAdvExpense= function(){	

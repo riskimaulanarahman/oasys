@@ -236,6 +236,15 @@ Class Advpaymentmodule extends Application{
 										$Advpayment = Advpayment::find($id, array('include' => array('employee'=>array('company','department','designation'))));
 
 										//check lessadvance
+										if($paymenttype == false || $paymenttype == 'false') {
+											$valpaymenttype = 0;
+										} else if ($paymenttype == true || $paymenttype == 'true') {
+											$valpaymenttype = 1;
+										}
+
+										if($paymenttype !== null) {
+											$Advpayment->paymenttype = $valpaymenttype;
+										}
 										
 										if($advanceno !== null) {
 
@@ -741,7 +750,7 @@ Class Advpaymentmodule extends Application{
 								<li><b><span>Less Advance : '.number_format($less).'</span></b></li>
 								<li><b><span>Balance To Be Paid : '.number_format($val_tamount-$less).'</span></b></li>
 							</ul>
-							<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+							<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.83.18/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 							$this->mail->addAddress($adb->email, $adb->fullname);
 							$this->mail->Subject = "Online Approval System -> Advpayment";
 							$this->mail->msgHTML($this->mailbody);
@@ -910,11 +919,11 @@ Class Advpaymentmodule extends Application{
 							$sel = 'tbl_advpayment.*,v.personholding ';
 							$Advpayment = Advpayment::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
 							
-							if($Employee->location->sapcode=='0200' || $this->currentUser->isadmin){
+							// if($Employee->location->sapcode=='0200' || $this->currentUser->isadmin){
 								$Advpayment = Advpayment::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee'=>array('company','department'))));
-							}else{
-								$Advpayment = Advpayment::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_advpayment.RequestStatus=3 or tbl_advpayment.RequestStatus=5 and tbl_employee.company_id=?',$Employee->company_id ),'include' => array('employee'=>array('company','department'))));
-							}
+							// }else{
+							// 	$Advpayment = Advpayment::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_advpayment.RequestStatus=3 or tbl_advpayment.RequestStatus=5 and tbl_employee.company_id=?',$Employee->company_id ),'include' => array('employee'=>array('company','department'))));
+							// }
 							
 							foreach ($Advpayment as &$result) {
 								$fullname	= $result->employee->fullname;		
@@ -1166,7 +1175,7 @@ Class Advpaymentmodule extends Application{
 								<li><b><span>Less Advance : '.number_format($less).'</span></b></li>
 								<li><b><span>Balance To Be Paid : '.number_format($val_tamount-$less).'</span></b></li>
 						</ul>
-						<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.80.201/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+						<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.83.18/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.80.201/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 						
 								
 								$this->mail->msgHTML($this->mailbody);
