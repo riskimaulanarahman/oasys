@@ -194,11 +194,7 @@ app.register.controller('rfcreportCtrl', ['$rootScope','$scope', '$http', '$inte
                 if(!gridCell) {
                     return;
                 }
-
                 if(gridCell.rowType === 'data') {
-                    if(gridCell.data.OrderDate < new Date(2014, 2, 3)) {
-                        options.font.color = '#AAAAAA';
-                    }
                     if((gridCell.column.dataField === 'requeststatus') ){
 						if(options.value.includes("Approved")) {
 							options.value = "APPROVED"
