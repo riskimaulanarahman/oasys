@@ -188,7 +188,35 @@ app.register.controller('rfcreportCtrl', ['$rootScope','$scope', '$http', '$inte
         "export": {
             enabled: true,
             fileName: "ExportGrid",
-            allowExportSelectedData: false
+            allowExportSelectedData: false,
+			customizeExcelCell: function(options) {
+                var gridCell = options.gridCell;
+                if(!gridCell) {
+                    return;
+                }
+                if(gridCell.rowType === 'data') {
+                    if((gridCell.column.dataField === 'requeststatus') ){
+						if(options.value.includes("Approved")) {
+							options.value = "APPROVED"
+							options.backgroundColor = '#3ac47d';
+						} else if(options.value.includes("Saved")) {
+							options.value = "SAVED AS DRAFT"
+							options.backgroundColor = '#6c757d';
+						} else if(options.value.includes("Waiting")) {
+							options.value = "WAITING APPROVAL"
+							options.backgroundColor = '#3f6ad8';
+						} else if(options.value.includes("Rejected")) {
+							options.value = "REJECTED"
+							options.backgroundColor = '#d92550';
+						} else if(options.value.includes("Require")) {
+							options.value = "REQUIRE REWORK"
+							options.backgroundColor = '#f7b924';
+						}else{
+							options.value = ""
+						}
+					}
+                }
+			}
         },
 		bindingOptions :{
 			//"editing.allowUpdating": "allowEdit" ,
