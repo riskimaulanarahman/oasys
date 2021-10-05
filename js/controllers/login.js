@@ -81,9 +81,8 @@
 						});
 						CrudService.checkAccess('Advance',$rootScope.curUser.username).then(function (access) {
 							$rootScope.viewAdvance = access.allowview;
-						});
-						CrudService.checkAccess('AdvPayment',$rootScope.curUser.username).then(function (access) {
-							$rootScope.viewAdvance = access.allowview;
+							$rootScope.viewAdvPayment = access.allowview;
+							$rootScope.viewAdvExpense = access.allowview;
 						});
 						if(!$rootScope.startRefresh) {
 							$rootScope.startRefresh = setInterval($scope.refreshUsers, 1000);
