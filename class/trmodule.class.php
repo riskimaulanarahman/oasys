@@ -726,7 +726,7 @@ Class TrModule extends Application{
 							}else{
 								$Tr = Tr::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_tr.RequestStatus=3 and tbl_employee.company_id=?',$Employee->company_id ),'include' => array('employee'=>array('company','department'))));
 							}
-							
+							$Tr = Tr::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee'=>array('company','department'))));
 							foreach ($Tr as &$result) {
 								$fullname	= $result->employee->fullname;		
 								$result		= $result->to_array();
