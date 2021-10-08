@@ -355,7 +355,7 @@ Class Mmf30module extends Application{
 
 								if(($Employee->companycode=="LDU" || $Employee->companycode=="BCL")){
 							
-									$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='MMF30' and tbl_approver.isactive='1' and approvaltype_id=27")));
+									$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='MMF30' and tbl_approver.isactive='1' and approvaltype_id=27 and tbl_employee.companycode='BCL'")));
 									if(count($Approver)>0){
 										$Mmf30approval = new Mmf30approval();
 										$Mmf30approval->mmf30_id = $Mmf30->id;
@@ -363,7 +363,7 @@ Class Mmf30module extends Application{
 										$Mmf30approval->save();
 									}
 								}else{
-									$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='MMF30' and tbl_approver.isactive='1' and approvaltype_id=27 and tbl_employee.location_id='1'")));
+									$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='MMF30' and tbl_approver.isactive='1' and approvaltype_id=27 and not tbl_employee.companycode='BCL'")));
 									if(count($Approver)>0){
 										$Mmf30approval = new Mmf30approval();
 										$Mmf30approval->mmf30_id = $Mmf30->id;

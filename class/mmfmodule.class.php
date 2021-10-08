@@ -341,7 +341,7 @@ Class Mmfmodule extends Application{
 							// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="022") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
 							if(($Employee->companycode=="LDU" || $Employee->companycode=="BCL")){
 							
-								$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='MMF' and tbl_approver.isactive='1' and approvaltype_id=24")));
+								$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='MMF' and tbl_approver.isactive='1' and approvaltype_id=24 and tbl_employee.companycode='BCL'")));
 								if(count($Approver)>0){
 									$Trapproval = new Mmfapproval();
 									$Trapproval->mmf28_id = $Tr->id;
@@ -349,7 +349,7 @@ Class Mmfmodule extends Application{
 									$Trapproval->save();
 								}
 							}else{
-								$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='MMF' and tbl_approver.isactive='1' and approvaltype_id=24 and tbl_employee.location_id='1'")));
+								$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='MMF' and tbl_approver.isactive='1' and approvaltype_id=24 and not tbl_employee.companycode='BCL'")));
 								if(count($Approver)>0){
 									$Trapproval = new Mmfapproval();
 									$Trapproval->mmf28_id = $Tr->id;
