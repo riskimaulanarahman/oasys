@@ -150,7 +150,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 		
 						{dataField:'createddate',editorType: "dxDateBox",label: {text: "Creation Date"},
 						editorOptions: {
-							readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 							displayFormat:"dd/MM/yyyy",
 							// disabled: true
 						}},
@@ -162,9 +162,9 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								text:"Name",
 							},
 							name:'name',
-							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 							editorOptions: {
-								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 								// disabled: true
 							}
 						},
@@ -174,9 +174,9 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								text:"Email",
 							},
 							name:'email',
-							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 							editorOptions: {
-								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 								// disabled: true
 							}
 						},
@@ -186,9 +186,9 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								text:"Cost Center",
 							},
 							name:'costcenter',
-							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 							editorOptions: {
-								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 								// disabled: true
 							}
 						},
@@ -198,9 +198,9 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								text:"BG",
 							},
 							name:'bg',
-							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 							editorOptions: {
-								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 								// disabled: true
 							}
 						},
@@ -210,9 +210,9 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								text:"Location",
 							},
 							name:'location',
-							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 							editorOptions: {
-								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 								// disabled: true
 							}
 						},
@@ -771,7 +771,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 						displayExpr: 'type',
 					},
 				},
-				{dataField:'purpose',width:150,dataType: "string", 
+				{dataField:'purpose',caption:'Purpose / Description',width:150,dataType: "string", 
 				validationRules: [{type: "required"}],
 				editorOptions: {
                     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
@@ -806,19 +806,19 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 						displayExpr: 'nama',
 					},
 				},
-				{dataField:'exchangerate',caption: "Exchange Rate",dataType: "number" ,format: "fixedPoint",
-                editorOptions: {
-					format: "fixedPoint",
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
-                }},
-				{dataField:'paymentamount',caption: "Amount in local currency",dataType: "number" ,format: "fixedPoint",
-                editorOptions: {
-					format: "fixedPoint",
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
-                }},
+				// {dataField:'exchangerate',caption: "Exchange Rate",dataType: "number" ,format: "fixedPoint",
+                // editorOptions: {
+				// 	format: "fixedPoint",
+                //     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                // }},
+				// {dataField:'paymentamount',caption: "Amount in local currency",dataType: "number" ,format: "fixedPoint",
+                // editorOptions: {
+				// 	format: "fixedPoint",
+                //     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                // }},
 				// {dataField:'exchangerate'},
 				// {dataField:'paymentamount'},
-				{dataField:'costcentre', caption: 'Cost Centre'},
+				// {dataField:'costcentre', caption: 'Cost Centre'},
 				{dataField:'country'},
 				{dataField:'location',validationRules: [{type: "required"}]},
 				{dataField:'remarks'},
@@ -1297,7 +1297,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 		
 	});
 	$scope.tabs = [
-		{ id:1, TabName : "Detail Advance", title: 'Detail Advance / Employee List', template: "tab1"   },
+		{ id:1, TabName : "Detail Expense", title: 'Detail Expense', template: "tab1"   },
 		{ id:5, TabName : "Bisnis Trip", title: 'Bisnis Trip', template: "tab5"   },
 		{ id:4, TabName : "SupportDoc", title: 'Supporting Document', template: "tab4"   },
 		{ id:2, TabName : "Approver List", title: 'Approver List', template: "tab2"   },
@@ -1462,22 +1462,22 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 	}
 	$scope.onFormSubmit = function(e) {
 		e.preventDefault();
-		criteria = {status:'waiting',username:$scope.formInstance.option("formData").employee_id,id:$scope.Requestid};
-		CrudService.FindData('advexpensebyemp',criteria).then(function (response){
-			if(response.jml>0){
-				DevExpress.ui.notify({
-					message: "Cannot add more request, You still have waiting approval request",
-					type: "warning",
-					displayTime: 5000,
-					height: 80,
-					position: {
-					   my: 'top center', 
-					   at: 'center center', 
-					   of: window, 
-					   offset: '0 0' 
-				   }
-				});
-			}else{
+		// criteria = {status:'waiting',username:$scope.formInstance.option("formData").employee_id,id:$scope.Requestid};
+		// CrudService.FindData('advexpensebyemp',criteria).then(function (response){
+		// 	if(response.jml>0){
+		// 		DevExpress.ui.notify({
+		// 			message: "Cannot add more request, You still have waiting approval request",
+		// 			type: "warning",
+		// 			displayTime: 5000,
+		// 			height: 80,
+		// 			position: {
+		// 			   my: 'top center', 
+		// 			   at: 'center center', 
+		// 			   of: window, 
+		// 			   offset: '0 0' 
+		// 		   }
+		// 		});
+		// 	}else{
 				criteria = {status:'approver',advexpense_id:$scope.Requestid};
 				CrudService.FindData('advexpenseapp',criteria).then(function (response){
 					if(response.jml>0){
@@ -1539,8 +1539,8 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 						});
 					}			
 				})	
-			}
-		})	   
+		// 	}
+		// })	   
     };
 	$scope.initDropDownBoxEditor = function(data) {
         return {

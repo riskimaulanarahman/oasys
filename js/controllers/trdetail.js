@@ -759,10 +759,10 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
         columnMinWidth: 50,
         columnAutoWidth: true,
 		columns: [
-			{dataField:'departdate',validationRules: [{ type: "required" }],width:100,caption: "Depart Date",dataType:"date", format: 'dd/MM/yyyy',editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now(),disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			{dataField:'departdate',validationRules: [{ type: "required" }],width:100,caption: "Depart Date",dataType:"date", format: 'dd/MM/yyyy',editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",min: new Date(d.getFullYear(), d.getMonth(), d.getDate()-1),disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
 			{dataField:'departtime',validationRules: [{ type: "required" }],width:50,caption: "Depart Time",dataType:"date",format: 'HH:mm',editorOptions: {displayFormat : "HH:mm", type:'time',disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
 			{dataField:'departfrom',validationRules: [{ type: "required" }],width:100,caption: "From",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
-			{dataField:'arrivingdate',validationRules: [{ type: "required" }],width:100,caption: "Arriving Date",dataType:"date", format: 'dd/MM/yyyy',editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now(),disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+			{dataField:'arrivingdate',validationRules: [{ type: "required" }],width:100,caption: "Arriving Date",dataType:"date", format: 'dd/MM/yyyy',editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",min: new Date(d.getFullYear(), d.getMonth(), d.getDate()-1),disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
 			{dataField:'arrivingtime',validationRules: [{ type: "required" }],width:50,caption: "Arriving Time",format: 'HH:mm',dataType:"date",editorOptions: {displayFormat : "HH:mm", type:'time',disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
 			{dataField:'arrivingto',validationRules: [{ type: "required" }],width:100,caption: "To",dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
 			{dataField:'region',validationRules: [{ type: "required" }],width:50,caption: "Region",dataType: "string",lookup: {dataSource: $scope.region,	displayExpr: "region",valueExpr: "id"},editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
@@ -1408,22 +1408,22 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 	}
 	$scope.onFormSubmit = function(e) {
 		e.preventDefault();
-		criteria = {status:'waiting',username:$scope.formInstance.option("formData").employee_id,id:$scope.Requestid};
-		CrudService.FindData('trbyemp',criteria).then(function (response){
-			if(response.jml>0){
-				DevExpress.ui.notify({
-					message: "Cannot add more request, Selected employee still have waiting approval request",
-					type: "warning",
-					displayTime: 5000,
-					height: 80,
-					position: {
-					   my: 'top center', 
-					   at: 'center center', 
-					   of: window, 
-					   offset: '0 0' 
-				   }
-				});
-			}else{
+		// criteria = {status:'waiting',username:$scope.formInstance.option("formData").employee_id,id:$scope.Requestid};
+		// CrudService.FindData('trbyemp',criteria).then(function (response){
+		// 	if(response.jml>0){
+		// 		DevExpress.ui.notify({
+		// 			message: "Cannot add more request, Selected employee still have waiting approval request",
+		// 			type: "warning",
+		// 			displayTime: 5000,
+		// 			height: 80,
+		// 			position: {
+		// 			   my: 'top center', 
+		// 			   at: 'center center', 
+		// 			   of: window, 
+		// 			   offset: '0 0' 
+		// 		   }
+		// 		});
+		// 	}else{
 				criteria = {status:'approver',tr_id:$scope.Requestid};
 				CrudService.FindData('trapp',criteria).then(function (response){
 					if(response.jml>0){
@@ -1503,8 +1503,8 @@ app.register.controller('trdetailCtrl', ['$rootScope','$scope', '$http', '$inter
 						});
 					}			
 				});
-			}
-		});			 	   
+		// 	}
+		// });			 	   
     };
 	$scope.initDropDownBoxEditorx = function(data) {
         return {

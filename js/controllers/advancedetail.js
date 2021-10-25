@@ -61,7 +61,6 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 			$scope.reqStatus = 0;
 			$scope.gridSelectedRowKeys =[];
 
-			
 			$scope.detailFormOptions = { 
 				onInitialized: function(e) {
 					$scope.formInstance = e.component;
@@ -97,10 +96,12 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 										criteria = {status:'appform',formtype:e.value,advance_id:$scope.Requestid,employee_id:$scope.data.employee_id};
 										CrudService.FindData('advance',criteria).then(function (response){
 											$scope.grid2Component.refresh();
-											// console.log(e.value + ' & ' + $scope.Requestid);
 											// console.log(response);
 										})
-										$('#advformtype').val(e.value);
+										console.log(e.value);
+										// if(e.value != 0 || e.value != '') {
+											$('#advformtype').val(e.value);
+										// }
 
 									}
                                 },
@@ -282,7 +283,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 							dataField:'isdeclaration',
 							label:{text:"Declaration"},
 							// visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
-							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							// disabled: (( $scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							dataType:"boolean",
 							editorType: "dxCheckBox",
 							validationRules: [{type: "required",message: "Declaration is required"}],
@@ -420,12 +421,18 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 			},
 			insert: function(values) {
 				values.advance_id=$scope.Requestid;
-				CrudService.Create('advancedetail',values).then(function (response) {
-					if(response.status=="error"){
-						DevExpress.ui.dialog.alert(response.message,"Error");
-					}
-					$scope.grid1Component.refresh();
-				});
+				// console.log();
+				if($scope.data.advanceform !== 0) {
+
+					CrudService.Create('advancedetail',values).then(function (response) {
+						if(response.status=="error"){
+							DevExpress.ui.dialog.alert(response.message,"Error");
+						}
+						$scope.grid1Component.refresh();
+					});
+				} else {
+					DevExpress.ui.dialog.alert("Select Advance Form","Error");
+				}
 			},
 			update: function(key, values) {
 				CrudService.Update('advancedetail',key.id,values).then(function (response) {
@@ -573,18 +580,19 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 			},
 			columns: [
 				{dataField:'description',width:150,dataType: "string" , editorOptions: {
-					format: "fixedPoint",
                     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }},	
 				{dataField:'accountcode',caption: "Account Code",width:150,dataType: "string", editorOptions: {
-					format: "fixedPoint",
                     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }},
 				{dataField:'amount',caption: "Amount",width:150,dataType: "number" ,format: "fixedPoint",
                 editorOptions: {
 					format: "fixedPoint",
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
                 }},
+				{dataField:'remarks',width:150,dataType: "string" , editorOptions: {
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
+                }},	
 			],
 			summary: {
 				recalculateWhileEditing: true,
@@ -598,7 +606,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 			editing: {
 				useIcons:true,
 				mode: "row",
-				allowUpdating:(($scope.mode=='approve') || ($scope.mode=='view') ||($scope.mode=='report') )?(($rootScope.isAdmin)?true:false):true,
+				allowUpdating:(($scope.mode=='approve') || ($scope.mode=='view') ||($scope.mode=='report') )?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?true:false):true,
 				allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 				allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 				//allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
@@ -617,7 +625,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 				var formadv = $('#advformtype').val();
 
 				// console.log(amount);
-				console.log(formadv);
+				console.log($scope.data.advanceform);
 
 				criteria = {status:'appcon',formtype:formadv,advance_id:$scope.Requestid,employee_id:$scope.data.employee_id};
 				CrudService.FindData('advance',criteria).then(function (response){
@@ -932,7 +940,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 		
 	});
 	$scope.tabs = [
-		{ id:1, TabName : "Detail Advance", title: 'Detail Advance / Employee List', template: "tab1"   },
+		{ id:1, TabName : "Detail Advance", title: 'Detail Advance', template: "tab1"   },
 		{ id:4, TabName : "SupportDoc", title: 'Supporting Document', template: "tab4"   },
 		{ id:2, TabName : "Approver List", title: 'Approver List', template: "tab2"   },
 		{ id:3, TabName : "History Tracking", title: 'History Tracking', template: "tab3"   },
@@ -967,19 +975,22 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 			var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
 			data.approvaldate = d;
 			data.mode="approve";
+			// delete data.advanceform;
 			delete data.createddate;
 			delete data.advanceno;
 			delete data.employee_id;
 			delete data.requeststatus;
 			delete data.depthead;
-			delete data.advanceform;
 			delete data.beneficiary;
 			delete data.accountName;
 			delete data.bank;
+			delete data.isused;
 			delete data.accountnumber;
 			delete data.duedate;
 			delete data.expecteddate;
 			delete data.isdeclaration;
+			delete data.apprstatuscode;
+
 			CrudService.Update('advanceapp',data.id,data).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.dialog.alert(response.message,"Error");
@@ -1010,19 +1021,22 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 					var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
 					data.approvaldate = d;
 					data.mode="approve";
+					// delete data.advanceform;
 					delete data.createddate;
 					delete data.advanceno;
 					delete data.employee_id;
 					delete data.requeststatus;
 					delete data.depthead;
-					delete data.advanceform;
 					delete data.beneficiary;
 					delete data.accountName;
 					delete data.bank;
+					delete data.isused;
 					delete data.accountnumber;
 					delete data.duedate;
 					delete data.expecteddate;
 					delete data.isdeclaration;
+					delete data.apprstatuscode;
+
 					CrudService.Update('advanceapp',data.id,data).then(function (response) {
 						if(response.status=="error"){
 							DevExpress.ui.dialog.alert(response.message,"Error");
@@ -1067,6 +1081,8 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 		delete data.fullname;
 		delete data.department;
 		delete data.approvalstatus;
+		delete data.apprstatuscode;
+
 		// delete data.advanceform;
 		data.duedate = $filter("date")(data.duedate, "yyyy-MM-dd HH:mm")
 		data.expecteddate = $filter("date")(data.expecteddate, "yyyy-MM-dd HH:mm")

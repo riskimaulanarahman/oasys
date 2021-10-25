@@ -829,11 +829,6 @@ Class Advexpensemodule extends Application{
 								$no++;
 							}
 							$this->mailbody .= '</table>
-							<ul>
-								<li><b><span>Total Amount Detail : '.number_format($val_tamount).'</span></b></li>
-								<li><b><span>Less Advance : '.number_format($less).'</span></b></li>
-								<li><b><span>Balance To Be Paid : '.number_format($val_tamount-$less).'</span></b></li>
-							</ul>
 							<table border=1 cellspacing=0 cellpadding=3 width=683>
 										<tr><th><p class=MsoNormal>No</p></th>
 											<th><p class=MsoNormal>Depart Date</p></th>
@@ -898,7 +893,10 @@ Class Advexpensemodule extends Application{
 							}
 							$this->mailbody .='</table>
 							<ul>
+								<li><b><span>Total Amount Detail : '.number_format($val_tamount).'</span></b></li>
 								<li><b><span>Total Bisnis Trip : '.number_format($totalbt).'</span></b></li>
+								<li><b><span>Less Advance : '.number_format($less).'</span></b></li>
+								<li><b><span>Balance To Be Paid : '.number_format(($val_tamount+$totalbt)-$less).'</span></b></li>
 							</ul>
 							<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.83.18/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.83.18/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 							$this->mail->addAddress($adb->email, $adb->fullname);
@@ -1281,11 +1279,6 @@ Class Advexpensemodule extends Application{
 							$no++;
 						}
 						$this->mailbody .= '</table>
-							<ul>
-								<li><b><span>Total Amount Detail : '.number_format($val_tamount).'</span></b></li>
-								<li><b><span>Less Advance : '.number_format($less).'</span></b></li>
-								<li><b><span>Balance To Be Paid : '.number_format($val_tamount-$less).'</span></b></li>
-							</ul>
 							<table border=1 cellspacing=0 cellpadding=3 width=683>
 										<tr><th><p class=MsoNormal>No</p></th>
 											<th><p class=MsoNormal>Depart Date</p></th>
@@ -1350,7 +1343,10 @@ Class Advexpensemodule extends Application{
 						}
 						$this->mailbody .='</table>
 						<ul>
+								<li><b><span>Total Amount Detail : '.number_format($val_tamount).'</span></b></li>
 								<li><b><span>Total Bisnis Trip : '.number_format($totalbt).'</span></b></li>
+								<li><b><span>Less Advance : '.number_format($less).'</span></b></li>
+								<li><b><span>Balance To Be Paid : '.number_format(($val_tamount+$totalbt)-$less).'</span></b></li>
 						</ul>
 						<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.83.18/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.83.18/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 						
@@ -1665,28 +1661,46 @@ Class Advexpensemodule extends Application{
 				
 				$Worksheet->Range("B35")->Value = $Advexpense->name;
 				$Worksheet->Range("D35")->Value = date("d/m/Y",strtotime($Advexpense->createddate));
+				$Worksheet->Range("B58")->Value = $Advexpense->name;
+				$Worksheet->Range("D58")->Value = date("d/m/Y",strtotime($Advexpense->createddate));
 
 				$pic=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 				$pic->Height  = 20;
-				$pic->Top = $excel->Cells(35, 1)->Top ;
-				$pic->Left = $excel->Cells(35, 1)->Left ;
+				$pic->Top = $excel->Cells(35, 3)->Top ;
+				$pic->Left = $excel->Cells(35, 3)->Left ;
+				$picc=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+				$picc->Height  = 20;
+				$picc->Top = $excel->Cells(58, 3)->Top ;
+				$picc->Left = $excel->Cells(58, 3)->Left ;
 
 					if(!empty($superiorname)) {
 						$Worksheet->Range("F35")->Value = $superiorname;
+						$Worksheet->Range("F58")->Value = $superiorname;
 						$Worksheet->Range("H35")->Value = $superiordate;
+						$Worksheet->Range("H58")->Value = $superiordate;
 						$pic1=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 						$pic1->Height  = 20;
-						$pic1->Top = $excel->Cells(35, 6)->Top ;
-						$pic1->Left = $excel->Cells(35, 6)->Left ;
+						$pic1->Top = $excel->Cells(35, 7)->Top ;
+						$pic1->Left = $excel->Cells(35, 7)->Left ;
+						$pic11=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic11->Height  = 20;
+						$pic11->Top = $excel->Cells(58, 7)->Top ;
+						$pic11->Left = $excel->Cells(58, 7)->Left ;
 					}
 	
 					if(!empty($hrdheadname)) {
 						$Worksheet->Range("K35")->Value = $hrdheadname;
+						$Worksheet->Range("K58")->Value = $hrdheadname;
 						$Worksheet->Range("L35")->Value = $hrdheaddate;
+						$Worksheet->Range("L58")->Value = $hrdheaddate;
 						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 						$pic2->Height  = 20;
-						$pic2->Top = $excel->Cells(35, 11)->Top ;
-						$pic2->Left = $excel->Cells(35, 11)->Left ;
+						$pic2->Top = $excel->Cells(35, 12)->Top ;
+						$pic2->Left = $excel->Cells(35, 12)->Left ;
+						$pic22=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic22->Height  = 20;
+						$pic22->Top = $excel->Cells(58, 12)->Top ;
+						$pic22->Left = $excel->Cells(58, 12)->Left ;
 					}
 	
 				foreach ($Advexpensedetail as $data){
@@ -1698,9 +1712,13 @@ Class Advexpensemodule extends Application{
 				} else {
 					$lessadvance = $Advexpense->lessadvance;
 				}
-				$Worksheet->Range("E21")->Value = number_format($val_tamount);
-				$Worksheet->Range("E23")->Value = number_format($lessadvance);
-				$Worksheet->Range("E25")->Value = number_format($val_tamount-$lessadvance);
+				// $Worksheet->Range("E21")->Value = number_format($val_tamount);
+				// $Worksheet->Range("E23")->Value = number_format($lessadvance);
+				// $Worksheet->Range("E25")->Value = number_format($val_tamount-$lessadvance);
+
+				$Worksheet->Range("E21")->Value = $val_tamount;
+				$Worksheet->Range("E23")->Value = $lessadvance;
+				$Worksheet->Range("E25")->Value = $val_tamount-$lessadvance;
 				
 	
 				$xlShiftDown=-4121;
@@ -1712,7 +1730,7 @@ Class Advexpensemodule extends Application{
 					$Worksheet->Range("B".$a)->Value = $Advexpensedetail[$a-19]->expensetype;
 					$Worksheet->Range("C".$a)->Value = $Advexpensedetail[$a-19]->purpose;
 					$Worksheet->Range("D".$a)->Value = $Advexpensedetail[$a-19]->receiptdate;
-					$Worksheet->Range("E".$a)->Value = number_format($Advexpensedetail[$a-19]->amount);
+					$Worksheet->Range("E".$a)->Value = $Advexpensedetail[$a-19]->amount;
 					$Worksheet->Range("F".$a)->Value = $Advexpensedetail[$a-19]->currency;
 					$Worksheet->Range("G".$a)->Value = $Advexpensedetail[$a-19]->exchangerate;
 					$Worksheet->Range("H".$a)->Value = $Advexpensedetail[$a-19]->paymentamount;
@@ -1779,17 +1797,19 @@ Class Advexpensemodule extends Application{
 
 					$totalbt = $jml_breakfast+$jml_lunch+$jml_dinner+$jml_pocket;
 
+					// $Worksheet->Range("G54")->Value = $totalbt;
+
 				}
 
-				for ($b=53;$b<53+count($Advexpensedetailbt);$b++){
-					if($Advexpensedetailbt[$b-53]->ispapua == 0) {
+				for ($b=52;$b<52+count($Advexpensedetailbt);$b++){
+					if($Advexpensedetailbt[$b-52]->ispapua == 0) {
 						$sppd = Advexpsppd::find('first',
 							array(
 								'conditions'=>array("level=? and ispapua=0",$Employee->level_id)
 							)
 						);
 
-					} else if($Advexpensedetailbt[$b-53]->ispapua == 1) {
+					} else if($Advexpensedetailbt[$b-52]->ispapua == 1) {
 						$sppd = Advexpsppd::find('first',
 							array(
 								'conditions'=>array("level=? and ispapua=1",$Employee->level_id)
@@ -1799,20 +1819,20 @@ Class Advexpensemodule extends Application{
 						
 					}
 
-					$breakfast = ($Advexpensedetailbt[$b-53]->breakfast == 0) ? $Advexpensedetailbt[$b-53]->breakfast : $sppd->breakfast;
-					$lunch = ($Advexpensedetailbt[$b-53]->lunch == 0) ? $Advexpensedetailbt[$b-53]->lunch : $sppd->lunch;
-					$dinner = ($Advexpensedetailbt[$b-53]->dinner == 0) ? $Advexpensedetailbt[$b-53]->dinner : $sppd->dinner;
-					$pocket = ($Advexpensedetailbt[$b-53]->pocket == 0) ? $Advexpensedetailbt[$b-53]->pocket : $sppd->pocket;
+					$breakfast = ($Advexpensedetailbt[$b-52]->breakfast == 0) ? $Advexpensedetailbt[$b-52]->breakfast : $sppd->breakfast;
+					$lunch = ($Advexpensedetailbt[$b-52]->lunch == 0) ? $Advexpensedetailbt[$b-52]->lunch : $sppd->lunch;
+					$dinner = ($Advexpensedetailbt[$b-52]->dinner == 0) ? $Advexpensedetailbt[$b-52]->dinner : $sppd->dinner;
+					$pocket = ($Advexpensedetailbt[$b-52]->pocket == 0) ? $Advexpensedetailbt[$b-52]->pocket : $sppd->pocket;
 
 					$Worksheet->Rows($b+1)->Copy();
 					$Worksheet->Rows($b+1)->Insert($xlShiftDown);
-					// $Worksheet->Range("A".$b)->Value = $no++;
-					$Worksheet->Range("C".$b)->Value = $Advexpensedetailbt[$b-53]->departdate;
-					$Worksheet->Range("D".$b)->Value = $Advexpensedetailbt[$b-53]->departtime;
-					$Worksheet->Range("E".$b)->Value = $Advexpensedetailbt[$b-53]->returndate;
-					$Worksheet->Range("F".$b)->Value = $Advexpensedetailbt[$b-53]->returntime;
+					$Worksheet->Range("B".$b)->Value = $no++;
+					$Worksheet->Range("C".$b)->Value = $Advexpensedetailbt[$b-52]->departdate;
+					$Worksheet->Range("D".$b)->Value = $Advexpensedetailbt[$b-52]->departtime;
+					$Worksheet->Range("E".$b)->Value = $Advexpensedetailbt[$b-52]->returndate;
+					$Worksheet->Range("F".$b)->Value = $Advexpensedetailbt[$b-52]->returntime;
 					$Worksheet->Range("G".$b)->Value = $breakfast;
-					// $Worksheet->Range("G".$b)->Value = $Advexpensedetailbt[$b-53]->breakfast;
+					// $Worksheet->Range("G".$b)->Value = $Advexpensedetailbt[$b-52]->breakfast;
 					$Worksheet->Range("H".$b)->Value = $lunch;
 					$Worksheet->Range("I".$b)->Value = $dinner;
 					$Worksheet->Range("J".$b)->Value = $pocket;

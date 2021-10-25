@@ -703,7 +703,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 								</ul>
 							</li>
 
-                            <!-- <li ng-class="{'mm-active': (isActive('/advance') || isActive('/advanceApproval') || isActive('/advancepayment') || isActive('/advancepaymentapproval') || isActive('/advexpense') || isActive('/advexpenseapproval') )}">
+                            <li ng-class="{'mm-active': (isActive('/advance') || isActive('/advanceApproval') || isActive('/advancepayment') || isActive('/advancepaymentapproval') || isActive('/advexpense') || isActive('/advexpenseapproval') )}">
 								<a href="#"><i class='metismenu-icon fas fa-marker'></i>Advance<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
 								<ul  ng-class="{'mm-show': (isActive('/advance') || isActive('/advanceApproval') || isActive('/advancepayment') ||  isActive('/advancepaymentapproval') || isActive('/advexpense') || isActive('/advexpenseapproval') )}">
 									<li class="nav-item"><a href="" ng-click="myAdvance()" class="nav-link" ><i class='fa fa-calendar-alt'></i> Adv Related Request</a></li>
@@ -713,7 +713,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                     <li class="nav-item"><a href="" ng-click="myAdvexpense()" class="nav-link" ><i class='fa fa-calendar-alt'></i> Expense Request</a></li>
 									<li class="nav-item"><a href="" ng-click="advexpenseApproval()" class="nav-link" ><i class='fas fa-marker'></i> Expense Approval</a></li>
 								</ul>
-							</li> -->
+							</li>
                             
 							<li class="app-sidebar__heading">Data Master</li>
 							<li ng-class="{'mm-active': $route.current.activeTab == 'company'}">
@@ -785,7 +785,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                             
                                         </ul>
                                     </li>
-                                    <!-- <li class="">
+                                    <li class="">
                                         <a href="#" aria-expanded="false">
                                             <i class="metismenu-icon"></i><i class='fa fa-calendar-alt'></i> HR
                                             <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
@@ -798,16 +798,16 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                             </li>
                                             <li>
                                                 <a href="" ng-click="dataAdvPayment()">
-                                                    <i class="metismenu-icon"></i>Advance Payment
+                                                    <i class="metismenu-icon"></i>Payment Request
                                                 </a>
                                             </li>
                                             <li>
                                                 <a href="" ng-click="dataAdvExpense()">
-                                                    <i class="metismenu-icon"></i>Advance Expense
+                                                    <i class="metismenu-icon"></i>Expense Claim
                                                 </a>
                                             </li>
                                         </ul>
-                                    </li> -->
+                                    </li>
 									
 								</ul>
 							</li>
@@ -863,14 +863,14 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 	<script language="JavaScript" src="js/lib/FileSaver.min.js" type="text/javascript"></script>
     <!-- <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/globalize/0.1.1/globalize.min.js"></script> -->
 
-	<script language="JavaScript" src="js/app.js?v=5.17" type="text/javascript"></script>
-	<script language="JavaScript" src="js/directive.js?v=5.17" type="text/javascript"></script>
-	<script language="JavaScript" src="js/services.js?v=5.17" type="text/javascript"></script>
-	<script language="JavaScript" src="js/filter.js?v=5.17" type="text/javascript"></script>
-	<script language="JavaScript" src="js/factory.js?v=5.17" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/maincontroller.js?v=5.17" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/login.js?v=5.17" type="text/javascript"></script>
-	<script language="JavaScript" src="js/script.js?v=5.17" type="text/javascript"></script>
+	<script language="JavaScript" src="js/app.js?v=5.18" type="text/javascript"></script>
+	<script language="JavaScript" src="js/directive.js?v=5.18" type="text/javascript"></script>
+	<script language="JavaScript" src="js/services.js?v=5.18" type="text/javascript"></script>
+	<script language="JavaScript" src="js/filter.js?v=5.18" type="text/javascript"></script>
+	<script language="JavaScript" src="js/factory.js?v=5.18" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/maincontroller.js?v=5.18" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/login.js?v=5.18" type="text/javascript"></script>
+	<script language="JavaScript" src="js/script.js?v=5.18" type="text/javascript"></script>
 
 	<script type="text/javascript" src="assets/scripts/main.js"></script>
 </body>

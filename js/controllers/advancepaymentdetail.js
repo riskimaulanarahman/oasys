@@ -337,16 +337,6 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 						colSpan:2,
 						colCount : 2,
 						items: [
-							{dataField:'duedate',
-							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-							editorType: "dxDateBox",label: {text: "Due Date"},
-							editorOptions: {
-								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-								displayFormat:"dd/MM/yyyy",min:Date.now()},
-							validationRules: [{
-								type: "required",
-								message: "Please Due Date"
-							}]},
 							{dataField:'paymentdate',
 							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							editorType: "dxDateBox",label: {text: "Payment Date"},
@@ -357,6 +347,17 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 								type: "required",
 								message: "Please Payment Date"
 							}]},
+							{dataField:'duedate',
+							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							editorType: "dxDateBox",label: {text: "Due Date"},
+							editorOptions: {
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+								displayFormat:"dd/MM/yyyy",min:Date.now()},
+							validationRules: [{
+								type: "required",
+								message: "Please Due Date"
+							}]},
+							
 							
 							
 						]
@@ -741,14 +742,16 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
                     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }},	
 				{dataField:'accountcode',caption: "Account Code",width:150,dataType: "string", editorOptions: {
-					format: "fixedPoint",
                     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }},
 				{dataField:'amount',caption: "Amount",width:150,dataType: "number" ,format: "fixedPoint",
                 editorOptions: {
 					format: "fixedPoint",
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
                 }},
+				{dataField:'remarks',width:150,dataType: "string" , editorOptions: {
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
+                }},	
 			],
 			summary: {
 				recalculateWhileEditing: true,
@@ -762,7 +765,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 			editing: {
 				useIcons:true,
 				mode: "row",
-				allowUpdating:(($scope.mode=='approve') || ($scope.mode=='view') ||($scope.mode=='report') )?(($rootScope.isAdmin)?true:false):true,
+				allowUpdating:(($scope.mode=='approve') || ($scope.mode=='view') ||($scope.mode=='report') )?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?true:false):true,
 				allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 				allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 				//allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
@@ -1147,6 +1150,8 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 			delete data.duedate;
 			delete data.paymentdate;
 			delete data.isdeclaration;
+			delete data.apprstatuscode;
+
 
 			CrudService.Update('advpaymentapp',data.id,data).then(function (response) {
 				if(response.status=="error"){
@@ -1195,6 +1200,8 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 					delete data.duedate;
 					delete data.paymentdate;
 					delete data.isdeclaration;
+					delete data.apprstatuscode;
+
 
 					CrudService.Update('advpaymentapp',data.id,data).then(function (response) {
 						if(response.status=="error"){
