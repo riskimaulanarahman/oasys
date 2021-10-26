@@ -785,7 +785,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 				{dataField:'amount',caption: "Amount", validationRules: [{type: "required"}], width:150,dataType: "number" ,format: "fixedPoint",
                 editorOptions: {
 					format: "fixedPoint",
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
                 }},
 				// {dataField: "currency",caption: "currency", lookup: { 
 				// 	displayExpr: 'nama',  
@@ -821,7 +821,9 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 				// {dataField:'costcentre', caption: 'Cost Centre'},
 				{dataField:'country'},
 				{dataField:'location',validationRules: [{type: "required"}]},
-				{dataField:'remarks'},
+				{dataField:'remarks',width:150,dataType: "string" , editorOptions: {
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
+                }},	
 			],
 			summary: {
 				recalculateWhileEditing: true,
@@ -838,7 +840,8 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 			editing: {
 				useIcons:true,
 				mode: "cell",
-				allowUpdating:(($scope.mode=='approve') || ($scope.mode=='view') ||($scope.mode=='report') )?(($rootScope.isAdmin)?true:false):true,
+				// allowUpdating:(($scope.mode=='approve') || ($scope.mode=='view') ||($scope.mode=='report') )?(($rootScope.isAdmin)?true:false):true,
+				allowUpdating:(($scope.mode=='approve') || ($scope.mode=='view') ||($scope.mode=='report') )?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?true:false):true,
 				allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 				allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 				//allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
@@ -1247,7 +1250,9 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 				// {dataField:'costcentre', caption: 'Cost Centre'},
 				// {dataField:'country'},
 				// {dataField:'location',validationRules: [{type: "required"}]},
-				{dataField:'remarks'},
+				{dataField:'remarks',width:150,dataType: "string" , editorOptions: {
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
+                }},	
 			],
 			// summary: {
 			// 	recalculateWhileEditing: true,
@@ -1264,7 +1269,8 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 			editing: {
 				useIcons:true,
 				mode: "cell",
-				allowUpdating:(($scope.mode=='approve') || ($scope.mode=='view') ||($scope.mode=='report') )?(($rootScope.isAdmin)?true:false):true,
+				allowUpdating:(($scope.mode=='approve') || ($scope.mode=='view') ||($scope.mode=='report') )?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?true:false):true,
+				// allowUpdating:(($scope.mode=='approve') || ($scope.mode=='view') ||($scope.mode=='report') )?(($rootScope.isAdmin)?true:false):true,
 				allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 				allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 				//allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
@@ -1348,6 +1354,8 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 			delete data.startdate;
 			delete data.enddate;
 			delete data.reason;
+			delete data.apprstatuscode;
+
 			CrudService.Update('advexpenseapp',data.id,data).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.dialog.alert(response.message,"Error");
@@ -1393,6 +1401,8 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 					delete data.startdate;
 					delete data.enddate;
 					delete data.reason;
+					delete data.apprstatuscode;
+
 					CrudService.Update('advexpenseapp',data.id,data).then(function (response) {
 						if(response.status=="error"){
 							DevExpress.ui.dialog.alert(response.message,"Error");

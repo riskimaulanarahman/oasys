@@ -191,7 +191,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 						dataField:'paymentterm',
 						editorType: "dxSelectBox",
 						label:{text:"Payment Term"},
-						editorOptions: {readOnly: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false, items: ['5 days','7 days','14 days','30 days']},
+						editorOptions: {readOnly: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false, items: ['3 days','5 days','7 days','14 days','30 days']},
 						validationRules: [{type: "required", message: "Please Select Payment Term" }]
 					},
 					{dataField:'periodstart',editorType: "dxDateBox",validationRules: [{type: "required", message: "Please enter Start Date" }],label: {text: "Period Start"},editorOptions: {displayFormat:"yyyy-MM-dd",readOnly: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,}},
