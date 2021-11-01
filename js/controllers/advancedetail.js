@@ -1118,7 +1118,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 						criteria = {status:'approver',advance_id:$scope.Requestid};
 						CrudService.FindData('advancedetail',criteria).then(function (response){
 							if(response.jml>0){
-								var data = $scope.formInstance.option("formData");;
+								var data = $scope.formInstance.option("formData");
 								data.requeststatus = 1;
 								delete data.approvalstatus;
 								data.duedate = $filter("date")(data.duedate, "yyyy-MM-dd HH:mm")

@@ -1280,7 +1280,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 						criteria = {status:'approver',advpayment_id:$scope.Requestid};
 						CrudService.FindData('advpaymentdetail',criteria).then(function (response){
 							if(response.jml>0){
-								var data = $scope.formInstance.option("formData");;
+								var data = $scope.formInstance.option("formData");
 								data.requeststatus = 1;
 								delete data.approvalstatus;
 								data.duedate = $filter("date")(data.duedate, "yyyy-MM-dd HH:mm")

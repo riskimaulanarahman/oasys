@@ -121,6 +121,9 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 			$scope.reqStatus = 0;
 			$scope.gridSelectedRowKeys =[];
 
+			var suspendValueChagned;
+			$scope.Pstart = new Date();
+			$scope.Pend = new Date();
 			
 			$scope.detailFormOptions = { 
 				onInitialized: function(e) {
@@ -150,7 +153,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 		
 						{dataField:'createddate',editorType: "dxDateBox",label: {text: "Creation Date"},
 						editorOptions: {
-							readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
+							readOnly: true,
 							displayFormat:"dd/MM/yyyy",
 							// disabled: true
 						}},
@@ -164,7 +167,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 							name:'name',
 							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 							editorOptions: {
-								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
+								readOnly: true
 								// disabled: true
 							}
 						},
@@ -176,7 +179,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 							name:'email',
 							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 							editorOptions: {
-								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
+								readOnly: true
 								// disabled: true
 							}
 						},
@@ -188,7 +191,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 							name:'costcenter',
 							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 							editorOptions: {
-								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
+								readOnly: true
 								// disabled: true
 							}
 						},
@@ -200,7 +203,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 							name:'bg',
 							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 							editorOptions: {
-								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
+								readOnly: true
 								// disabled: true
 							}
 						},
@@ -212,7 +215,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 							name:'location',
 							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 							editorOptions: {
-								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
+								readOnly: true
 								// disabled: true
 							}
 						},
@@ -308,27 +311,105 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 					{	
 						itemType: "group",
 						caption: "",
-						// name:"reqisition",
+						name:"gdatebox",
 						colSpan:2,
 						colCount : 2,
 						items: [
 							{dataField:'startdate',
+							name: 'startdate',
 							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							editorType: "dxDateBox",label: {text: "Start Date"},
 							editorOptions: {
 								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-								displayFormat:"dd/MM/yyyy",min:Date.now()
+								displayFormat:"dd/MM/yyyy",
+								min:Date.now(),
+								onValueChanged: function(e) {
+									if (suspendValueChagned) {
+										suspendValueChagned = false;
+										return;
+									}
+									var oldValue = e.previousValue;
+									console.log(e.value);
+									var start = e.value;
+									var end = $scope.formInstance.option("formData").enddate;
+									var departdate = $filter("date")(start, "yyyy-MM-dd HH:mm")
+									var returndate = $filter("date")(end, "yyyy-MM-dd HH:mm")
+
+									$scope.formInstance.getEditor("enddate").option('value', null);
+									// $scope.formInstance.updateData('enddate',  null);
+
+									
+									if(end !== null) {
+										var r = confirm("Detail Bisnis Trip will be deleted");
+										if (r == true) {
+											criteria = {status:'bisnistrip',action:'reset',valstart:departdate,valend:returndate,advexpense_id:$scope.Requestid,employee_id:$scope.data.employee_id};
+											CrudService.FindData('advexpense',criteria).then(function (response){
+												console.log(response);
+												$scope.grid5Component.refresh();
+											})
+											// $scope.formInstance.itemOption('gdatebox.enddate', 'visible', false);
+
+											e.component.option('value', start);
+											txt = "Delete Successed";
+										} else {
+											txt = "Delete Canceled";
+											suspendValueChagned = true; 
+											e.component.option('value',  oldValue);
+											// $scope.formInstance.refresh();
+											
+										}
+										alert(txt);
+									} else {
+										criteria = {status:'bisnistrip',valstart:departdate,valend:returndate,advexpense_id:$scope.Requestid,employee_id:$scope.data.employee_id};
+										CrudService.FindData('advexpense',criteria).then(function (response){
+											console.log(response);
+											// $scope.grid5Component.refresh();
+
+										})
+									}
+
+								}
 							},
 							validationRules: [{
 								type: "required",
 								message: "Please Due Date"
 							}]},
 							{dataField:'enddate',
+							name: 'enddate',
 							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							// visible: false,
+							// visible:($scope.data.startdate==null)?true:false,
 							editorType: "dxDateBox",label: {text: "End Date"},
 							editorOptions: {
 								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-								displayFormat:"dd/MM/yyyy",min:Date.now()
+								displayFormat:"dd/MM/yyyy",
+								min:Date.now(),
+								// value: '',
+								onValueChanged: function(e) {
+									// e.preventDefault();
+									// console.log(e.value);
+									var start = new Date($scope.formInstance.option("formData").startdate);
+									var end = new Date(e.value);
+
+									diff  = new Date(end - start);
+									days  = diff/1000/60/60/24;
+									console.log(start);
+									console.log(end);
+									console.log(diff);
+									console.log(days);
+
+									var departdate = $filter("date")(start, "yyyy-MM-dd HH:mm")
+									var returndate = $filter("date")(end, "yyyy-MM-dd HH:mm")
+									if(end !== null) {
+										
+										criteria = {status:'bisnistrip',action:'add',valdays:days,valstart:departdate,valend:returndate,advexpense_id:$scope.Requestid,employee_id:$scope.data.employee_id};
+										CrudService.FindData('advexpense',criteria).then(function (response){
+											// console.log(response);
+											$scope.grid5Component.refresh();
+										})
+									}
+
+								}
 							},
 							validationRules: [{
 								type: "required",
@@ -541,7 +622,13 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 							}
 						}]
 					},
-				],			
+				],
+				// bindingOptions: {
+				// 	"items[2].items[0].editorOptions.value":"Pstart", 
+				// 	"items[2].items[0].editorOptions.max":"Pend", 
+				// 	"items[2].items[1].editorOptions.value":"Pend", 
+				// 	"items[2].items[1].editorOptions.min":"Pstart", 
+				// }			
 			};
 		}
 		var myStore = new DevExpress.data.CustomStore({
@@ -763,24 +850,27 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 					dataField: "expensetype",
 					name:'expensetype',
                     editorType: "dxSelectBox",
-					disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
                     validationRules: [{type: "required", message: "Please select Expense Type" }],
 					lookup: { 
 						dataSource:$scope.ExpenseTypes,  
 						valueExpr: 'code',
 						displayExpr: 'type',
 					},
+					editorOptions: {
+						displayFormat:"dd/MM/yyyy",
+						disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin)?false:true):false,
+					},
 				},
 				{dataField:'purpose',caption:'Purpose / Description',width:150,dataType: "string", 
 				validationRules: [{type: "required"}],
 				editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin)?false:true):false,
                 }},
 				{dataField:'receiptdate',width:150,dataType: "date" ,
 				format: 'dd/MM/yyyy',editorType: "dxDateBox",
                 editorOptions: {
 					displayFormat:"dd/MM/yyyy",
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin)?false:true):false,
                 }},
 				{dataField:'amount',caption: "Amount", validationRules: [{type: "required"}], width:150,dataType: "number" ,format: "fixedPoint",
                 editorOptions: {
@@ -799,11 +889,11 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 					dataField: "currency",
 					name:'currency',
                     editorType: "dxSelectBox",
-					disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
 					editorOptions: { 
 						dataSource:$scope.Currencys,  
 						valueExpr: 'nama',
 						displayExpr: 'nama',
+						disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin)?false:true):false,
 					},
 				},
 				// {dataField:'exchangerate',caption: "Exchange Rate",dataType: "number" ,format: "fixedPoint",
@@ -819,8 +909,12 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 				// {dataField:'exchangerate'},
 				// {dataField:'paymentamount'},
 				// {dataField:'costcentre', caption: 'Cost Centre'},
-				{dataField:'country'},
-				{dataField:'location',validationRules: [{type: "required"}]},
+				{dataField:'country',editorOptions: {
+					disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin)?false:true):false,
+				}},
+				{dataField:'location',validationRules: [{type: "required"}],editorOptions: {
+					disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin)?false:true):false,
+				}},
 				{dataField:'remarks',width:150,dataType: "string" , editorOptions: {
                     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
                 }},	
@@ -1143,48 +1237,33 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 			// 	return Globalize.format(arg.value, "c")  
 			// },
 			columns: [
-				// {
-				// 	dataField: "expensetype",
-				// 	name:'expensetype',
-                //     editorType: "dxSelectBox",
-				// 	disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
-                //     validationRules: [{type: "required", message: "Please select Expense Type" }],
-				// 	editorOptions: { 
-				// 		dataSource:$scope.ExpenseTypes,  
-				// 		valueExpr: 'type',
-				// 		displayExpr: 'type',
-				// 	},
-				// },
-				// {dataField:'purpose',width:150,dataType: "string", 
-				// validationRules: [{type: "required"}],
-				// editorOptions: {
-                //     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
-                // }},
 				{dataField:'departdate',width:150,dataType: "date" ,
 				format: 'dd/MM/yyyy',editorType: "dxDateBox",
                 editorOptions: {
 					displayFormat:"dd/MM/yyyy",
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                    // disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) ?false:true):false
+					disabled:true
                 }},
 				{dataField:'departtime',width:150,dataType: "date" ,
 				format: 'HH:mm',editorType: "dxDateBox",
                 editorOptions: {
 					displayFormat:"HH:mm",
 					type:"time",
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) ?false:true):false
                 }},
 				{dataField:'returndate',width:150,dataType: "date" ,
 				format: 'dd/MM/yyyy',editorType: "dxDateBox",
                 editorOptions: {
 					displayFormat:"dd/MM/yyyy",
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                    // disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) ?false:true):false
+                    disabled:true
                 }},
 				{dataField:'returntime',width:150,dataType: "date" ,
 				format: 'HH:mm',editorType: "dxDateBox",
                 editorOptions: {
 					displayFormat:"HH:mm",
 					type:"time",
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) ?false:true):false
                 }},
 				// {
 				// 	dataField:'accom',
@@ -1193,79 +1272,45 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 				{
 					dataField:'breakfast',
 					dataType: "boolean",
+					editorOptions: {
+						disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
+					}
 				},
 				{
 					dataField:'lunch',
 					dataType: "boolean",
+					editorOptions: {
+						disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
+					}
 				},
 				{
 					dataField:'dinner',
 					dataType: "boolean",
+					editorOptions: {
+						disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
+					}
 				},
 				{
 					dataField:'pocket',
 					dataType: "boolean",
+					editorOptions: {
+						disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
+					}
 				},
 				{
 					dataField:'ispapua',
 					caption:'isPapua ?',
 					dataType: "boolean",
+					editorOptions: {
+						disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
+					}
 				},
-				// {dataField:'amount',caption: "Amount", validationRules: [{type: "required"}], width:150,dataType: "number" ,format: "fixedPoint",
-                // editorOptions: {
-				// 	format: "fixedPoint",
-                //     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
-                // }},
-				// {dataField: "currency",caption: "currency", lookup: { 
-				// 	displayExpr: 'nama',  
-				// 	valueExpr: 'nama',
-				// 	},setCellValue: function(rowData, value) {
-				// 		rowData.currency = value;
-				// 		// rowData.approvaltype_id = null;
-				// 	},
-				// }, 
-				// {
-				// 	dataField: "currency",
-				// 	name:'currency',
-                //     editorType: "dxSelectBox",
-				// 	disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
-				// 	editorOptions: { 
-				// 		dataSource:$scope.Currencys,  
-				// 		valueExpr: 'nama',
-				// 		displayExpr: 'nama',
-				// 	},
-				// },
-				// {dataField:'exchangerate',caption: "Exchange Rate",dataType: "number" ,format: "fixedPoint",
-                // editorOptions: {
-				// 	format: "fixedPoint",
-                //     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
-                // }},
-				// {dataField:'paymentamount',caption: "Amount in local currency",dataType: "number" ,format: "fixedPoint",
-                // editorOptions: {
-				// 	format: "fixedPoint",
-                //     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
-                // }},
-				// {dataField:'exchangerate'},
-				// {dataField:'paymentamount'},
-				// {dataField:'costcentre', caption: 'Cost Centre'},
-				// {dataField:'country'},
-				// {dataField:'location',validationRules: [{type: "required"}]},
+				
 				{dataField:'remarks',width:150,dataType: "string" , editorOptions: {
                     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
                 }},	
 			],
-			// summary: {
-			// 	recalculateWhileEditing: true,
-			// 	totalItems: [{
-			// 		column: "amount",
-			// 		summaryType: "sum",
-			// 		valueFormat: "fixedPoint",
-			// 		displayFormat: "Total: {0}",	
-			// 	}]
-			// },
-			// bindingOptions :{
-			// 	"columns[0].lookup.dataSource":"expensetypes",
-			// },
+		
 			editing: {
 				useIcons:true,
 				mode: "cell",
@@ -1279,13 +1324,13 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 				},
 			},
 			onInitialized:function (e){
-				$scope.grid1Component = e.component;
+				$scope.grid5Component = e.component;
 			},
 			onEditorPreparing: function (e) {  
-				$scope.grid1Component = e.component;
+				$scope.grid5Component = e.component;
 			},
 			onToolbarPreparing: function(e) {   
-				$scope.grid1Component = e.component;
+				$scope.grid5Component = e.component;
 
 				e.toolbarOptions.items.unshift({						
 					location: "after",
@@ -1294,7 +1339,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 						hint: "Refresh Data",
 						icon: "refresh",
 						onClick: function() {
-							$scope.grid1Component.refresh();
+							$scope.grid5Component.refresh();
 						}
 					}
 				});
@@ -1494,19 +1539,39 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 						criteria = {status:'approver',advexpense_id:$scope.Requestid};
 						CrudService.FindData('advexpensedetail',criteria).then(function (response){
 							if(response.jml>0){
-								var data = $scope.formInstance.option("formData");;
-								data.requeststatus = 1;
-								delete data.approvalstatus;
-								data.startdate = $filter("date")(data.startdate, "yyyy-MM-dd HH:mm")
-								data.enddate = $filter("date")(data.enddate, "yyyy-MM-dd HH:mm")
-								CrudService.Update('advexpense',data.id,data).then(function (response) {
-									if(response.status=="error"){
-										DevExpress.ui.notify(response.message,"error");
-									}else{
+								CrudService.FindData('advexpensedetail',criteria).then(function (responsed){
+									if(responsed.jml>0){
+										var data = $scope.formInstance.option("formData");
+										data.requeststatus = 1;
+										delete data.approvalstatus;
+										data.startdate = $filter("date")(data.startdate, "yyyy-MM-dd HH:mm")
+										data.enddate = $filter("date")(data.enddate, "yyyy-MM-dd HH:mm")
+										CrudService.Update('advexpense',data.id,data).then(function (response) {
+
+										if(response.status=="error"){
+											DevExpress.ui.notify(response.message,"error");
+										}else{
+											DevExpress.ui.notify({
+												message: "Data has been Updated",
+												type: "success",
+												displayTime: 2000,
+												height: 80,
+												position: {
+												my: 'top center', 
+												at: 'center center', 
+												of: window, 
+												offset: '0 0' 
+											}
+											});
+											$location.path( "/advexpense" );
+										}
+										
+										});
+									} else {
 										DevExpress.ui.notify({
-											message: "Data has been Updated",
-											type: "success",
-											displayTime: 2000,
+											message: "Please add detail bisnis trip of the request",
+											type: "warning",
+											displayTime: 5000,
 											height: 80,
 											position: {
 											my: 'top center', 
@@ -1515,13 +1580,11 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 											offset: '0 0' 
 										}
 										});
-										$location.path( "/advexpense" );
 									}
-									
 								});
 							}else{
 								DevExpress.ui.notify({
-									message: "Please add detail of the request",
+									message: "Please add detail expense of the request",
 									type: "warning",
 									displayTime: 5000,
 									height: 80,
