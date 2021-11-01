@@ -340,7 +340,7 @@ Class Itimailmodule extends Application{
 												if($Employee->companycode == 'BCL') {
 													$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id='30' and tbl_employee.companycode='BCL' ")));
 												} else {
-													$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id='30' and tbl_employee.companycode=? ",$Employee->companycode)));
+													$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id='30' and not (tbl_employee.companycode='BCL')")));
 												}
 												if(count($Approver2)>0){
 													$Itimailapproval = new Itimailapproval();
@@ -386,9 +386,11 @@ Class Itimailmodule extends Application{
 																$logger->SaveData();
 														}
 													}
+
+													echo "21";
 													
 												} else {
-													$Appl = Itimailapproval::find('all',array('joins'=>$joins,'conditions' => array("itimail_id=? and tbl_approver.approvaltype_id=30 and tbl_employee.company_id=? and not(tbl_employee.location_id='8') ",$id,$Employee->company_id)));
+													$Appl = Itimailapproval::find('all',array('joins'=>$joins,'conditions' => array("itimail_id=? and tbl_approver.approvaltype_id=30 and tbl_employee.companycode=? and not(tbl_employee.companycode='IHM') ",$id,$Employee->companycode)));
 													if (count($Appl)>0){
 													}else{
 														$dx = Itimailapproval::find('all',array('joins'=>$joins,'conditions' => array("itimail_id=? and tbl_approver.approvaltype_id=30",$id)));	
@@ -398,7 +400,7 @@ Class Itimailmodule extends Application{
 															$logger->SaveData();
 														}
 												
-														$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=30 and tbl_employee.company_id=? and not(tbl_employee.location_id='8')",$Employee->company_id)));
+														$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=30 and not(tbl_employee.companycode='IHM')")));
 														if(count($Approver2)>0){
 															$Itimailapproval = new Itimailapproval();
 															$Itimailapproval->itimail_id = $Itimail->id;
@@ -406,6 +408,9 @@ Class Itimailmodule extends Application{
 															$Itimailapproval->save();
 														}
 													}
+
+													echo "22";
+
 													
 												}
 										}
