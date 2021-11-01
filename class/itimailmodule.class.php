@@ -340,7 +340,7 @@ Class Itimailmodule extends Application{
 												if($Employee->companycode == 'BCL') {
 													$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id='30' and tbl_employee.companycode='BCL' ")));
 												} else {
-													$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id='30' and not (tbl_employee.companycode='BCL')")));
+													$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id='30' and tbl_employee.companycode='IHM'")));
 												}
 												if(count($Approver2)>0){
 													$Itimailapproval = new Itimailapproval();
