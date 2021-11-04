@@ -667,7 +667,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 								</ul>
 							</li>
 							<li ng-class="{'mm-active': (isActive('/spkl') || isActive('/spklapproval') || isActive('/spkltms') || isActive('/spkltmsapproval'))}">
-								<a href="#"><i class='metismenu-icon pe-7s-clock icon-gradient bg-premium-dark'></i>SPKL<i class="metismenu-state-icon fas pe-7s-angle-down caret-left"></i></a>
+								<a href="#"><i class='metismenu-icon pe-7s-alarm icon-gradient bg-premium-dark'></i>SPKL<i class="metismenu-state-icon fas pe-7s-angle-down caret-left"></i></a>
 								<ul  ng-class="{'mm-show': (isActive('/spkl') || isActive('/spklapproval') || isActive('/spkltms') || isActive('/spkltmsapproval'))}">
 									<li class="nav-item"><a href="" ng-click="mySPKL()" class="nav-link" ><i class='fa fa-calendar-alt'></i> OT Instruction Request</a></li>
 									<li class="nav-item"><a href="" ng-click="SPKLApproval()" class="nav-link" ><i class='fas fa-marker'></i> OT Instruction Approval</a></li>
