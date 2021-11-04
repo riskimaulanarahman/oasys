@@ -779,11 +779,11 @@ Class DayoffModule extends Application{
 						}else if (isset($query['detail'])){
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$joinx   = "LEFT JOIN tbl_dayoffreq as r ON (dayoff_id = r.id) left join tbl_employee e on r.employee_id=e.id ";	
-							if(($Employee->location->sapcode=='0200') || ($this->currentUser->isadmin)){
+							// if(($Employee->location->sapcode=='0200') || ($this->currentUser->isadmin)){
 								$Dayoffdetail = Dayoffdetail::find('all', array('joins'=>$joinx,'conditions' => array("isApproved='1' and r.requeststatus='3' and dateworked between ? and ?",$query['startDate'],$query['endDate']),'order'=>"dateworked"));
-							}else{
-								$Dayoffdetail = Dayoffdetail::find('all', array('joins'=>$joinx,'conditions' => array("isApproved='1' and r.requeststatus='3' and e.company_id=?  and dateworked between ? and ?",$Employee->company_id,$query['startDate'],$query['endDate']),'order'=>"dateworked"));
-							}
+							// }else{
+							// 	$Dayoffdetail = Dayoffdetail::find('all', array('joins'=>$joinx,'conditions' => array("isApproved='1' and r.requeststatus='3' and e.company_id=?  and dateworked between ? and ?",$Employee->company_id,$query['startDate'],$query['endDate']),'order'=>"dateworked"));
+							// }
 							
 							foreach ($Dayoffdetail as &$result) {
 								$joine  = "LEFT JOIN tbl_employee s ON (tbl_dayoffreq.superior = s.id) left join tbl_employee d on (tbl_dayoffreq.depthead = d.id)";	
@@ -1478,7 +1478,10 @@ Class DayoffModule extends Application{
 						if(isset($query['status'])){
 							switch ($query['status']){
 								case 'pending':
-									$Dayoff = Dayoff::find('all', array('conditions' => array("employee_id=? and RequestStatus<3 and id<>?",$query['username'],$query['id']),'include' => array('employee')));
+									$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+
+									$Dayoff = Dayoff::find('all', array('conditions' => array("employee_id=? and RequestStatus<3 ",$Employee->id),'include' => array('employee')));
+									// $Dayoff = Dayoff::find('all', array('conditions' => array("employee_id=? and RequestStatus<3 and id<>?",$query['username'],$query['id']),'include' => array('employee')));
 									foreach ($Dayoff as &$result) {
 										$fullname	= $result->employee->fullname;		
 										$result		= $result->to_array();

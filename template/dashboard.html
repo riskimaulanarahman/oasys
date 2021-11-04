@@ -1,6 +1,425 @@
 <div ng-controller="dashboardCtrl as dsb">
-	<div class="tabs-animation">
-		<div class="mb-3 card">
+	<div class="row">
+		<div class="col-md-12 col-lg-6 col-xl-3">
+			<div class="card-hover-shadow profile-responsive card-border border-inverse mb-3 card {{ ( pendingDayoff >0 )? 'divshake' : ''}}" style="min-height:370px;">
+				<div class="dropdown-menu-header">
+					<div class="dropdown-menu-header-inner bg-happy-itmeo">
+						<div class="menu-header-content btn-pane-right">
+							<div>
+								<h5 class="menu-header-title"><i class="pe-7s-umbrella"></i> Weekend/PH Coverage</h5>
+							</div>
+							<div class="menu-header-btn-pane">
+								<button class="mb-2 mr-2 btn-pill btn btn-success"><i class="fa fa-question"></i></button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<ul class="list-group list-group-flush">
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-clock"></i> WPHC Request</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse"><span ng-bind="pendingDayoffReq">0</span>
+									| <button class="btn-icon btn btn-success btn-sm" ng-click="myDayoff()">View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-hourglass-half"></i> WPHC Approval</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse"><span ng-bind="pendingDayoff">0</span>
+									| <button class="btn-icon btn btn-success btn-sm" ng-click="dayoffApproval()">View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+		
+				</ul>
+			</div>
+		</div>
+		<div class="col-md-12 col-lg-6 col-xl-3">
+			<div class="card-hover-shadow profile-responsive card-border border-inverse mb-3 card {{ ( pendingSPKL >0 || pendingSPKLTMS >0 )? 'divshake' : ''}}" style="min-height:370px;">
+				<div class="dropdown-menu-header">
+					<div class="dropdown-menu-header-inner bg-sunny-morning">
+						<div class="menu-header-content btn-pane-right">
+							<div>
+								<h5 class="menu-header-title"><i class="pe-7s-alarm"></i> SPKL/Overtime</h5>
+							</div>
+							<div class="menu-header-btn-pane">
+								<button class="mb-2 mr-2 btn-pill btn btn-warning"><i class="fa fa-question"></i></button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<ul class="list-group list-group-flush">
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-clock"></i> SPKL Request</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse"><span ng-bind="pendingSPKLReq">0</span>
+									| <button class="btn-icon btn btn-warning btn-sm" ng-click="mySPKL()">View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-hourglass-half"></i> SPKL Approval</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse"><span ng-bind="pendingSPKL">0</span>
+									| <button class="btn-icon btn btn-warning btn-sm" ng-click="SPKLApproval()">View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-clock"></i> TS Request</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse"><span ng-bind="pendingSPKLTMSReq">0</span>
+									| <button class="btn-icon btn btn-warning btn-sm" ng-click="myTimesheet()">View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-hourglass-half"></i> TS Approval</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse"><span ng-bind="pendingSPKLTMS">0</span>
+									| <button class="btn-icon btn btn-warning btn-sm" ng-click="SPKLTMSApproval()">View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					
+		
+				</ul>
+			</div>
+		</div>
+		<div class="col-md-12 col-lg-6 col-xl-3">
+			<div class="card-hover-shadow profile-responsive card-border border-inverse mb-3 card {{ ( pendingTR >0 )? 'divshake' : ''}}" style="min-height:370px;">
+				<div class="dropdown-menu-header">
+					<div class="dropdown-menu-header-inner bg-arielle-smile">
+						<div class="menu-header-content btn-pane-right">
+							<div>
+								<h5 class="menu-header-title"><i class="pe-7s-plane"></i> Travel Request</h5>
+							</div>
+							<div class="menu-header-btn-pane">
+								<button class="mb-2 mr-2 btn-pill btn btn-info"><i class="fa fa-question"></i></button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<ul class="list-group list-group-flush">
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-clock"></i> TR Request</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse"><span  ng-bind="pendingTRReq">0</span>
+									| <button class="btn-icon btn btn-info btn-sm" ng-click="myTR()">View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-hourglass-half"></i> TR Approval</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse"><span ng-bind="pendingTR">0</span>
+									| <button class="btn-icon btn btn-info btn-sm" ng-click="TRApproval()">View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+		
+				</ul>
+			</div>
+		</div>
+		<div class="col-md-12 col-lg-6 col-xl-3">
+			<div class="card-hover-shadow profile-responsive card-border border-inverse mb-3 card {{ ( pendingRFC >0 )? 'divshake' : ''}} " style="min-height:370px;">
+				<div class="dropdown-menu-header">
+					<div class="dropdown-menu-header-inner bg-plum-plate">
+						<div class="menu-header-content btn-pane-right">
+							<div>
+								<h5 class="menu-header-title"><i class="pe-7s-note2"></i> RFC</h5>
+							</div>
+							<div class="menu-header-btn-pane">
+								<button class="mb-2 mr-2 btn-pill btn btn-primary"><i class="fa fa-question"></i></button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<ul class="list-group list-group-flush">
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-clock"></i> RFC Request</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse"><span ng-bind="pendingRFCReq">0</span>
+									| <button class="btn-icon btn btn-primary btn-sm" ng-click="myRFC()">View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-hourglass-half"></i> RFC Approval</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse"><span ng-bind="pendingRFC">0</span>
+									| <button class="btn-icon btn btn-primary btn-sm" ng-click="RFCApproval()">View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+		
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12 col-lg-6 col-xl-3">
+			<div class="card-hover-shadow profile-responsive card-border border-inverse mb-3 card {{ pendingMMF28 >0 || pendingMMF30 >0 ? 'divshake' : ''}}" style="min-height:370px;">
+				<div class="dropdown-menu-header">
+					<div class="dropdown-menu-header-inner bg-night-fade">
+						<div class="menu-header-content btn-pane-right">
+							<div>
+								<h5 class="menu-header-title"><i class="pe-7s-tools"></i> MMF</h5>
+							</div>
+							<div class="menu-header-btn-pane">
+								<button class="mb-2 mr-2 btn-pill btn btn-alternate"><i class="fa fa-question"></i></button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<ul class="list-group list-group-flush">
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-clock"></i> MMF28 Request</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse" ><span ng-bind="pendingMMF28Req">0</span>
+									| <button class="btn-icon btn btn-alternate btn-sm" ng-click="myMMF()">View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-hourglass-half"></i> MMF28 Approval</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse" ><span ng-bind="pendingMMF28">0</span>
+									| <button class="btn-icon btn btn-alternate btn-sm" ng-click="mmfApproval()">View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-clock"></i> MMF30 Request</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse" ><span ng-bind="pendingMMF30Req">0</span>
+									| <button class="btn-icon btn btn-alternate btn-sm" ng-click="myMMF30()">View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-hourglass-half"></i> MMF30 Approval</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse" ><span ng-bind="pendingMMF30">0</span>
+									| <button class="btn-icon btn btn-alternate btn-sm" ng-click="mmf30Approval()">View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+		
+				</ul>
+			</div>
+		</div>
+		<div class="col-md-12 col-lg-6 col-xl-3">
+			<div class="card-hover-shadow profile-responsive card-border border-inverse mb-3 card {{ ( pendingITEIE >0 || pendingITIMAIL >0 || pendingITSHAREF >0 )? 'divshake' : ''}}" style="height:370px; ">
+				<div class="dropdown-menu-header">
+					<div class="dropdown-menu-header-inner bg-love-kiss">
+						<div class="menu-header-content btn-pane-right">
+							<div>
+								<h5 class="menu-header-title"><i class="pe-7s-science"></i> IT</h5>
+							</div>
+							<div class="menu-header-btn-pane">
+								<button class="mb-2 mr-2 btn-pill btn btn-danger"><i class="fa fa-question"></i></button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<ul class="list-group list-group-flush" style="overflow-x: auto;">
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-clock"></i> Active Directory Request</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse" ><span ng-bind="pendingITEIEReq">0</span>
+									| <button class="btn-icon btn btn-danger btn-sm" ng-click="myITEIE()">View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-hourglass-half"></i> Active Directory Approval</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse" ><span ng-bind="pendingITEIE">0</span>
+									| <button class="btn-icon btn btn-danger btn-sm" ng-click="iteieApproval()">View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-clock"></i> Request Form Request</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse" ><span ng-bind="pendingITIMAILReq">0</span>
+									| <button class="btn-icon btn btn-danger btn-sm" ng-click="itimailApproval()">View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-hourglass-half"></i> Request Form Approval</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse" ><span ng-bind="pendingITIMAIL">0</span>
+									| <button class="btn-icon btn btn-danger btn-sm" ng-click="myITIMAIL()">View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-clock"></i> Share Folder Request</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse" ><span ng-bind="pendingITSHAREFReq">0</span>
+									| <button class="btn-icon btn btn-danger btn-sm" ng-click="myITSHAREF()">View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-hourglass-half"></i> Share Folder Approval</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse" ><span ng-bind="pendingITSHAREF">0</span>
+									| <button class="btn-icon btn btn-danger btn-sm" ng-click="itsharefApproval()">View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+		
+				</ul>
+			</div>
+		</div>
+	</div>
+	<!-- <div class="tabs-animation">
+		<div class="mb-3 card" style="min-height:370px;">
 			<div class="card-header-tab card-header">
 				<div class="card-header-title font-size-lg text-capitalize font-weight-normal">
 					<i class="header-icon fa fa-tachometer-alt "></i>
@@ -20,7 +439,7 @@
 							<div class="widget-heading text-alternate"><b>Weekend/PH Coverage</b></div>
 							<button ng-click="dayoffApproval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-alternate btn-lg">
 								<span class="mr-2 opacity-7">
-									<i class="icon {{ pendingDayoff>0 ? 'icon-anim-pulse' : ''}}  fa fa-marker"></i>
+									<i class="icon {{ pendingDayoff>0 ? 'icon-anim-pulse' : ''}}  fa fa-hourglass-half"></i>
 								</span>
 								Pending Approval <span class="badge badge-pill badge-light {{ pendingDayoff>0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingDayoff"></span>
 							</button>
@@ -43,7 +462,7 @@
 							<div class="widget-heading text-danger"><b>SPKL/Overtime</b></div>
 							<button ng-click="SPKLApproval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-danger btn-lg">
 								<span class="mr-2 opacity-7">
-									<i class="icon {{ pendingSPKL >0 ? 'icon-anim-pulse' : ''}}  fa fa-marker"></i>
+									<i class="icon {{ pendingSPKL >0 ? 'icon-anim-pulse' : ''}}  fa fa-hourglass-half"></i>
 								</span>
 								Pending SPKL Approval <span class="badge badge-pill badge-light {{ pendingSPKL >0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingSPKL"></span>
 							</button>
@@ -55,7 +474,7 @@
 							</button>
 							<button ng-click="SPKLTMSApproval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-danger btn-lg">
 								<span class="mr-2 opacity-7">
-									<i class="icon  {{ pendingSPKLTMS >0 ? 'icon-anim-pulse' : ''}} fa fa-marker"></i>
+									<i class="icon  {{ pendingSPKLTMS >0 ? 'icon-anim-pulse' : ''}} fa fa-hourglass-half"></i>
 								</span>
 								Pending TS Approval <span class="badge badge-pill badge-light {{ pendingSPKLTMS >0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingSPKLTMS"></span>
 							</button>
@@ -77,7 +496,7 @@
 							<div class="widget-heading text-primary"><b>Travel Request</b></div>
 							<button ng-click="TRApproval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-primary btn-lg">
 								<span class="mr-2 opacity-7">
-									<i class="icon {{ pendingTR >0 ? 'icon-anim-pulse' : ''}}  fa fa-marker"></i>
+									<i class="icon {{ pendingTR >0 ? 'icon-anim-pulse' : ''}}  fa fa-hourglass-half"></i>
 								</span>
 								Pending Approval <span class="badge badge-pill badge-light {{ pendingTR >0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingTR"></span>
 							</button>
@@ -101,7 +520,7 @@
 							<div class="widget-heading text-warning"><b>RFC </b></div>
 							<button ng-click="RFCApproval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-warning btn-lg">
 								<span class="mr-2 opacity-7">
-									<i class="icon {{ pendingRFC >0 ? 'icon-anim-pulse' : ''}} fa fa-marker"></i>
+									<i class="icon {{ pendingRFC >0 ? 'icon-anim-pulse' : ''}} fa fa-hourglass-half"></i>
 								</span>
 								Pending Approval <span class="badge badge-pill badge-light {{ pendingRFC >0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingRFC"></span>
 							</button>
@@ -124,7 +543,7 @@
 							<div class="widget-heading text-primary"><b>MMF </b></div>
 							<button ng-click="mmfApproval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-primary btn-lg">
 								<span class="mr-2 opacity-7">
-									<i class="icon {{ pendingmmf >0 ? 'icon-anim-pulse' : ''}} fa fa-marker"></i>
+									<i class="icon {{ pendingmmf >0 ? 'icon-anim-pulse' : ''}} fa fa-hourglass-half"></i>
 								</span>
 								Pending MMF28 Approval <span class="badge badge-pill badge-light {{ pendingMMF28 >0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingMMF28"></span>
 							</button>
@@ -136,7 +555,7 @@
 							</button>
 							<button ng-click="mmf30Approval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-primary btn-lg">
 								<span class="mr-2 opacity-7">
-									<i class="icon {{ pendingMMF30 >0 ? 'icon-anim-pulse' : ''}} fa fa-marker"></i>
+									<i class="icon {{ pendingMMF30 >0 ? 'icon-anim-pulse' : ''}} fa fa-hourglass-half"></i>
 								</span>
 								Pending MMF30 Approval <span class="badge badge-pill badge-light {{ pendingMMF30 >0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingMMF30"></span>
 							</button>
@@ -159,7 +578,7 @@
 							<div class="widget-heading text-danger"><b>IT online Form</b></div>
 							<button ng-click="iteieApproval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-danger btn-lg">
 								<span class="mr-2 opacity-7">
-									<i class="icon {{ pendingITEIE >0 ? 'icon-anim-pulse' : ''}}  fa fa-marker"></i>
+									<i class="icon {{ pendingITEIE >0 ? 'icon-anim-pulse' : ''}}  fa fa-hourglass-half"></i>
 								</span>
 								Pending Active Directory Approval <span class="badge badge-pill badge-light {{ pendingITEIE >0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingITEIE"></span>
 							</button>
@@ -171,7 +590,7 @@
 							</button>
 							<button ng-click="itimailApproval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-danger btn-lg">
 								<span class="mr-2 opacity-7">
-									<i class="icon  {{ pendingITIMAIL >0 ? 'icon-anim-pulse' : ''}} fa fa-marker"></i>
+									<i class="icon  {{ pendingITIMAIL >0 ? 'icon-anim-pulse' : ''}} fa fa-hourglass-half"></i>
 								</span>
 								Pending Request Form Approval <span class="badge badge-pill badge-light {{ pendingITIMAIL >0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingITIMAIL"></span>
 							</button>
@@ -184,7 +603,7 @@
 							
 							<button ng-click="itsharefApproval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-danger btn-lg">
 								<span class="mr-2 opacity-7">
-									<i class="icon  {{ pendingITSHAREF >0 ? 'icon-anim-pulse' : ''}} fa fa-marker"></i>
+									<i class="icon  {{ pendingITSHAREF >0 ? 'icon-anim-pulse' : ''}} fa fa-hourglass-half"></i>
 								</span>
 								Pending Share Folder Approval <span class="badge badge-pill badge-light {{ pendingITSHAREF >0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingITSHAREF"></span>
 							</button>
@@ -199,7 +618,7 @@
 					</div>
 				</div>
 
-				<!-- <div class="col-lg-6 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-primary border-primary">
+				<div class="col-lg-6 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-primary border-primary">
 					<div class="card no-shadow rm-border bg-grow-early widget-chart text-center card-btm-border card-shadow-primary border-primary"  style="height:275px;overflow: auto;">
 						<div class="icon-wrapper rounded-circle" style="overflow:visible !important;">
 							<div class="icon-wrapper-bg opacity-9 bg-success"></div>
@@ -208,7 +627,7 @@
 							<div class="widget-heading text-light"><b>Advance Form</b></div>
 							<button ng-click="advanceApproval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-light btn-lg">
 								<span class="mr-2 opacity-7">
-									<i class="icon {{ pendingAdvance >0 ? 'icon-anim-pulse' : ''}}  fa fa-marker"></i>
+									<i class="icon {{ pendingAdvance >0 ? 'icon-anim-pulse' : ''}}  fa fa-hourglass-half"></i>
 								</span>
 								Pending Advance Approval <span class="badge badge-pill badge-light {{ pendingAdvance >0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingAdvance"></span>
 							</button>
@@ -220,7 +639,7 @@
 							</button>
 							<button ng-click="advpaymentApproval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-light btn-lg">
 								<span class="mr-2 opacity-7">
-									<i class="icon  {{ pendingAdvpayment >0 ? 'icon-anim-pulse' : ''}} fa fa-marker"></i>
+									<i class="icon  {{ pendingAdvpayment >0 ? 'icon-anim-pulse' : ''}} fa fa-hourglass-half"></i>
 								</span>
 								Pending Payment Approval <span class="badge badge-pill badge-light {{ pendingAdvpayment >0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingAdvpayment"></span>
 							</button>
@@ -233,7 +652,7 @@
 							
 							<button ng-click="advexpenseApproval()"  class="btn-pill btn-shadow btn-sm btn-block btn btn-light btn-lg">
 								<span class="mr-2 opacity-7">
-									<i class="icon  {{ pendingAdvexpense >0 ? 'icon-anim-pulse' : ''}} fa fa-marker"></i>
+									<i class="icon  {{ pendingAdvexpense >0 ? 'icon-anim-pulse' : ''}} fa fa-hourglass-half"></i>
 								</span>
 								Pending Expense Approval <span class="badge badge-pill badge-light {{ pendingAdvexpense >0 ? 'icon-anim-pulse' : ''}} text-dark" ng-bind="pendingAdvexpense"></span>
 							</button>
@@ -246,54 +665,13 @@
 
 						</div>
 					</div>
-				</div> -->
+				</div>
 				
 			</div>
-			<!--
-			<div class="row widget-chart widget-chart2 border-primary">
-				<div class="col-lg-6 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-success border-success">
-					<div class="card no-shadow rm-border bg-warm-flame widget-chart text-center card-btm-border card-shadow-success border-success">
-						<div class="icon-wrapper rounded-circle">
-							<div class="icon-wrapper-bg opacity-9 bg-alternate"></div>
-							<i class="icon icon-anim-pulse fas fa-marker text-white"></i></div>
-						<div class="widget-chart-content">
-							<div class="widget-subheading">Pending RFC Approval</div>
-							<div class="widget-numbers text-alternate"><span ng-bind="pendingRFC"></span></div>
-							<button ng-click="RFCApproval()"  class="btn-pill btn-shadow btn-wide  btn btn-alternate btn-lg">
-								<span class="mr-2 opacity-7">
-									<i class="icon icon-anim-pulse fa fa-marker"></i>
-								</span>
-								<span class="mr-1" >Details</span>
-							</button>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-6 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-primary border-primary">
-					<div class="card no-shadow rm-border bg-primary widget-chart text-center card-btm-border card-shadow-primary border-primary">
-						<div class="icon-wrapper rounded-circle">
-							<div class="icon-wrapper-bg opacity-9 bg-warning"></div>
-							<i class="icon icon-anim-pulse fas fa-calendar-alt text-primary"></i></div>
-						<div class="widget-chart-content">
-							<div class="widget-subheading text-white">Pending RFC Submission</div>
-							<div class="widget-numbers text-warning"><span ng-bind="pendingRFCReq"></span></div>
-							<button ng-click="myRFC()"  class="btn-pill btn-shadow btn-wide  btn btn-warning btn-lg">
-								<span class="mr-2 opacity-7">
-									<i class="icon icon-anim-pulse fa fa-calendar-alt "></i>
-								</span>
-								<span class="mr-1" >Details</span>
-							</button>
-						</div>
-					</div>
-				</div>
-			</div>-->
+			
 			<div class="text-center d-block p-3 card-footer">
-				<!--<button class="btn-pill btn-shadow btn-wide  btn btn-primary btn-lg">
-					<span class="mr-2 opacity-7">
-						<i class="icon icon-anim-pulse fa fa-dashboard"></i>
-					</span>
-					<span class="mr-1"></span>
-				</button>-->
+		
 			</div>
 		</div>
-    </div>
+    </div> -->
 </div>

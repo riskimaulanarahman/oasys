@@ -29,17 +29,106 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
     * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
     -->
 	<link rel='stylesheet' href='css/style.css' type='text/css'>
-	<link href="css/main.css?v=1.0002" rel="stylesheet">
+	<link href="css/main.css?v=1.0005" rel="stylesheet">
 	
 	<link rel='stylesheet' href='css/cssload.css' type='text/css'>
 	<link rel='stylesheet' href='css/quill.core.css' type='text/css'>
 	<link rel='stylesheet' href='css/dx.spa.css' type='text/css'>
 	<link rel='stylesheet' href='css/dx.common.css' type='text/css'>
 	<link rel='stylesheet' href='css/dx.light.compact.css' type='text/css'>
+    <!-- <link href="css/main.css" rel="stylesheet"> -->
+    <style>
+    .divshake {
+        animation: shake 0.5s;
+        animation-iteration-count: infinite;
+    }
+
+    .divshake:hover {
+        animation: shake 0s;
+    }
+
+    @keyframes shake {
+        0% { transform: translate(1px, 1px) rotate(0deg); }
+        10% { transform: translate(-1px, -2px) rotate(-1deg); }
+        20% { transform: translate(-3px, 0px) rotate(1deg); }
+        30% { transform: translate(3px, 2px) rotate(0deg); }
+        40% { transform: translate(1px, -1px) rotate(1deg); }
+        50% { transform: translate(-1px, 2px) rotate(-1deg); }
+        60% { transform: translate(-3px, 1px) rotate(0deg); }
+        70% { transform: translate(3px, 1px) rotate(-1deg); }
+        80% { transform: translate(-1px, -1px) rotate(1deg); }
+        90% { transform: translate(1px, 2px) rotate(0deg); }
+        100% { transform: translate(1px, -2px) rotate(-1deg); }
+    }
+    </style>
  </head>
-<body class='main page login' ng-app='kduApp' data-ng-controller='mainCtrl as main'>
+<body class='main page login' ng-app='kduApp' data-ng-controller='mainCtrl as main' style="padding: 0 !important;">
 <div ng-hide="isLogin" data-ng-controller='LoginController as main'>
-	<div class="wrapper">
+    <div class="app-container app-theme-white body-tabs-shadow">
+        <div class="app-container">
+            <div class="h-100 bg-plum-plate bg-animation">
+                <div class="d-flex h-100 justify-content-center align-items-center">
+                    <div class="mx-auto app-login-box col-md-8">
+                    <div class="app-logo-inverse mx-auto mb-3"></div>
+                        <div class="modal-dialog w-100 mx-auto">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    <div class="h5 modal-title text-center">
+                                        <h4 class="mt-2">
+                                            <!-- <span>Welcome to OASys</span> -->
+                                            <div ng-if="loading" class="ball-scale-multiple">
+                                                    <div style="background-color: rgb(121, 76, 138);"></div>
+                                                    <div style="background-color: rgb(121, 76, 138);"></div>
+                                                    <div style="background-color: rgb(121, 76, 138);"></div>
+                                            </div>
+                                            <div>Online Approval System</div>
+                                        </h4>
+                                    </div>
+                                    <form name="form" method="post" ng-submit="form.$valid && login()" novalidate>
+                                        <div class="form-row">
+                                            <div class="col-md-12">
+                                                <div class="position-relative form-group" ng-class="{ 'has-error': form.$submitted && form.username.$invalid }">
+                                                    <input name="username" id="username" placeholder="Username" type="text" class="form-control" ng-model="username" required >
+                                                    <div ng-messages="form.$submitted && form.username.$error" class="help-block">
+                                                        <div ng-message="required">Username is required</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="position-relative form-group">
+                                                    <input name="password" id="password" placeholder="Password" type="password" class="form-control" ng-model="password" required>
+                                                    <div ng-messages="form.$submitted && form.password.$error" class="help-block">
+                                                        <div ng-message="required">Password is required</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="divider"></div>
+                                        <div ng-if="error" class="alert alert-danger" ng-bind="error"></div>
+                                    </div>
+                                    <div class="modal-footer clearfix">
+                                        <div class="float-right">
+                                            <button type="submit" ng-disabled="loading" class="btn btn-primary btn-lg" ng-click="login()" >Login</button>
+                                                
+                                            <!-- <img ng-if="loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" /> -->
+                                            <br>
+                                        </div>
+                                        </form>
+
+                                        <div class="float-right">
+                                            <button class="btn btn-info btn-lg" onclick="alert('fitur belum tersedia')">GuideBook</button>
+                                        </div>
+
+                                    </div>
+                            </div>
+                        </div>
+                        <div class="text-center text-white opacity-8 mt-3">KF Planning</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+	<!-- <div class="wrapper">
       <div class='row'>
         <div class='col-lg-12'>
           <div class='brand text-center'>
@@ -80,13 +169,14 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
           </form>
         </div>
 	  </div>
-	</div>	
+	</div>	 -->
 </div>
 <div ng-show="isLogin">
     <div class="app-container app-theme-white body-tabs-shadow fixed-sidebar fixed-header">
         <div class="app-header header-shadow">
             <div class="app-header__logo">
-                <div class=""><i class="fas fa-file-signature" style="font-size:28px;"></i> OASys</div>
+                <!-- <div class=""><i class="fas fa-file-signature" style="font-size:28px;"></i> OASys</div> -->
+                <div class="logo-src"></div>
                 <div class="header__pane ml-auto">
                     <div>
                         <button type="button" class="hamburger close-sidebar-btn hamburger--elastic" data-class="closed-sidebar">
@@ -176,7 +266,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 										<div tabindex="-1" role="menu" aria-hidden="true" class="rm-pointers dropdown-menu-lg dropdown-menu dropdown-menu-right">
 											<div class="dropdown-menu-header">
 												<div class="dropdown-menu-header-inner bg-info">
-													<div class="menu-header-image opacity-2" style="background-image: url('assets/images/dropdown-header/city3.jpg');"></div>
+													<div class="menu-header-image opacity-2" style="background-image: url('https://demo.dashboardpack.com/architectui-html-pro/assets/images/dropdown-header/city3.jpg');"></div>
 													<div class="menu-header-content text-left">
 														<div class="widget-content p-0">
 															<div class="widget-content-wrapper">
@@ -557,10 +647,10 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 					<div class="app-sidebar__inner">
 						<ul class="vertical-nav-menu">
 							<li class="app-sidebar__heading">Dashboard</li>
-							<li ><a href="#!" ><i class='metismenu-icon fa fa-tachometer-alt'></i> Dashboard</a></li>
+							<li ><a href="#!" ><i class='metismenu-icon pe-7s-rocket icon-gradient bg-premium-dark'></i> Dashboard</a></li>
 							<li ng-show="isAdmin" class="app-sidebar__heading">Admin Area</li>
 							<li ng-show="isAdmin">
-								<a href="#"><i class='metismenu-icon fa fa-user'></i>Admin Area<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
+								<a href="#"><i class='metismenu-icon pe-7s-users icon-gradient bg-premium-dark'></i>Admin Area<i class="metismenu-state-icon fas pe-7s-angle-down caret-left"></i></a>
 								<ul>
 									<li class="nav-item"><a href="#!/user"  ><i class='fa fa-user'></i> Manage User</a></li>
 									<li class="nav-item"><a href="#!/role" class="nav-link" ><i class='fas fa-user-tag'></i> Manage Role</a></li>
@@ -570,14 +660,14 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 							</li>
 							<li class="app-sidebar__heading active">Personal Task</li>
 							<li ng-class="{'mm-active': (isActive('/dayoff') || isActive('/doapproval'))}">
-								<a href="#" ><i class='metismenu-icon fas fa-marker'></i>Weekend/PH Coverage<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
+								<a href="#" ><i class='metismenu-icon pe-7s-umbrella icon-gradient bg-premium-dark'></i>Weekend/PH Coverage<i class="metismenu-state-icon fas pe-7s-angle-down caret-left"></i></a>
 								<ul ng-class="{'mm-show': (isActive('/dayoff') || isActive('/doapproval'))}">
 									<li class="nav-item"><a href="" ng-click="myDayoff()" class="nav-link" ><i class='fa fa-calendar-alt'></i> My Request</a></li>
 									<li class="nav-item"><a href="" ng-click="dayoffApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
 								</ul>
 							</li>
 							<li ng-class="{'mm-active': (isActive('/spkl') || isActive('/spklapproval') || isActive('/spkltms') || isActive('/spkltmsapproval'))}">
-								<a href="#"><i class='metismenu-icon fas fa-marker'></i>SPKL<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
+								<a href="#"><i class='metismenu-icon pe-7s-clock icon-gradient bg-premium-dark'></i>SPKL<i class="metismenu-state-icon fas pe-7s-angle-down caret-left"></i></a>
 								<ul  ng-class="{'mm-show': (isActive('/spkl') || isActive('/spklapproval') || isActive('/spkltms') || isActive('/spkltmsapproval'))}">
 									<li class="nav-item"><a href="" ng-click="mySPKL()" class="nav-link" ><i class='fa fa-calendar-alt'></i> OT Instruction Request</a></li>
 									<li class="nav-item"><a href="" ng-click="SPKLApproval()" class="nav-link" ><i class='fas fa-marker'></i> OT Instruction Approval</a></li>
@@ -586,7 +676,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 								</ul>
 							</li>
 							<li ng-class="{'mm-active': (isActive('/tr') || isActive('/trapproval'))}">
-								<a href="#" ><i class='metismenu-icon fas fa-marker'></i>Travel Request<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
+								<a href="#" ><i class='metismenu-icon pe-7s-plane icon-gradient bg-premium-dark'></i>Travel Request<i class="metismenu-state-icon fas pe-7s-angle-down caret-left"></i></a>
 								<ul ng-class="{'mm-show': (isActive('/tr') || isActive('/trapproval'))}">
 									<li class="nav-item"><a href="" ng-click="myTR()" class="nav-link" ><i class='fa fa-calendar-alt'></i> My Request</a></li>
 									<li class="nav-item"><a href="" ng-click="TRApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
@@ -594,7 +684,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 							</li>
                             
 							<li ng-class="{'mm-active': (isActive('/rfc') || isActive('/rfcapproval'))}" >
-								<a href="#"  ><i class='metismenu-icon fas fa-marker'></i>RFC<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
+								<a href="#"  ><i class='metismenu-icon pe-7s-note2 icon-gradient bg-premium-dark'></i>RFC<i class="metismenu-state-icon fas pe-7s-angle-down caret-left"></i></a>
 								<ul ng-class="{'mm-show': (isActive('/rfc') || isActive('/rfcapproval'))}">
 									<li class="nav-item"><a href="" ng-click="myRFC()" class="nav-link" ><i class='fa fa-calendar-alt'></i> My Request</a></li>
 									<li class="nav-item"><a href="" ng-click="RFCApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
@@ -602,7 +692,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 							</li>
 
                             <li ng-class="{'mm-active': (isActive('/mmf') || isActive('/mmf30') || isActive('/mmfdetail') || isActive('/mmfapproval') || isActive('/mmf30approval'))}">
-								<a href="#"><i class='metismenu-icon fas fa-marker'></i>MMF<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
+								<a href="#"><i class='metismenu-icon pe-7s-tools icon-gradient bg-premium-dark'></i>MMF<i class="metismenu-state-icon fas pe-7s-angle-down caret-left"></i></a>
                                 <ul ng-class="{'mm-show': (isActive('/mmf') || isActive('/mmf30') || isActive('/mmfapproval') || isActive('/mmf30approval'))}">
                                 
 									<!-- <li class="nav-item"><a href="" ng-click="myMMF()" class="nav-link" ><i class='fa fa-calendar-alt'></i> My Request</a></li> -->
@@ -651,7 +741,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                             
                             <li ng-class="{'mm-active': (isActive('/iteie') || isActive('/itimail') || isActive('/iteiedetail') || isActive('/itimaildetail') || isActive('/itimailapproval') || isActive('/iteieapproval'))}">
                             <!-- <li ng-class=""> -->
-								<a href="#"><i class='metismenu-icon fas fa-marker'></i>IT Approval<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
+								<a href="#"><i class='metismenu-icon pe-7s-science icon-gradient bg-premium-dark'></i>IT Approval<i class="metismenu-state-icon fas pe-7s-angle-down caret-left"></i></a>
 								<ul ng-class="">
                                     <li class="">
                                         <a href="#" aria-expanded="false">
@@ -704,7 +794,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 							</li>
 
                             <!-- <li ng-class="{'mm-active': (isActive('/advance') || isActive('/advanceApproval') || isActive('/advancepayment') || isActive('/advancepaymentapproval') || isActive('/advexpense') || isActive('/advexpenseapproval') )}">
-								<a href="#"><i class='metismenu-icon fas fa-marker'></i>Advance<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
+								<a href="#"><i class='metismenu-icon fas fa-marker'></i>Advance<i class="metismenu-state-icon fas pe-7s-angle-down caret-left"></i></a>
 								<ul  ng-class="{'mm-show': (isActive('/advance') || isActive('/advanceApproval') || isActive('/advancepayment') ||  isActive('/advancepaymentapproval') || isActive('/advexpense') || isActive('/advexpenseapproval') )}">
 									<li class="nav-item"><a href="" ng-click="myAdvance()" class="nav-link" ><i class='fa fa-calendar-alt'></i> Adv Related Request</a></li>
 									<li class="nav-item"><a href="" ng-click="advanceApproval()" class="nav-link" ><i class='fas fa-marker'></i> Adv Related Approval</a></li>
@@ -717,7 +807,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                             
 							<li class="app-sidebar__heading">Data Master</li>
 							<li ng-class="{'mm-active': $route.current.activeTab == 'company'}">
-								<a href="#"><i class='metismenu-icon fa fa-th-large'></i>Data Master<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
+								<a href="#"><i class='metismenu-icon pe-7s-menu icon-gradient bg-premium-dark'></i>Data Master<i class="metismenu-state-icon fas pe-7s-angle-down caret-left"></i></a>
 								<ul>
 									<li class="nav-item"><a href="" ng-click="dataCompany()"  class="nav-link" ><i class='fa fa-building'></i> Data Company</a></li>
 									<li class="nav-item"><a href="" ng-click="dataDepartment()"  class="nav-link" ><i class='fa fa-id-badge'></i> Data Department</a></li>
@@ -733,18 +823,18 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 							</li>
 							<li class="app-sidebar__heading">Report / Summary Data</li>
 							<li>
-								<a href="#"><i class='metismenu-icon fa fa-file-alt'></i>Report<i class="metismenu-state-icon fas fa-angle-down caret-left"></i></a>
+								<a href="#"><i class='metismenu-icon pe-7s-display2 icon-gradient bg-premium-dark'></i>Report<i class="metismenu-state-icon fas pe-7s-angle-down caret-left"></i></a>
 								<ul>
-									<li class="nav-item"><a href="" ng-click="dataLeave()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Employee Leave</a></li>
-									<li class="nav-item"><a href="" ng-click="dataDayoff()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Employee Weekend Cov.</a></li>
-									<li class="nav-item"><a href="" ng-click="detailDayoff()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Detail Approved WPHC</a></li>
-									<li class="nav-item"><a href="" ng-click="dataTR()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> TR Report</a></li>
-                                    <li class="nav-item"><a href="" ng-click="dataRFC()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> RFC Record</a></li>
-									<li class="nav-item"><a href="" ng-click="dataSPKL()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Data SPKL</a></li>
-									<li class="nav-item"><a href="" ng-click="detailSPKL()"  class="nav-link" ><i class='fa fa-calendar-alt'></i> Detail OT Timesheet</a></li>
+									<li class="nav-item"><a href="" ng-click="dataLeave()"  class="nav-link" ><i class='pe-7s-news-paper icon-gradient bg-premium-dark'></i> Employee Leave</a></li>
+									<li class="nav-item"><a href="" ng-click="dataDayoff()"  class="nav-link" ><i class='pe-7s-news-paper icon-gradient bg-premium-dark'></i> Employee Weekend Cov.</a></li>
+									<li class="nav-item"><a href="" ng-click="detailDayoff()"  class="nav-link" ><i class='pe-7s-news-paper icon-gradient bg-premium-dark'></i> Detail Approved WPHC</a></li>
+									<li class="nav-item"><a href="" ng-click="dataTR()"  class="nav-link" ><i class='pe-7s-news-paper icon-gradient bg-premium-dark'></i> TR Report</a></li>
+                                    <li class="nav-item"><a href="" ng-click="dataRFC()"  class="nav-link" ><i class='pe-7s-news-paper icon-gradient bg-premium-dark'></i> RFC Record</a></li>
+									<li class="nav-item"><a href="" ng-click="dataSPKL()"  class="nav-link" ><i class='pe-7s-news-paper icon-gradient bg-premium-dark'></i> Data SPKL</a></li>
+									<li class="nav-item"><a href="" ng-click="detailSPKL()"  class="nav-link" ><i class='pe-7s-news-paper icon-gradient bg-premium-dark'></i> Detail OT Timesheet</a></li>
                                     <li class="">
                                         <a href="#" aria-expanded="false">
-                                            <i class="metismenu-icon"></i><i class='fa fa-calendar-alt'></i> MMF
+                                            <i class="metismenu-icon"></i><i class='pe-7s-news-paper icon-gradient bg-premium-dark'></i> MMF
                                             <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
                                         </a>
                                         <ul class="mm-collapse" style="height: 7.04px;">
@@ -763,7 +853,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                     </li>
                                     <li class="">
                                         <a href="#" aria-expanded="false">
-                                            <i class="metismenu-icon"></i><i class='fa fa-calendar-alt'></i> IT
+                                            <i class="metismenu-icon"></i><i class='pe-7s-news-paper icon-gradient bg-premium-dark'></i> IT
                                             <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
                                         </a>
                                         <ul class="mm-collapse" style="height: 7.04px;">
@@ -862,7 +952,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 	<script language="JavaScript" src="js/lib/dx.all.js" type="text/javascript"></script>
 	<script language="JavaScript" src="js/lib/FileSaver.min.js" type="text/javascript"></script>
     <!-- <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/globalize/0.1.1/globalize.min.js"></script> -->
-
+    
 	<script language="JavaScript" src="js/app.js?v=5.19" type="text/javascript"></script>
 	<script language="JavaScript" src="js/directive.js?v=5.19" type="text/javascript"></script>
 	<script language="JavaScript" src="js/services.js?v=5.19" type="text/javascript"></script>
@@ -871,7 +961,8 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 	<script language="JavaScript" src="js/controllers/maincontroller.js?v=5.19" type="text/javascript"></script>
 	<script language="JavaScript" src="js/controllers/login.js?v=5.19" type="text/javascript"></script>
 	<script language="JavaScript" src="js/script.js?v=5.19" type="text/javascript"></script>
-
+    <!-- <script type="text/javascript" src="https://demo.dashboardpack.com/architectui-html-pro/assets/scripts/main.d810cf0ae7f39f28f336.js"></script> -->
+    
 	<script type="text/javascript" src="assets/scripts/main.js"></script>
 </body>
 </html>
