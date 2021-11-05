@@ -1575,6 +1575,7 @@
                         delete data.department;
                         delete data.approvalstatus;
                         delete data.apprstatuscode;
+						data.requireddate = $filter("date")(data.requireddate, "yyyy-MM-dd HH:mm");
                         // data.jobfinishdate= $filter("date")(data.jobfinishdate, "yyyy-MM-dd HH:mm");
                         CrudService.Update('mmf',data.id,data).then(function (response) {
                             if(response.status=="error"){

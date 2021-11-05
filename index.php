@@ -36,31 +36,8 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 	<link rel='stylesheet' href='css/dx.spa.css' type='text/css'>
 	<link rel='stylesheet' href='css/dx.common.css' type='text/css'>
 	<link rel='stylesheet' href='css/dx.light.compact.css' type='text/css'>
-    <!-- <link href="css/main.css" rel="stylesheet"> -->
-    <style>
-    .divshake {
-        animation: shake 0.5s;
-        animation-iteration-count: infinite;
-    }
-
-    .divshake:hover {
-        animation: shake 0s;
-    }
-
-    @keyframes shake {
-        0% { transform: translate(1px, 1px) rotate(0deg); }
-        10% { transform: translate(-1px, -2px) rotate(-1deg); }
-        20% { transform: translate(-3px, 0px) rotate(1deg); }
-        30% { transform: translate(3px, 2px) rotate(0deg); }
-        40% { transform: translate(1px, -1px) rotate(1deg); }
-        50% { transform: translate(-1px, 2px) rotate(-1deg); }
-        60% { transform: translate(-3px, 1px) rotate(0deg); }
-        70% { transform: translate(3px, 1px) rotate(-1deg); }
-        80% { transform: translate(-1px, -1px) rotate(1deg); }
-        90% { transform: translate(1px, 2px) rotate(0deg); }
-        100% { transform: translate(1px, -2px) rotate(-1deg); }
-    }
-    </style>
+    <link href="css/custom.css" rel="stylesheet">
+    
  </head>
 <body class='main page login' ng-app='kduApp' data-ng-controller='mainCtrl as main' style="padding: 0 !important;">
 <div ng-hide="isLogin" data-ng-controller='LoginController as main'>
@@ -953,14 +930,14 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 	<script language="JavaScript" src="js/lib/FileSaver.min.js" type="text/javascript"></script>
     <!-- <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/globalize/0.1.1/globalize.min.js"></script> -->
     
-	<script language="JavaScript" src="js/app.js?v=5.19" type="text/javascript"></script>
-	<script language="JavaScript" src="js/directive.js?v=5.19" type="text/javascript"></script>
-	<script language="JavaScript" src="js/services.js?v=5.19" type="text/javascript"></script>
-	<script language="JavaScript" src="js/filter.js?v=5.19" type="text/javascript"></script>
-	<script language="JavaScript" src="js/factory.js?v=5.19" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/maincontroller.js?v=5.19" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/login.js?v=5.19" type="text/javascript"></script>
-	<script language="JavaScript" src="js/script.js?v=5.19" type="text/javascript"></script>
+	<script language="JavaScript" src="js/app.js?v=5.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/directive.js?v=5.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/services.js?v=5.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/filter.js?v=5.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/factory.js?v=5.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/maincontroller.js?v=5.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/login.js?v=5.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/script.js?v=5.20" type="text/javascript"></script>
     <!-- <script type="text/javascript" src="https://demo.dashboardpack.com/architectui-html-pro/assets/scripts/main.d810cf0ae7f39f28f336.js"></script> -->
     
 	<script type="text/javascript" src="assets/scripts/main.js"></script>

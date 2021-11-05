@@ -452,8 +452,8 @@ Class Mmfmodule extends Application{
 							unset($data['department']);
 							unset($data['approvalstatus']);
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-							if($superior==$Employee->id){
-								$result= array("status"=>"error","message"=>"You cannot select yourself as your Direct superior");
+							if($depthead==$Employee->id){
+								$result= array("status"=>"error","message"=>"You cannot select yourself as your Depthead");
 								echo json_encode($result);
 							}else{
 								foreach($data as $key=>$val){
