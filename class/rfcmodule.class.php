@@ -545,18 +545,22 @@ Class RfcModule extends Application{
 							$join   = "LEFT JOIN tbl_approver ON (tbl_rfcapproval.approver_id = tbl_approver.id) ";
 							if (isset($data['mode'])){
 								$Rfcapproval = Rfcapproval::find('first', array('joins'=>$join,'conditions' => array("rfc_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
+								$Rfcapprovalx = Rfcapproval::find('all', array('joins'=>$join,'conditions' => array("rfc_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
 								unset($data['mode']);
 							}else{
 								$Rfcapproval = Rfcapproval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
 							}
 							$olddata = $Rfcapproval->to_array();
-							foreach($data as $key=>$val){
-								$val=($val=='false')?false:(($val=='true')?true:$val);
-								$Rfcapproval->$key=$val;
+							foreach ($Rfcapprovalx as $approval){
+								foreach($data as $key=>$val){
+									$val=($val=='false')?false:(($val=='true')?true:$val);
+									$approval->$key=$val;
+								}
+								$approval->save();
+								$logger = new Datalogger("Rfcapproval","update",json_encode($olddata),json_encode($data));
+								$logger->SaveData();
 							}
-							$Rfcapproval->save();
-							$logger = new Datalogger("Rfcapproval","update",json_encode($olddata),json_encode($data));
-							$logger->SaveData();
+							
 							if (isset($mode) && ($mode=='approve')){
 								$Rfc = Rfc::find($doid);
 								$joinx   = "LEFT JOIN tbl_approver ON (tbl_rfcapproval.approver_id = tbl_approver.id) ";					
