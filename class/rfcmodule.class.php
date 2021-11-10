@@ -550,8 +550,9 @@ Class RfcModule extends Application{
 							}else{
 								$Rfcapproval = Rfcapproval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
 							}
-							$olddata = $Rfcapproval->to_array();
+							
 							foreach ($Rfcapprovalx as $approval){
+								$olddata = $approval->to_array();
 								foreach($data as $key=>$val){
 									$val=($val=='false')?false:(($val=='true')?true:$val);
 									$approval->$key=$val;
