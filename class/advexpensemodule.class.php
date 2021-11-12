@@ -497,27 +497,29 @@ Class Advexpensemodule extends Application{
 												$logger->SaveData();
 											}
 
-											if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
+											// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
 												
 												
-												$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=36 and tbl_employee.location_id='8'")));
+												$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=36 and CompanyList like '%".$Employee->companycode."%' ")));
 												if(count($Approver2)>0){
 													$Advexpenseapproval = new Advexpenseapproval();
 													$Advexpenseapproval->advexpense_id = $Advexpense->id;
 													$Advexpenseapproval->approver_id = $Approver2->id;
 													$Advexpenseapproval->save();
+													$logger = new Datalogger("Advexpenseapproval","add","Add initial HRD Approval ",json_encode($Advexpenseapproval->to_array()));
+													$logger->SaveData();
 												}
 													
-											}else{
+											// }else{
 												
-												$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=36 and tbl_employee.company_id=? and not(tbl_employee.location_id='8')",$Employee->company_id)));
-												if(count($Approver2)>0){
-													$Advexpenseapproval = new Advexpenseapproval();
-													$Advexpenseapproval->advexpense_id = $Advexpense->id;
-													$Advexpenseapproval->approver_id = $Approver2->id;
-													$Advexpenseapproval->save();
-												}
-											}
+											// 	$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=36 and tbl_employee.company_id=? and not(tbl_employee.location_id='8')",$Employee->company_id)));
+											// 	if(count($Approver2)>0){
+											// 		$Advexpenseapproval = new Advexpenseapproval();
+											// 		$Advexpenseapproval->advexpense_id = $Advexpense->id;
+											// 		$Advexpenseapproval->approver_id = $Approver2->id;
+											// 		$Advexpenseapproval->save();
+											// 	}
+											// }
 											
 
 											
@@ -555,12 +557,12 @@ Class Advexpensemodule extends Application{
 												$logger->SaveData();
 											}
 
-											$companyBU=( ($Employee->companycode=='KPA') || ($Employee->companycode=='AHL') )?"KPSI":$Employee->companycode;
-											if (($Employee->company->sapcode=='RND') || ($Employee->company->sapcode=='NKF')){
-												$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
-											}else{
-												$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$companyBU,$Employee->id)));
-											}
+											// $companyBU=( ($Employee->companycode=='KPA') || ($Employee->companycode=='AHL') )?"KPSI":$Employee->companycode;
+											// if (($Employee->company->sapcode=='RND') || ($Employee->company->sapcode=='NKF')){
+												$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and CompanyList like '%".$Employee->companycode."%' ")));
+											// }else{
+											// 	$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$companyBU,$Employee->id)));
+											// }
 											if(count($ApproverBU)>0){
 												$Advexpenseapproval = new Advexpenseapproval();
 												$Advexpenseapproval->advexpense_id = $Advexpense->id;
@@ -598,7 +600,7 @@ Class Advexpensemodule extends Application{
 							$data['employee_id']=$Employee->id;
 							$data['RequestStatus']=0;
 							try{
-								$code = Advexpense::find('first',array('select' => "CONCAT('Expense/','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(expenseno,-4,4)) is null then 1 else max(substring(expenseno,-4,4))+1 end,4,'0')) as expenseno","conditions"=>array("substring(expenseno,7,".strlen($Employee->companycode).")=? and substring(expenseno,".(strlen($Employee->companycode)+8).",4)=YEAR(CURDATE())",$Employee->companycode)));
+								$code = Advexpense::find('first',array('select' => "CONCAT('Expense/','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(expenseno,-4,4)) is null then 1 else max(substring(expenseno,-4,4))+1 end,4,'0')) as expenseno","conditions"=>array("substring(expenseno,9,".strlen($Employee->companycode).")=? and substring(expenseno,".(strlen($Employee->companycode)+10).",4)=YEAR(CURDATE())",$Employee->companycode)));
 								$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=5 AND advanceform=1",$Employee->id)));
 								
 								$AdvanceDetail = AdvanceDetail::find('all',array('conditions'=> array("advance_id=?",$Advance->id)));
@@ -662,16 +664,18 @@ Class Advexpensemodule extends Application{
 									$logger->SaveData();
 								}
 
-								if($Employee->companycode == 'BCL') {
-									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and tbl_employee.companycode='BCL'")));
-								}else {
-									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and not(tbl_employee.companycode='BCL')")));
-								}
+								// if($Employee->companycode == 'BCL') {
+									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and CompanyList like '%".$Employee->companycode."%' ")));
+								// }else {
+								// 	$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and not(tbl_employee.companycode='BCL')")));
+								// }
 								if(count($Approver2)>0){
 									$Advexpenseapproval = new Advexpenseapproval();
 									$Advexpenseapproval->advexpense_id = $Advexpense->id;
 									$Advexpenseapproval->approver_id = $Approver2->id;
 									$Advexpenseapproval->save();
+									$logger = new Datalogger("Advexpenseapproval","add","Add initial HRD Approval ",json_encode($Advexpenseapproval->to_array()));
+									$logger->SaveData();
 								}
 
 								// $companyFC=(($data['companycode']=='BCL') || ($data['companycode']=='KPA'))?"KPSI":((($data['companycode']=='KPSI'))?"LDU":$Employee->companycode);
@@ -1205,6 +1209,9 @@ Class Advexpensemodule extends Application{
 							$join   = "LEFT JOIN tbl_approver ON (tbl_advexpenseapproval.approver_id = tbl_approver.id) ";
 							if (isset($data['mode'])){
 								$Advexpenseapproval = Advexpenseapproval::find('first', array('joins'=>$join,'conditions' => array("advexpense_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
+								//start for update all duplicate approver
+								$Advexpenseapprovalx = Advexpenseapproval::find('all', array('joins'=>$join,'conditions' => array("advexpense_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
+								//end for update all duplicate approver
 								unset($data['mode']);
 							}else{
 								$Advexpenseapproval = Advexpenseapproval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
@@ -1225,16 +1232,17 @@ Class Advexpensemodule extends Application{
 							unset($data['startdate']);
 							unset($data['enddate']);
 
-							
-							$olddata = $Advexpenseapproval->to_array();
-							foreach($data as $key=>$val){
-								$val=($val=='false')?false:(($val=='true')?true:$val);
-								$Advexpenseapproval->$key=$val;
+							foreach ($Advexpenseapprovalx as $approval){
+								$olddata = $Advexpenseapproval->to_array();
+								foreach($data as $key=>$val){
+									$val=($val=='false')?false:(($val=='true')?true:$val);
+									$approval->$key=$val;
+								}
+								
+								$approval->save();
+								$logger = new Datalogger("Advexpenseapproval","update",json_encode($olddata),json_encode($data));
+								$logger->SaveData();
 							}
-							
-							$Advexpenseapproval->save();
-							$logger = new Datalogger("Advexpenseapproval","update",json_encode($olddata),json_encode($data));
-							$logger->SaveData();
 						if (isset($mode) && ($mode=='approve')){
 								$Advexpense = Advexpense::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
 								$joinx   = "LEFT JOIN tbl_approver ON (tbl_advexpenseapproval.approver_id = tbl_approver.id) ";					

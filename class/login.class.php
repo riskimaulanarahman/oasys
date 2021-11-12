@@ -66,14 +66,14 @@ Class Login extends Application{
 								$log->isactive = false;
 								$log->save();
 							}							
-							$user->create_userlogs(array(
-								'LoginTime'		=>date("Y-m-d H:i:s"),
-								'LoginIP'		=>$this->ip,
-								'displayname'	=>$user->firstname." ".$user->lastname,
-								'isActive'		=>true,
-								'LastAccess'	=>date("Y-m-d H:i:s"),
-								'LoginApp'		=>'Web'
-							));	
+							// $user->create_userlogs(array(
+							// 	'LoginTime'		=>date("Y-m-d H:i:s"),
+							// 	'LoginIP'		=>$this->ip,
+							// 	'displayname'	=>$user->firstname." ".$user->lastname,
+							// 	'isActive'		=>true,
+							// 	'LastAccess'	=>date("Y-m-d H:i:s"),
+							// 	'LoginApp'		=>'Web'
+							// ));	
 							
 							http_response_code(200);	
 							

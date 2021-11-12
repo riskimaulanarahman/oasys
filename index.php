@@ -37,13 +37,15 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 	<link rel='stylesheet' href='css/dx.common.css' type='text/css'>
 	<link rel='stylesheet' href='css/dx.light.compact.css' type='text/css'>
     <link href="css/custom.css" rel="stylesheet">
-    
+    <!-- tooltip -->
+    <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
+
  </head>
 <body class='main page login' ng-app='kduApp' data-ng-controller='mainCtrl as main' style="padding: 0 !important;">
 <div ng-hide="isLogin" data-ng-controller='LoginController as main'>
     <div class="app-container app-theme-white body-tabs-shadow">
         <div class="app-container">
-            <div class="h-100 bg-plum-plate bg-animation">
+            <div class="h-100 bg-animation" style="background-image: url('assets/images/bg1.jpg') !important; background-repeat: no-repeat !important; background-size: 100% 100% !important;">
                 <div class="d-flex h-100 justify-content-center align-items-center">
                     <div class="mx-auto app-login-box col-md-8">
                     <div class="app-logo-inverse mx-auto mb-3"></div>
@@ -54,11 +56,11 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                         <h4 class="mt-2">
                                             <!-- <span>Welcome to OASys</span> -->
                                             <div ng-if="loading" class="ball-scale-multiple">
-                                                    <div style="background-color: rgb(121, 76, 138);"></div>
-                                                    <div style="background-color: rgb(121, 76, 138);"></div>
-                                                    <div style="background-color: rgb(121, 76, 138);"></div>
+                                                    <div style="background-color: rgb(117, 213, 138);"></div>
+                                                    <div style="background-color: rgb(117, 213, 138);"></div>
+                                                    <div style="background-color: rgb(117, 213, 138);"></div>
                                             </div>
-                                            <div>Online Approval System</div>
+                                            <div style="font-weight: 900;">Online Approval System</div>
                                         </h4>
                                     </div>
                                     <form name="form" method="post" ng-submit="form.$valid && login()" novalidate>
@@ -85,16 +87,16 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                     </div>
                                     <div class="modal-footer clearfix">
                                         <div class="float-right">
-                                            <button type="submit" ng-disabled="loading" class="btn btn-primary btn-lg" ng-click="login()" >Login</button>
+                                            <button type="submit" ng-disabled="loading" class="btn btn-info btn-block btn-lg" ng-click="login()" >Login</button>
                                                 
                                             <!-- <img ng-if="loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" /> -->
                                             <br>
                                         </div>
                                         </form>
 
-                                        <div class="float-right">
+                                        <!-- <div class="float-right">
                                             <button class="btn btn-info btn-lg" onclick="alert('fitur belum tersedia')">GuideBook</button>
-                                        </div>
+                                        </div> -->
 
                                     </div>
                             </div>
@@ -769,18 +771,24 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                     </li>
 								</ul>
 							</li>
-
-                            <!-- <li ng-class="{'mm-active': (isActive('/advance') || isActive('/advanceApproval') || isActive('/advancepayment') || isActive('/advancepaymentapproval') || isActive('/advexpense') || isActive('/advexpenseapproval') )}">
-								<a href="#"><i class='metismenu-icon fas fa-marker'></i>Advance<i class="metismenu-state-icon fas pe-7s-angle-down caret-left"></i></a>
+                            <li class="app-sidebar__heading active" style="color: red;">Coming Soon</li>
+                            <li ng-class="{'mm-active': (isActive('/advance') || isActive('/advanceApproval') || isActive('/advancepayment') || isActive('/advancepaymentapproval') || isActive('/advexpense') || isActive('/advexpenseapproval') )}">
+								<a href="#"><i class='metismenu-icon pe-7s-cash'></i>Advance<i class="metismenu-state-icon fas pe-7s-angle-down caret-left"></i></a>
 								<ul  ng-class="{'mm-show': (isActive('/advance') || isActive('/advanceApproval') || isActive('/advancepayment') ||  isActive('/advancepaymentapproval') || isActive('/advexpense') || isActive('/advexpenseapproval') )}">
-									<li class="nav-item"><a href="" ng-click="myAdvance()" class="nav-link" ><i class='fa fa-calendar-alt'></i> Adv Related Request</a></li>
+									<!-- <li class="nav-item"><a href="" ng-click="myAdvance()" class="nav-link" ><i class='fa fa-calendar-alt'></i> Adv Related Request</a></li>
 									<li class="nav-item"><a href="" ng-click="advanceApproval()" class="nav-link" ><i class='fas fa-marker'></i> Adv Related Approval</a></li>
 									<li class="nav-item"><a href="" ng-click="myAdvpayment()" class="nav-link" ><i class='fa fa-calendar-alt'></i> Payment Request</a></li>
 									<li class="nav-item"><a href="" ng-click="advpaymentApproval()" class="nav-link" ><i class='fas fa-marker'></i> Payment Approval</a></li>
                                     <li class="nav-item"><a href="" ng-click="myAdvexpense()" class="nav-link" ><i class='fa fa-calendar-alt'></i> Expense Request</a></li>
-									<li class="nav-item"><a href="" ng-click="advexpenseApproval()" class="nav-link" ><i class='fas fa-marker'></i> Expense Approval</a></li>
+									<li class="nav-item"><a href="" ng-click="advexpenseApproval()" class="nav-link" ><i class='fas fa-marker'></i> Expense Approval</a></li> -->
+                                    <li class="nav-item"><a href="" onClick="alert('belum tersedia')" class="nav-link" ><i class='fa fa-calendar-alt'></i> Adv Related Request</a></li>
+									<li class="nav-item"><a href="" onClick="alert('belum tersedia')" class="nav-link" ><i class='fas fa-marker'></i> Adv Related Approval</a></li>
+									<li class="nav-item"><a href="" onClick="alert('belum tersedia')" class="nav-link" ><i class='fa fa-calendar-alt'></i> Payment Request</a></li>
+									<li class="nav-item"><a href="" onClick="alert('belum tersedia')" class="nav-link" ><i class='fas fa-marker'></i> Payment Approval</a></li>
+                                    <li class="nav-item"><a href="" onClick="alert('belum tersedia')" class="nav-link" ><i class='fa fa-calendar-alt'></i> Expense Request</a></li>
+									<li class="nav-item"><a href="" onClick="alert('belum tersedia')" class="nav-link" ><i class='fas fa-marker'></i> Expense Approval</a></li>
 								</ul>
-							</li> -->
+							</li>
                             
 							<li class="app-sidebar__heading">Data Master</li>
 							<li ng-class="{'mm-active': $route.current.activeTab == 'company'}">
@@ -852,9 +860,9 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                             
                                         </ul>
                                     </li>
-                                    <!-- <li class="">
+                                    <li class="">
                                         <a href="#" aria-expanded="false">
-                                            <i class="metismenu-icon"></i><i class='fa fa-calendar-alt'></i> HR
+                                            <i class="metismenu-icon"></i><i class='pe-7s-news-paper icon-gradient bg-premium-dark''></i> HR
                                             <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
                                         </a>
                                         <ul class="mm-collapse" style="height: 7.04px;">
@@ -874,7 +882,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                                 </a>
                                             </li>
                                         </ul>
-                                    </li> -->
+                                    </li>
 									
 								</ul>
 							</li>
@@ -930,16 +938,17 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 	<script language="JavaScript" src="js/lib/FileSaver.min.js" type="text/javascript"></script>
     <!-- <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/globalize/0.1.1/globalize.min.js"></script> -->
     
-	<script language="JavaScript" src="js/app.js?v=5.20" type="text/javascript"></script>
-	<script language="JavaScript" src="js/directive.js?v=5.20" type="text/javascript"></script>
-	<script language="JavaScript" src="js/services.js?v=5.20" type="text/javascript"></script>
-	<script language="JavaScript" src="js/filter.js?v=5.20" type="text/javascript"></script>
-	<script language="JavaScript" src="js/factory.js?v=5.20" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/maincontroller.js?v=5.20" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/login.js?v=5.20" type="text/javascript"></script>
-	<script language="JavaScript" src="js/script.js?v=5.20" type="text/javascript"></script>
+	<script language="JavaScript" src="js/app.js?v=5.21" type="text/javascript"></script>
+	<script language="JavaScript" src="js/directive.js?v=5.21" type="text/javascript"></script>
+	<script language="JavaScript" src="js/services.js?v=5.21" type="text/javascript"></script>
+	<script language="JavaScript" src="js/filter.js?v=5.21" type="text/javascript"></script>
+	<script language="JavaScript" src="js/factory.js?v=5.21" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/maincontroller.js?v=5.21" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/login.js?v=5.21" type="text/javascript"></script>
+	<script language="JavaScript" src="js/script.js?v=5.21" type="text/javascript"></script>
     <!-- <script type="text/javascript" src="https://demo.dashboardpack.com/architectui-html-pro/assets/scripts/main.d810cf0ae7f39f28f336.js"></script> -->
     
 	<script type="text/javascript" src="assets/scripts/main.js"></script>
+    <script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
 </body>
 </html>

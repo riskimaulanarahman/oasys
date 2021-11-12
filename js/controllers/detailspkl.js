@@ -498,8 +498,10 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 			editing: {
 				useIcons:true,
 				mode: "cell",
-				allowUpdating: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
-				allowAdding:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+				// allowUpdating: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+				allowUpdating:($rootScope.isAdmin)?true:false,
+				allowAdding:($rootScope.isAdmin)?true:false,
+				// allowAdding:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 				allowDeleting:($rootScope.isAdmin)?true:false,
 				form:{colCount: 1,
 				},

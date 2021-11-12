@@ -651,8 +651,8 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 		editing: {
             useIcons:true,
             mode: "cell",
-			allowUpdating: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
-			allowAdding:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowUpdating: ($rootScope.isAdmin)?true:false,
+			allowAdding:($rootScope.isAdmin)?true:false,
 			allowDeleting:($rootScope.isAdmin)?true:false,
             form:{colCount: 1,
             },

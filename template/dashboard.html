@@ -1,7 +1,7 @@
 <div ng-controller="dashboardCtrl as dsb">
 	<div class="row">
-		<div class="col-md-12 col-lg-6 col-xl-3">
-			<div class="card-hover-shadow profile-responsive card-border border-inverse mb-3 card {{ ( pendingDayoff >0 )? 'divshake' : ''}}" style="min-height:370px;">
+		<div class="col-md-6 col-lg-4 col-xl-3">
+			<div class="card-hover-shadow profile-responsive card-border border-inverse mb-3 card {{ ( pendingDayoff >0 )? 'divshake' : ''}}" style="height:370px;">
 				<div class="dropdown-menu-header">
 					<div class="dropdown-menu-header-inner bg-happy-itmeo">
 						<div class="menu-header-content btn-pane-right">
@@ -14,7 +14,7 @@
 						</div>
 					</div>
 				</div>
-				<ul class="list-group list-group-flush">
+				<ul class="list-group list-group-flush" style="overflow-x: auto;">
 					<li class="list-group-item">
 						<div class="widget-content p-0">
 							<div class="widget-content-wrapper">
@@ -49,8 +49,8 @@
 				</ul>
 			</div>
 		</div>
-		<div class="col-md-12 col-lg-6 col-xl-3">
-			<div class="card-hover-shadow profile-responsive card-border border-inverse mb-3 card {{ ( pendingSPKL >0 || pendingSPKLTMS >0 )? 'divshake' : ''}}" style="min-height:370px;">
+		<div class="col-md-6 col-lg-4 col-xl-3">
+			<div class="card-hover-shadow profile-responsive card-border border-inverse mb-3 card {{ ( pendingSPKL >0 || pendingSPKLTMS >0 )? 'divshake' : ''}}" style="height:370px;">
 				<div class="dropdown-menu-header">
 					<div class="dropdown-menu-header-inner bg-sunny-morning">
 						<div class="menu-header-content btn-pane-right">
@@ -63,7 +63,7 @@
 						</div>
 					</div>
 				</div>
-				<ul class="list-group list-group-flush">
+				<ul class="list-group list-group-flush" style="overflow-x: auto;">
 					<li class="list-group-item">
 						<div class="widget-content p-0">
 							<div class="widget-content-wrapper">
@@ -129,8 +129,8 @@
 				</ul>
 			</div>
 		</div>
-		<div class="col-md-12 col-lg-6 col-xl-3">
-			<div class="card-hover-shadow profile-responsive card-border border-inverse mb-3 card {{ ( pendingTR >0 )? 'divshake' : ''}}" style="min-height:370px;">
+		<div class="col-md-6 col-lg-4 col-xl-3">
+			<div class="card-hover-shadow profile-responsive card-border border-inverse mb-3 card {{ ( pendingTR >0 )? 'divshake' : ''}}" style="height:370px;">
 				<div class="dropdown-menu-header">
 					<div class="dropdown-menu-header-inner bg-arielle-smile">
 						<div class="menu-header-content btn-pane-right">
@@ -143,7 +143,7 @@
 						</div>
 					</div>
 				</div>
-				<ul class="list-group list-group-flush">
+				<ul class="list-group list-group-flush" style="overflow-x: auto;">
 					<li class="list-group-item">
 						<div class="widget-content p-0">
 							<div class="widget-content-wrapper">
@@ -178,8 +178,8 @@
 				</ul>
 			</div>
 		</div>
-		<div class="col-md-12 col-lg-6 col-xl-3">
-			<div class="card-hover-shadow profile-responsive card-border border-inverse mb-3 card {{ ( pendingRFC >0 )? 'divshake' : ''}} " style="min-height:370px;">
+		<div class="col-md-6 col-lg-4 col-xl-3">
+			<div class="card-hover-shadow profile-responsive card-border border-inverse mb-3 card {{ ( pendingRFC >0 )? 'divshake' : ''}} " style="height:370px;">
 				<div class="dropdown-menu-header">
 					<div class="dropdown-menu-header-inner bg-plum-plate">
 						<div class="menu-header-content btn-pane-right">
@@ -192,7 +192,7 @@
 						</div>
 					</div>
 				</div>
-				<ul class="list-group list-group-flush">
+				<ul class="list-group list-group-flush" style="overflow-x: auto;">
 					<li class="list-group-item">
 						<div class="widget-content p-0">
 							<div class="widget-content-wrapper">
@@ -227,10 +227,10 @@
 				</ul>
 			</div>
 		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-12 col-lg-6 col-xl-3">
-			<div class="card-hover-shadow profile-responsive card-border border-inverse mb-3 card {{ pendingMMF28 >0 || pendingMMF30 >0 ? 'divshake' : ''}}" style="min-height:370px;">
+	<!-- </div> -->
+	<!-- <div class="row"> -->
+		<div class="col-md-6 col-lg-4 col-xl-3">
+			<div class="card-hover-shadow profile-responsive card-border border-inverse mb-3 card {{ pendingMMF28 >0 || pendingMMF30 >0 ? 'divshake' : ''}}" style="height:370px;">
 				<div class="dropdown-menu-header">
 					<div class="dropdown-menu-header-inner bg-night-fade">
 						<div class="menu-header-content btn-pane-right">
@@ -243,7 +243,7 @@
 						</div>
 					</div>
 				</div>
-				<ul class="list-group list-group-flush">
+				<ul class="list-group list-group-flush" style="overflow-x: auto;">
 					<li class="list-group-item">
 						<div class="widget-content p-0">
 							<div class="widget-content-wrapper">
@@ -308,7 +308,7 @@
 				</ul>
 			</div>
 		</div>
-		<div class="col-md-12 col-lg-6 col-xl-3">
+		<div class="col-md-6 col-lg-4 col-xl-3">
 			<div class="card-hover-shadow profile-responsive card-border border-inverse mb-3 card {{ ( pendingITEIE >0 || pendingITIMAIL >0 || pendingITSHAREF >0 )? 'divshake' : ''}}" style="height:370px; ">
 				<div class="dropdown-menu-header">
 					<div class="dropdown-menu-header-inner bg-love-kiss">
@@ -417,6 +417,115 @@
 				</ul>
 			</div>
 		</div>
+		<div class="col-md-6 col-lg-4 col-xl-3">
+			<div class="card-hover-shadow profile-responsive card-border border-inverse mb-3 card {{ ( pendingAdvance >0 || pendingAdvpayment >0 || pendingAdvExpense >0 )? 'divshake' : ''}}" style="height:370px; ">
+				<div class="dropdown-menu-header">
+					<div class="dropdown-menu-header-inner bg-grow-early">
+						<div class="menu-header-content btn-pane-right">
+							<div>
+								<h5 class="menu-header-title"><i class="pe-7s-cash"></i> Advance (Coming Soon)</h5>
+							</div>
+							<div class="menu-header-btn-pane">
+								<button class="mb-2 mr-2 btn-pill btn btn-success" tooltip="Module ini digunakan untuk proses pengajuan Cash Advance dan Payment Request/Claim" flow="left"><i class="fa fa-question"></i></button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<ul class="list-group list-group-flush" style="overflow-x: auto;">
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-clock"></i> Advance Request</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse" ><span ng-bind="pendingAdvanceReq">0</span>
+									| <button class="btn-icon btn btn-success btn-sm" ng-click="myAdvance()" disabled>View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-hourglass-half"></i> Advance Approval</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse" ><span ng-bind="pendingAdvance">0</span>
+									| <button class="btn-icon btn btn-success btn-sm" ng-click="advanceApproval()" disabled>View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-clock"></i> Payment Request</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse" ><span ng-bind="pendingAdvpaymentReq">0</span>
+									| <button class="btn-icon btn btn-success btn-sm" ng-click="myAdvpayment()" disabled>View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-hourglass-half"></i> Payment Approval</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse" ><span ng-bind="pendingAdvpayment">0</span>
+									| <button class="btn-icon btn btn-success btn-sm" ng-click="advpaymentApproval()" disabled>View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-clock"></i> Expense Request</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse" ><span ng-bind="pendingAdvexpenseReq">0</span>
+									| <button class="btn-icon btn btn-success btn-sm" ng-click="myAdvexpense()" disabled>View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="list-group-item">
+						<div class="widget-content p-0">
+							<div class="widget-content-wrapper">
+
+								<div class="widget-content-left">
+									<div class="widget-heading"><i class="fa fa-hourglass-half"></i> Expense Approval</div>
+								</div>
+								<div class="widget-content-right">
+									<div class="widget-numbers widget-numbers-sm text-inverse" ><span ng-bind="pendingAdvexpense">0</span>
+									| <button class="btn-icon btn btn-success btn-sm" ng-click="advexpenseApproval()" disabled>View Detail</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+		
+				</ul>
+			</div>
+		</div>
 	</div>
 	<!-- <div class="tabs-animation">
 		<div class="mb-3 card" style="min-height:370px;">
@@ -430,7 +539,7 @@
 				</div>
 			</div>
 			<div class="row widget-chart widget-chart2 border-primary">				
-				<div class="col-lg-6 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-success border-success">
+				<div class="col-lg-4 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-success border-success">
 					<div class="card no-shadow rm-border bg-happy-itmeo widget-chart text-center card-btm-border card-shadow-success border-success" style="min-height:275px;">
 						<div class="icon-wrapper rounded-circle">
 							<div class="icon-wrapper-bg opacity-9 bg-alternate"></div>
@@ -453,7 +562,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-lg-6 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-primary border-primary">
+				<div class="col-lg-4 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-primary border-primary">
 					<div class="card no-shadow rm-border bg-sunny-morning widget-chart text-center card-btm-border card-shadow-primary border-primary"  style="min-height:275px;">
 						<div class="icon-wrapper rounded-circle">
 							<div class="icon-wrapper-bg opacity-9 bg-danger"></div>
@@ -487,7 +596,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-lg-6 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-primary border-primary">
+				<div class="col-lg-4 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-primary border-primary">
 					<div class="card no-shadow rm-border bg-arielle-smile widget-chart text-center card-btm-border card-shadow-primary border-primary"  style="min-height:275px;">
 						<div class="icon-wrapper rounded-circle">
 							<div class="icon-wrapper-bg opacity-9 bg-primary"></div>
@@ -511,7 +620,7 @@
 					</div>
 				</div>
 				
-				<div class="col-lg-6 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-success border-success">
+				<div class="col-lg-4 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-success border-success">
 					<div class="card no-shadow rm-border bg-plum-plate widget-chart text-center card-btm-border card-shadow-success border-success"  style="min-height:275px;">
 						<div class="icon-wrapper rounded-circle">
 							<div class="icon-wrapper-bg opacity-9 bg-warning"></div>
@@ -534,7 +643,7 @@
 					</div>
 				</div>
 
-				<div class="col-lg-6 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-success border-success">
+				<div class="col-lg-4 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-success border-success">
 					<div class="card no-shadow rm-border bg-deep-blue widget-chart text-center card-btm-border card-shadow-success border-success"  style="min-height:275px;">
 						<div class="icon-wrapper rounded-circle">
 							<div class="icon-wrapper-bg opacity-9 bg-primary"></div>
@@ -569,7 +678,7 @@
 					</div>
 				</div>
 
-				<div class="col-lg-6 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-primary border-primary">
+				<div class="col-lg-4 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-primary border-primary">
 					<div class="card no-shadow rm-border bg-night-fade widget-chart text-center card-btm-border card-shadow-primary border-primary"  style="height:275px;overflow: auto;">
 						<div class="icon-wrapper rounded-circle" style="overflow:visible !important;">
 							<div class="icon-wrapper-bg opacity-9 bg-danger"></div>
@@ -618,7 +727,7 @@
 					</div>
 				</div>
 
-				<div class="col-lg-6 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-primary border-primary">
+				<div class="col-lg-4 col-xl-3 card mb-3 widget-chart widget-chart2 card-shadow-primary border-primary">
 					<div class="card no-shadow rm-border bg-grow-early widget-chart text-center card-btm-border card-shadow-primary border-primary"  style="height:275px;overflow: auto;">
 						<div class="icon-wrapper rounded-circle" style="overflow:visible !important;">
 							<div class="icon-wrapper-bg opacity-9 bg-success"></div>

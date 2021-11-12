@@ -1045,9 +1045,9 @@
 		editing: {
             useIcons:true,
             mode: "cell",
-			allowUpdating: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule'))?(($rootScope.isAdmin)?true:false):true,
-			// allowAdding:(($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule') && ($scope.data.apprstatuscode!==5))?false:true,
-			allowAdding:(($scope.mode=='view')||($scope.mode=='report')||($scope.mode=='reschedule'))?(($rootScope.isAdmin)?true:false):true,
+			allowUpdating: (($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			// allowAdding:(($scope.mode=='view')||($scope.mode=='report') && ($scope.data.apprstatuscode!==5))?false:true,
+			allowAdding:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
             allowDeleting:(($rootScope.isAdmin) || ($scope.mode=='approve'))?true:false,
 			// allowDeleting:(($scope.mode=='approve')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
             

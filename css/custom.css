@@ -1,3 +1,16 @@
+.customTooltip * {
+    color: #4a4a4a;
+    font-size: 18px;
+}
+  
+.customTooltip .introjs-tooltip-title {
+    color: #0a41c9;
+}
+
+.introjs-helperLayer {
+    background-color: rgb(255 255 255 / 0%) !important;
+}
+
 .divshake {
     animation: shake 0.5s;
     animation-iteration-count: infinite;

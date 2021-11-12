@@ -120,22 +120,30 @@ app.register.controller('dashboardCtrl', ['$rootScope','$scope', '$http', '$inte
 			CrudService.FindData('itsharefapp',criteria).then(function (response){
 				$scope.pendingITSHAREF=response.jml;
 			});
-			// criteria = {status:'pending'};
-			// CrudService.FindData('advancebyemp',criteria).then(function (response){
-			// 	$scope.pendingAdvanceReq=response.jml;
-			// });
-			// criteria = {mypending:'true'};
-			// CrudService.FindData('advanceapp',criteria).then(function (response){
-			// 	$scope.pendingAdvance=response.jml;
-			// });
-			// criteria = {status:'pending'};
-			// CrudService.FindData('advpaymentbyemp',criteria).then(function (response){
-			// 	$scope.pendingAdvpaymentReq=response.jml;
-			// });
-			// criteria = {mypending:'true'};
-			// CrudService.FindData('advpaymentapp',criteria).then(function (response){
-			// 	$scope.pendingAdvpayment=response.jml;
-			// });
+			criteria = {status:'pending'};
+			CrudService.FindData('advancebyemp',criteria).then(function (response){
+				$scope.pendingAdvanceReq=response.jml;
+			});
+			criteria = {mypending:'true'};
+			CrudService.FindData('advanceapp',criteria).then(function (response){
+				$scope.pendingAdvance=response.jml;
+			});
+			criteria = {status:'pending'};
+			CrudService.FindData('advpaymentbyemp',criteria).then(function (response){
+				$scope.pendingAdvpaymentReq=response.jml;
+			});
+			criteria = {mypending:'true'};
+			CrudService.FindData('advpaymentapp',criteria).then(function (response){
+				$scope.pendingAdvpayment=response.jml;
+			});
+			criteria = {status:'pending'};
+			CrudService.FindData('advexpensebyemp',criteria).then(function (response){
+				$scope.pendingAdvexpenseReq=response.jml;
+			});
+			criteria = {mypending:'true'};
+			CrudService.FindData('advexpenseapp',criteria).then(function (response){
+				$scope.pendingAdvexpense=response.jml;
+			});
 
 			// criteria = {status:'pendingapproval'};
 			// CrudService.FindData('dashboard',criteria).then(function (response){

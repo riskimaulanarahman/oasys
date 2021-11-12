@@ -371,7 +371,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 						colCount : 1,
 						items: [
 							{label: {
-								text: "Department Head"
+								text: "Superior"
 							},
 							dataField:"depthead",
 							editorType: "dxDropDownBox",

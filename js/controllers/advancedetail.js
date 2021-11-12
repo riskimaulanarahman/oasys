@@ -67,6 +67,9 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 				},
 				onContentReady:function(e){
 					$scope.formInstance = e.component;
+					if (e.rowType === "header" && e.column.dataField === "advanceform") {  
+						e.element.attr("title", "My title");  
+					}  
 				},
 				readOnly : (($scope.mode=='view')||($scope.mode=='report'))?true:false,
 				labelLocation : "top",
@@ -91,6 +94,8 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
                                     dataSource:$scope.AdvanceForm,  
                                     valueExpr: 'id',
                                     displayExpr: 'advanceform',
+									inputAttr:{ dataintro : 'advanceform' },
+
 									// value: "",
 									onValueChanged: function(e) {
 										criteria = {status:'appform',formtype:e.value,advance_id:$scope.Requestid,employee_id:$scope.data.employee_id};
@@ -111,7 +116,9 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 						editorOptions: {
 							displayFormat:"dd/MM/yyyy",
 							// disabled: true
-							readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							readOnly: true,
+							inputAttr:{ dataintro : 'createddate' },
+
 						}},
 						
 						
@@ -123,6 +130,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 							name:'beneficiary',
 							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true 
 							editorOptions: {
+								inputAttr:{ dataintro : 'beneficiary' },
 								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							}                           
 						},
@@ -134,6 +142,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 							name:'accountname',
 							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true    
 							editorOptions: {
+								inputAttr:{ dataintro : 'accountname' },
 								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							}                        
 						},
@@ -145,6 +154,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 							name:'bank',
 							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true     
 							editorOptions: {
+								inputAttr:{ dataintro : 'bank' },
 								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							}                       
 						},
@@ -156,6 +166,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 							name:'accountnumber',
 							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true      
 							editorOptions: {
+								inputAttr:{ dataintro : 'accountnumber' },
 								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							}                      
 						},
@@ -177,6 +188,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							editorType: "dxDateBox",label: {text: "Expected Date"},
 							editorOptions: {
+								inputAttr:{ dataintro : 'expecteddate' },
 								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 								displayFormat:"dd/MM/yyyy",min:Date.now()},
 							validationRules: [{
@@ -187,6 +199,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							editorType: "dxDateBox",label: {text: "Due Date"},
 							editorOptions: {
+								inputAttr:{ dataintro : 'duedate' },
 								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 								displayFormat:"dd/MM/yyyy",min:Date.now()},
 							validationRules: [{
@@ -213,6 +226,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 							visible: true,
 							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							editorOptions: { 
+								inputAttr:{ dataintro : 'depthead' },
 								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 								dataSource:$scope.allEmpDataSource,  
 								valueExpr: 'id',
@@ -277,18 +291,23 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 							}]
 						},
 						{
-							dataField:'remarks',colSpan:2,editorType:"dxHtmlEditor",editorOptions: {height: 190,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}
+							dataField:'remarks',colSpan:2,editorType:"dxHtmlEditor",
+							editorOptions: {
+								inputAttr:{ dataintro : 'remarks' },
+								height: 190,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}
+							}
 						},
 						{
 							dataField:'isdeclaration',
 							label:{text:"Declaration"},
 							// visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
-							// disabled: (( $scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							disabled: (( $scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							dataType:"boolean",
 							editorType: "dxCheckBox",
 							validationRules: [{type: "required",message: "Declaration is required"}],
 							editorOptions: { 
-								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+								inputAttr:{ dataintro : 'remarks' },
+								// readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 								text:"Please Check Your Detail & Approval list, before submit this form. Any Problem Contact Developer",
 							}
 						}
@@ -408,6 +427,9 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 					},
 				],			
 			};
+
+
+			
 		}
 		var myStore = new DevExpress.data.CustomStore({
 			load: function() {			
@@ -580,6 +602,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 			},
 			columns: [
 				{dataField:'description',width:150,dataType: "string" , editorOptions: {
+					// inputAttr:{ dataintro : 'detaildescription' },
                     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }},	
 				{dataField:'accountcode',caption: "Account Code",width:150,dataType: "string", editorOptions: {
@@ -794,7 +817,13 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 			columnMinWidth: 50,
 			columnAutoWidth: true,
 			columns: [
-						{dataField:'file_descr',width:250,caption:"File Description",encodeHtml: false,dataType: "string",editorOptions: {disabled:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?false:true):false}},
+						{
+							dataField:'file_descr',width:250,caption:"File Description",encodeHtml: false,dataType: "string",
+							editorOptions: {
+								// inputAttr:{ dataintro : 'docfiledescription' },
+								disabled:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?false:true):false
+							}
+						},
 						
 						{
 								dataField: "file_loc",
@@ -977,7 +1006,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 			data.mode="approve";
 			// delete data.advanceform;
 			delete data.createddate;
-			delete data.advanceno;
+			// delete data.advanceno;
 			delete data.employee_id;
 			delete data.requeststatus;
 			delete data.depthead;
@@ -1023,7 +1052,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 					data.mode="approve";
 					// delete data.advanceform;
 					delete data.createddate;
-					delete data.advanceno;
+					// delete data.advanceno;
 					delete data.employee_id;
 					delete data.requeststatus;
 					delete data.depthead;
@@ -1225,6 +1254,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
             }
         }
     }
+
     $scope.initContentx = function(data, component) {
         return {
             dataSource: $scope.empDataSource,
@@ -1251,6 +1281,8 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
             }
         }
     }
+
+
 	
 }]);
 })(app || angular.module("kduApp"));

@@ -449,16 +449,18 @@ Class Advpaymentmodule extends Application{
 											// 	}
 											// }
 
-											if($Employee->companycode == 'BCL') {
-												$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and tbl_employee.companycode='BCL'")));
-											}else {
-												$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and tbl_employee.companycode=?",$Employee->companycode)));
-											}
+											// if($Employee->companycode == 'BCL') {
+												$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and CompanyList like '%".$Employee->companycode."%' ")));
+											// }else {
+											// 	$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and tbl_employee.companycode=?",$Employee->companycode)));
+											// }
 											if(count($Approver2)>0){
 												$Advpaymentapproval = new Advpaymentapproval();
 												$Advpaymentapproval->advpayment_id = $Advpayment->id;
 												$Advpaymentapproval->approver_id = $Approver2->id;
 												$Advpaymentapproval->save();
+												$logger = new Datalogger("Advpaymentapproval","add","Add initial HRD Approval ",json_encode($Advpaymentapproval->to_array()));
+												$logger->SaveData();
 											}
 											
 
@@ -497,12 +499,12 @@ Class Advpaymentmodule extends Application{
 												$logger->SaveData();
 											}
 
-											$companyBU=( ($Employee->companycode=='KPA') || ($Employee->companycode=='AHL') )?"KPSI":$Employee->companycode;
-											if (($Employee->company->sapcode=='RND') || ($Employee->company->sapcode=='NKF')){
-												$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
-											}else{
-												$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$companyBU,$Employee->id)));
-											}
+											// $companyBU=( ($Employee->companycode=='KPA') || ($Employee->companycode=='AHL') )?"KPSI":$Employee->companycode;
+											// if (($Employee->company->sapcode=='RND') || ($Employee->company->sapcode=='NKF')){
+												$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and CompanyList like '%".$Employee->companycode."%' ")));
+											// }else{
+											// 	$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$companyBU,$Employee->id)));
+											// }
 											if(count($ApproverBU)>0){
 												$Advpaymentapproval = new Advpaymentapproval();
 												$Advpaymentapproval->advpayment_id = $Advpayment->id;
@@ -549,8 +551,8 @@ Class Advpaymentmodule extends Application{
 								
 								$joins   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
 
-								$companyFC=(($data['companycode']=='BCL') || ($data['companycode']=='KPA'))?"KPSI":((($data['companycode']=='KPSI'))?"LDU":$Employee->companycode);
-								$ApproverBUFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='37' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$companyFC,$Employee->id)));
+								// $companyFC=(($data['companycode']=='BCL') || ($data['companycode']=='KPA'))?"KPSI":((($data['companycode']=='KPSI'))?"LDU":$Employee->companycode);
+								$ApproverBUFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='37' and CompanyList like '%".$Employee->companycode."%' ")));
 								if(count($ApproverBUFC)>0){
 									$Advpaymentapproval = new Advpaymentapproval();
 									$Advpaymentapproval->advpayment_id = $Advpayment->id;
@@ -1001,6 +1003,9 @@ Class Advpaymentmodule extends Application{
 							$join   = "LEFT JOIN tbl_approver ON (tbl_advpaymentapproval.approver_id = tbl_approver.id) ";
 							if (isset($data['mode'])){
 								$Advpaymentapproval = Advpaymentapproval::find('first', array('joins'=>$join,'conditions' => array("advpayment_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
+								//start for update all duplicate approver
+								$Advpaymentapproval = Advpaymentapproval::find('all', array('joins'=>$join,'conditions' => array("advpayment_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
+								//end for update all duplicate approver
 								unset($data['mode']);
 							}else{
 								$Advpaymentapproval = Advpaymentapproval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
@@ -1027,16 +1032,17 @@ Class Advpaymentmodule extends Application{
 							unset($data['duedate']);
 							unset($data['expecteddate']);
 
-							
-							$olddata = $Advpaymentapproval->to_array();
-							foreach($data as $key=>$val){
-								$val=($val=='false')?false:(($val=='true')?true:$val);
-								$Advpaymentapproval->$key=$val;
+							foreach ($Advpaymentapproval as $approval){
+								$olddata = $Advpaymentapproval->to_array();
+								foreach($data as $key=>$val){
+									$val=($val=='false')?false:(($val=='true')?true:$val);
+									$approval->$key=$val;
+								}
+								
+								$approval->save();
+								$logger = new Datalogger("Advpaymentapproval","update",json_encode($olddata),json_encode($data));
+								$logger->SaveData();
 							}
-							
-							$Advpaymentapproval->save();
-							$logger = new Datalogger("Advpaymentapproval","update",json_encode($olddata),json_encode($data));
-							$logger->SaveData();
 						if (isset($mode) && ($mode=='approve')){
 								$Advpayment = Advpayment::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
 								$joinx   = "LEFT JOIN tbl_approver ON (tbl_advpaymentapproval.approver_id = tbl_approver.id) ";					
