@@ -1478,10 +1478,10 @@ Class DayoffModule extends Application{
 						if(isset($query['status'])){
 							switch ($query['status']){
 								case 'pending':
-									$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+									//$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 
-									$Dayoff = Dayoff::find('all', array('conditions' => array("employee_id=? and RequestStatus<3 ",$Employee->id),'include' => array('employee')));
-									// $Dayoff = Dayoff::find('all', array('conditions' => array("employee_id=? and RequestStatus<3 and id<>?",$query['username'],$query['id']),'include' => array('employee')));
+									//$Dayoff = Dayoff::find('all', array('conditions' => array("employee_id=? and RequestStatus<3 ",$Employee->id),'include' => array('employee')));
+									$Dayoff = Dayoff::find('all', array('conditions' => array("employee_id=? and RequestStatus<3 and id<>?",$query['username'],$query['id']),'include' => array('employee')));
 									foreach ($Dayoff as &$result) {
 										$fullname	= $result->employee->fullname;		
 										$result		= $result->to_array();
