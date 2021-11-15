@@ -40,7 +40,7 @@ app.register.controller('dashboardCtrl', ['$rootScope','$scope', '$http', '$inte
 	$scope.pendingAdvexpense=0;
     function initController() {
 		setTimeout(function(){ 
-			criteria = {status:'pending'};
+			criteria = {status:'dashboard'};
 			CrudService.FindData('dayoffbyemp',criteria).then(function (response){
 				$scope.pendingDayoffReq=response.jml;
 			});

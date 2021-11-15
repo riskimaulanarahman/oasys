@@ -1489,6 +1489,18 @@ Class DayoffModule extends Application{
 									}
 									$data=array("jml"=>count($Dayoff));
 									break;
+								case 'dashboard':
+									$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+
+									$Dayoff = Dayoff::find('all', array('conditions' => array("employee_id=? and RequestStatus<3 ",$Employee->id),'include' => array('employee')));
+									// $Dayoff = Dayoff::find('all', array('conditions' => array("employee_id=? and RequestStatus<3 and id<>?",$query['username'],$query['id']),'include' => array('employee')));
+									foreach ($Dayoff as &$result) {
+										$fullname	= $result->employee->fullname;		
+										$result		= $result->to_array();
+										$result['fullname']=$fullname;
+									}
+									$data=array("jml"=>count($Dayoff));
+								break;
 								default:
 									//$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->post['username'])));
 									$Dayoff = Dayoff::find('all', array('conditions' => array("employee_id=? and RequestStatus>0 and RequestStatus<3 and id<>?",$query['username'],$query['id']),'include' => array('employee')));
