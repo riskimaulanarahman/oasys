@@ -305,10 +305,12 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 							dataType:"boolean",
 							editorType: "dxCheckBox",
 							validationRules: [{type: "required",message: "Declaration is required"}],
+							encodeHtml: true,
 							editorOptions: { 
 								inputAttr:{ dataintro : 'remarks' },
 								// readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-								text:"Please Check Your Detail & Approval list, before submit this form. Any Problem Contact Developer",
+								// text:"Please Check Your Detail & Approval list, before submit this form. Any Problem Contact Developer",
+								text: "I fully aware that this advance must be cleared/settled within seven (7) working days from date of occurent of event. If I fail to comply this, I authorize The Finance Section to deduct my salary without further notification.|| Saya sepenuhnya memahami bahwa Advance ini harus diselesaikan dalam waktu 7 hari kerja setelah tanggal pelaksanaan kegiatan. Jika Saya tidak dapat memenuhi ketentuan ini, Saya memberikan wewenang kepada bagian keuangan untuk memotong gaji saya tanpa perlu pemberitahuan lebih lanjut."
 							}
 						}
 
@@ -1011,7 +1013,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 			delete data.requeststatus;
 			delete data.depthead;
 			delete data.beneficiary;
-			delete data.accountName;
+			delete data.accountname;
 			delete data.bank;
 			delete data.isused;
 			delete data.accountnumber;
@@ -1057,7 +1059,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 					delete data.requeststatus;
 					delete data.depthead;
 					delete data.beneficiary;
-					delete data.accountName;
+					delete data.accountname;
 					delete data.bank;
 					delete data.isused;
 					delete data.accountnumber;

@@ -94,6 +94,14 @@
                                     $scope.loadITIMAIL(options.data,"report",true);
                                 })
                                 .appendTo(container);
+                                if((options.data.approveddoc=='' || options.data.approveddoc==null)  && (options.data.requeststatus=='3')){
+                                    $('<div style="padding:2px 15px 2px 15px;"/>').addClass('dx-icon-repeat  btn-pill btn-shadow btn btn-success')
+                                        .text('')
+                                        .on('dxclick', function () {
+                                            window.open('api/apiitimailpdf?id='+options.data.id, '_blank');
+                                        })
+                                        .appendTo(container);
+                                }
                             // if((options.data.requeststatus=='0') || (options.data.requeststatus=='2')){
                             // if((options.data.requeststatus=='3')){
                             //     $('<div style="padding:2px 15px 2px 15px;" title="Edit" />').addClass('dx-icon-edit btn-pill btn-shadow btn btn-success')
@@ -164,7 +172,7 @@
                                 dataField: "approveddoc",
                                 caption:"Approval Doc",
                                 width: 100,
-                                allowFiltering: false,
+                                allowFiltering: true,
                                 allowSorting: false,
                                 formItem: { visible: false},
                                 editorOptions: { 

@@ -454,7 +454,8 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 							validationRules: [{type: "required",message: "Declaration is required"}],
 							editorOptions: { 
 								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-								text:"Please Check Your Detail & Approval list, before submit this form. Any Problem Contact Developer",
+								// text:"Please Check Your Detail & Approval list, before submit this form. Any Problem Contact Developer",
+								text: "I fully aware that this advance must be cleared/settled within seven (7) working days from date of occurent of event. If I fail to comply this, I authorize The Finance Section to deduct my salary without further notification.|| Saya sepenuhnya memahami bahwa Advance ini harus diselesaikan dalam waktu 7 hari kerja setelah tanggal pelaksanaan kegiatan. Jika Saya tidak dapat memenuhi ketentuan ini, Saya memberikan wewenang kepada bagian keuangan untuk memotong gaji saya tanpa perlu pemberitahuan lebih lanjut."					
 							}
 						}
 
@@ -1098,7 +1099,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 		
 	});
 	$scope.tabs = [
-		{ id:1, TabName : "Detail Advance", title: 'Detail Advance / Employee List', template: "tab1"   },
+		{ id:1, TabName : "Detail Advance", title: 'Detail Payment & Receipt', template: "tab1"   },
 		{ id:4, TabName : "SupportDoc", title: 'Supporting Document', template: "tab4"   },
 		{ id:2, TabName : "Approver List", title: 'Approver List', template: "tab2"   },
 		{ id:3, TabName : "History Tracking", title: 'History Tracking', template: "tab3"   },
