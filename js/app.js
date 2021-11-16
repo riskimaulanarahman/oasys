@@ -55,7 +55,7 @@ if (!String.prototype.padStart) {
 var RouteProvider = function () {
 	var scriptPath = "js/controllers/";
 	var templatePath = "template/";
-	var v= '5.21'
+	var v= '5.22'
 	this.resolve = function (name) {
 		var route = {};
 		route.templateUrl = templatePath + name + ".html?v="+v;
@@ -66,6 +66,7 @@ var RouteProvider = function () {
 		};
 		return route;
 	};
+	$('#versionapp').text('v '+v);
 	var loadController = function ($q, $rootScope, path) {
 		var defer = $q.defer();
 		$.ajax({
