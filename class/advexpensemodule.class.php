@@ -1782,6 +1782,7 @@ Class Advexpensemodule extends Application{
 				$picpath= SITE_PATH."/images/approved.png";
 				
 				$Worksheet->Range("B35")->Value = $Advexpense->name;
+				$Worksheet->Range("B44")->Value = 'Name / SAP : '.$Advexpense->name;
 				$Worksheet->Range("D35")->Value = date("d/m/Y",strtotime($Advexpense->createddate));
 				$Worksheet->Range("B58")->Value = $Advexpense->name;
 				$Worksheet->Range("D58")->Value = date("d/m/Y",strtotime($Advexpense->createddate));
@@ -1863,6 +1864,7 @@ Class Advexpensemodule extends Application{
 					$Worksheet->Range("K".$a)->Value = $Advexpensedetail[$a-19]->location;
 					$Worksheet->Range("L".$a)->Value = $Advexpensedetail[$a-19]->remarks;
 				}
+
 
 				foreach ($Advexpensedetailbt as $data){
 					// if($data->ispapua == 0) {
@@ -1986,6 +1988,9 @@ Class Advexpensemodule extends Application{
 			$excel->Workbooks->Close();
 			$excel->Quit();
 			unset($excel);
+
+			$output = 200;
+			echo json_encode($output);
 
 			return $fileName;
 

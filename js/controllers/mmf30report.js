@@ -453,18 +453,7 @@
                 },
 
             ],
-            summary: {
-              totalItems: [
-                {
-                  column: "extendedprice",
-                  summaryType: "sum",
-                  valueFormat: {
-                    format: "currency",
-                    precision: 2,
-                  },
-                },
-              ],
-            },
+
           });
         };
       }

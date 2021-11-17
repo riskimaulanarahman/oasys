@@ -373,7 +373,8 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 							validationRules: [{
 								type: "required",
 								message: "Please Due Date"
-							}]},
+							}]
+							},
 							{dataField:'enddate',
 							name: 'enddate',
 							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
@@ -857,7 +858,6 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 						displayExpr: 'type',
 					},
 					editorOptions: {
-						displayFormat:"dd/MM/yyyy",
 						disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin)?false:true):false,
 					},
 				},
@@ -1396,8 +1396,8 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 			delete data.bg;
 			delete data.location;
 			delete data.superior;
-			delete data.startdate;
-			delete data.enddate;
+			// delete data.startdate;
+			// delete data.enddate;
 			delete data.reason;
 			delete data.apprstatuscode;
 
@@ -1443,8 +1443,8 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 					delete data.bg;
 					delete data.location;
 					delete data.superior;
-					delete data.startdate;
-					delete data.enddate;
+					// delete data.startdate;
+					// delete data.enddate;
 					delete data.reason;
 					delete data.apprstatuscode;
 
@@ -1488,12 +1488,16 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 	}
 	
 	$scope.saveDraft = function(e){
+		console.log('oke');
 		var data = $scope.formInstance.option("formData");
 		delete data.fullname;
 		delete data.department;
 		delete data.approvalstatus;
-		data.startdate = $filter("date")(data.startdate, "yyyy-MM-dd HH:mm")
-		data.enddate = $filter("date")(data.enddate, "yyyy-MM-dd HH:mm")
+		// delete data.startdate;
+		// delete data.enddate;
+
+		// data.startdate = $filter("date")(data.startdate, "yyyy-MM-dd HH:mm")
+		// data.enddate = $filter("date")(data.enddate, "yyyy-MM-dd HH:mm")
 		CrudService.Update('advexpense',data.id,data).then(function (response) {
 			if(response.status=="error"){
 				DevExpress.ui.dialog.alert(response.message,"Error");
@@ -1544,8 +1548,8 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 										var data = $scope.formInstance.option("formData");
 										data.requeststatus = 1;
 										delete data.approvalstatus;
-										data.startdate = $filter("date")(data.startdate, "yyyy-MM-dd HH:mm")
-										data.enddate = $filter("date")(data.enddate, "yyyy-MM-dd HH:mm")
+										// data.startdate = $filter("date")(data.startdate, "yyyy-MM-dd HH:mm")
+										// data.enddate = $filter("date")(data.enddate, "yyyy-MM-dd HH:mm")
 										CrudService.Update('advexpense',data.id,data).then(function (response) {
 
 										if(response.status=="error"){

@@ -1332,6 +1332,9 @@ Class Itsharefoldermodule extends Application{
 			$excel->Quit();
 			unset($excel);
 
+			$output = 200;
+			echo json_encode($output);
+
 			return $fileName;
 
 		} catch(com_exception $e) {  

@@ -965,6 +965,7 @@ Class Iteiemodule extends Application{
 			$title = "AD";
 
 			$file= SITE_PATH."/doc/it/ad_template.xlsx";
+			// $file="";
 			// $file="D:/xampp/htdocs/oasys/doc/it/ad_template.xlsx";
 			$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
 			$Worksheet = $Workbook->Worksheets(1);
@@ -1045,6 +1046,9 @@ Class Iteiemodule extends Application{
 			$excel->Workbooks->Close();
 			$excel->Quit();
 			unset($excel);
+
+			$output = 200;
+			echo json_encode($output);
 
 			return $fileName;
 		} catch(com_exception $e) {  

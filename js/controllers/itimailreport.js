@@ -98,7 +98,29 @@
                                     $('<div style="padding:2px 15px 2px 15px;"/>').addClass('dx-icon-repeat  btn-pill btn-shadow btn btn-success')
                                         .text('')
                                         .on('dxclick', function () {
-                                            window.open('api/apiitimailpdf?id='+options.data.id, '_blank');
+                                            // window.open('api/apiitimailpdf?id='+options.data.id, '_blank');
+                                            DevExpress.ui.notify("Please Wait...","info");
+                                            $.ajax({
+                                                url: 'api/apiitimailpdf?id='+options.data.id,
+                                                type: 'get',
+                                                cache: false,
+                                                success: function(data){
+                                                    console.log(data);
+                                                    if(data == 200) {
+                                                        DevExpress.ui.notify("Success Re-PDF","success");
+                                                    }else {
+                                                        alert(data); 
+                                                    }
+                                                    $scope.dataGrid.refresh();
+
+                                                 },
+                                                 error: function(data){
+                                                    var json = $.parseJSON(data);
+                                                    alert('error '+json);
+                                                    $scope.dataGrid.refresh();
+
+                                                 }
+                                              });
                                         })
                                         .appendTo(container);
                                 }
