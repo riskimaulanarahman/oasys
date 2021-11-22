@@ -292,25 +292,27 @@ Class Advexpensemodule extends Application{
 										}
 
 
-										
-										if($advanceno !== null) {
+										if($Advexpense->requeststatus == 0) {
 
-											$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND advanceno=?",$Advexpense->employee_id,$advanceno)));
-											
-											$AdvanceDetail = AdvanceDetail::find('all',array('conditions'=> array("advance_id=?",$Advance->id)));
-											foreach ($AdvanceDetail as $val) {
-												$val_tamount += $val->amount;
+												if($advanceno !== null) {
+													
+													$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND advanceno=?",$Advexpense->employee_id,$advanceno)));
+													
+													$AdvanceDetail = AdvanceDetail::find('all',array('conditions'=> array("advance_id=?",$Advance->id)));
+													foreach ($AdvanceDetail as $val) {
+														$val_tamount += $val->amount;
+												}
+												
+												$Advexpense->advanceno = $advanceno;
+												$Advexpense->lessadvance = $val_tamount;
+												$Advexpense->save();
+												
+											} else {
+												
+												$Advexpense->advanceno = null;
+												$Advexpense->lessadvance = null;
+												$Advexpense->save();
 											}
-											
-											$Advexpense->advanceno = $advanceno;
-											$Advexpense->lessadvance = $val_tamount;
-											$Advexpense->save();
-
-										} else {
-
-											$Advexpense->advanceno = null;
-											$Advexpense->lessadvance = null;
-											$Advexpense->save();
 										}
 
 										
@@ -1228,7 +1230,7 @@ Class Advexpensemodule extends Application{
 							$Advexpense->save();
 							unset($data['advanceno']);
 							unset($data['lessadvance']);
-
+							
 							unset($data['startdate']);
 							unset($data['enddate']);
 
@@ -1291,7 +1293,7 @@ Class Advexpensemodule extends Application{
 											// 	$Advance->save();
 											// }
 
-											if($Advexpense->advanceno !== null) {
+											if($Advexpense->advanceno !== null || $Advexpense->advanceno !== '') {
 												$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND advanceno=?",$Advexpense->employee->id,$Advexpense->advanceno)));
 												$Advance->isused=1;
 												$Advance->save();

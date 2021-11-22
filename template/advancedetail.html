@@ -27,7 +27,8 @@
 						</div>
 					</div>
 					<div data-options="dxTemplate: { name: 'tab4' }" style="padding:10px;">
-						<div dataintro="supportdoc" dx-data-grid="grid4Options" style="min-height:400px;max-height:430px" dx-item-alias="row">
+						<div dataintro="supportdoc" dx-data-grid="grid4Options"
+							style="min-height:400px;max-height:430px" dx-item-alias="row">
 							<div data-options="dxTemplate:{ name: 'dropDownBoxEditorTemplate'}">
 								<div dx-drop-down-box="initDropDownBoxEditor(row)" dx-item-alias="item">
 									<div data-options="dxTemplate:{ name: 'contentTemplate'}">
@@ -66,70 +67,76 @@
 	// $("[id*='_advanceform']").attr('data-info', '222');
 
 	// console.log(name2);
-	$('#btn-help').click(function(){
+	$('#btn-help').click(function () {
 		introJs().start();
 		introJs().setOptions({
-		showProgress: true,
-		steps: [{
-			title: 'Welcome',
-			intro: 'Hello World! 👋'
-		},
-		{	
-			title: 'advance form',
-			element: document.querySelector('input[dataintro="advanceform"]'),
-			intro: 'isi'
-		},
-		{	
-			title: 'created date',
-			element: document.querySelector('input[dataintro="createddate"]'),
-			intro: 'isi'
-		},
-		{	
-			title: 'beneficiary',
-			element: document.querySelector('input[dataintro="beneficiary"]'),
-			intro: 'isi'
-		},
-		{	
-			title: 'account name',
-			element: document.querySelector('input[dataintro="accountname"]'),
-			intro: 'isi'
-		},
-		{	
-			title: 'bank',
-			element: document.querySelector('input[dataintro="bank"]'),
-			intro: 'isi'
-		},
-		{	
-			title: 'bank account number',
-			element: document.querySelector('input[dataintro="accountnumber"]'),
-			intro: 'isi'
-		},
-		{	
-			title: 'expected date',
-			element: document.querySelector('input[dataintro="expecteddate"]'),
-			intro: 'isi'
-		},{	
-			title: 'due date',
-			element: document.querySelector('input[dataintro="duedate"]'),
-			intro: 'isi'
-		},{	
-			title: 'department head',
-			element: document.querySelector('input[dataintro="depthead"]'),
-			intro: 'isi'
-		},{	
-			title: 'remarks',
-			intro: 'isi'
-		},{	
-			title: 'declaration',
-			intro: 'isi'
-		},{	
-			title: 'detail advance',
-			intro: 'isi',
-		},{	
-			title: 'supporting document',
-			intro: 'isi',
-		}
-	]
+			showProgress: true,
+			steps: [{
+					title: 'Welcome',
+					intro: 'Hello World! 👋'
+				},
+				{
+					title: 'advance form',
+					element: document.querySelector('input[dataintro="advanceform"]'),
+					intro: '- HR Related = untuk pengajuan terkait SPPD Karyawan, Listrik/Air, International Staff Document. <br>- OPS Related = untuk pengajuan terkait operasional.'
+				},
+				{
+					title: 'created date',
+					element: document.querySelector('input[dataintro="createddate"]'),
+					intro: 'tanggal pembuatan pengajuan'
+				},
+				{
+					title: 'beneficiary',
+					element: document.querySelector('input[dataintro="beneficiary"]'),
+					intro: 'penerima advance'
+				},
+				{
+					title: 'account name',
+					element: document.querySelector('input[dataintro="accountname"]'),
+					intro: 'pemilik rekening'
+				},
+				{
+					title: 'bank',
+					element: document.querySelector('input[dataintro="bank"]'),
+					intro: 'nama bank'
+				},
+				{
+					title: 'bank account number',
+					element: document.querySelector('input[dataintro="accountnumber"]'),
+					intro: 'nomor rekening bank'
+				},
+				{
+					title: 'expected date',
+					element: document.querySelector('input[dataintro="expecteddate"]'),
+					intro: 'tanggal permintaan pembayaran advance'
+				}, {
+					title: 'due date',
+					element: document.querySelector('input[dataintro="duedate"]'),
+					intro: 'tanggal jatuh tempo pembayaran advance'
+				}, {
+					title: 'department head',
+					element: document.querySelector('input[dataintro="depthead"]'),
+					intro: 'untuk memilih department head sebagai approver'
+				}, {
+					title: 'remarks',
+					intro: 'untuk memberikan catatan terkait pengajuan'
+				}, {
+					title: 'declaration',
+					intro: 'pernyataan karyawan untuk mempertanggung jawabkan advance yang telah dibuat (dalam waktu yang telah ditentukan)'
+				}, {
+					title: 'detail advance',
+					intro: '- description = deskripsi terkait advance<br>' +
+						'- account code = cost center (optional)<br>' +
+						'- amount = jumlah harga permintaan advance<br>' +
+						'- remarks = catatan terkait deskripsi detail advance',
+				}, {
+					title: 'supporting document',
+					intro: 'untuk melampirkan file pendukung terkait pengajuan advance',
+				}, {
+					title: 'Finish',
+					intro: 'Good Bye! 👋👋👋'
+				}
+			]
 		}).start();
 	})
 </script>

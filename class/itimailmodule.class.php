@@ -400,7 +400,8 @@ Class Itimailmodule extends Application{
 															$logger->SaveData();
 														}
 												
-														$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=30 and not(tbl_employee.companycode='IHM')")));
+														// $Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=30 and not(tbl_employee.companycode='IHM')")));
+														$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=30 and tbl_employee.companycode=? ",$Employee->companycode)));
 														if(count($Approver2)>0){
 															$Itimailapproval = new Itimailapproval();
 															$Itimailapproval->itimail_id = $Itimail->id;

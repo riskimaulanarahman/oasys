@@ -249,24 +249,31 @@ Class Advpaymentmodule extends Application{
 										if($paymenttype !== null) {
 											$Advpayment->paymenttype = $valpaymenttype;
 										}
-										
-										if($advanceno !== null) {
 
-											$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND advanceno=?",$Advpayment->employee_id,$advanceno)));
+										if($Advpayment->requeststatus == 0) {
 											
-											$AdvanceDetail = AdvanceDetail::find('all',array('conditions'=> array("advance_id=?",$Advance->id)));
-											foreach ($AdvanceDetail as $val) {
-												$val_tamount += $val->amount;
+												if($advanceno !== null) {
+
+													$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND advanceno=?",$Advpayment->employee_id,$advanceno)));
+													
+													$AdvanceDetail = AdvanceDetail::find('all',array('conditions'=> array("advance_id=?",$Advance->id)));
+													foreach ($AdvanceDetail as $val) {
+														$val_tamount += $val->amount;
+													}
+													
+													$Advpayment->advanceno = $advanceno;
+													$Advpayment->lessadvance = $val_tamount;
+													$Advpayment->save();
+													
+												echo 'adaa';
+												
+											} else {
+												$Advpayment->advanceno = null;
+												$Advpayment->lessadvance = null;
+												$Advpayment->save();
+												
+												echo 'tidaak';
 											}
-											
-											$Advpayment->advanceno = $advanceno;
-											$Advpayment->lessadvance = $val_tamount;
-											$Advpayment->save();
-
-										} else {
-											$Advpayment->advanceno = null;
-											$Advpayment->lessadvance = null;
-											$Advpayment->save();
 										}
 
 										
@@ -1002,9 +1009,9 @@ Class Advpaymentmodule extends Application{
 							$Advpayment = Advpayment::find($doid);
 							$join   = "LEFT JOIN tbl_approver ON (tbl_advpaymentapproval.approver_id = tbl_approver.id) ";
 							if (isset($data['mode'])){
-								$Advpaymentapproval = Advpaymentapproval::find('first', array('joins'=>$join,'conditions' => array("advpayment_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
+								$Advpaymentapproval = Advpaymentapproval::find('first', array('joins'=>$join,'conditions' => array("advpayment_id=? and tbl_approver.employee_id=? and ApprovalStatus = 0",$doid,$Employee->id),'order' => 'tbl_approver.sequence','include' => array('approver'=>array('employee','approvaltype'))));
 								//start for update all duplicate approver
-								$Advpaymentapproval = Advpaymentapproval::find('all', array('joins'=>$join,'conditions' => array("advpayment_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
+								// $Advpaymentapproval = Advpaymentapproval::find('all', array('joins'=>$join,'conditions' => array("advpayment_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
 								//end for update all duplicate approver
 								unset($data['mode']);
 							}else{
@@ -1020,7 +1027,7 @@ Class Advpaymentmodule extends Application{
 							}
 							
 							$Advpayment->save();
-
+							
 							unset($data['advanceno']);
 							unset($data['paymentform']);
 							unset($data['lessadvance']);
@@ -1028,21 +1035,21 @@ Class Advpaymentmodule extends Application{
 							unset($data['accountname']);
 							unset($data['bank']);
 							unset($data['accountnumber']);
-
+							
 							unset($data['duedate']);
 							unset($data['expecteddate']);
 
-							foreach ($Advpaymentapproval as $approval){
+							// foreach ($Advpaymentapproval as $approval){
 								$olddata = $Advpaymentapproval->to_array();
 								foreach($data as $key=>$val){
 									$val=($val=='false')?false:(($val=='true')?true:$val);
-									$approval->$key=$val;
+									$Advpaymentapproval->$key=$val;
 								}
 								
-								$approval->save();
+								$Advpaymentapproval->save();
 								$logger = new Datalogger("Advpaymentapproval","update",json_encode($olddata),json_encode($data));
 								$logger->SaveData();
-							}
+							// }
 						if (isset($mode) && ($mode=='approve')){
 								$Advpayment = Advpayment::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
 								$joinx   = "LEFT JOIN tbl_approver ON (tbl_advpaymentapproval.approver_id = tbl_approver.id) ";					
@@ -1072,8 +1079,8 @@ Class Advpaymentmodule extends Application{
 										break;
 									case '2':
 
-										print_r($Advpayment->paymentform);
-										print_r($Advpaymentapproval->approver->approvaltype_id);
+										// print_r($Advpayment->paymentform);
+										// print_r($Advpaymentapproval->approver->approvaltype_id);
 
 										if (($Advpayment->paymentform == 1 && $Advpaymentapproval->approver->approvaltype_id == 37) || ($Advpayment->paymentform == 2 && $Advpaymentapproval->approver->approvaltype_id == 38)){
 											$Advpayment->requeststatus = 3;
@@ -1090,7 +1097,7 @@ Class Advpaymentmodule extends Application{
 												}
 											}
 
-											if($Advpayment->advanceno !== null) {
+											if($Advpayment->advanceno !== null || $Advpayment->advanceno !== '') {
 												$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND advanceno=?",$Advpayment->employee->id,$Advpayment->advanceno)));
 												$Advance->isused=1;
 												$Advance->save();

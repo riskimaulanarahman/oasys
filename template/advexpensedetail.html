@@ -1,70 +1,154 @@
-<div  ng-controller="advexpensedetailCtrl as advanced">
-  <div class='panel panel-default'>
-    <div class='panel-heading'> <i class="fa fa-user fa-fw"></i> Detail Expense</div>
-    <div class='panel-body' id="maincontainer">
-		<div class="clearfix"></div><br>
-		<form action="your-action" ng-submit="onFormSubmit($event)">
-            <div class="widget-container">
-                <div id="form" dx-form="detailFormOptions"></div>
-            </div>
-        </form>
-		<input type="hidden" id="advformtype" value="1">
+<div ng-controller="advexpensedetailCtrl as advanced">
+	<button class="btn btn-sm btn-danger" id="btn-help">Help</button>
+	<div class='panel panel-default'>
+		<div class='panel-heading'> <i class="fa fa-user fa-fw"></i> Detail Expense</div>
+		<div class='panel-body' id="maincontainer">
+			<div class="clearfix"></div><br>
+			<form action="your-action" ng-submit="onFormSubmit($event)">
+				<div class="widget-container">
+					<div id="form" dx-form="detailFormOptions"></div>
+				</div>
+			</form>
+			<input type="hidden" id="advformtype" value="1">
 
-		<div data-options="dxTemplate: { name: 'content' }" ng-show="showHistory">
-			<div id="detailEMP" dx-tab-panel="tabSettings">			
-				<div data-options="dxTemplate: { name: 'tab1' }" style="padding:10px;">
+			<div data-options="dxTemplate: { name: 'content' }" ng-show="showHistory">
+				<div id="detailEMP" dx-tab-panel="tabSettings">
+					<div data-options="dxTemplate: { name: 'tab1' }" style="padding:10px;">
 
-				   <div dx-data-grid="grid1Options" style="min-height:400px;max-height:430px" dx-item-alias="row" >
-				     <div data-options="dxTemplate:{ name: 'dropDownBoxEditorTemplate'}">
-						 
-						<div dx-drop-down-box="initDropDownBoxEditor(row)" dx-item-alias="item">
-							<div data-options="dxTemplate:{ name: 'contentTemplate'}">
-								<div dx-data-grid="initContent(row, item.component)"></div>
+						<div dx-data-grid="grid1Options" style="min-height:400px;max-height:430px" dx-item-alias="row">
+							<div data-options="dxTemplate:{ name: 'dropDownBoxEditorTemplate'}">
+
+								<div dx-drop-down-box="initDropDownBoxEditor(row)" dx-item-alias="item">
+									<div data-options="dxTemplate:{ name: 'contentTemplate'}">
+										<div dx-data-grid="initContent(row, item.component)"></div>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
-					</div>
-				</div>
-				<div data-options="dxTemplate: { name: 'tab5' }" style="padding:10px;">
-					<div dx-data-grid="grid5Options" style="min-height:400px;max-height:430px" dx-item-alias="row" >
-					  <div data-options="dxTemplate:{ name: 'dropDownBoxEditorTemplate'}">
-						 <div dx-drop-down-box="initDropDownBoxEditor(row)" dx-item-alias="item">
-							 <div data-options="dxTemplate:{ name: 'contentTemplate'}">
-								 <div dx-data-grid="initContent(row, item.component)"></div>
-							 </div>
-						 </div>
-					 </div>
-					 </div>
-				 </div>
-				<div data-options="dxTemplate: { name: 'tab4' }" style="padding:10px;">
-					<div dx-data-grid="grid4Options" style="min-height:400px;max-height:430px" dx-item-alias="row" >
-					  <div data-options="dxTemplate:{ name: 'dropDownBoxEditorTemplate'}">
-						 <div dx-drop-down-box="initDropDownBoxEditor(row)" dx-item-alias="item">
-							 <div data-options="dxTemplate:{ name: 'contentTemplate'}">
-								 <div dx-data-grid="initContent(row, item.component)"></div>
-							 </div>
-						 </div>
-					 </div>
-					 </div>
-				 </div>
-				<div data-options="dxTemplate: { name: 'tab2' }" style="padding:10px;">
-				   <div dx-data-grid="grid2Options" style="min-height:400px;max-height:430px" dx-item-alias="rowx" >
-				     <div data-options="dxTemplate:{ name: 'dropDownBoxEditorTemplatex'}">
-						<div dx-drop-down-box="initDropDownBoxEditorx(rowx)" dx-item-alias="itemx">
-							<div data-options="dxTemplate:{ name: 'contentTemplatex'}">
-								<div dx-data-grid="initContentx(rowx, itemx.component)"></div>
+					<div data-options="dxTemplate: { name: 'tab5' }" style="padding:10px;">
+						<div dx-data-grid="grid5Options" style="min-height:400px;max-height:430px" dx-item-alias="row">
+							<div data-options="dxTemplate:{ name: 'dropDownBoxEditorTemplate'}">
+								<div dx-drop-down-box="initDropDownBoxEditor(row)" dx-item-alias="item">
+									<div data-options="dxTemplate:{ name: 'contentTemplate'}">
+										<div dx-data-grid="initContent(row, item.component)"></div>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
+					<div data-options="dxTemplate: { name: 'tab4' }" style="padding:10px;">
+						<div dx-data-grid="grid4Options" style="min-height:400px;max-height:430px" dx-item-alias="row">
+							<div data-options="dxTemplate:{ name: 'dropDownBoxEditorTemplate'}">
+								<div dx-drop-down-box="initDropDownBoxEditor(row)" dx-item-alias="item">
+									<div data-options="dxTemplate:{ name: 'contentTemplate'}">
+										<div dx-data-grid="initContent(row, item.component)"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div data-options="dxTemplate: { name: 'tab2' }" style="padding:10px;">
+						<div dx-data-grid="grid2Options" style="min-height:400px;max-height:430px" dx-item-alias="rowx">
+							<div data-options="dxTemplate:{ name: 'dropDownBoxEditorTemplatex'}">
+								<div dx-drop-down-box="initDropDownBoxEditorx(rowx)" dx-item-alias="itemx">
+									<div data-options="dxTemplate:{ name: 'contentTemplatex'}">
+										<div dx-data-grid="initContentx(rowx, itemx.component)"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div data-options="dxTemplate: { name: 'tab3' }" style="padding:10px;">
+						<div dx-data-grid="grid3Options" style="min-height:400px;max-height:430px"></div>
 					</div>
 				</div>
-				<div data-options="dxTemplate: { name: 'tab3' }" style="padding:10px;">
-				   <div dx-data-grid="grid3Options" style="min-height:400px;max-height:430px"></div>
+				<div style="z-index:1000"
+					dx-load-panel="{ bindingOptions: { visible: 'loadPanelVisible' }, message: 'Loading...',showPane:true,shadingColor: 'rgba(0,0,0,0.4)', position: { of: '#detailEMP' }, shading: true}">
 				</div>
 			</div>
-			<div style="z-index:1000" dx-load-panel="{ bindingOptions: { visible: 'loadPanelVisible' }, message: 'Loading...',showPane:true,shadingColor: 'rgba(0,0,0,0.4)', position: { of: '#detailEMP' }, shading: true}"></div>
+			<div ng-include src="'template/panel.html'"></div>
 		</div>
-     <div ng-include src="'template/panel.html'"></div>
-    </div>
-  </div>
+	</div>
 </div>
+
+<script>
+	$('#btn-help').click(function () {
+		introJs().start();
+		introJs().setOptions({
+			showProgress: true,
+			steps: [{
+					title: 'Welcome',
+					intro: 'Hello World! 👋'
+				},
+				{
+					title: 'payment form',
+					element: document.querySelector('input[dataintro="paymentform"]'),
+					intro: '- Payment Req HR = untuk pengajuan terkait pembayaran SPPD Karyawan, Listrik/Air, International Staff Document. <br>' +
+						'- Payment Req OPS = untuk pengajuan terkait pembayaran operasional.'
+				},
+				{
+					title: 'payment method',
+					element: document.querySelector('input[dataintro="payment"]'),
+					intro: 'metode pembayaran'
+				},
+				{
+					title: 'created date',
+					element: document.querySelector('input[dataintro="createddate"]'),
+					intro: 'tanggal pembuatan pengajuan'
+				},
+				{
+					title: 'beneficiary',
+					element: document.querySelector('input[dataintro="beneficiary"]'),
+					intro: 'penerima advance'
+				},
+				{
+					title: 'account name',
+					element: document.querySelector('input[dataintro="accountname"]'),
+					intro: 'pemilik rekening'
+				},
+				{
+					title: 'bank',
+					element: document.querySelector('input[dataintro="bank"]'),
+					intro: 'nama bank'
+				},
+				{
+					title: 'bank account number',
+					element: document.querySelector('input[dataintro="accountnumber"]'),
+					intro: 'nomor rekening bank'
+				},
+				{
+					title: 'payment date',
+					element: document.querySelector('input[dataintro="paymentdate"]'),
+					intro: 'tanggal permintaan pembayaran advance'
+				}, {
+					title: 'due date',
+					element: document.querySelector('input[dataintro="duedate"]'),
+					intro: 'tanggal jatuh tempo pembayaran advance'
+				}, {
+					title: 'superior',
+					element: document.querySelector('input[dataintro="superior"]'),
+					intro: 'untuk memilih superior sebagai approver'
+				}, {
+					title: 'remarks',
+					intro: 'untuk memberikan catatan terkait pengajuan'
+				}, {
+					title: 'declaration',
+					intro: 'pernyataan karyawan untuk mempertanggung jawabkan payment yang telah dibuat'
+				}, {
+					title: 'payment detail',
+					intro: '- description = deskripsi terkait payment<br>' +
+						'- account code = cost center (optional)<br>' +
+						'- amount = jumlah harga <br>' +
+						'- remarks = catatan terkait deskripsi detail payment',
+				}, {
+					title: 'supporting document',
+					intro: 'untuk melampirkan file pendukung terkait pengajuan payment',
+				}, {
+					title: 'Finish',
+					intro: 'Good Bye! 👋👋👋'
+				}
+			]
+		}).start();
+	})
+</script>

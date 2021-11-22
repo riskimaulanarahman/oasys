@@ -293,9 +293,19 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 						{
 							dataField:'remarks',colSpan:2,editorType:"dxHtmlEditor",
 							editorOptions: {
-								inputAttr:{ dataintro : 'remarks' },
+								// inputAttr:{ dataintro : 'remarks' },
 								height: 190,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}
 							}
+						},
+						{
+							label: {
+								text: "I fully aware that this advance must be cleared/settled within seven (7) working days from date of occurent of event. If I fail to comply this, I authorize The Finance Section to deduct my salary without further notification."
+							},
+						},
+						{
+							label: {
+								text: "Saya sepenuhnya memahami bahwa Advance ini harus diselesaikan dalam waktu 7 hari kerja setelah tanggal pelaksanaan kegiatan. Jika Saya tidak dapat memenuhi ketentuan ini, Saya memberikan wewenang kepada bagian keuangan untuk memotong gaji saya tanpa perlu pemberitahuan lebih lanjut."
+							},
 						},
 						{
 							dataField:'isdeclaration',
@@ -307,10 +317,10 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 							validationRules: [{type: "required",message: "Declaration is required"}],
 							encodeHtml: true,
 							editorOptions: { 
-								inputAttr:{ dataintro : 'remarks' },
+								// inputAttr:{ dataintro : 'declaration' },
 								// readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 								// text:"Please Check Your Detail & Approval list, before submit this form. Any Problem Contact Developer",
-								text: "I fully aware that this advance must be cleared/settled within seven (7) working days from date of occurent of event. If I fail to comply this, I authorize The Finance Section to deduct my salary without further notification.|| Saya sepenuhnya memahami bahwa Advance ini harus diselesaikan dalam waktu 7 hari kerja setelah tanggal pelaksanaan kegiatan. Jika Saya tidak dapat memenuhi ketentuan ini, Saya memberikan wewenang kepada bagian keuangan untuk memotong gaji saya tanpa perlu pemberitahuan lebih lanjut."
+								text: "Agree/Setuju"
 							}
 						}
 

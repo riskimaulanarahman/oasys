@@ -16,6 +16,9 @@ Class ListmodModule extends Application{
 				case 'apilistadvance':
 					$this->getadvance();
 					break;
+				case 'apilistadvancefinal':
+					$this->getadvancefinal();
+					break;
 				default:
 					break;
 			}
@@ -33,6 +36,35 @@ Class ListmodModule extends Application{
 					case 'byid':
 						$id = $this->post['id'];
 						$Advance = Advance::find('all', array('conditions' => array("employee_id=? and RequestStatus=3 and isused=0",$id),'include' => array('employee')));
+						foreach ($Advance as &$result) {
+							$result = $result->to_array();
+						}
+						// print_r($Advance);					
+						echo json_encode($Advance, JSON_NUMERIC_CHECK);
+						break;
+					default:
+						$Advance = Advance::all();
+						foreach ($Advance as &$result) {
+							$result = $result->to_array();
+						}					
+						echo json_encode($Advance, JSON_NUMERIC_CHECK);
+						break;					
+				}
+			}	
+		}
+	}
+
+	public function getadvancefinal(){
+		if (count($this->post)==0){
+			http_response_code(405);
+    		echo json_encode(array("message" => "Method not Allowed"));
+		}else{
+			$auth = $this->jwt->checkAuth();
+			if($auth){
+				switch ($this->post['criteria']){
+					case 'byid':
+						$id = $this->post['id'];
+						$Advance = Advance::find('all', array('conditions' => array("employee_id=? and RequestStatus=3 and isused=1",$id),'include' => array('employee')));
 						foreach ($Advance as &$result) {
 							$result = $result->to_array();
 						}

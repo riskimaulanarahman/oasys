@@ -115,6 +115,25 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
                 sort: "id"
             }
 
+			$scope.getlessadvfinal = {
+                store: new DevExpress.data.CustomStore({
+                    key: "id",
+                    loadMode: "raw",
+                    load: function() {
+                        return CrudService.GetById('listadvancefinal',$scope.data.employee_id).then(function (response) {
+                            if(response.status=="error"){
+                                DevExpress.ui.notify(response.message,"error");
+                            }else{
+								console.log(response);
+                                return response;
+                            }
+                        });
+                    },
+                }),
+                
+                sort: "id"
+            }
+
 			$scope.AppAction = ($scope.data.approvalstep==2)?[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Verify"}]:[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
 			$scope.AdvanceForm =[{id:0,paymentform:"- Select -"},{id:1,paymentform:"Payment Req HR"},{id:2,paymentform:"Payment Req OPR"}];
 			$scope.Paymentopt =[{id:1,payment:"Cash"},{id:2,payment:"Bank"}];
@@ -153,6 +172,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 		
 						{dataField:'createddate',editorType: "dxDateBox",label: {text: "Creation Date"},
 						editorOptions: {
+							inputAttr:{ dataintro : 'createddate' },
 							readOnly: true,
 							displayFormat:"dd/MM/yyyy",
 							// disabled: true
@@ -167,6 +187,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 							name:'name',
 							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 							editorOptions: {
+								inputAttr:{ dataintro : 'name' },
 								readOnly: true
 								// disabled: true
 							}
@@ -179,6 +200,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 							name:'email',
 							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 							editorOptions: {
+								inputAttr:{ dataintro : 'email' },
 								readOnly: true
 								// disabled: true
 							}
@@ -191,6 +213,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 							name:'costcenter',
 							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 							editorOptions: {
+								inputAttr:{ dataintro : 'costcenter' },
 								readOnly: true
 								// disabled: true
 							}
@@ -203,6 +226,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 							name:'bg',
 							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 							editorOptions: {
+								inputAttr:{ dataintro : 'bg' },
 								readOnly: true
 								// disabled: true
 							}
@@ -215,6 +239,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 							name:'location',
 							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 							editorOptions: {
+								inputAttr:{ dataintro : 'location' },
 								readOnly: true
 								// disabled: true
 							}
@@ -228,6 +253,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 							dataType:"boolean",
 							editorType: "dxCheckBox",
 							editorOptions: { 
+								inputAttr:{ dataintro : 'paymenttype' },
 								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 								text:"Yes",
 								onValueChanged: function (e) {
@@ -280,13 +306,14 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 						items: [
 							{
                                 dataField:'advanceno',
-								name:'Advance No',
+								name:'advanceno',
                                 editorType: "dxSelectBox",
                                 label:{text:"Less Advance"},
-								visible:($scope.data.paymenttype==1)?true:false,
+								visible:($scope.data.paymenttype==1 && $scope.data.requeststatus !=3)?true:false,
                                 // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
                                 validationRules: [{type: "required",message: "Action is required"}],
                                 editorOptions: { 
+									inputAttr:{ dataintro : 'advanceno' },
 									readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
                                     dataSource:$scope.getlessadv,  
                                     valueExpr: 'advanceno',
@@ -303,6 +330,25 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
                                 },
 								
                             },
+
+							{
+                                dataField:'advanceno',
+								name:'advanceno2',
+                                editorType: "dxSelectBox",
+                                label:{text:"Less Advance"},
+								visible:($scope.data.paymenttype==1 && $scope.data.requeststatus ==3)?true:false,
+                                // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                validationRules: [{type: "required",message: "Action is required"}],
+                                editorOptions: { 
+									inputAttr:{ dataintro : 'advanceno' },
+									readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                    dataSource:$scope.getlessadvfinal,  
+                                    valueExpr: 'advanceno',
+                                    displayExpr: 'advanceno',
+                                },
+								
+                            },
+							
 							
 							
 						]
@@ -320,6 +366,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							editorType: "dxDateBox",label: {text: "Start Date"},
 							editorOptions: {
+								inputAttr:{ dataintro : 'startdate' },
 								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 								displayFormat:"dd/MM/yyyy",
 								min:Date.now(),
@@ -382,6 +429,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 							// visible:($scope.data.startdate==null)?true:false,
 							editorType: "dxDateBox",label: {text: "End Date"},
 							editorOptions: {
+								inputAttr:{ dataintro : 'enddate' },
 								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 								displayFormat:"dd/MM/yyyy",
 								min:Date.now(),
@@ -436,6 +484,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 							visible: true,
 							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							editorOptions: { 
+								inputAttr:{ dataintro : 'superior' },
 								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 								dataSource:$scope.allEmpDataSource,  
 								valueExpr: 'id',
