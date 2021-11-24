@@ -885,6 +885,7 @@ Class Mmf30module extends Application{
 					case 'update':
 						$doid = $this->post['id'];
 						$data = $this->post['data'];
+						$action = $this->post['action'];
 						$mode= $data['mode'];
 						unset($data['id']);
 						unset($data['depthead']);
@@ -899,18 +900,21 @@ Class Mmf30module extends Application{
 						}else{
 							$Mmf30approval = Mmf30approval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
 						}
-						
-						$mmf30 = Mmf30::find($doid);
 
-						foreach($data as $key=>$val) {
-							if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks')) {
-								// if(($key == 'isrepair') || ($key == 'isscrap')) {
-									$value=(($val===0) || ($val==='0') || ($val==='false'))?false:((($val===1) || ($val==='1') || ($val==='true'))?true:$val);
-								// }
-								$mmf30->$key=$value;
+						if($action == 'form') {
+						
+							$mmf30 = Mmf30::find($doid);
+
+							foreach($data as $key=>$val) {
+								if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks')) {
+									// if(($key == 'isrepair') || ($key == 'isscrap')) {
+										$value=(($val===0) || ($val==='0') || ($val==='false'))?false:((($val===1) || ($val==='1') || ($val==='true'))?true:$val);
+									// }
+									$mmf30->$key=$value;
+								}
 							}
+							$mmf30->save();
 						}
-						$mmf30->save();
 
 						// unset($data['materialdispatchno']);
 						// unset($data['isrepair']);

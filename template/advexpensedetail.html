@@ -82,65 +82,30 @@
 					intro: 'Hello World! 👋'
 				},
 				{
-					title: 'payment form',
-					element: document.querySelector('input[dataintro="paymentform"]'),
-					intro: '- Payment Req HR = untuk pengajuan terkait pembayaran SPPD Karyawan, Listrik/Air, International Staff Document. <br>' +
-						'- Payment Req OPS = untuk pengajuan terkait pembayaran operasional.'
+					title: 'with advance ?',
+					element: document.querySelector('input[dataintro="paymenttype"]'),
+					intro: 'pilihan apakah expense tersebut berkaitan dengan advance yang diajukan'
 				},
 				{
-					title: 'payment method',
-					element: document.querySelector('input[dataintro="payment"]'),
-					intro: 'metode pembayaran'
+					title: 'start date',
+					element: document.querySelector('input[dataintro="startdate"]'),
+					intro: 'tanggal mulai dinas'
 				},
 				{
-					title: 'created date',
-					element: document.querySelector('input[dataintro="createddate"]'),
-					intro: 'tanggal pembuatan pengajuan'
+					title: 'end date',
+					element: document.querySelector('input[dataintro="enddate"]'),
+					intro: 'tanggal selesai dinas'
 				},
 				{
-					title: 'beneficiary',
-					element: document.querySelector('input[dataintro="beneficiary"]'),
-					intro: 'penerima advance'
-				},
-				{
-					title: 'account name',
-					element: document.querySelector('input[dataintro="accountname"]'),
-					intro: 'pemilik rekening'
-				},
-				{
-					title: 'bank',
-					element: document.querySelector('input[dataintro="bank"]'),
-					intro: 'nama bank'
-				},
-				{
-					title: 'bank account number',
-					element: document.querySelector('input[dataintro="accountnumber"]'),
-					intro: 'nomor rekening bank'
-				},
-				{
-					title: 'payment date',
-					element: document.querySelector('input[dataintro="paymentdate"]'),
-					intro: 'tanggal permintaan pembayaran advance'
-				}, {
-					title: 'due date',
-					element: document.querySelector('input[dataintro="duedate"]'),
-					intro: 'tanggal jatuh tempo pembayaran advance'
-				}, {
-					title: 'superior',
-					element: document.querySelector('input[dataintro="superior"]'),
-					intro: 'untuk memilih superior sebagai approver'
-				}, {
-					title: 'remarks',
-					intro: 'untuk memberikan catatan terkait pengajuan'
-				}, {
-					title: 'declaration',
-					intro: 'pernyataan karyawan untuk mempertanggung jawabkan payment yang telah dibuat'
-				}, {
-					title: 'payment detail',
-					intro: '- description = deskripsi terkait payment<br>' +
-						'- account code = cost center (optional)<br>' +
-						'- amount = jumlah harga <br>' +
-						'- remarks = catatan terkait deskripsi detail payment',
+					title: 'expense detail',
+					intro: '- expense type = tipe yang diklaim<br>' +
+						'- purpose/description = tujuan pembuatan klaim<br>' +
+						'- receipt date = tanggal kwitansi klaim<br>' +
+						'- amount = jumlah tagihan kwitansi<br>'+
+						'- currency = mata uang kwitansi<br>'+
+						'- country = negara dinas<br>'+
+						'- location = lokasi dinas<br>'+
+						'- remarks = catatan terkait klaim kwitansi'
 				}, {
 					title: 'supporting document',
 					intro: 'untuk melampirkan file pendukung terkait pengajuan payment',

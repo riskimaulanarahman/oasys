@@ -792,6 +792,7 @@ Class Mmfmodule extends Application{
 					case 'update':
 						$doid = $this->post['id'];
 						$data = $this->post['data'];
+						$action = $this->post['action'];
 						$mode= $data['mode'];
 						unset($data['id']);
 						unset($data['depthead']);
@@ -799,7 +800,6 @@ Class Mmfmodule extends Application{
 						unset($data['department']);
 						unset($data['approveddoc']);
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-						$mmf = Mmf::find($doid);
 						$join   = "LEFT JOIN tbl_approver ON (tbl_mmf28approval.approver_id = tbl_approver.id) ";
 						if (isset($data['mode'])){
 							$Trapproval = Mmfapproval::find('first', array('joins'=>$join,'conditions' => array("mmf28_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
@@ -807,15 +807,20 @@ Class Mmfmodule extends Application{
 						}else{
 							$Trapproval = Mmfapproval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
 						}
-						foreach($data as $key=>$val) {
-							if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks')) {
-								// if(($key == 'isrepair') || ($key == 'isscrap')) {
-									$value=(($val===0) || ($val==='0') || ($val==='false'))?false:((($val===1) || ($val==='1') || ($val==='true'))?true:$val);
-								// }
-								$mmf->$key=$value;
+						
+						if($action == 'form') {
+							$mmf = Mmf::find($doid);
+
+							foreach($data as $key=>$val) {
+								if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks')) {
+									// if(($key == 'isrepair') || ($key == 'isscrap')) {
+										$value=(($val===0) || ($val==='0') || ($val==='false'))?false:((($val===1) || ($val==='1') || ($val==='true'))?true:$val);
+									// }
+									$mmf->$key=$value;
+								}
 							}
+							$mmf->save();
 						}
-						$mmf->save();
 
 						unset($data['materialdispatchno']);
 						unset($data['isrepair']);

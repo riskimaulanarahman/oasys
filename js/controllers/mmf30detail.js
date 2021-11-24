@@ -719,7 +719,8 @@
 		},
 		update: function(key, values) {
 			values.approvaldate = $filter("date")(values.approvaldate, "yyyy-MM-dd HH:mm")
-            CrudService.Update('mmf30app',key.id,values).then(function (response) {
+            values.action = 'approver';
+			CrudService.Update('mmf30app',key.id,values).then(function (response) {
 				if(response.status=="error"){
 					 DevExpress.ui.notify(response.message,"error");
 				}
@@ -1346,6 +1347,7 @@
 				var date = new Date();
                 var d= $filter("date")(date, "yyyy-MM-dd HH:mm");
                 // data.materialreturneddate = $filter("date")(data.materialreturneddate, "yyyy-MM-dd HH:mm");
+				data.action = 'form'
 				data.approvaldate = d;
 				data.mode="approve";
 				delete data.createddate;
@@ -1398,6 +1400,7 @@
 						var date = new Date();
                         var d= $filter("date")(date, "yyyy-MM-dd HH:mm");
                         // data.materialreturneddate = $filter("date")(data.materialreturneddate, "yyyy-MM-dd HH:mm");
+						data.action = 'form'
 						data.approvaldate = d;
 						data.mode="approve";
 						delete data.createddate;

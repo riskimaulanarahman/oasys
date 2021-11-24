@@ -1241,6 +1241,7 @@
 		},
 		update: function(key, values) {
 			values.approvaldate = $filter("date")(values.approvaldate, "yyyy-MM-dd HH:mm")
+            values.action = 'approver';
             CrudService.Update('itimailapp',key.id,values).then(function (response) {
 				if(response.status=="error"){
 					 DevExpress.ui.notify(response.message,"error");
@@ -1521,6 +1522,7 @@
                 var d= $filter("date")(date, "yyyy-MM-dd HH:mm");
                 data.validfrom = $filter("date")(data.validfrom, "yyyy-MM-dd HH:mm");
                 data.validto = $filter("date")(data.validto, "yyyy-MM-dd HH:mm");
+                data.action = 'form';
                 // data.membername = data.membername.join();
                 data.approvaldate = d;
 				data.mode="approve";
@@ -1587,6 +1589,7 @@
                         var d= $filter("date")(date, "yyyy-MM-dd HH:mm");
                         data.validfrom = $filter("date")(data.validfrom, "yyyy-MM-dd HH:mm");
                         data.validto = $filter("date")(data.validto, "yyyy-MM-dd HH:mm");
+                        data.action = 'form';
                         // data.membername = data.membername.join();
 						data.approvaldate = d;
                         data.mode="approve";

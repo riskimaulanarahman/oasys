@@ -301,44 +301,105 @@ Class Advpaymentmodule extends Application{
 										// print_r($advpayment_form);
 										$data['companycode']=$Employee->companycode;
 
-										if($advpayment_form == 1) {
+										if($Advpayment->requeststatus == 0) {
 
-											//check lessadvance
-											$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=3 AND advanceform=1 AND isused=0",$Advpayment->employee_id)));
+											
+												if($advpayment_form == 1) {
 
-											if($Advance) {
-												$item['message']=200;
-												echo json_encode($item, JSON_NUMERIC_CHECK);
-											} else {
-												$Advpayment = Advpayment::find($id, array('include' => array('employee'=>array('company','department','designation'))));
-												$Advpayment->paymenttype = 0;
-												$Advpayment->advanceno = null;
-												$Advpayment->lessadvance = null;
-												$Advpayment->save();
-												$item['message']=404;
-												echo json_encode($item, JSON_NUMERIC_CHECK);
+													//check lessadvance
+													$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=3 AND advanceform=1 AND isused=0",$Advpayment->employee_id)));
+													
+													if($Advance) {
+														$item['message']=200;
+														echo json_encode($item, JSON_NUMERIC_CHECK);
+													} else {
+														$Advpayment = Advpayment::find($id, array('include' => array('employee'=>array('company','department','designation'))));
+														$Advpayment->paymenttype = 0;
+														$Advpayment->advanceno = null;
+														$Advpayment->lessadvance = null;
+														$Advpayment->save();
+														$item['message']=404;
+														echo json_encode($item, JSON_NUMERIC_CHECK);
+													}
+													
+												} else if($advpayment_form == 2) {
+													
+													//check lessadvance
+													$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=3 AND advanceform=2 AND isused=0",$Advpayment->employee_id)));
+													
+												if($Advance) {
+													$item['message']=200;
+													// $item['lessadvance']=$val_tamount;
+													echo json_encode($item, JSON_NUMERIC_CHECK);
+												} else {
+													$Advpayment = Advpayment::find($id, array('include' => array('employee'=>array('company','department','designation'))));
+													$Advpayment->paymenttype = 0;
+													$Advpayment->advanceno = null;
+													$Advpayment->lessadvance = null;
+													$Advpayment->save();
+													$item['message']=404;
+													echo json_encode($item, JSON_NUMERIC_CHECK);
+												}
 											}
 
-										} else if($advpayment_form == 2) {
+										} else if($Advpayment->requeststatus == 3 || $Advpayment->requeststatus == 4) {
+											if($advpayment_form == 1) {
 
-											//check lessadvance
-											$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=3 AND advanceform=2 AND isused=0",$Advpayment->employee_id)));
-
-											if($Advance) {
-												$item['message']=200;
-												// $item['lessadvance']=$val_tamount;
-												echo json_encode($item, JSON_NUMERIC_CHECK);
-											} else {
-												$Advpayment = Advpayment::find($id, array('include' => array('employee'=>array('company','department','designation'))));
-												$Advpayment->paymenttype = 0;
-												$Advpayment->advanceno = null;
-												$Advpayment->lessadvance = null;
-												$Advpayment->save();
-												$item['message']=404;
-												echo json_encode($item, JSON_NUMERIC_CHECK);
+												//check lessadvance
+												$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=3 AND advanceform=1 AND isused=1",$Advpayment->employee_id)));
+												
+												if($Advance) {
+													$item['message']=200;
+													echo json_encode($item, JSON_NUMERIC_CHECK);
+												} else {
+													$item['message']=404;
+													echo json_encode($item, JSON_NUMERIC_CHECK);
+												}
+												
+											} else if($advpayment_form == 2) {
+												
+												//check lessadvance
+												$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=3 AND advanceform=2 AND isused=1",$Advpayment->employee_id)));
+												
+												if($Advance) {
+													$item['message']=200;
+													// $item['lessadvance']=$val_tamount;
+													echo json_encode($item, JSON_NUMERIC_CHECK);
+												} else {
+													$item['message']=404;
+													echo json_encode($item, JSON_NUMERIC_CHECK);
+												}
 											}
+										} else {
+											if($advpayment_form == 1) {
 
+												//check lessadvance
+												$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=3 AND advanceform=1 AND isused=0",$Advpayment->employee_id)));
+												
+												if($Advance) {
+													$item['message']=200;
+													echo json_encode($item, JSON_NUMERIC_CHECK);
+												} else {
+													$item['message']=404;
+													echo json_encode($item, JSON_NUMERIC_CHECK);
+												}
+												
+											} else if($advpayment_form == 2) {
+												
+												//check lessadvance
+												$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=3 AND advanceform=2 AND isused=0",$Advpayment->employee_id)));
+												
+												if($Advance) {
+													$item['message']=200;
+													// $item['lessadvance']=$val_tamount;
+													echo json_encode($item, JSON_NUMERIC_CHECK);
+												} else {
+													$item['message']=404;
+													echo json_encode($item, JSON_NUMERIC_CHECK);
+												}
+											}
 										}
+										
 									break;
 									case 'appform':
 										$advpayment_form = $query['formtype'];

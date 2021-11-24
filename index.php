@@ -735,7 +735,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                             </li>
                                             <li>
                                                 <a href="" ng-click="myITIMAIL()">
-                                                    <i class="metismenu-icon"></i>Request Form
+                                                    <i class="metismenu-icon"></i>IT Form
                                                 </a>
                                             </li>
                                             <li>
@@ -758,7 +758,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                             </li>
                                             <li>
                                                 <a href="" ng-click="itimailApproval()">
-                                                    <i class="metismenu-icon"></i>Request Form
+                                                    <i class="metismenu-icon"></i>IT Form
                                                 </a>
                                             </li>
                                             <li>
@@ -849,7 +849,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                             </li>
                                             <li>
                                                 <a href="" ng-click="dataITIMAIL()">
-                                                    <i class="metismenu-icon"></i>Request Form
+                                                    <i class="metismenu-icon"></i>IT Form
                                                 </a>
                                             </li>
                                             <li>
