@@ -854,13 +854,13 @@ Class Mmf30module extends Application{
 						} else if(isset($query['filter'])){
 							$join = "LEFT JOIN vwmmf30report v on tbl_mmf30.id=v.id";
 							$sel = 'tbl_mmf30.*, v.laststatus,v.personholding, v.apprbuyername, v.apprprocheaddate, v.apprbuyerdate ';
-							$Mmf = Mmf30::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
-							foreach ($Mmf as &$result) {
+							$Mmf30 = Mmf30::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
+							foreach ($Mmf30 as &$result) {
 								$fullname	= $result->employee->fullname;		
 								$result		= $result->to_array();
 								$result['fullname']=$fullname;
 							}
-							$data=$Mmf;
+							$data=$Mmf30;
 						} else{
 							$data=array();
 						}
@@ -885,7 +885,7 @@ Class Mmf30module extends Application{
 					case 'update':
 						$doid = $this->post['id'];
 						$data = $this->post['data'];
-						$action = $this->post['action'];
+						$action = $data['action'];
 						$mode= $data['mode'];
 						unset($data['id']);
 						unset($data['depthead']);
@@ -902,6 +902,7 @@ Class Mmf30module extends Application{
 						}
 
 						if($action == 'form') {
+							unset($data['action']);
 						
 							$mmf30 = Mmf30::find($doid);
 
@@ -915,6 +916,9 @@ Class Mmf30module extends Application{
 							}
 							$mmf30->save();
 						}
+
+						unset($data['action']);
+
 
 						// unset($data['materialdispatchno']);
 						// unset($data['isrepair']);

@@ -1053,7 +1053,6 @@ Class Advancemodule extends Application{
 							// unset($data['advanceform']);
 
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-							$Advance = Advance::find($doid);
 							$join   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";
 							if (isset($data['mode'])){
 								$Advanceapproval = Advanceapproval::find('first', array('joins'=>$join,'conditions' => array("advance_id=? and tbl_approver.employee_id=? and ApprovalStatus = 0 ",$doid,$Employee->id),'order' => 'tbl_approver.sequence','include' => array('approver'=>array('employee','approvaltype'))));
@@ -1064,14 +1063,16 @@ Class Advancemodule extends Application{
 							}else{
 								$Advanceapproval = Advanceapproval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
 							}
-							foreach($data as $key=>$val) {
-								if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks') ) {
-										$value=(($val===0) || ($val==='0') || ($val==='false'))?false:((($val===1) || ($val==='1') || ($val==='true'))?true:$val);
-									$Advance->$key=$value;
-								}
-							}
+
+							// $Advance = Advance::find($doid);
+							// foreach($data as $key=>$val) {
+							// 	if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks') ) {
+							// 			$value=(($val===0) || ($val==='0') || ($val==='false'))?false:((($val===1) || ($val==='1') || ($val==='true'))?true:$val);
+							// 		$Advance->$key=$value;
+							// 	}
+							// }
 							
-							$Advance->save();
+							// $Advance->save();
 
 							unset($data['advanceform']);
 							unset($data['lessadvance']);

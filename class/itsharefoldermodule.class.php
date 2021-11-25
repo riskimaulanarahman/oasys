@@ -672,6 +672,7 @@ Class Itsharefoldermodule extends Application{
 					case 'update':
 						$doid = $this->post['id'];
 						$data = $this->post['data'];
+						$action = $data['action'];
 						$mode= $data['mode'];
 						$appstatus = $data['approvalstatus'];
 						unset($data['id']);
@@ -684,10 +685,9 @@ Class Itsharefoldermodule extends Application{
 						// if ($appstatus=='4' || $appstatus==4 ){
 						// 	$data['approvalstatus'] == 0;
 						// }
-						print_r($data);
+						// print_r($data);
 
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-						$Itsharef = Itsharef::find($doid);
 						$join   = "LEFT JOIN tbl_approver ON (tbl_itsharefapproval.approver_id = tbl_approver.id) ";
 						if (isset($data['mode'])){
 							$Itsharefapproval = Itsharefapproval::find('first', array('joins'=>$join,'conditions' => array("itsharef_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
@@ -695,16 +695,23 @@ Class Itsharefoldermodule extends Application{
 						}else{
 							$Itsharefapproval = Itsharefapproval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
 						}
-						foreach($data as $key=>$val) {
-							if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks') ) {
-								// if(($key == 'isrepair') || ($key == 'isscrap')) {
-									$value=(($val===0) || ($val==='0') || ($val==='false'))?false:((($val===1) || ($val==='1') || ($val==='true'))?true:$val);
-								// }
-								$Itsharef->$key=$value;
+						if($action == 'form') {
+							unset($data['action']);
+
+							$Itsharef = Itsharef::find($doid);
+							foreach($data as $key=>$val) {
+								if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks') ) {
+									// if(($key == 'isrepair') || ($key == 'isscrap')) {
+										$value=(($val===0) || ($val==='0') || ($val==='false'))?false:((($val===1) || ($val==='1') || ($val==='true'))?true:$val);
+									// }
+									$Itsharef->$key=$value;
+								}
 							}
+							
+							$Itsharef->save();
 						}
-						
-						$Itsharef->save();
+
+						unset($data['action']);
 
 						// unset($data['formtype']);
 						

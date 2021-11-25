@@ -730,6 +730,7 @@
 		},
 		update: function(key, values) {
 			values.approvaldate = $filter("date")(values.approvaldate, "yyyy-MM-dd HH:mm")
+            values.action = 'approver';
             CrudService.Update('itsharefapp',key.id,values).then(function (response) {
 				if(response.status=="error"){
 					 DevExpress.ui.notify(response.message,"error");
@@ -1392,6 +1393,7 @@
                 data.validfrom = $filter("date")(data.validfrom, "yyyy-MM-dd HH:mm");
                 data.validto = $filter("date")(data.validto, "yyyy-MM-dd HH:mm");
                 // data.membername = data.membername.join();
+                data.action = 'form';
                 data.approvaldate = d;
 				data.mode="approve";
 				delete data.createddate;
@@ -1448,6 +1450,7 @@
                         data.validfrom = $filter("date")(data.validfrom, "yyyy-MM-dd HH:mm");
                         data.validto = $filter("date")(data.validto, "yyyy-MM-dd HH:mm");
                         // data.membername = data.membername.join();
+                        data.action = 'form';
 						data.approvaldate = d;
                         data.mode="approve";
                         

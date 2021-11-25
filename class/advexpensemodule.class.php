@@ -1204,47 +1204,48 @@ Class Advexpensemodule extends Application{
 							// if ($appstatus=='4' || $appstatus==4 ){
 							// 	$data['approvalstatus'] == 0;
 							// }
-							print_r($data);
+							// print_r($data);
 
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-							$Advexpense = Advexpense::find($doid);
 							$join   = "LEFT JOIN tbl_approver ON (tbl_advexpenseapproval.approver_id = tbl_approver.id) ";
 							if (isset($data['mode'])){
-								$Advexpenseapproval = Advexpenseapproval::find('first', array('joins'=>$join,'conditions' => array("advexpense_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
+								$Advexpenseapproval = Advexpenseapproval::find('first', array('joins'=>$join,'conditions' => array("advexpense_id=? and tbl_approver.employee_id=? and  ApprovalStatus = 0",$doid,$Employee->id),'order' => 'tbl_approver.sequence','include' => array('approver'=>array('employee','approvaltype'))));
 								//start for update all duplicate approver
-								$Advexpenseapprovalx = Advexpenseapproval::find('all', array('joins'=>$join,'conditions' => array("advexpense_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
+								// $Advexpenseapprovalx = Advexpenseapproval::find('all', array('joins'=>$join,'conditions' => array("advexpense_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
 								//end for update all duplicate approver
 								unset($data['mode']);
 							}else{
 								$Advexpenseapproval = Advexpenseapproval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
 							}
-							foreach($data as $key=>$val) {
-								if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks') ) {
-									// if(($key == 'isrepair') || ($key == 'isscrap')) {
-										$value=(($val===0) || ($val==='0') || ($val==='false'))?false:((($val===1) || ($val==='1') || ($val==='true'))?true:$val);
-									// }
-									$Advexpense->$key=$value;
-								}
-							}
+
+							// $Advexpense = Advexpense::find($doid);
+							// foreach($data as $key=>$val) {
+							// 	if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks') ) {
+							// 		// if(($key == 'isrepair') || ($key == 'isscrap')) {
+							// 			$value=(($val===0) || ($val==='0') || ($val==='false'))?false:((($val===1) || ($val==='1') || ($val==='true'))?true:$val);
+							// 		// }
+							// 		$Advexpense->$key=$value;
+							// 	}
+							// }
 							
-							$Advexpense->save();
+							// $Advexpense->save();
 							unset($data['advanceno']);
 							unset($data['lessadvance']);
 							
 							unset($data['startdate']);
 							unset($data['enddate']);
 
-							foreach ($Advexpenseapprovalx as $approval){
+							// foreach ($Advexpenseapprovalx as $approval){
 								$olddata = $Advexpenseapproval->to_array();
 								foreach($data as $key=>$val){
 									$val=($val=='false')?false:(($val=='true')?true:$val);
-									$approval->$key=$val;
+									$Advexpenseapproval->$key=$val;
 								}
 								
-								$approval->save();
+								$Advexpenseapproval->save();
 								$logger = new Datalogger("Advexpenseapproval","update",json_encode($olddata),json_encode($data));
 								$logger->SaveData();
-							}
+							// }
 						if (isset($mode) && ($mode=='approve')){
 								$Advexpense = Advexpense::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
 								$joinx   = "LEFT JOIN tbl_approver ON (tbl_advexpenseapproval.approver_id = tbl_approver.id) ";					

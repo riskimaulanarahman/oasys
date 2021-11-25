@@ -1064,10 +1064,9 @@ Class Advpaymentmodule extends Application{
 							// if ($appstatus=='4' || $appstatus==4 ){
 							// 	$data['approvalstatus'] == 0;
 							// }
-							print_r($data);
+							// print_r($data);
 
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-							$Advpayment = Advpayment::find($doid);
 							$join   = "LEFT JOIN tbl_approver ON (tbl_advpaymentapproval.approver_id = tbl_approver.id) ";
 							if (isset($data['mode'])){
 								$Advpaymentapproval = Advpaymentapproval::find('first', array('joins'=>$join,'conditions' => array("advpayment_id=? and tbl_approver.employee_id=? and ApprovalStatus = 0",$doid,$Employee->id),'order' => 'tbl_approver.sequence','include' => array('approver'=>array('employee','approvaltype'))));
@@ -1078,16 +1077,18 @@ Class Advpaymentmodule extends Application{
 							}else{
 								$Advpaymentapproval = Advpaymentapproval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
 							}
-							foreach($data as $key=>$val) {
-								if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks') ) {
-									// if(($key == 'isrepair') || ($key == 'isscrap')) {
-										$value=(($val===0) || ($val==='0') || ($val==='false'))?false:((($val===1) || ($val==='1') || ($val==='true'))?true:$val);
-									// }
-									$Advpayment->$key=$value;
-								}
-							}
+
+							// $Advpayment = Advpayment::find($doid);
+							// foreach($data as $key=>$val) {
+							// 	if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks') ) {
+							// 		// if(($key == 'isrepair') || ($key == 'isscrap')) {
+							// 			$value=(($val===0) || ($val==='0') || ($val==='false'))?false:((($val===1) || ($val==='1') || ($val==='true'))?true:$val);
+							// 		// }
+							// 		$Advpayment->$key=$value;
+							// 	}
+							// }
 							
-							$Advpayment->save();
+							// $Advpayment->save();
 							
 							unset($data['advanceno']);
 							unset($data['paymentform']);

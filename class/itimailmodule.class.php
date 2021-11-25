@@ -1263,7 +1263,6 @@ Class Itimailmodule extends Application{
 						if($action == 'form') {
 							unset($data['action']);
 
-							echo 'form xx';
 							$Itimail = Itimail::find($doid);
 							foreach($data as $key=>$val) {
 								if(($key !== 'approvalstatus') && ($key !== 'approvaldate') && ($key !== 'remarks') ) {

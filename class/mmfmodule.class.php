@@ -792,7 +792,7 @@ Class Mmfmodule extends Application{
 					case 'update':
 						$doid = $this->post['id'];
 						$data = $this->post['data'];
-						$action = $this->post['action'];
+						$action = $data['action'];
 						$mode= $data['mode'];
 						unset($data['id']);
 						unset($data['depthead']);
@@ -809,6 +809,8 @@ Class Mmfmodule extends Application{
 						}
 						
 						if($action == 'form') {
+							unset($data['action']);
+
 							$mmf = Mmf::find($doid);
 
 							foreach($data as $key=>$val) {
@@ -821,6 +823,9 @@ Class Mmfmodule extends Application{
 							}
 							$mmf->save();
 						}
+
+						unset($data['action']);
+
 
 						unset($data['materialdispatchno']);
 						unset($data['isrepair']);
