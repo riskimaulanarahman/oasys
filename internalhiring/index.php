@@ -319,7 +319,31 @@ function internalhiring() {
                             {
                                 itemType: 'group',
                                 caption: 'Letter of Approval from the Department Head',
-                                // items: [
+                                 items: [
+										{
+											template: function(data, itemElement) {
+												itemElement.append($("<div>").attr("id", "lampiran").dxFileUploader({
+													multiple: false,
+													name:'lampiran',
+													accept: '*',
+													value: [],
+													uploadMode: 'instantly',
+													uploadUrl: '../api/uploadlampiran',
+													onUploaded: function (e) {						
+														var path = e.request.response;
+														formInstance.option("formData").lampiran = path
+													}
+												  }));
+											},
+											dataField: "lampiran",
+											name: "lampiran",
+											label: {
+												text: "Letter of Approval from the Department Head"
+											},
+											validationRules: [{
+												type: "required"
+											}]
+										},
                                 //     {
                                 //         dataField: "lampiran",
                                 //         width: 70,
@@ -329,7 +353,7 @@ function internalhiring() {
                                 //         editCellTemplate: editCellTemplate
                                 //     }
                                     
-                                // ],
+                                ],
                             }, 
                             {
                                 itemType: 'group',

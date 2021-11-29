@@ -47,6 +47,9 @@ Class Internalhiringmodule extends Application{
 				case 'apiinternalhiringdetail':
 					$this->internalhiringDetail();
 					break;
+				case 'uploadlampiran':
+					$this->uploadLampiran();
+					break;
 				default:
 					break;
 			}
@@ -712,5 +715,33 @@ Class Internalhiringmodule extends Application{
 
 		}
 	}
-
+	
+	function uploadLampiran(){
+		if(!isset($_FILES['lampiran'])) {
+			http_response_code(400);
+			echo "There is no file to upload";
+			exit;
+		}
+		$max_image_size = 5242880;
+		if(!is_uploaded_file($_FILES['lampiran']['tmp_name'])) {
+			http_response_code(400);
+			echo "Unable to upload File";
+			exit;
+		}
+		if($_FILES['lampiran']['size'] > $max_image_size) {
+			http_response_code(413);
+			echo "File Size too Large, Maximum 5MB";
+			exit;
+		}
+		if((strpos($_FILES['lampiran']['type'], "image") === false) && (strpos($_FILES['lampiran']['type'], "pdf") === false) && (strpos($_FILES['lampiran']['type'], "officedocument") === false)  && (strpos($_FILES['lampiran']['type'], "msword") === false) && (strpos($_FILES['lampiran']['type'], "excel") === false)){
+			http_response_code(415);
+			echo "Only Accept Image File, pdf or Office Document (Excel & Word) ";
+			exit;
+		}
+		$path_to_file = "upload/internalhiring/".$id."_".time()."_".$_FILES['lampiran']['name'];
+		$path_to_file = str_replace("%","_",$path_to_file);
+		$path_to_file = str_replace(" ","_",$path_to_file);
+		echo $path_to_file;
+        move_uploaded_file($_FILES['lampiran']['tmp_name'], $path_to_file);
+	}
 }
