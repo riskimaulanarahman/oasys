@@ -73,7 +73,7 @@ Class DayoffModule extends Application{
 		$join   = "LEFT JOIN tbl_approver ON (tbl_dayoffapproval.approver_id = tbl_approver.id) ";
 		$Dayoffapproval = Dayoffapproval::find('all', array('joins'=>$join,'conditions' => array("dayoff_id=?",$id),'include' => array('approver'=>array('employee','approvaltype'))));
 		$supname=$dateSup=$bgname=$datebg="";
-		
+		$reqdate =$Dayoff->requestdate;
 		foreach ($Dayoffapproval as $data){
 			if(($data->approver->approvaltype->id==5) || ($data->approver->employee_id==$Dayoff->superior)){
 				$supname = $data->approver->employee->fullname;
