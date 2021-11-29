@@ -561,7 +561,7 @@ Class Internalhiringmodule extends Application{
 					
 					break;
 				default:
-					$internalhiring = Internalhiring::all();
+					$internalhiring = Internalhiring::find('all',array('conditions' => array("expireddate >= now()")));
 					foreach ($internalhiring as &$result) {
 						$result = $result->to_array();
 					}
@@ -612,8 +612,9 @@ Class Internalhiringmodule extends Application{
 					} else {
 						$data['isdeclaration'] = 0;
 					}
-
-					$Employee = Employee::find('first', array('conditions' => array("SAPID=?",$data['sapid'])));
+					$join = "LEFT JOIN tbl_empjoindate ON tbl_employee.SAPID = tbl_empjoindate.SAPID";
+					$select = "tbl_employee.*,tbl_empjoindate.joindate as sapidjd";
+					$Employee = Employee::find('first', array('joins'=>$join,'select'=>$select,'conditions' => array("tbl_employee.SAPID=?",$data['sapid'])));
 					if($Employee->sapid !== null) {
 						$data['fullname'] = $Employee->fullname;
 						$data['company_id'] = $Employee->company_id;
@@ -621,6 +622,7 @@ Class Internalhiringmodule extends Application{
 						$data['location_id'] = $Employee->location_id;
 						$data['designation_id'] = $Employee->designation_id;
 						$data['level_id'] = $Employee->level_id;
+						$data['joindate'] = $Employee->sapidjd;
 						$data['status'] = 1;
 
 						//get age from date or birthdate
@@ -738,7 +740,7 @@ Class Internalhiringmodule extends Application{
 			echo "Only Accept Image File, pdf or Office Document (Excel & Word) ";
 			exit;
 		}
-		$path_to_file = "upload/internalhiring/".$id."_".time()."_".$_FILES['lampiran']['name'];
+		$path_to_file = "upload/internalhiring/".time()."_".$_FILES['lampiran']['name'];
 		$path_to_file = str_replace("%","_",$path_to_file);
 		$path_to_file = str_replace(" ","_",$path_to_file);
 		echo $path_to_file;
