@@ -558,10 +558,11 @@ function internalhiring() {
                     })
                 );
             },
-            showTitle: false,
-            title: "Employee Data",
+            showTitle: true,
+            title: "Application Form",
             dragEnabled: false,
-            closeOnOutsideClick: true
+            showCloseButton: true,
+            closeOnOutsideClick: false
     };
 
     var showForm = function(vid,vlevel) {
