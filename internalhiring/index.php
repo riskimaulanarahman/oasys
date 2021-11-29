@@ -72,12 +72,14 @@
                                         <div class="form-row">
                                             <div class="col-md-12">
                                                 <div class="position-relative form-group">
-                                                    <input name="isapid" id="isapid" placeholder="SAPID" type="text" class="form-control" value="10070500" autocomplete="off" >
+                                                    <!-- <input name="isapid" id="isapid" placeholder="SAPID" type="text" class="form-control" value="10070500" autocomplete="off" > -->
+                                                    <input name="isapid" id="isapid" placeholder="SAPID" type="text" class="form-control" autocomplete="off" >
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
                                                 <div class="position-relative form-group">
-                                                    <input name="ipasscode" id="ipasscode" placeholder="Password" type="password" class="form-control" value="123"  autocomplete="off">
+                                                    <!-- <input name="ipasscode" id="ipasscode" placeholder="Password" type="password" class="form-control" value="123"  autocomplete="off"> -->
+                                                    <input name="ipasscode" id="ipasscode" placeholder="Password" type="password" class="form-control" autocomplete="off">
                                                 </div>
                                             </div>
                                         </div>
@@ -260,14 +262,14 @@ function internalhiring() {
                                         label: {
                                             text: 'SAPID'
                                         },
-                                        // validationRules: [{type: "required",message: "this data is required"}],
+                                        validationRules: [{type: "required",message: "this data is required"}],
                                     },
                                     {
                                         dataField: 'passcode',
                                         label: {
                                             text: 'Create Password'
                                         },
-                                        // validationRules: [{type: "required",message: "this data is required"}],
+                                        validationRules: [{type: "required",message: "this data is required"}],
                                     },
                                     {
                                         itemType: 'button',
@@ -359,24 +361,23 @@ function internalhiring() {
                                 itemType: 'group',
                                 caption: 'Personal Data',
                                 items: [
-                                    {
-                                        dataField: 'joindate',
-                                        label: {
-                                            text: 'Join Date'
-                                        },
-                                        editorType: 'dxDateBox',
-                                        format: 'yyyy-MM-dd',
-                                        editorOptions: {
-                                            displayFormat:"yyyy-MM-dd",
-                                        },
-                                        // validationRules: [{type: "required",message: "this data is required"}],
-                                    },
+                                    // {
+                                    //     dataField: 'joindate',
+                                    //     label: {
+                                    //         text: 'Join Date'
+                                    //     },
+                                    //     editorType: 'dxDateBox',
+                                    //     format: 'yyyy-MM-dd',
+                                    //     editorOptions: {
+                                    //         displayFormat:"yyyy-MM-dd",
+                                    //     },
+                                    // },
                                     {
                                         dataField: 'nohp',
                                         label: {
                                             text: 'No Handphone'
                                         },
-                                        // validationRules: [{type: "required",message: "this data is required"}],
+                                        validationRules: [{type: "required",message: "this data is required"}],
                                     },
                                     {
                                         dataField: 'dob',
@@ -388,14 +389,14 @@ function internalhiring() {
                                         editorOptions: {
                                             displayFormat:"yyyy-MM-dd",
                                         },
-                                        // validationRules: [{type: "required",message: "this data is required"}],
+                                        validationRules: [{type: "required",message: "this data is required"}],
                                     },{
                                         dataField: 'gender',
                                         editorType: 'dxSelectBox',
                                         editorOptions: {
                                         dataSource: ['Male','Female'],
                                         },
-                                        // validationRules: [{type: "required",message: "this data is required"}],
+                                        validationRules: [{type: "required",message: "this data is required"}],
                                     },{
                                         dataField: 'education',
                                         editorType: 'dxSelectBox',
@@ -412,7 +413,7 @@ function internalhiring() {
                                                     'Other'
                                                 ],
                                         },
-                                        // validationRules: [{type: "required",message: "this data is required"}],
+                                        validationRules: [{type: "required",message: "this data is required"}],
                                     },
                                     {
                                         dataField: 'educationothers',
@@ -432,7 +433,7 @@ function internalhiring() {
                                         label: {
                                             text: 'Reason To Move',
                                         },
-                                        // validationRules: [{type: "required",message: "this data is required"}],
+                                        validationRules: [{type: "required",message: "this data is required"}],
                                     },
                                     {
                                         dataField: 'reasondeserve',
@@ -440,7 +441,7 @@ function internalhiring() {
                                         label: {
                                             text: 'Reason why i deserve this position ',
                                         },
-                                        // validationRules: [{type: "required",message: "this data is required"}],
+                                        validationRules: [{type: "required",message: "this data is required"}],
                                     },
                                     {
                                         dataField: 'reasoncontribution',
@@ -448,7 +449,7 @@ function internalhiring() {
                                         label: {
                                             text: 'Contribution I will make in this position ',
                                         },
-                                        // validationRules: [{type: "required",message: "this data is required"}],
+                                        validationRules: [{type: "required",message: "this data is required"}],
                                     },
                                 ],
                             },
@@ -465,7 +466,7 @@ function internalhiring() {
                                         editorOptions: {
                                             dataSource: ['A','B+','B','C','D'],
                                         },
-                                        // validationRules: [{type: "required",message: "this data is required"}],
+                                        validationRules: [{type: "required",message: "this data is required"}],
                                     },
                                     {
                                         dataField: 'score2',
@@ -476,7 +477,7 @@ function internalhiring() {
                                         editorOptions: {
                                             dataSource: ['1','2','3','4','5'],
                                         },
-                                        // validationRules: [{type: "required",message: "this data is required"}],
+                                        validationRules: [{type: "required",message: "this data is required"}],
                                     },
                                     {
                                         dataField: 'score3',
@@ -487,7 +488,7 @@ function internalhiring() {
                                         editorOptions: {
                                             dataSource: ['1','2','3','4','5'],
                                         },
-                                        // validationRules: [{type: "required",message: "this data is required"}],
+                                        validationRules: [{type: "required",message: "this data is required"}],
                                     },
                                 ],
                             }, 
@@ -505,7 +506,7 @@ function internalhiring() {
                                         editorOptions: {
                                         text: 'I declare that all statements of data and information entered are correct. If further information is needed to complete this registration, I will be willing. This application about mutation of employee and no additional benefits, no raises, and no offers.',
                                         },
-                                        // validationRules: [{type: "required",message: "this data is required"}],
+                                        validationRules: [{type: "required",message: "this data is required"}],
                                     }, {
                                         itemType: 'button',
                                         horizontalAlignment: 'left',
@@ -584,6 +585,8 @@ function internalhiring() {
         columnsAutoWidth: true,
         columnMinWidth: 80,
         wordWrapEnabled: true,
+        rowAlternationEnabled: true, 
+        showRowLines: true,
         showBorders: true,
         filterRow: { visible: true },
         // filterPanel: { visible: true },
