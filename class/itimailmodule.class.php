@@ -1751,7 +1751,7 @@ Class Itimailmodule extends Application{
 								$form = $Itimail->formtype;
 								$fileName = $this->generatePDFi($doid);
 								$filePath = SITE_PATH.DS.$fileName;
-								$Mailrecipient = Mailrecipient::find('all',array('conditions'=>array("module='IT' and company_list like ?","%".$ItimailJ->employee->companycode."%")));
+								$Mailrecipient = Mailrecipient::find('all',array('conditions'=>array("module='IT' and company_list like ? and isActive='1' ","%".$ItimailJ->employee->companycode."%")));
 								foreach ($Mailrecipient as $data){
 									$this->mail->AddCC($data->email);
 								}

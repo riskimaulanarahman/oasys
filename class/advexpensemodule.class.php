@@ -1475,7 +1475,7 @@ Class Advexpensemodule extends Application{
 								$this->mail->msgHTML($this->mailbody);
 								if ($complete){
 									$filePath= $this->generatePDFi($doid);
-									$Mailrecipient = Mailrecipient::find('all',array('conditions'=>array("module='Advance' and company_list like ?","%".$Advexpense->employee->companycode."%")));
+									$Mailrecipient = Mailrecipient::find('all',array('conditions'=>array("module='Advance' and company_list like ? and isActive='1' ","%".$Advexpense->employee->companycode."%")));
 									foreach ($Mailrecipient as $data){
 										$this->mail->AddCC($data->email);
 									}

@@ -54,7 +54,7 @@ $page = array("login",
 	"advpaymentmodule",
 	"advexpensemodule",
 	"expensetypemodule",
-	// "dashboardmodule",
+	"internalhiringmodule",
 );
 
 foreach ($page as $class){

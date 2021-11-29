@@ -544,6 +544,7 @@ Class Advancemodule extends Application{
 							unset($data['username']);
 							$data['employee_id']=$Employee->id;
 							$data['RequestStatus']=0;
+							$data['isUsed']=0;
 							try{
 								$code = Advance::find('first',array('select' => "CONCAT('Advance/','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(advanceno,-4,4)) is null then 1 else max(substring(advanceno,-4,4))+1 end,4,'0')) as advanceno","conditions"=>array("substring(advanceno,9,".strlen($Employee->companycode).")=? and substring(advanceno,".(strlen($Employee->companycode)+10).",4)=YEAR(CURDATE())",$Employee->companycode)));
 
@@ -1189,6 +1190,7 @@ Class Advancemodule extends Application{
 									default:
 										break;
 								}
+								$Advance->isused = 0;
 								$Advance->save();
 								$Advancehistory->save();
 								echo "email to :".$emto." ->".$emname;
@@ -1262,7 +1264,7 @@ Class Advancemodule extends Application{
 								$this->mail->msgHTML($this->mailbody);
 								if ($complete){
 									$filePath= $this->generatePDFi($doid);
-									$Mailrecipient = Mailrecipient::find('all',array('conditions'=>array("module='Advance' and company_list like ?","%".$Advance->employee->companycode."%")));
+									$Mailrecipient = Mailrecipient::find('all',array('conditions'=>array("module='Advance' and company_list like ? and isActive='1' ","%".$Advance->employee->companycode."%")));
 									foreach ($Mailrecipient as $data){
 										$this->mail->AddCC($data->email);
 									}

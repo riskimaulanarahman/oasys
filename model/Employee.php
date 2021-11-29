@@ -8,7 +8,8 @@ class Employee extends ActiveRecord\Model
 		array('designation'),
 		array('grade'),
 		array('location'),
-		array('religion')
+		array('religion'),
+		array('level')
 	);
 	static $has_many = array(
 		array('accessuser'),

@@ -39,10 +39,17 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
     <link href="css/custom.css" rel="stylesheet">
     <!-- tooltip -->
     <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
+    <!-- login page -->
+    <!-- <link rel="stylesheet" href="assets/css/vendor.bundle.css" > -->
+    <!-- <link href="assets/css/stylelanding.css?ver=1.3" rel="stylesheet">
+    <link href="assets/css/theme-royel-teal.css" rel="stylesheet" id="layoutstyle"> -->
 
  </head>
 <body class='main page login' ng-app='kduApp' data-ng-controller='mainCtrl as main' style="padding: 0 !important;">
 <div ng-hide="isLogin" data-ng-controller='LoginController as main'>
+
+    
+
     <div class="app-container app-theme-white body-tabs-shadow">
         <div class="app-container">
             <div class="h-100 bg-animation" style="background-image: url('assets/images/bg1.jpg') !important; background-repeat: no-repeat !important; background-size: 100% 100% !important;">
@@ -54,7 +61,6 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                 <div class="modal-body">
                                     <div class="h5 modal-title text-center">
                                         <h4 class="mt-2">
-                                            <!-- <span>Welcome to OASys</span> -->
                                             <div ng-if="loading" class="ball-scale-multiple">
                                                     <div style="background-color: rgb(117, 213, 138);"></div>
                                                     <div style="background-color: rgb(117, 213, 138);"></div>
@@ -86,19 +92,17 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                         <div ng-if="error" class="alert alert-danger" ng-bind="error"></div>
                                     </div>
                                     <div class="modal-footer clearfix">
-                                        <div class="float-right">
+                                        <!-- <div class="float-right"> -->
                                             <button type="submit" ng-disabled="loading" class="btn btn-info btn-block btn-lg" ng-click="login()" >Login</button>
-                                                
-                                            <!-- <img ng-if="loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" /> -->
-                                            <br>
-                                        </div>
-                                        </form>
+                                        <!-- </div> -->
+                                    </form>
+                                    
+                                </div>
+                                <div class="divider"></div>
+                                <div class="col-md-6">
+                                    <a href="/oasys/internalhiring" class="btn-icon btn-shadow btn-outline-2x btn btn-outline-primary" ><i class="fa fa-users btn-icon-wrapper"> </i>Internal Hiring</a>
+                                </div>
 
-                                        <!-- <div class="float-right">
-                                            <button class="btn btn-info btn-lg" onclick="alert('fitur belum tersedia')">GuideBook</button>
-                                        </div> -->
-
-                                    </div>
                             </div>
                         </div>
                         <div class="text-center text-white opacity-8 mt-3">KF Planning © <span id="versionapp">v-</span></div>
@@ -107,6 +111,8 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
             </div>
         </div>
     </div>
+
+    
 	<!-- <div class="wrapper">
       <div class='row'>
         <div class='col-lg-12'>
@@ -775,18 +781,18 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                             <li ng-class="{'mm-active': (isActive('/advance') || isActive('/advanceApproval') || isActive('/advancepayment') || isActive('/advancepaymentapproval') || isActive('/advexpense') || isActive('/advexpenseapproval') )}">
 								<a href="#"><i class='metismenu-icon pe-7s-cash'></i>Advance<i class="metismenu-state-icon fas pe-7s-angle-down caret-left"></i></a>
 								<ul  ng-class="{'mm-show': (isActive('/advance') || isActive('/advanceApproval') || isActive('/advancepayment') ||  isActive('/advancepaymentapproval') || isActive('/advexpense') || isActive('/advexpenseapproval') )}">
-									<!-- <li class="nav-item"><a href="" ng-click="myAdvance()" class="nav-link" ><i class='fa fa-calendar-alt'></i> Adv Related Request</a></li>
+									<li class="nav-item"><a href="" ng-click="myAdvance()" class="nav-link" ><i class='fa fa-calendar-alt'></i> Adv Related Request</a></li>
 									<li class="nav-item"><a href="" ng-click="advanceApproval()" class="nav-link" ><i class='fas fa-marker'></i> Adv Related Approval</a></li>
 									<li class="nav-item"><a href="" ng-click="myAdvpayment()" class="nav-link" ><i class='fa fa-calendar-alt'></i> Payment Request</a></li>
 									<li class="nav-item"><a href="" ng-click="advpaymentApproval()" class="nav-link" ><i class='fas fa-marker'></i> Payment Approval</a></li>
                                     <li class="nav-item"><a href="" ng-click="myAdvexpense()" class="nav-link" ><i class='fa fa-calendar-alt'></i> Expense Request</a></li>
-									<li class="nav-item"><a href="" ng-click="advexpenseApproval()" class="nav-link" ><i class='fas fa-marker'></i> Expense Approval</a></li> -->
-                                    <li class="nav-item"><a href="" onClick="alert('belum tersedia')" class="nav-link" ><i class='fa fa-calendar-alt'></i> Adv Related Request</a></li>
+									<li class="nav-item"><a href="" ng-click="advexpenseApproval()" class="nav-link" ><i class='fas fa-marker'></i> Expense Approval</a></li>
+                                    <!-- <li class="nav-item"><a href="" onClick="alert('belum tersedia')" class="nav-link" ><i class='fa fa-calendar-alt'></i> Adv Related Request</a></li>
 									<li class="nav-item"><a href="" onClick="alert('belum tersedia')" class="nav-link" ><i class='fas fa-marker'></i> Adv Related Approval</a></li>
 									<li class="nav-item"><a href="" onClick="alert('belum tersedia')" class="nav-link" ><i class='fa fa-calendar-alt'></i> Payment Request</a></li>
 									<li class="nav-item"><a href="" onClick="alert('belum tersedia')" class="nav-link" ><i class='fas fa-marker'></i> Payment Approval</a></li>
                                     <li class="nav-item"><a href="" onClick="alert('belum tersedia')" class="nav-link" ><i class='fa fa-calendar-alt'></i> Expense Request</a></li>
-									<li class="nav-item"><a href="" onClick="alert('belum tersedia')" class="nav-link" ><i class='fas fa-marker'></i> Expense Approval</a></li>
+									<li class="nav-item"><a href="" onClick="alert('belum tersedia')" class="nav-link" ><i class='fas fa-marker'></i> Expense Approval</a></li> -->
 								</ul>
 							</li>
                             
@@ -950,5 +956,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
     
 	<script type="text/javascript" src="assets/scripts/main.js"></script>
     <script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
+    <!-- <script src="assets/js/jquery.bundle.js"></script>
+    <script src="assets/js/scriptlanding.js"></script> -->
 </body>
 </html>

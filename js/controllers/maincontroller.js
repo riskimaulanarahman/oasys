@@ -177,6 +177,10 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 		$location.path( "/advexpense" );
 	}
 
+	$scope.internalhiring= function(){
+		$location.path( "/internalhiring" );
+	}
+
 	$scope.mySPKL= function(){
 		$location.path( "/spkl" );
 	}

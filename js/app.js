@@ -152,6 +152,7 @@ app.config(function ($routeProvider, $controllerProvider) {
 	.when('/advexpensedetail', route.resolve("advexpensedetail"))
 	.when('/advexpenseapproval', route.resolve("advexpenseapproval"))
 	.when('/advexpensereport', route.resolve("advexpensereport"))
+	.when('/internalhiring', route.resolve("internalhiring"))
 
 	.otherwise({
 		redirectTo: '/'

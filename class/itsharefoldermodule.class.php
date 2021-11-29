@@ -918,7 +918,7 @@ Class Itsharefoldermodule extends Application{
 							if ($complete){
 								$fileName = $this->generatePDFi($doid);
 								$filePath = SITE_PATH.DS.$fileName;
-								$Mailrecipient = Mailrecipient::find('all',array('conditions'=>array("module='IT' and company_list like ?","%".$ItsharefJ->employee->companycode."%")));
+								$Mailrecipient = Mailrecipient::find('all',array('conditions'=>array("module='IT' and company_list like ? and isActive='1' ","%".$ItsharefJ->employee->companycode."%")));
 								foreach ($Mailrecipient as $data){
 									$this->mail->AddCC($data->email);
 								}
