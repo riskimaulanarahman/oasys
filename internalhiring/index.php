@@ -72,12 +72,12 @@
                                         <div class="form-row">
                                             <div class="col-md-12">
                                                 <div class="position-relative form-group">
-                                                    <input name="isapid" id="isapid" placeholder="SAPID" type="text" class="form-control" value="10070500" autocomplete="off" >
+                                                    <input name="isapid" id="isapid" placeholder="SAPID" type="text" class="form-control" value="" autocomplete="off" >
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
                                                 <div class="position-relative form-group">
-                                                    <input name="ipasscode" id="ipasscode" placeholder="Password" type="password" class="form-control" value="123"  autocomplete="off">
+                                                    <input name="ipasscode" id="ipasscode" placeholder="Password" type="password" class="form-control" value=""  autocomplete="off">
                                                 </div>
                                             </div>
                                         </div>
@@ -284,13 +284,13 @@ function internalhiring() {
                                                 $.post('/oasys/api/apiinternalhiring', criteria ,function(response){
                                                     // console.log(response);
                                                     if(response.status == 200) {
-                                                        alert(
-                                                            'fullname : '+response.data.fullname+'\n'+
-                                                            'company : '+response.data.companycode+'\n'+
-                                                            'department : '+response.data.department+'\n'+
-                                                            'position : '+response.data.designation+'\n'+
-                                                            'location : '+response.data.location+'\n'+
-                                                            'level : '+response.data.level+'\n'
+                                                        DevExpress.ui.dialog.alert(
+                                                            '<table ><tr><td style="padding-left:5px">Fullname </td><td>:</td><td style="padding-left:5px"><b> '+response.data.fullname+'</b></td><tr>'+
+                                                            '<tr><td  style="padding-left:5px">Company </td><td>:</td><td style="padding-left:5px"><b> '+response.data.companycode+'</b></td><tr>'+
+                                                            '<tr><td  style="padding-left:5px">Department </td><td>:</td><td style="padding-left:5px"><b> '+response.data.department+'</b></td><tr>'+
+                                                            '<tr><td  style="padding-left:5px">Position </td><td>:</td><td style="padding-left:5px"><b> '+response.data.designation+'</b></td><tr>'+
+                                                            '<tr><td  style="padding-left:5px">Location </td><td>:</td><td style="padding-left:5px"><b> '+response.data.location+'</b></td><tr>'+
+                                                            '<tr><td style="padding-left:5px">Level </td><td>:</td><td><b style="padding-left:5px"> '+response.data.level+'</b></td><tr></table>',"Information"
                                                         );
                                                     } else {
                                                         DevExpress.ui.notify({
@@ -582,6 +582,8 @@ function internalhiring() {
         allowColumnReordering: true,
         allowColumnResizing: true,
         columnsAutoWidth: true,
+		showRowLines: true,
+		rowAlternationEnabled: true,
         columnMinWidth: 80,
         wordWrapEnabled: true,
         showBorders: true,
