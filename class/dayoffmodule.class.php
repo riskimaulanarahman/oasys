@@ -1002,69 +1002,86 @@ Class DayoffModule extends Application{
 											$Dayoffapproval->save();
 										}
 									}
-									if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="025") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
+									// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="025") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
 										
-										$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=4 and tbl_employee.location_id='8'")));
-										if(count($Approver2)>0){
-											$Dayoffapproval = new Dayoffapproval();
-											$Dayoffapproval->dayoff_id = $Dayoff->id;
-											$Dayoffapproval->approver_id = $Approver2->id;
-											$Dayoffapproval->save();
-										}
+									// 	$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=4 and tbl_employee.location_id='8'")));
+									// 	if(count($Approver2)>0){
+									// 		$Dayoffapproval = new Dayoffapproval();
+									// 		$Dayoffapproval->dayoff_id = $Dayoff->id;
+									// 		$Dayoffapproval->approver_id = $Approver2->id;
+									// 		$Dayoffapproval->save();
+									// 	}
 										
-										if(($Employee->department->sapcode!="13000090") && ($Employee->department->sapcode!="13000121") && ($Employee->company->sapcode!="NKF") && ($Employee->company->sapcode!="RND")  && ($Employee->companycode!="BCL")  && ($Employee->companycode!="LDU")){
-											if(($Employee->level_id!=4) && ($Employee->level_id!=6) ){
-												$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.companycode='KPSI' and not(tbl_employee.id=?)",$Employee->id)));
-												if(count($Approver)>0){
-													$Dayoffapproval = new Dayoffapproval();
-													$Dayoffapproval->dayoff_id = $Dayoff->id;
-													$Dayoffapproval->approver_id = $Approver->id;
-													$Dayoffapproval->save();
-												}
-											}
-										}else{
-											$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and not tbl_employee.companycode='KPSI' and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
-											if(count($Approver)>0){
-												$Dayoffapproval = new Dayoffapproval();
-												$Dayoffapproval->dayoff_id = $Dayoff->id;
-												$Dayoffapproval->approver_id = $Approver->id;
-												$Dayoffapproval->save();
-											}else{
-												$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
-												if(count($Approver)>0){
-													$Dayoffapproval = new Dayoffapproval();
-													$Dayoffapproval->dayoff_id = $Dayoff->id;
-													$Dayoffapproval->approver_id = $Approver->id;
-													$Dayoffapproval->save();
-												}
-											}
-										}
+									// 	if(($Employee->department->sapcode!="13000090") && ($Employee->department->sapcode!="13000121") && ($Employee->company->sapcode!="NKF") && ($Employee->company->sapcode!="RND")  && ($Employee->companycode!="BCL")  && ($Employee->companycode!="LDU")){
+									// 		if(($Employee->level_id!=4) && ($Employee->level_id!=6) ){
+									// 			$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.companycode='KPSI' and not(tbl_employee.id=?)",$Employee->id)));
+									// 			if(count($Approver)>0){
+									// 				$Dayoffapproval = new Dayoffapproval();
+									// 				$Dayoffapproval->dayoff_id = $Dayoff->id;
+									// 				$Dayoffapproval->approver_id = $Approver->id;
+									// 				$Dayoffapproval->save();
+									// 			}
+									// 		}
+									// 	}else{
+									// 		$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and not tbl_employee.companycode='KPSI' and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+									// 		if(count($Approver)>0){
+									// 			$Dayoffapproval = new Dayoffapproval();
+									// 			$Dayoffapproval->dayoff_id = $Dayoff->id;
+									// 			$Dayoffapproval->approver_id = $Approver->id;
+									// 			$Dayoffapproval->save();
+									// 		}else{
+									// 			$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+									// 			if(count($Approver)>0){
+									// 				$Dayoffapproval = new Dayoffapproval();
+									// 				$Dayoffapproval->dayoff_id = $Dayoff->id;
+									// 				$Dayoffapproval->approver_id = $Approver->id;
+									// 				$Dayoffapproval->save();
+									// 			}
+									// 		}
+									// 	}
 										
-									}else{
-										if($Employee->companycode == 'LDU') {
-											$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.companycode='LDU' and not tbl_employee.companycode='KPSI'  and not(tbl_employee.id=?)",$Employee->id)));
-										} else {
-											$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.company_id=? and not tbl_employee.companycode='KPSI'  and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
-										}
+									// }else{
+									// 	if($Employee->companycode == 'LDU') {
+									// 		$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.companycode='LDU' and not tbl_employee.companycode='KPSI'  and not(tbl_employee.id=?)",$Employee->id)));
+									// 	} else {
+									// 		$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.company_id=? and not tbl_employee.companycode='KPSI'  and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+									// 	}
+									// 	if(count($Approver)>0){
+									// 		$Dayoffapproval = new Dayoffapproval();
+									// 		$Dayoffapproval->dayoff_id = $Dayoff->id;
+									// 		$Dayoffapproval->approver_id = $Approver->id;
+									// 		$Dayoffapproval->save();
+									// 	} else {
+									// 		$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+									// 		if(count($Approver)>0){
+									// 			$Dayoffapproval = new Dayoffapproval();
+									// 			$Dayoffapproval->dayoff_id = $Dayoff->id;
+									// 			$Dayoffapproval->approver_id = $Approver->id;
+									// 			$Dayoffapproval->save();
+									// 		}
+									// 	}
+									// 	$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=4 and tbl_employee.company_id=?",$Employee->company_id)));
+									// 	if(count($Approver2)>0){
+									// 		$Dayoffapproval = new Dayoffapproval();
+									// 		$Dayoffapproval->dayoff_id = $Dayoff->id;
+									// 		$Dayoffapproval->approver_id = $Approver2->id;
+									// 		$Dayoffapproval->save();
+									// 	}
+									// }
+
+									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=4 and CompanyList like '%".$Employee->companycode."%' ")));
+									if(count($Approver2)>0){
+										$Dayoffapproval = new Dayoffapproval();
+										$Dayoffapproval->dayoff_id = $Dayoff->id;
+										$Dayoffapproval->approver_id = $Approver2->id;
+										$Dayoffapproval->save();
+									}
+									if(($Employee->level_id!=4) && ($Employee->level_id!=6) ){
+										$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and CompanyList like '%".$Employee->companycode."%' and not(tbl_employee.id=?)",$Employee->id)));
 										if(count($Approver)>0){
 											$Dayoffapproval = new Dayoffapproval();
 											$Dayoffapproval->dayoff_id = $Dayoff->id;
 											$Dayoffapproval->approver_id = $Approver->id;
-											$Dayoffapproval->save();
-										} else {
-											$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
-											if(count($Approver)>0){
-												$Dayoffapproval = new Dayoffapproval();
-												$Dayoffapproval->dayoff_id = $Dayoff->id;
-												$Dayoffapproval->approver_id = $Approver->id;
-												$Dayoffapproval->save();
-											}
-										}
-										$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=4 and tbl_employee.company_id=?",$Employee->company_id)));
-										if(count($Approver2)>0){
-											$Dayoffapproval = new Dayoffapproval();
-											$Dayoffapproval->dayoff_id = $Dayoff->id;
-											$Dayoffapproval->approver_id = $Approver2->id;
 											$Dayoffapproval->save();
 										}
 									}
@@ -1115,17 +1132,20 @@ Class DayoffModule extends Application{
 									$Dayoffapproval->save();
 								}
 							}
-							if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="025") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
-								$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=4 and tbl_employee.location_id='8'")));
+							// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,3)=="025") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND"))
+							// {
+								$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=4 and CompanyList like '%".$Employee->companycode."%' ")));
+								// $Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=4 and tbl_employee.location_id='8'")));
 								if(count($Approver2)>0){
 									$Dayoffapproval = new Dayoffapproval();
 									$Dayoffapproval->dayoff_id = $Dayoff->id;
 									$Dayoffapproval->approver_id = $Approver2->id;
 									$Dayoffapproval->save();
 								}
-								if(($Employee->department->sapcode!="13000090") && ($Employee->department->sapcode!="13000121") && (substr(strtolower($Employee->location->sapcode),0,3)!="025") && ($Employee->company->sapcode!="NKF") && ($Employee->company->sapcode!="RND")  && ($Employee->company->companycode!="BCL")  && ($Employee->company->companycode!="LDU")){
+								// if(($Employee->department->sapcode!="13000090") && ($Employee->department->sapcode!="13000121") && (substr(strtolower($Employee->location->sapcode),0,3)!="025") && ($Employee->company->sapcode!="NKF") && ($Employee->company->sapcode!="RND")  && ($Employee->company->companycode!="BCL")  && ($Employee->company->companycode!="LDU")){
 									if(($Employee->level_id!=4) && ($Employee->level_id!=6) ){
-										$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.companycode='KPSI' and not(tbl_employee.id=?)",$Employee->id)));
+										$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and CompanyList like '%".$Employee->companycode."%' and not(tbl_employee.id=?)",$Employee->id)));
+										// $Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.companycode='KPSI' and not(tbl_employee.id=?)",$Employee->id)));
 										if(count($Approver)>0){
 											$Dayoffapproval = new Dayoffapproval();
 											$Dayoffapproval->dayoff_id = $Dayoff->id;
@@ -1133,65 +1153,65 @@ Class DayoffModule extends Application{
 											$Dayoffapproval->save();
 										}
 									}
-								}else{
-									if($Employee->companycode == 'LDU') {
-										$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.companycode='LDU' and not tbl_employee.companycode='KPSI'  and not(tbl_employee.id=?)",$Employee->id)));
-									} else {
-										$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.company_id=? and not tbl_employee.companycode='KPSI'  and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
-									}
-									if(count($Approver)>0){
-										$Dayoffapproval = new Dayoffapproval();
-										$Dayoffapproval->dayoff_id = $Dayoff->id;
-										$Dayoffapproval->approver_id = $Approver->id;
-										$Dayoffapproval->save();
-									}else{
-										$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
-										if(count($Approver)>0){
-											$Dayoffapproval = Dayoffapproval::find('all',array('joins'=>$joins,'conditions' => array("dayoff_id=? and tbl_approver.employee_id=?",$Dayoff->id,$Approver->employee_id)));	
-											foreach ($Dayoffapproval as &$result) {
-												$result		= $result->to_array();
-												$result['no']=1;
-											}			
-											if(count($Dayoffapproval)==0){ 
-												$Dayoffapproval = new Dayoffapproval();
-												$Dayoffapproval->dayoff_id = $Dayoff->id;
-												$Dayoffapproval->approver_id = $Approver->id;
-												$Dayoffapproval->save();
-											}
-										}
-									}
-								}	
-							}else{
-								$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and not tbl_employee.companycode='KPSI' and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
-								if(count($Approver)>0){
-									$Dayoffapproval = new Dayoffapproval();
-									$Dayoffapproval->dayoff_id = $Dayoff->id;
-									$Dayoffapproval->approver_id = $Approver->id;
-									$Dayoffapproval->save();
-								}else{
-									$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
-									if(count($Approver)>0){
-										$Dayoffapproval = Dayoffapproval::find('all',array('joins'=>$joins,'conditions' => array("dayoff_id=? and tbl_approver.employee_id=?",$Dayoff->id,$Approver->employee_id)));	
-										foreach ($Dayoffapproval as &$result) {
-											$result		= $result->to_array();
-											$result['no']=1;
-										}			
-										if(count($Dayoffapproval)==0){ 
-											$Dayoffapproval = new Dayoffapproval();
-											$Dayoffapproval->dayoff_id = $Dayoff->id;
-											$Dayoffapproval->approver_id = $Approver->id;
-											$Dayoffapproval->save();
-										}
-									}
-								}
-								$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=4 and tbl_employee.company_id=? ",$Employee->company_id)));
-								if(count($Approver2)>0){
-									$Dayoffapproval = new Dayoffapproval();
-									$Dayoffapproval->dayoff_id = $Dayoff->id;
-									$Dayoffapproval->approver_id = $Approver2->id;
-									$Dayoffapproval->save();
-								}
-							}
+								// }else{
+								// 	if($Employee->companycode == 'LDU') {
+								// 		$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.companycode='LDU' and not tbl_employee.companycode='KPSI'  and not(tbl_employee.id=?)",$Employee->id)));
+								// 	} else {
+								// 		$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.company_id=? and not tbl_employee.companycode='KPSI'  and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+								// 	}
+								// 	if(count($Approver)>0){
+								// 		$Dayoffapproval = new Dayoffapproval();
+								// 		$Dayoffapproval->dayoff_id = $Dayoff->id;
+								// 		$Dayoffapproval->approver_id = $Approver->id;
+								// 		$Dayoffapproval->save();
+								// 	}else{
+								// 		$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+								// 		if(count($Approver)>0){
+								// 			$Dayoffapproval = Dayoffapproval::find('all',array('joins'=>$joins,'conditions' => array("dayoff_id=? and tbl_approver.employee_id=?",$Dayoff->id,$Approver->employee_id)));	
+								// 			foreach ($Dayoffapproval as &$result) {
+								// 				$result		= $result->to_array();
+								// 				$result['no']=1;
+								// 			}			
+								// 			if(count($Dayoffapproval)==0){ 
+								// 				$Dayoffapproval = new Dayoffapproval();
+								// 				$Dayoffapproval->dayoff_id = $Dayoff->id;
+								// 				$Dayoffapproval->approver_id = $Approver->id;
+								// 				$Dayoffapproval->save();
+								// 			}
+								// 		}
+								// 	}
+								// }	
+							// }else{
+							// 	$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and not tbl_employee.companycode='KPSI' and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+							// 	if(count($Approver)>0){
+							// 		$Dayoffapproval = new Dayoffapproval();
+							// 		$Dayoffapproval->dayoff_id = $Dayoff->id;
+							// 		$Dayoffapproval->approver_id = $Approver->id;
+							// 		$Dayoffapproval->save();
+							// 	}else{
+							// 		$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=2 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+							// 		if(count($Approver)>0){
+							// 			$Dayoffapproval = Dayoffapproval::find('all',array('joins'=>$joins,'conditions' => array("dayoff_id=? and tbl_approver.employee_id=?",$Dayoff->id,$Approver->employee_id)));	
+							// 			foreach ($Dayoffapproval as &$result) {
+							// 				$result		= $result->to_array();
+							// 				$result['no']=1;
+							// 			}			
+							// 			if(count($Dayoffapproval)==0){ 
+							// 				$Dayoffapproval = new Dayoffapproval();
+							// 				$Dayoffapproval->dayoff_id = $Dayoff->id;
+							// 				$Dayoffapproval->approver_id = $Approver->id;
+							// 				$Dayoffapproval->save();
+							// 			}
+							// 		}
+							// 	}
+							// 	$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Dayoff' and tbl_approver.isactive='1' and approvaltype_id=4 and tbl_employee.company_id=? ",$Employee->company_id)));
+							// 	if(count($Approver2)>0){
+							// 		$Dayoffapproval = new Dayoffapproval();
+							// 		$Dayoffapproval->dayoff_id = $Dayoff->id;
+							// 		$Dayoffapproval->approver_id = $Approver2->id;
+							// 		$Dayoffapproval->save();
+							// 	}
+							// }
 							
 							$Dayoffhistory = new Dayoffhistory();
 							$Dayoffhistory->date = date("Y-m-d h:i:s");

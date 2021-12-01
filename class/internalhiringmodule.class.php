@@ -197,7 +197,12 @@ Class Internalhiringmodule extends Application{
 							// 	$result['fullname']=$fullname;
 							// }
 							// $data=array("jml"=>count($Advance));
-							break;
+							$internalhiring = Internalhiringdetail::all();
+							foreach ($internalhiring as &$result) {
+								$result = $result->to_array();
+							}
+							echo json_encode($internalhiring, JSON_NUMERIC_CHECK);
+						break;
 					}
 					
 				break;
@@ -626,8 +631,7 @@ Class Internalhiringmodule extends Application{
 						$data['status'] = 1;
 
 						//get age from date or birthdate
-						$data['age'] = (date('Y') - date('Y',strtotime($data['dob'])));
-						$data['los'] = (date('Y') - date('Y',strtotime($data['joindate'])));
+						
 						
 						$findih = Internalhiringdetail::find('all', array('conditions' => array("SAPID=? and status>=0 ",$data['sapid']))); //check sapid and status
 						// $findih = Internalhiringdetail::find('all', array('conditions' => array("SAPID=? and (status='1' or status='0') ",$data['sapid']))); //check sapid and status
@@ -650,6 +654,8 @@ Class Internalhiringmodule extends Application{
 										if(count($checkihreject)>0) {
 											echo '407'; //cannot apply coz rejected data
 										} else {
+											$data['age'] = (date('Y') - date('Y',strtotime($data['dob'])));
+											$data['los'] = (date('Y') - date('Y',strtotime($data['joindate'])));
 											$Internalhiring = Internalhiringdetail::create($data);
 											$logger = new Datalogger("Internalhiringdetail","create",null,json_encode($data));
 											$logger->SaveData();
@@ -707,11 +713,11 @@ Class Internalhiringmodule extends Application{
 					
 					break;
 				default:
-					$Advancedetail = Advancedetail::all();
-					foreach ($Advancedetail as &$result) {
+					$Internalhiringdetail = Internalhiringdetail::all();
+					foreach ($Internalhiringdetail as &$result) {
 						$result = $result->to_array();
 					}
-					echo json_encode($Advancedetail, JSON_NUMERIC_CHECK);
+					echo json_encode($Internalhiringdetail, JSON_NUMERIC_CHECK);
 					break;
 			}
 

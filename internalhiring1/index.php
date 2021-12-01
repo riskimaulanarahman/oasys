@@ -6,7 +6,8 @@
 		<meta name="description" content="AppsLand is a powerful App Landing HTML Template with full of customization options and features">
 		<link rel="shortcut icon" href="../assets/images/oasys-inverse.png">
 		<title>Oasys : Internal Hiring</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+		<link rel="stylesheet" href="../css/font-awesome.min.css" >
 		<link rel="stylesheet" href="../assets/css/vendor.bundle.css" >
 		<link href="../assets/css/stylelanding.css?ver=1.2" rel="stylesheet">
 		<link href="../assets/css/theme-royel-teal.css" rel="stylesheet" id="layoutstyle">
@@ -117,11 +118,17 @@
                             <div id="popup"></div>
                             <div id="divinternalhiring"></div>
                             <div style="text-align: left; margin-top: 5px; ">
-                                <strong>*Notes :</strong>
+                                <strong>Terms and Condition :</strong>
                                 <ul>
                                     <li>- You Can Only apply for one position</li>
                                     <li>- You Can Only apply same position level</li>
-                                    <li>- You Can Canceled applyment on (Check Status Form) and apply position again just 3 times</li>
+                                    <li>- You Can Canceled applyment on (Check Status Form) and apply position again just 3 times each batch</li>
+                                </ul>
+                                <strong>Syarat dan Ketentuan :</strong>
+                                <ul>
+                                    <li>- Anda Hanya Dapat melamar satu posisi</li>
+                                    <li>- Anda Hanya Dapat melamar posisi di level yang sama</li>
+                                    <li>- Anda Dapat Membatalkan Lamaran di (Form Check Status) dan melamar posisi lagi hanya 3 kali setiap batch</li>
                                 </ul>
                             </div>
 						</div>
@@ -198,7 +205,7 @@
     </html>
     
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>    
+<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>     -->
 <script src="../assets/js/jquery.bundle.js"></script>
 <script src="../assets/js/scriptlanding.js"></script>
 <script src="service.js"></script>
@@ -298,7 +305,7 @@ function internalhiring() {
                                                         DevExpress.ui.notify({
                                                             message: "SAPID Not Found",
                                                             type: "error",
-                                                            displayTime: 3000,
+                                                            displayTime: 5000,
                                                             height: 80,
                                                             position: {
                                                                 my: 'top center', 
@@ -340,7 +347,7 @@ function internalhiring() {
 											dataField: "lampiran",
 											name: "lampiran",
 											label: {
-												text: "Letter of Approval from the Department Head"
+												text: "attach here"
 											},
 											validationRules: [{
 												type: "required"
@@ -455,7 +462,7 @@ function internalhiring() {
                             },
                             {
                                 itemType: 'group',
-                                caption: 'Score Apprisal',
+                                caption: 'Performance Appraisal',
                                 items: [
                                     {
                                         dataField: 'score1',
@@ -504,7 +511,7 @@ function internalhiring() {
                                         },
                                         editorType: "dxCheckBox",
                                         editorOptions: {
-                                        text: 'I declare that all statements of data and information entered are correct. If further information is needed to complete this registration, I will be willing. This application about mutation of employee and no additional benefits, no raises, and no offers.',
+                                        text: 'I declare that all statements of data and information entered are correct. If further information is needed to complete this registration, I will be willing. This application about mutation, not promotion',
                                         },
                                         validationRules: [{type: "required",message: "this data is required"}],
                                     }, {
@@ -528,6 +535,8 @@ function internalhiring() {
                                                         offset: '0 0' 
                                                     }
                                                     });
+                                                    var data = formInstance.option("formData");	
+                                                    submitform(vacantid,vacantlevel,data);
                                                 } else {
                                                     DevExpress.ui.notify({
                                                         message: "Your form is not complete or has invalid value, please recheck before submit",
@@ -544,8 +553,7 @@ function internalhiring() {
                                                 }
                                                 
                                                 // var data = JSON.stringify(formInstance.option("formData"));	
-                                                var data = formInstance.option("formData");	
-                                                submitform(vacantid,vacantlevel,data);
+                                                
                                                 // alert(JSON.stringify(formInstance.option("formData")));
                                             },
                                             useSubmitBehavior: false,
@@ -705,7 +713,7 @@ function submitform(id,level,data) {
             DevExpress.ui.notify({
                 message: "Success Apply Data",
                 type: "success",
-                displayTime: 3000,
+                displayTime: 5000,
                 height: 80,
                 position: {
                 my: 'top center', 
@@ -719,7 +727,7 @@ function submitform(id,level,data) {
             DevExpress.ui.notify({
                 message: "SAPID Not Found",
                 type: "error",
-                displayTime: 3000,
+                displayTime: 5000,
                 height: 80,
                 position: {
                     my: 'top center', 
@@ -733,7 +741,7 @@ function submitform(id,level,data) {
             DevExpress.ui.notify({
                 message: "You Must Apply same level",
                 type: "error",
-                displayTime: 3000,
+                displayTime: 5000,
                 height: 80,
                 position: {
                     my: 'top center', 
@@ -747,7 +755,7 @@ function submitform(id,level,data) {
             DevExpress.ui.notify({
                 message: "You Already Apply",
                 type: "error",
-                displayTime: 3000,
+                displayTime: 5000,
                 height: 80,
                 position: {
                     my: 'top center', 
@@ -761,7 +769,7 @@ function submitform(id,level,data) {
             DevExpress.ui.notify({
                 message: "Can't apply again because rejected status was found",
                 type: "error",
-                displayTime: 3000,
+                displayTime: 5000,
                 height: 80,
                 position: {
                     my: 'top center', 
@@ -775,7 +783,7 @@ function submitform(id,level,data) {
             DevExpress.ui.notify({
                 message: "You already apply 3 times",
                 type: "warning",
-                displayTime: 3000,
+                displayTime: 5000,
                 height: 80,
                 position: {
                     my: 'top center', 
@@ -847,7 +855,7 @@ $('#btn-search').click(function(){
             DevExpress.ui.notify({
                 message: "Data Not Found",
                 type: "error",
-                displayTime: 3000,
+                displayTime: 5000,
                 height: 80,
                 position: {
                     my: 'top center', 
@@ -875,7 +883,7 @@ function cancelposition(id) {
                 DevExpress.ui.notify({
                     message: "Cancel Applyment Success",
                     type: "success",
-                    displayTime: 3000,
+                    displayTime: 5000,
                     height: 80,
                     position: {
                         my: 'top center', 
@@ -888,7 +896,7 @@ function cancelposition(id) {
                 DevExpress.ui.notify({
                     message: "Error!!",
                     type: "error",
-                    displayTime: 3000,
+                    displayTime: 5000,
                     height: 80,
                     position: {
                         my: 'top center', 

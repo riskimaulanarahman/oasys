@@ -28,6 +28,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 				});
 				CrudService.checkAccess('Internalhiring',$rootScope.curUser.username).then(function (access) {
 					$rootScope.viewInternalhiringmaster = access.allowview;
+					$rootScope.viewInternalhiringreport = access.allowview;
 				});
 				CrudService.checkAccess('Dayoff',$rootScope.curUser.username).then(function (access) {
 					$rootScope.viewDayoff = access.allowview;
@@ -243,6 +244,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.dataDesignation= function(){loadModule($rootScope.viewDesignation,"designation");}  
 	$scope.dataEmployee= function(){loadModule($rootScope.viewEmployee,"employee");} 
 	$scope.dataInternalhiringmaster= function(){loadModule($rootScope.viewInternalhiringmaster,"internalhiringmaster");} 
+	$scope.dataInternalhiringreport= function(){loadModule($rootScope.viewInternalhiringreport,"internalhiringreport");} 
 	$scope.dataApprover= function(){loadModule($rootScope.viewApprover,"approver");} 
 	$scope.dataRFCActivity= function(){loadModule($rootScope.viewRFCActivity,"rfcactivity");} 
 	$scope.dataContractor= function(){loadModule($rootScope.viewRFCContractor,"rfccontractor");} 

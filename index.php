@@ -38,7 +38,8 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 	<link rel='stylesheet' href='css/dx.light.compact.css' type='text/css'>
     <link href="css/custom.css" rel="stylesheet">
     <!-- tooltip -->
-    <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
+	<link rel='stylesheet' href='css/introjs.min.css' type='text/css'>
+    <!-- <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css"> -->
     <!-- login page -->
     <!-- <link rel="stylesheet" href="assets/css/vendor.bundle.css" > -->
     <!-- <link href="assets/css/stylelanding.css?ver=1.3" rel="stylesheet">
@@ -100,7 +101,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                 </div>
                                 <div class="divider"></div>
                                 <div class="col-md-6">
-                                    <a href="/oasys/internalhiring" class="btn-icon btn-shadow btn-outline-2x btn btn-outline-primary" ><i class="fa fa-users btn-icon-wrapper"> </i>Internal Hiring</a>
+                                    <!-- <a href="/oasys/internalhiring" class="btn-icon btn-shadow btn-outline-2x btn btn-outline-primary" ><i class="fa fa-users btn-icon-wrapper"> </i>Internal Hiring</a> -->
                                 </div>
 
                             </div>
@@ -888,6 +889,11 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                                     <i class="metismenu-icon"></i>Expense Claim
                                                 </a>
                                             </li>
+                                            <li>
+                                                <a href="" ng-click="dataInternalhiringreport()">
+                                                    <i class="metismenu-icon"></i>Internal Hiring
+                                                </a>
+                                            </li>
                                         </ul>
                                     </li>
 									
@@ -956,7 +962,8 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
     <!-- <script type="text/javascript" src="https://demo.dashboardpack.com/architectui-html-pro/assets/scripts/main.d810cf0ae7f39f28f336.js"></script> -->
     
 	<script type="text/javascript" src="assets/scripts/main.js"></script>
-    <script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
+    <script language="JavaScript" src="js/lib/intro.min.js" type="text/javascript"></script>
+    <!-- <script src="https://unpkg.com/intro.js/minified/intro.min.js"></script> -->
     <!-- <script src="assets/js/jquery.bundle.js"></script>
     <script src="assets/js/scriptlanding.js"></script> -->
 </body>
