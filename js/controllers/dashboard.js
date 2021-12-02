@@ -40,146 +40,181 @@ app.register.controller('dashboardCtrl', ['$rootScope','$scope', '$http', '$inte
 	$scope.pendingAdvexpense=0;
     function initController() {
 		setTimeout(function(){ 
-			criteria = {status:'dashboard'};
-			CrudService.FindData('dayoffbyemp',criteria).then(function (response){
-				$scope.pendingDayoffReq=response.jml;
-			});
-			criteria = {mypending:'true'};
-			CrudService.FindData('doapp',criteria).then(function (response){
-				$scope.pendingDayoff=response.jml;
-			});
-			criteria = {status:'pending'};
-			CrudService.FindData('rfcbyemp',criteria).then(function (response){
-				$scope.pendingRFCReq=response.jml;
-			});
-			criteria = {mypending:'true'};
-			CrudService.FindData('rfcapp',criteria).then(function (response){
-				$scope.pendingRFC=response.jml;
-			});
-			criteria = {status:'pending'};
-			CrudService.FindData('mmfbyemp',criteria).then(function (response){
-				$scope.pendingMMF28Req=response.jml;
-			});
-			criteria = {mypending:'true'};
-			CrudService.FindData('mmfapp',criteria).then(function (response){
-				$scope.pendingMMF28=response.jml;
-			});
-			criteria = {status:'pending'};
-			CrudService.FindData('mmf30byemp',criteria).then(function (response){
-				$scope.pendingMMF30Req=response.jml;
-			});
-			criteria = {mypending:'true'};
-			CrudService.FindData('mmf30app',criteria).then(function (response){
-				$scope.pendingMMF30=response.jml;
-			});
-			criteria = {status:'pending'};
-			CrudService.FindData('trbyemp',criteria).then(function (response){
-				$scope.pendingTRReq=response.jml;
-			});
-			criteria = {mypending:'true'};
-			CrudService.FindData('trapp',criteria).then(function (response){
-				$scope.pendingTR=response.jml;
-			});
-			criteria = {status:'pending'};
-			CrudService.FindData('spklbyemp',criteria).then(function (response){
-				$scope.pendingSPKLReq=response.jml;
-			});
-			criteria = {mypending:'true'};
-			CrudService.FindData('spklapp',criteria).then(function (response){
-				$scope.pendingSPKL=response.jml;
-			});
-			criteria = {status:'pending'};
-			CrudService.FindData('spkltms',criteria).then(function (response){
-				$scope.pendingSPKLTMSReq=response.jml;
-			});
-			criteria = {mypending:'true'};
-			CrudService.FindData('spkltmsapp',criteria).then(function (response){
-				$scope.pendingSPKLTMS=response.jml;
-			});
-			criteria = {status:'pending'};
-			CrudService.FindData('iteiebyemp',criteria).then(function (response){
-				$scope.pendingITEIEReq=response.jml;
-			});
-			criteria = {mypending:'true'};
-			CrudService.FindData('iteieapp',criteria).then(function (response){
-				$scope.pendingITEIE=response.jml;
-			});
-			criteria = {status:'pending'};
-			CrudService.FindData('itimailbyemp',criteria).then(function (response){
-				$scope.pendingITIMAILReq=response.jml;
-			});
-			criteria = {mypending:'true'};
-			CrudService.FindData('itimailapp',criteria).then(function (response){
-				$scope.pendingITIMAIL=response.jml;
-			});
-			criteria = {status:'pending'};
-			CrudService.FindData('itsharefbyemp',criteria).then(function (response){
-				$scope.pendingITSHAREFReq=response.jml;
-			});
-			criteria = {mypending:'true'};
-			CrudService.FindData('itsharefapp',criteria).then(function (response){
-				$scope.pendingITSHAREF=response.jml;
-			});
-			criteria = {status:'pending'};
-			CrudService.FindData('advancebyemp',criteria).then(function (response){
-				$scope.pendingAdvanceReq=response.jml;
-			});
-			criteria = {mypending:'true'};
-			CrudService.FindData('advanceapp',criteria).then(function (response){
-				$scope.pendingAdvance=response.jml;
-			});
-			criteria = {status:'pending'};
-			CrudService.FindData('advpaymentbyemp',criteria).then(function (response){
-				$scope.pendingAdvpaymentReq=response.jml;
-			});
-			criteria = {mypending:'true'};
-			CrudService.FindData('advpaymentapp',criteria).then(function (response){
-				$scope.pendingAdvpayment=response.jml;
-			});
-			criteria = {status:'pending'};
-			CrudService.FindData('advexpensebyemp',criteria).then(function (response){
-				$scope.pendingAdvexpenseReq=response.jml;
-			});
-			criteria = {mypending:'true'};
-			CrudService.FindData('advexpenseapp',criteria).then(function (response){
-				$scope.pendingAdvexpense=response.jml;
-			});
-
-			// criteria = {status:'pendingapproval'};
-			// CrudService.FindData('dashboard',criteria).then(function (response){
-			// 	$scope.pendingDayoff=response.jml_Dayoff;
-			// 	$scope.pendingSPKL=response.jml_Spkl;
-			// 	$scope.pendingSPKLTMS=response.jml_Spklts;
-			// 	$scope.pendingTR=response.jml_Tr;
-			// 	$scope.pendingRFC=response.jml_Rfc;
-			// 	$scope.pendingMMF28=response.jml_Mmf28;
-			// 	$scope.pendingMMF30=response.jml_Mmf30;
-			// 	$scope.pendingITEIE=response.jml_Iteie;
-			// 	$scope.pendingITIMAIL=response.jml_Itimail;
-			// 	$scope.pendingITSHAREF=response.jml_Itsharef;
-			// 	$scope.pendingAdvance=response.jml_Advance;
-			// 	$scope.pendingAdvpayment=response.jml_Advpayment;
-			// 	$scope.pendingAdvexpense=response.jml_Advexpense;
+			// criteria = {status:'dashboard'};
+			// CrudService.FindData('dayoffbyemp',criteria).then(function (response){
+			// 	$scope.pendingDayoffReq=response.jml;
+			// });
+			// criteria = {mypending:'true'};
+			// CrudService.FindData('doapp',criteria).then(function (response){
+			// 	$scope.pendingDayoff=response.jml;
+			// });
+			// criteria = {status:'pending'};
+			// CrudService.FindData('rfcbyemp',criteria).then(function (response){
+			// 	$scope.pendingRFCReq=response.jml;
+			// });
+			// criteria = {mypending:'true'};
+			// CrudService.FindData('rfcapp',criteria).then(function (response){
+			// 	$scope.pendingRFC=response.jml;
+			// });
+			// criteria = {status:'pending'};
+			// CrudService.FindData('mmfbyemp',criteria).then(function (response){
+			// 	$scope.pendingMMF28Req=response.jml;
+			// });
+			// criteria = {mypending:'true'};
+			// CrudService.FindData('mmfapp',criteria).then(function (response){
+			// 	$scope.pendingMMF28=response.jml;
+			// });
+			// criteria = {status:'pending'};
+			// CrudService.FindData('mmf30byemp',criteria).then(function (response){
+			// 	$scope.pendingMMF30Req=response.jml;
+			// });
+			// criteria = {mypending:'true'};
+			// CrudService.FindData('mmf30app',criteria).then(function (response){
+			// 	$scope.pendingMMF30=response.jml;
+			// });
+			// criteria = {status:'pending'};
+			// CrudService.FindData('trbyemp',criteria).then(function (response){
+			// 	$scope.pendingTRReq=response.jml;
+			// });
+			// criteria = {mypending:'true'};
+			// CrudService.FindData('trapp',criteria).then(function (response){
+			// 	$scope.pendingTR=response.jml;
+			// });
+			// criteria = {status:'pending'};
+			// CrudService.FindData('spklbyemp',criteria).then(function (response){
+			// 	$scope.pendingSPKLReq=response.jml;
+			// });
+			// criteria = {mypending:'true'};
+			// CrudService.FindData('spklapp',criteria).then(function (response){
+			// 	$scope.pendingSPKL=response.jml;
+			// });
+			// criteria = {status:'pending'};
+			// CrudService.FindData('spkltms',criteria).then(function (response){
+			// 	$scope.pendingSPKLTMSReq=response.jml;
+			// });
+			// criteria = {mypending:'true'};
+			// CrudService.FindData('spkltmsapp',criteria).then(function (response){
+			// 	$scope.pendingSPKLTMS=response.jml;
+			// });
+			// criteria = {status:'pending'};
+			// CrudService.FindData('iteiebyemp',criteria).then(function (response){
+			// 	$scope.pendingITEIEReq=response.jml;
+			// });
+			// criteria = {mypending:'true'};
+			// CrudService.FindData('iteieapp',criteria).then(function (response){
+			// 	$scope.pendingITEIE=response.jml;
+			// });
+			// criteria = {status:'pending'};
+			// CrudService.FindData('itimailbyemp',criteria).then(function (response){
+			// 	$scope.pendingITIMAILReq=response.jml;
+			// });
+			// criteria = {mypending:'true'};
+			// CrudService.FindData('itimailapp',criteria).then(function (response){
+			// 	$scope.pendingITIMAIL=response.jml;
+			// });
+			// criteria = {status:'pending'};
+			// CrudService.FindData('itsharefbyemp',criteria).then(function (response){
+			// 	$scope.pendingITSHAREFReq=response.jml;
+			// });
+			// criteria = {mypending:'true'};
+			// CrudService.FindData('itsharefapp',criteria).then(function (response){
+			// 	$scope.pendingITSHAREF=response.jml;
+			// });
+			// criteria = {status:'pending'};
+			// CrudService.FindData('advancebyemp',criteria).then(function (response){
+			// 	$scope.pendingAdvanceReq=response.jml;
+			// });
+			// criteria = {mypending:'true'};
+			// CrudService.FindData('advanceapp',criteria).then(function (response){
+			// 	$scope.pendingAdvance=response.jml;
+			// });
+			// criteria = {status:'pending'};
+			// CrudService.FindData('advpaymentbyemp',criteria).then(function (response){
+			// 	$scope.pendingAdvpaymentReq=response.jml;
+			// });
+			// criteria = {mypending:'true'};
+			// CrudService.FindData('advpaymentapp',criteria).then(function (response){
+			// 	$scope.pendingAdvpayment=response.jml;
+			// });
+			// criteria = {status:'pending'};
+			// CrudService.FindData('advexpensebyemp',criteria).then(function (response){
+			// 	$scope.pendingAdvexpenseReq=response.jml;
+			// });
+			// criteria = {mypending:'true'};
+			// CrudService.FindData('advexpenseapp',criteria).then(function (response){
+			// 	$scope.pendingAdvexpense=response.jml;
 			// });
 
-			// criteria = {status:'pendingrequest'};
-			// CrudService.FindData('dashboard',criteria).then(function (response){
-			// 	$scope.pendingDayoffReq=response.jml_Dayoff;
-			// 	$scope.pendingSPKLReq=response.jml_Spkl;
-			// 	$scope.pendingSPKLTMSReq=response.jml_Spklts;
-			// 	$scope.pendingTRReq=response.jml_Tr;
-			// 	$scope.pendingRFCReq=response.jml_Rfc;
-			// 	$scope.pendingMMF28Req=response.jml_Mmf28;
-			// 	$scope.pendingMMF30Req=response.jml_Mmf30;
-			// 	$scope.pendingITEIEReq=response.jml_Iteie;
-			// 	$scope.pendingITIMAILReq=response.jml_Itimail;
-			// 	$scope.pendingITSHAREFReq=response.jml_Itsharef;
-			// 	$scope.pendingAdvanceReq=response.jml_Advance;
-			// 	$scope.pendingAdvpaymentReq=response.jml_Advpayment;
-			// 	$scope.pendingAdvexpenseReq=response.jml_Advexpense;
-			// });
+			criteria = {status:'pendingapproval'};
+			CrudService.FindData('dashboard',criteria).then(function (response){
+				$.each(response,function(x,y){
+					console.log(y);
+					if(y.module == 'Dayoff') {
+						$scope.pendingDayoff=y.jml;
+					} else if(y.module == 'SPKL') {
+						$scope.pendingSPKL=y.jml;
+					} else if(y.module == 'SPKL_OT') {
+						$scope.pendingSPKLTMS=y.jml;
+					} else if(y.module == 'TR') {
+						$scope.pendingTR=y.jml;
+					} else if(y.module == 'RFC') {
+						$scope.pendingRFC=y.jml;
+					} else if(y.module == 'MMF28') {
+						$scope.pendingMMF28=y.jml;
+					} else if(y.module == 'MMF30') {
+						$scope.pendingMMF30=y.jml;
+					} else if(y.module == 'AD') {
+						$scope.pendingITEIE=y.jml;
+					} else if(y.module == 'ITMail') {
+						$scope.pendingITIMAIL=y.jml;
+					} else if(y.module == 'ITShare') {
+						$scope.pendingITSHAREF=y.jml;
+					} else if(y.module == 'Advance') {
+						$scope.pendingAdvance=y.jml;
+					} else if(y.module == 'Payment') {
+						$scope.pendingAdvpayment=y.jml;
+					} else if(y.module == 'Expense') {
+						$scope.pendingAdvexpense=y.jml;
+					}
+				})
+				
+			});
+
+			criteria = {status:'pendingrequest'};
+			CrudService.FindData('dashboard',criteria).then(function (response){
+				$.each(response,function(x,y){
+					console.log(y);
+					if(y.module == 'Dayoff') {
+						$scope.pendingDayoffReq=y.jml;
+					} else if(y.module == 'SPKL') {
+						$scope.pendingSPKLReq=y.jml;
+					} else if(y.module == 'SPKL_OT') {
+						$scope.pendingSPKLTMSReq=y.jml;
+					} else if(y.module == 'TR') {
+						$scope.pendingTRReq=y.jml;
+					} else if(y.module == 'RFC') {
+						$scope.pendingRFCReq=y.jml;
+					} else if(y.module == 'MMF28') {
+						$scope.pendingMMF28Req=y.jml;
+					} else if(y.module == 'MMF30') {
+						$scope.pendingMMF30Req=y.jml;
+					} else if(y.module == 'AD') {
+						$scope.pendingITEIEReq=y.jml;
+					} else if(y.module == 'ITMail') {
+						$scope.pendingITIMAILReq=y.jml;
+					} else if(y.module == 'ITShare') {
+						$scope.pendingITSHAREFReq=y.jml;
+					} else if(y.module == 'Advance') {
+						$scope.pendingAdvanceReq=y.jml;
+					} else if(y.module == 'Payment') {
+						$scope.pendingAdvpaymentReq=y.jml;
+					} else if(y.module == 'Expense') {
+						$scope.pendingAdvexpenseReq=y.jml;
+					}
+				})
+			});
 			
-		}, 3000);
+		}, 500);
 		
         // DevExpress.ui.notify({
             // message: "Welcome \r\n ",

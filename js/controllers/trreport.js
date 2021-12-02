@@ -24,10 +24,48 @@
       if (!$rootScope.isAdmin && !$rootScope.viewTR) {
         $location.path("/");
       }
+      var date = new Date();
+      var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+      var endDay = new Date(date.getFullYear(), date.getMonth()+1, 0);
+      $scope.filterData = {startDate : $filter("date")(firstDay, 'yyyy-MM-dd'), endDate : $filter("date")(endDay, 'yyyy-MM-dd') };
+      $scope.formOptions = {
+        readOnly: false,
+        showColonAfterLabel: true,
+        labelLocation: "left",
+        minColWidth: 200,
+        colCount:3,
+        showValidationSummary: true,
+        onInitialized: function(e) {
+          $scope.formFilterInstance = e.component;
+        },items: [{
+                    dataField: "startDate",
+                    editorType: "dxDateBox",
+            displayFormat: "yyyy-mm-dd",
+                    validationRules: [{
+                        type: "required",
+                        message: "Date is required"
+                    }]
+                },{
+                    dataField: "endDate",
+                    editorType: "dxDateBox",
+            displayFormat: "yyyy-mm-dd",
+                    validationRules: [{
+                        type: "required",
+                        message: "Date is required"
+                    }]
+                }],
+        bindingOptions: {
+           'formData': 'filterData',		 
+        }
+      }
+      $scope.showForm= true;
+      function initController() {
+        $scope.dataGrid.refresh();
+      }
       var myStore = new DevExpress.data.CustomStore({
         load: function () {
           $scope.isLoaded = true;
-          criteria = { filter: "all" };
+          criteria = { filter: "all",startDate:$filter("date")($scope.filterData.startDate, 'yyyy-MM-dd'),endDate:$filter("date")($scope.filterData.endDate, 'yyyy-MM-dd') };
           return CrudService.FindData("trapp", criteria).then(function (
             response
           ) {
@@ -51,7 +89,11 @@
         remove: function (key) {},
       });
       $scope.$on("initTR", function (event, name) {
-        $scope.dataGrid.refresh();
+        // $scope.dataGrid.refresh();
+          initController();
+      });
+      $rootScope.$on("dataRefreshing", function(event, data) {
+          initController();
       });
       var myData = new DevExpress.data.DataSource({
         store: myStore,

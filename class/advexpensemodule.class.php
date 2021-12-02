@@ -1793,11 +1793,11 @@ Class Advexpensemodule extends Application{
 				$pic=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 				$pic->Height  = 20;
 				$pic->Top = $excel->Cells(35, 3)->Top ;
-				$pic->Left = $excel->Cells(35, 3)->Left ;
+				$pic->Left = $excel->Cells(35, 3)->Left + 80;
 				$picc=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 				$picc->Height  = 20;
 				$picc->Top = $excel->Cells(58, 3)->Top ;
-				$picc->Left = $excel->Cells(58, 3)->Left ;
+				$picc->Left = $excel->Cells(58, 3)->Left + 80 ;
 
 					if(!empty($superiorname)) {
 						$Worksheet->Range("F35")->Value = $superiorname;
@@ -1822,11 +1822,11 @@ Class Advexpensemodule extends Application{
 						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 						$pic2->Height  = 20;
 						$pic2->Top = $excel->Cells(35, 12)->Top ;
-						$pic2->Left = $excel->Cells(35, 12)->Left ;
+						$pic2->Left = $excel->Cells(35, 12)->Left +20 ;
 						$pic22=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 						$pic22->Height  = 20;
 						$pic22->Top = $excel->Cells(58, 12)->Top ;
-						$pic22->Left = $excel->Cells(58, 12)->Left ;
+						$pic22->Left = $excel->Cells(58, 12)->Left +20 ;
 					}
 	
 				foreach ($Advexpensedetail as $data){
