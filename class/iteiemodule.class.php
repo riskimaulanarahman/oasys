@@ -669,7 +669,9 @@ Class Iteiemodule extends Application{
 						} else if(isset($query['filter'])){
 							$join = "LEFT JOIN vwiteiereport v on tbl_iteie.id=v.id";
 							$sel = 'tbl_iteie.*, v.laststatus,v.personholding ';
-							$Iteie = Iteie::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
+							//start filter date
+							$Iteie = Iteie::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_iteie.CreatedDate between ? and ?',$query['startDate'],$query['endDate'] ),'include' => array('employee')));
+							//end filter date
 							foreach ($Iteie as &$result) {
 								$fullname	= $result->employee->fullname;		
 								$result		= $result->to_array();

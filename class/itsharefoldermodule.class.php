@@ -641,7 +641,7 @@ Class Itsharefoldermodule extends Application{
 						} else if(isset($query['filter'])){
 							$join = "LEFT JOIN vwitsharefreport v on tbl_itsharef.id=v.id";
 							$sel = 'tbl_itsharef.*, v.laststatus,v.personholding ';
-							$Itsharef = Itsharef::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
+							$Itsharef = Itsharef::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_itsharef.CreatedDate between ? and ?',$query['startDate'],$query['endDate'] ),'include' => array('employee')));
 							foreach ($Itsharef as &$result) {
 								$fullname	= $result->employee->fullname;		
 								$result		= $result->to_array();

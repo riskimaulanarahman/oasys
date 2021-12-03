@@ -581,10 +581,10 @@ Class SpklModule extends Application{
 							$sel = 'tbl_spkl.*, v.spklstatus,v.otstatus,v.personholding ';
 							$Spkl = Spkl::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
 							
-							if($Employee->location->sapcode=='0200' || $this->currentUser->isadmin){
-								$Spkl = Spkl::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee'=>array('company','department'))));
+							if($this->currentUser->isadmin){
+								$Spkl = Spkl::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_spkl.CreatedDate between ? and ?',$query['startDate'],$query['endDate'] ),'include' => array('employee'=>array('company','department'))));
 							}else{
-								$Spkl = Spkl::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_spkl.RequestStatus=3 and tbl_employee.company_id=?',$Employee->company_id ),'include' => array('employee'=>array('company','department'))));
+								$Spkl = Spkl::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_spkl.CreatedDate between ? and ? and tbl_spkl.RequestStatus>0 and tbl_employee.company_id=?',$query['startDate'],$query['endDate'],$Employee->company_id ),'include' => array('employee'=>array('company','department'))));
 							}
 							
 							foreach ($Spkl as &$result) {

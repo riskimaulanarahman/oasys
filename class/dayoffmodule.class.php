@@ -332,14 +332,14 @@ Class DayoffModule extends Application{
 						} else if(isset($query['filter'])){
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$Dayoff = Dayoff::find('all',array('conditions' => array('RequestStatus>0'),'include' => array('employee'=>array('company','department'))));
-							if($Employee->location->sapcode=='0200'){
-								$Dayoff = Dayoff::find('all',array('conditions' => array('RequestStatus=3'),'include' => array('employee'=>array('company','department'))));
-							}else if($this->currentUser->isadmin){
-								$Dayoff = Dayoff::find('all',array('include' => array('employee'=>array('company','department'))));
-							}else{
+							// if($Employee->location->sapcode=='0200'){
+							// 	$Dayoff = Dayoff::find('all',array('conditions' => array('RequestStatus=3'),'include' => array('employee'=>array('company','department'))));
+							// }else if($this->currentUser->isadmin){
+							// 	$Dayoff = Dayoff::find('all',array('include' => array('employee'=>array('company','department'))));
+							// }else{
 								$joinx   = "LEFT JOIN tbl_employee ON (tbl_dayoffreq.employee_id = tbl_employee.id) ";	
-								$Dayoff = Dayoff::find('all',array('joins'=>$joinx,'conditions' => array('tbl_dayoffreq.RequestStatus=3 and tbl_employee.company_id=?',$Employee->company_id),'include' => array('employee'=>array('company','department'))));
-							}
+								$Dayoff = Dayoff::find('all',array('joins'=>$joinx,'conditions' => array('tbl_dayoffreq.RequestDate between ? and ? ',$query['startDate'],$query['endDate']),'include' => array('employee'=>array('company','department'))));
+							// }
 							
 							foreach ($Dayoff as &$result) {
 								$department = $result->employee->department->departmentname;

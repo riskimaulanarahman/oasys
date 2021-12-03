@@ -843,12 +843,12 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                             
                                         </ul>
                                     </li>
-                                    <li class="">
+                                    <li ng-class="{'mm-active': (isActive('/iteiereport') || isActive('/itimailreport') || isActive('/itsharefolderreport')) }">
                                         <a href="#" aria-expanded="false">
                                             <i class="metismenu-icon"></i><i class='pe-7s-news-paper icon-gradient bg-premium-dark'></i> IT
                                             <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
                                         </a>
-                                        <ul class="mm-collapse" style="height: 7.04px;">
+                                        <ul ng-class="{'mm-show': (isActive('/iteiereport') || isActive('/itimailreport') || isActive('/itsharefolderreport') )}" class="mm-collapse" style="height: 7.04px;">
                                             <li>
                                                 <a href="" ng-click="dataITEIE()">
                                                     <i class="metismenu-icon"></i>Active Directory

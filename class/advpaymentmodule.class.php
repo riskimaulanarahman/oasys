@@ -1017,7 +1017,7 @@ Class Advpaymentmodule extends Application{
 							$Advpayment = Advpayment::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
 							
 							// if($Employee->location->sapcode=='0200' || $this->currentUser->isadmin){
-								$Advpayment = Advpayment::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee'=>array('company','department'))));
+								$Advpayment = Advpayment::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_advpayment.CreatedDate between ? and ?',$query['startDate'],$query['endDate'] ),'include' => array('employee'=>array('company','department'))));
 							// }else{
 							// 	$Advpayment = Advpayment::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_advpayment.RequestStatus=3 or tbl_advpayment.RequestStatus=5 and tbl_employee.company_id=?',$Employee->company_id ),'include' => array('employee'=>array('company','department'))));
 							// }

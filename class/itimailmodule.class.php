@@ -1210,7 +1210,7 @@ Class Itimailmodule extends Application{
 						} else if(isset($query['filter'])){
 							$join = "LEFT JOIN vwitimailreport v on tbl_itimail.id=v.id";
 							$sel = 'tbl_itimail.*, v.laststatus,v.personholding ';
-							$Itimail = Itimail::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
+							$Itimail = Itimail::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_itimail.CreatedDate between ? and ?',$query['startDate'],$query['endDate'] ),'include' => array('employee')));
 							foreach ($Itimail as &$result) {
 								$fullname	= $result->employee->fullname;		
 								$result		= $result->to_array();

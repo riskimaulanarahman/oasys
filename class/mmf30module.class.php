@@ -854,7 +854,7 @@ Class Mmf30module extends Application{
 						} else if(isset($query['filter'])){
 							$join = "LEFT JOIN vwmmf30report v on tbl_mmf30.id=v.id";
 							$sel = 'tbl_mmf30.*, v.laststatus,v.personholding, v.apprbuyername, v.apprprocheaddate, v.apprbuyerdate ';
-							$Mmf30 = Mmf30::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
+							$Mmf30 = Mmf30::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_mmf30.CreatedDate between ? and ?',$query['startDate'],$query['endDate'] ),'include' => array('employee')));
 							foreach ($Mmf30 as &$result) {
 								$fullname	= $result->employee->fullname;		
 								$result		= $result->to_array();

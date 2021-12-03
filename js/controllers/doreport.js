@@ -6,10 +6,54 @@ app.register.controller('doreportCtrl', ['$rootScope','$scope', '$http', '$inter
 	if ((!$rootScope.isAdmin) &&  (!$rootScope.viewDayoff)){
 		$location.path( "/" );
 	}
+    //start filter date
+    var date = new Date();
+    var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+    var endDay = new Date(date.getFullYear(), date.getMonth()+1, 0);
+    $scope.filterData = {startDate : $filter("date")(firstDay, 'yyyy-MM-dd'), endDate : $filter("date")(endDay, 'yyyy-MM-dd') };
+    $scope.formOptions = {
+        readOnly: false,
+        showColonAfterLabel: true,
+        labelLocation: "left",
+        minColWidth: 200,
+        colCount: 3,
+        showValidationSummary: true,
+        onInitialized: function (e) {
+            $scope.formFilterInstance = e.component;
+        },
+        items: [{
+            dataField: "startDate",
+            editorType: "dxDateBox",
+            displayFormat: "yyyy-mm-dd",
+            validationRules: [{
+                type: "required",
+                message: "Date is required"
+            }]
+        }, {
+            dataField: "endDate",
+            editorType: "dxDateBox",
+            displayFormat: "yyyy-mm-dd",
+            validationRules: [{
+                type: "required",
+                message: "Date is required"
+            }]
+        }],
+        bindingOptions: {
+            'formData': 'filterData',
+        }
+    }
+    $scope.showForm = true;
+
+    function initController() {
+        $scope.dataGrid.refresh();
+    }
+    //end filter date
 	var myStore = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;
-			criteria = {filter:'true'};
+			//start filter date
+            criteria = {filter:'all',startDate:$filter("date")($scope.filterData.startDate, 'yyyy-MM-dd'),endDate:$filter("date")($scope.filterData.endDate, 'yyyy-MM-dd')};
+            //end filter date
             return CrudService.FindData('doapp',criteria).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.notify(response.message,"error");
@@ -34,9 +78,14 @@ app.register.controller('doreportCtrl', ['$rootScope','$scope', '$http', '$inter
 			
 		}
     });
+    //start filter date
 	$scope.$on("initDO", function(event, name) {
-		$scope.dataGrid.refresh();
+		initController();
     });
+    $rootScope.$on("dataRefreshing", function(event, data) {
+        initController();
+    });
+    //end filter date
 	var myData = new DevExpress.data.DataSource({
 		store: myStore
     });

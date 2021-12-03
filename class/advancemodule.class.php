@@ -1009,7 +1009,7 @@ Class Advancemodule extends Application{
 							$Advance = Advance::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
 							
 							// if($Employee->location->sapcode=='0200' || $this->currentUser->isadmin){
-								$Advance = Advance::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee'=>array('company','department'))));
+								$Advance = Advance::find('all',array('joins'=>$join,'conditions' => array('tbl_advance.CreatedDate between ? and ?',$query['startDate'],$query['endDate'] ),'select'=>$sel,'include' => array('employee'=>array('company','department'))));
 							// }else{
 							// 	$Advance = Advance::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_advance.RequestStatus=3 or tbl_advance.RequestStatus=5 and tbl_employee.company_id=?',$Employee->company_id ),'include' => array('employee'=>array('company','department'))));
 							// }

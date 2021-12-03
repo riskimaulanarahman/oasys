@@ -1157,7 +1157,7 @@ Class Advexpensemodule extends Application{
 							$Advexpense = Advexpense::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
 							
 							// if($Employee->location->sapcode=='0200' || $this->currentUser->isadmin){
-								$Advexpense = Advexpense::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee'=>array('company','department'))));
+								$Advexpense = Advexpense::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_advexpense.CreatedDate between ? and ?',$query['startDate'],$query['endDate'] ),'include' => array('employee'=>array('company','department'))));
 							// }else{
 							// 	$Advexpense = Advexpense::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_advexpense.RequestStatus=3 or tbl_advexpense.RequestStatus=5 and tbl_employee.company_id=?',$Employee->company_id ),'include' => array('employee'=>array('company','department'))));
 							// }
