@@ -736,7 +736,6 @@ Class Advpaymentmodule extends Application{
 									$Advpaymentapproval->advpayment_id = $Advpayment->id;
 									$Advpaymentapproval->approver_id = $Approver->id;
 									$Advpaymentapproval->save();
-									echo 'a1';
 								}else{
 									$approver = new Approver();
 									$approver->module = "Advance";
@@ -751,7 +750,6 @@ Class Advpaymentmodule extends Application{
 									$Advpaymentapproval->save();
 									$logger = new Datalogger("Advpaymentapproval","add","Add Approval Dept Head",json_encode($Advpaymentapproval->to_array()));
 									$logger->SaveData();
-									echo 'a2';
 								}
 							}
 						}
