@@ -848,7 +848,7 @@ Class Advexpensemodule extends Application{
 									$Advexpenseapproval->save();
 								}else{
 									$approver = new Approver();
-									$approver->module = "Advexpense";
+									$approver->module = "Advance";
 									$approver->employee_id=$superior;
 									$approver->sequence=0;
 									$approver->approvaltype_id = 35;

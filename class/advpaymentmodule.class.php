@@ -736,9 +736,10 @@ Class Advpaymentmodule extends Application{
 									$Advpaymentapproval->advpayment_id = $Advpayment->id;
 									$Advpaymentapproval->approver_id = $Approver->id;
 									$Advpaymentapproval->save();
+									echo 'a1';
 								}else{
 									$approver = new Approver();
-									$approver->module = "Advpayment";
+									$approver->module = "Advance";
 									$approver->employee_id=$depthead;
 									$approver->sequence=0;
 									$approver->approvaltype_id = 35;
@@ -748,6 +749,9 @@ Class Advpaymentmodule extends Application{
 									$Advpaymentapproval->advpayment_id = $Advpayment->id;
 									$Advpaymentapproval->approver_id = $approver->id;
 									$Advpaymentapproval->save();
+									$logger = new Datalogger("Advpaymentapproval","add","Add Approval Dept Head",json_encode($Advpaymentapproval->to_array()));
+									$logger->SaveData();
+									echo 'a2';
 								}
 							}
 						}
