@@ -113,7 +113,7 @@ app.register.controller('advanceCtrl', ['$rootScope','$scope', '$http', '$interv
 					customizeText: function (e) {
                         var rDesc = ["","<span class='mb-2 mr-2 badge badge-pill badge-info'>HR Related</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>OPS Related</span>",""];
 						return rDesc[e.value];
-					}},
+				}},
 				{dataField:'advanceno',caption:"Advance No",width: 200},
 				{dataField:'requeststatus',caption:"Request Status",encodeHtml: false ,width: 300,
 					customizeText: function (e) {

@@ -247,6 +247,19 @@
             },
           },
           {
+            dataField: "fullname",
+            caption: "Name",
+            width: 200,
+            editorOptions: {
+              disabled: true,
+            },
+          },
+          {dataField:'advanceform',caption:"Form Type",encodeHtml: false ,width: 200,
+					customizeText: function (e) {
+              var rDesc = ["","<span class='mb-2 mr-2 badge badge-pill badge-info'>HR Related</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>OPS Related</span>",""];
+              return rDesc[e.value];
+          }},
+          {
             dataField: "advanceno",
             caption: "Advance No",
             width: 200,
@@ -255,15 +268,8 @@
             },
           },
           {
-            dataField: "fullname",
-            caption: "Name",
-            width: 200,
-            editorOptions: {
-              disabled: true,
-            },
-          },
-          {
             dataField: "requeststatus",
+            caption:"Request Status",
             encodeHtml: false,
             width: 300,
             customizeText: function (e) {

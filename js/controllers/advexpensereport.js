@@ -252,16 +252,16 @@
             },
           },
           {
-            dataField: "expenseno",
-            caption: "Expense No",
+            dataField: "fullname",
+            caption: "Name",
             width: 200,
             editorOptions: {
               disabled: true,
             },
           },
           {
-            dataField: "fullname",
-            caption: "Name",
+            dataField: "expenseno",
+            caption: "Expense No",
             width: 200,
             editorOptions: {
               disabled: true,
