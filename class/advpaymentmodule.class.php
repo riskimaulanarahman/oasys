@@ -609,7 +609,7 @@ Class Advpaymentmodule extends Application{
 							$data['employee_id']=$Employee->id;
 							$data['RequestStatus']=0;
 							try{
-								$code = Advpayment::find('first',array('select' => "CONCAT('Advance/','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(paymentno,-4,4)) is null then 1 else max(substring(paymentno,-4,4))+1 end,4,'0')) as paymentno","conditions"=>array("substring(paymentno,9,".strlen($Employee->companycode).")=? and substring(paymentno,".(strlen($Employee->companycode)+10).",4)=YEAR(CURDATE())",$Employee->companycode)));
+								$code = Advpayment::find('first',array('select' => "CONCAT('Payment/','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(paymentno,-4,4)) is null then 1 else max(substring(paymentno,-4,4))+1 end,4,'0')) as paymentno","conditions"=>array("substring(paymentno,9,".strlen($Employee->companycode).")=? and substring(paymentno,".(strlen($Employee->companycode)+10).",4)=YEAR(CURDATE())",$Employee->companycode)));
 
 								$data['paymentno']=$code->paymentno;
 
