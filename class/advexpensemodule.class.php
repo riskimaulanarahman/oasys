@@ -1948,10 +1948,10 @@ Class Advexpensemodule extends Application{
 						
 					}
 
-					$breakfast = ($Advexpensedetailbt[$b-52]->breakfast == 0) ? $Advexpensedetailbt[$b-52]->breakfast : $sppd->breakfast;
-					$lunch = ($Advexpensedetailbt[$b-52]->lunch == 0) ? $Advexpensedetailbt[$b-52]->lunch : $sppd->lunch;
-					$dinner = ($Advexpensedetailbt[$b-52]->dinner == 0) ? $Advexpensedetailbt[$b-52]->dinner : $sppd->dinner;
-					$pocket = ($Advexpensedetailbt[$b-52]->pocket == 0) ? $Advexpensedetailbt[$b-52]->pocket : $sppd->pocket;
+					$breakfast = ($Advexpensedetailbt[$b-52]->breakfast == 1) ? 0 : $sppd->breakfast;
+					$lunch = ($Advexpensedetailbt[$b-52]->lunch == 1) ? 0 : $sppd->lunch;
+					$dinner = ($Advexpensedetailbt[$b-52]->dinner == 1) ? 0 : $sppd->dinner;
+					$pocket = ($Advexpensedetailbt[$b-52]->pocket == 1) ? 0 : $sppd->pocket;
 
 					$Worksheet->Rows($b+1)->Copy();
 					$Worksheet->Rows($b+1)->Insert($xlShiftDown);

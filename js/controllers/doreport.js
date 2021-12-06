@@ -195,6 +195,10 @@ app.register.controller('doreportCtrl', ['$rootScope','$scope', '$http', '$inter
 			//"editing.allowDeleting": "allowDel" ,
             //"columns[3].lookup.dataSource":"divDatasource"
         },
+        masterDetail: {
+            enabled: true,
+            template: masterDetailTemplate,
+        },
         columnChooser: {
             enabled: true
         },
@@ -291,5 +295,86 @@ app.register.controller('doreportCtrl', ['$rootScope','$scope', '$http', '$inter
             $scope.ds = e.component.getDataSource();
         },                             
     }; 
+
+    function masterDetailTemplate(_, masterDetailOptions) {
+        return $("<div>").dxTabPanel({
+          items: [
+            {
+              title: "Detail Dayoff",
+              template: detail1(masterDetailOptions.data),
+            },
+            {
+              title: "Approver list",
+            //   template: approverlist(masterDetailOptions.data),
+            },
+            {
+              title: "History Tracking",
+            //   template: history(masterDetailOptions.data),
+            },
+          ],
+        });
+      }
+
+    function detail1(masterDetailData) {
+        return function () {
+          return $("<div>").dxDataGrid({
+            dataSource: new DevExpress.data.DataSource({
+              store: new DevExpress.data.CustomStore({
+                key: "dayoff_id",
+                load: function () {
+                  return CrudService.GetById(
+                    "dodetail",
+                    masterDetailData.id
+                  );
+                },
+              }),
+            }),
+            allowColumnResizing: true,
+            columnResizingMode: "widget",
+            columnAutoWidth: true,
+            showBorders: true,
+            paging: {
+              pageSize: 5,
+            },
+            pager: {
+              showPageSizeSelector: false,
+              allowedPageSizes: [5, 10, 20],
+              showInfo: false,
+            },
+            showBorders: true,
+            columns: [
+              {
+                dataField: "dateworked",
+                dataType: "date",
+                format: "dd/MM/yyyy",
+                editorType: "dxDateBox",
+                editorOptions: {
+                  displayFormat: "dd/MM/yyyy",
+                },
+              },
+              {
+                dataField: "reason",
+                name: "reason",
+              },
+              {
+                dataField: "Achievement",
+              },
+			  {
+			      dataField: 'isapproved',
+			      width: 150,
+			      caption: "Approved",
+			      dataType: "boolean",
+			      showEditorAlways: true,    
+			    //   visible: (($scope.mode == 'approve') || ($scope.mode == 'view') || ($scope.mode == 'report')) ? true : false
+			  },
+              {
+                dataField: "remarks",
+                dataType: "string",
+              },
+            ],
+          });
+        };
+    }
+
 }]);
 })(app || angular.module("kduApp"));
