@@ -1445,6 +1445,7 @@ Class Advpaymentmodule extends Application{
 		
 		$superiorId=$Advpayment->depthead;
 		$Superior = Employee::find($superiorId);
+		$compx = Company::find('first',array('conditions'=>array("companycode=?",$Advpayment->employee->companycode)));
 		$supAdb = Addressbook::find('first',array('conditions'=>array("username=?",$Superior->loginname)));
 		$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Advpayment->employee->loginname)));
 		$email=$usr->email;
@@ -1480,6 +1481,12 @@ Class Advpaymentmodule extends Application{
 				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
 				$Worksheet = $Workbook->Worksheets(1);
 				$Worksheet->Activate;
+
+				if($Advpayment->employee->companycode == 'NKF' || $Advpayment->employee->companycode == 'RND') {
+					$Worksheet->Range("A1")->Value = 'PT. ITCI Hutani Manunggal';
+				} else {
+					$Worksheet->Range("A1")->Value = $compx->companyname;
+				}
 
 				if($Advpayment->payment == 1) {
 					$payment = 'Cash';

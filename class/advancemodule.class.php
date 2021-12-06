@@ -1424,6 +1424,7 @@ Class Advancemodule extends Application{
 		
 		$superiorId=$Advance->depthead;
 		$Superior = Employee::find($superiorId);
+		$compx = Company::find('first',array('conditions'=>array("companycode=?",$Advance->employee->companycode)));
 		$supAdb = Addressbook::find('first',array('conditions'=>array("username=?",$Superior->loginname)));
 		$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Advance->employee->loginname)));
 		$email=$usr->email;
@@ -1447,6 +1448,8 @@ Class Advancemodule extends Application{
 			$excel = new COM("Excel.Application") or die ("ERROR: Unable to instantaniate COM!\r\n");
 			$excel->Visible = false;
 
+			
+			
 			if($Advance->advanceform == 1) {
 				$title = 'advance_hr';
 				$file= SITE_PATH."/doc/hr/advancehr.xlsx";
@@ -1459,6 +1462,12 @@ Class Advancemodule extends Application{
 				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
 				$Worksheet = $Workbook->Worksheets(1);
 				$Worksheet->Activate;
+
+				if($Advance->employee->companycode == 'NKF' || $Advance->employee->companycode == 'RND') {
+					$Worksheet->Range("A1")->Value = 'PT. ITCI Hutani Manunggal';
+				} else {
+					$Worksheet->Range("A1")->Value = $compx->companyname;
+				}
 
 				$Worksheet->Range("N6")->Value = date("d/m/Y",strtotime($Advance->createddate));
 				$Worksheet->Range("N8")->Value = date("d/m/Y",strtotime($duedate));
