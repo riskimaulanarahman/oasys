@@ -957,7 +957,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
                 // }},
 				// {dataField:'exchangerate'},
 				// {dataField:'paymentamount'},
-				// {dataField:'costcentre', caption: 'Cost Centre'},
+				{dataField:'costcentre', caption: 'Cost Centre'},
 				{dataField:'country',editorOptions: {
 					disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin)?false:true):false,
 				}},
