@@ -1161,7 +1161,8 @@ Class Advpaymentmodule extends Application{
 												}
 											}
 
-											if($Advpayment->advanceno !== null || $Advpayment->advanceno !== '') {
+											if($Advpayment->advanceno == null || $Advpayment->advanceno == '') {
+											} else {
 												$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND advanceno=?",$Advpayment->employee->id,$Advpayment->advanceno)));
 												$Advance->isused=1;
 												$Advance->save();

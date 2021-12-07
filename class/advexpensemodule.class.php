@@ -1294,7 +1294,8 @@ Class Advexpensemodule extends Application{
 											// 	$Advance->save();
 											// }
 
-											if($Advexpense->advanceno !== null || $Advexpense->advanceno !== '') {
+											if($Advexpense->advanceno == null || $Advexpense->advanceno == '') {
+											} else {
 												$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND advanceno=?",$Advexpense->employee->id,$Advexpense->advanceno)));
 												$Advance->isused=1;
 												$Advance->save();
