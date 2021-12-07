@@ -613,14 +613,14 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 				return Globalize.format(arg.value, "c")  
 			},
 			columns: [
-				{dataField:'description',width:150,dataType: "string" , editorOptions: {
+				{dataField:'description',width:150,dataType: "string" , validationRules: [{ type: "required" }], editorOptions: {
 					// inputAttr:{ dataintro : 'detaildescription' },
                     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }},	
 				{dataField:'accountcode',caption: "Account Code",width:150,dataType: "string", editorOptions: {
                     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
                 }},
-				{dataField:'amount',caption: "Amount",width:150,dataType: "number" ,format: "fixedPoint",
+				{dataField:'amount',caption: "Amount",width:150,dataType: "number" ,format: "fixedPoint",validationRules: [{ type: "required" }],
                 editorOptions: {
 					format: "fixedPoint",
                     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
