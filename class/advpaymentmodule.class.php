@@ -1569,58 +1569,32 @@ Class Advpaymentmodule extends Application{
 					}
 	
 					if(!empty($hrdheadname)) {
-						$Worksheet->Range("H34")->Value = $hrdheadname;
-						$Worksheet->Range("H35")->Value = $hrdheaddate;
+						$Worksheet->Range("G34")->Value = $hrdheadname;
+						$Worksheet->Range("G35")->Value = $hrdheaddate;
 						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 						$pic2->Height  = 20;
-						$pic2->Top = $excel->Cells(30, 8)->Top ;
-						$pic2->Left = $excel->Cells(30, 8)->Left ;
+						$pic2->Top = $excel->Cells(30, 7)->Top ;
+						$pic2->Left = $excel->Cells(30, 7)->Left ;
 					}
 	
 					if(!empty($bufcname)) {
-						$Worksheet->Range("K34")->Value = $bufcname;
-						$Worksheet->Range("K35")->Value = $bufcdate;
+						$Worksheet->Range("J34")->Value = $bufcname;
+						$Worksheet->Range("J35")->Value = $bufcdate;
 						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 						$pic2->Height  = 20;
-						$pic2->Top = $excel->Cells(30, 11)->Top ;
-						$pic2->Left = $excel->Cells(30, 11)->Left ;
+						$pic2->Top = $excel->Cells(30, 10)->Top ;
+						$pic2->Left = $excel->Cells(30, 10)->Left ;
 					}
-	
-					// if(!empty($buheadname)) {
-					// 	$Worksheet->Range("A45")->Value = $buheadname;
-					// 	$Worksheet->Range("A46")->Value = $buheaddate;
-					// 	$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-					// 	$pic2->Height  = 20;
-					// 	$pic2->Top = $excel->Cells(42, 1)->Top ;
-					// 	$pic2->Left = $excel->Cells(42, 1)->Left ;
-					// }
-	
-					// if(!empty($financename)) {
-					// 	$Worksheet->Range("F45")->Value = $financename;
-					// 	$Worksheet->Range("F46")->Value = $financedate;
-					// 	$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-					// 	$pic2->Height  = 20;
-					// 	$pic2->Top = $excel->Cells(42, 6)->Top ;
-					// 	$pic2->Left = $excel->Cells(42, 6)->Left ;
-					// }
-	
-					// if(!empty($depmdname)) {
-					// 	$Worksheet->Range("I45")->Value = $depmdname;
-					// 	$Worksheet->Range("I46")->Value = $depmddate;
-					// 	$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-					// 	$pic2->Height  = 20;
-					// 	$pic2->Top = $excel->Cells(42, 9)->Top ;
-					// 	$pic2->Left = $excel->Cells(42, 9)->Left ;
-					// }
-	
-					// if(!empty($mdname)) {
-					// 	$Worksheet->Range("L45")->Value = $mdname;
-					// 	$Worksheet->Range("L46")->Value = $mddate;
-					// 	$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-					// 	$pic2->Height  = 20;
-					// 	$pic2->Top = $excel->Cells(42, 12)->Top ;
-					// 	$pic2->Left = $excel->Cells(42, 12)->Left ;
-					// }
+
+					if(!empty($buheadname)) {
+						$Worksheet->Range("M34")->Value = $buheadname;
+						$Worksheet->Range("M35")->Value = $buheaddate;
+						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic2->Height  = 20;
+						$pic2->Top = $excel->Cells(30, 13)->Top ;
+						$pic2->Left = $excel->Cells(30, 13)->Left ;
+					}
+				
 				} else {
 					if(!empty($deptheadname)) {
 						$Worksheet->Range("E34")->Value = $deptheadname;
@@ -1630,15 +1604,6 @@ Class Advpaymentmodule extends Application{
 						$pic1->Top = $excel->Cells(30, 5)->Top ;
 						$pic1->Left = $excel->Cells(30, 5)->Left ;
 					}
-
-					// if(!empty($procname)) {
-					// 	$Worksheet->Range("L32")->Value = $procname;
-					// 	$Worksheet->Range("L33")->Value = $procdate;
-					// 	$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-					// 	$pic2->Height  = 20;
-					// 	$pic2->Top = $excel->Cells(29, 12)->Top ;
-					// 	$pic2->Left = $excel->Cells(29, 12)->Left ;
-					// }
 	
 					if(!empty($bufcname)) {
 						$Worksheet->Range("H34")->Value = $bufcname;
@@ -1657,33 +1622,7 @@ Class Advpaymentmodule extends Application{
 						$pic2->Top = $excel->Cells(30, 11)->Top ;
 						$pic2->Left = $excel->Cells(30, 11)->Left ;
 					}
-	
-					// if(!empty($financename)) {
-					// 	$Worksheet->Range("H45")->Value = $financename;
-					// 	$Worksheet->Range("H46")->Value = $financedate;
-					// 	$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-					// 	$pic2->Height  = 20;
-					// 	$pic2->Top = $excel->Cells(42, 8)->Top ;
-					// 	$pic2->Left = $excel->Cells(42, 8)->Left ;
-					// }
-
-					// if(!empty($depmdname)) {
-					// 	$Worksheet->Range("K45")->Value = $depmdname;
-					// 	$Worksheet->Range("K46")->Value = $depmddate;
-					// 	$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-					// 	$pic2->Height  = 20;
-					// 	$pic2->Top = $excel->Cells(42, 11)->Top ;
-					// 	$pic2->Left = $excel->Cells(42, 11)->Left ;
-					// }
-	
-					// if(!empty($mdname)) {
-					// 	$Worksheet->Range("N45")->Value = $mdname;
-					// 	$Worksheet->Range("N46")->Value = $mddate;
-					// 	$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-					// 	$pic2->Height  = 20;
-					// 	$pic2->Top = $excel->Cells(42, 14)->Top ;
-					// 	$pic2->Left = $excel->Cells(42, 14)->Left ;
-					// }
+				
 				}
 
 				foreach ($Advpaymentdetail as $data){
