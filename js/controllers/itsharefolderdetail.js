@@ -860,9 +860,6 @@
                         dataField:'foldername',
                         caption: "Folder Name",
                         dataType: "string",
-                        // editorOptions: {
-                        //     disabled:(($scope.mode=='approve') ||($scope.mode=='view') ||($scope.data.apprstatuscode==3))?true:false
-                        // }
                     },
                     {
                         dataField:"requesttype",
@@ -900,38 +897,15 @@
                         maxLength: 30,
                         editorOptions: {
                             maxLength: 30
-                            // disabled:(($scope.mode=='approve') ||($scope.mode=='view') ||($scope.data.apprstatuscode==3))?true:false
                         }
                     },
                     {
                         dataField:'change',
                         caption:'Permission',
                         dataType: "boolean",
-                        // editorOptions: {
-                        //     disabled:(($scope.mode=='approve') ||($scope.mode=='view') )?true:false
-                        // }
-
-                        // editorType: "dxCheckBox",
-                        // showEditorAlways: false
                         width: "20%"
                     },
-                    // {dataField:'change',dataType: "boolean" },
-                    // {
-                    //     dataField:'readonly',
-                    //     caption: "Read Only",
-                    //     dataType: "string",
-                    //     editorOptions: {
-                    //         disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
-                    //     }
-                    // },
-                    // {
-                    //     dataField:'change',
-                    //     caption: "Change",
-                    //     dataType: "string",
-                    //     editorOptions: {
-                    //         disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false
-                    //     }
-                    // },
+
                 ],
 
                 editing: {
