@@ -538,6 +538,8 @@
                 dataField: "currency",
                 name: "currency",
               },
+				      {dataField:'costcentre', caption: 'Cost Centre'},
+
               {
                 dataField: "country",
               },

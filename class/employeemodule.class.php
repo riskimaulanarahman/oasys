@@ -102,6 +102,19 @@ Class EmployeeModule extends Application{
 									}					
 									$data =  json_encode($Employee, JSON_NUMERIC_CHECK);
 									break;
+								case 'byreport':
+										$Employee = Employee::all(array('include' => array('department','company', 'designation'),"order"=>"fullname"));
+										foreach ($Employee as &$result) {
+											$dept=$result->department->departmentname;
+											$comp=$result->company->companycode;
+											$des=$result->designation->designationname;				
+											$result = $result->to_array();
+											$result['department']=$dept;
+											$result['designation']=$des;
+											$result['company']=$comp;
+										}					
+										echo json_encode($Employee, JSON_NUMERIC_CHECK);
+								break;
 								default:
 									break;
 							}

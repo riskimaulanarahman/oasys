@@ -776,21 +776,21 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 								</ul>
 							</li>
 
-                            <li ng-class="{'mm-active': (isActive('/advance') || isActive('/advanceapproval') || isActive('/advancepayment') || isActive('/advancepaymentapproval') || isActive('/advexpense') || isActive('/advexpenseapproval') )}">
+                            <li ng-class="{'mm-active': (isActive('/advance') || isActive('/advanceapproval') )}">
 								<a href="#"><i class='metismenu-icon pe-7s-cash'></i>Advance<i class="metismenu-state-icon fas pe-7s-angle-down caret-left"></i></a>
-								<ul  ng-class="{'mm-show': (isActive('/advance') || isActive('/advanceapproval') || isActive('/advancepayment') ||  isActive('/advancepaymentapproval') || isActive('/advexpense') || isActive('/advexpenseapproval') )}">
+								<ul  ng-class="{'mm-show': (isActive('/advance') || isActive('/advanceapproval') )}">
 									<li class="nav-item"><a href="" ng-click="myAdvance()" class="nav-link" ><i class='fa fa-calendar-alt'></i> Adv Related Request</a></li>
 									<li class="nav-item"><a href="" ng-click="advanceApproval()" class="nav-link" ><i class='fas fa-marker'></i> Adv Related Approval</a></li>
+								</ul>
+							</li>
+
+                            <li ng-class="{'mm-active': (isActive('/advancepayment') || isActive('/advancepaymentapproval') || isActive('/advexpense') || isActive('/advexpenseapproval') )}">
+								<a href="#"><i class='metismenu-icon pe-7s-cash'></i>Payment<i class="metismenu-state-icon fas pe-7s-angle-down caret-left"></i></a>
+								<ul  ng-class="{'mm-show': (isActive('/advancepayment') ||  isActive('/advancepaymentapproval') || isActive('/advexpense') || isActive('/advexpenseapproval') )}">
 									<li class="nav-item"><a href="" ng-click="myAdvpayment()" class="nav-link" ><i class='fa fa-calendar-alt'></i> Payment Request</a></li>
 									<li class="nav-item"><a href="" ng-click="advpaymentApproval()" class="nav-link" ><i class='fas fa-marker'></i> Payment Approval</a></li>
                                     <li class="nav-item"><a href="" ng-click="myAdvexpense()" class="nav-link" ><i class='fa fa-calendar-alt'></i> Expense Request</a></li>
 									<li class="nav-item"><a href="" ng-click="advexpenseApproval()" class="nav-link" ><i class='fas fa-marker'></i> Expense Approval</a></li>
-                                    <!-- <li class="nav-item"><a href="" onClick="alert('belum tersedia')" class="nav-link" ><i class='fa fa-calendar-alt'></i> Adv Related Request</a></li>
-									<li class="nav-item"><a href="" onClick="alert('belum tersedia')" class="nav-link" ><i class='fas fa-marker'></i> Adv Related Approval</a></li>
-									<li class="nav-item"><a href="" onClick="alert('belum tersedia')" class="nav-link" ><i class='fa fa-calendar-alt'></i> Payment Request</a></li>
-									<li class="nav-item"><a href="" onClick="alert('belum tersedia')" class="nav-link" ><i class='fas fa-marker'></i> Payment Approval</a></li>
-                                    <li class="nav-item"><a href="" onClick="alert('belum tersedia')" class="nav-link" ><i class='fa fa-calendar-alt'></i> Expense Request</a></li>
-									<li class="nav-item"><a href="" onClick="alert('belum tersedia')" class="nav-link" ><i class='fas fa-marker'></i> Expense Approval</a></li> -->
 								</ul>
 							</li>
                             <li class="app-sidebar__heading active" style="color: red;">Coming Soon</li>
@@ -867,17 +867,15 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                             
                                         </ul>
                                     </li>
+                            
+									<li class="nav-item"><a href="" ng-click="dataAdvance()"  class="nav-link" ><i class='pe-7s-news-paper icon-gradient bg-premium-dark'></i> Advance</a></li>
+
                                     <li class="">
                                         <a href="#" aria-expanded="false">
-                                            <i class="metismenu-icon"></i><i class='pe-7s-news-paper icon-gradient bg-premium-dark''></i> HR
+                                            <i class="metismenu-icon"></i><i class='pe-7s-news-paper icon-gradient bg-premium-dark'></i> Payment
                                             <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
                                         </a>
                                         <ul class="mm-collapse" style="height: 7.04px;">
-                                            <li>
-                                                <a href="" ng-click="dataAdvance()">
-                                                    <i class="metismenu-icon"></i>Advance
-                                                </a>
-                                            </li>
                                             <li>
                                                 <a href="" ng-click="dataAdvPayment()">
                                                     <i class="metismenu-icon"></i>Payment Request
@@ -888,13 +886,11 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                                     <i class="metismenu-icon"></i>Expense Claim
                                                 </a>
                                             </li>
-                                            <li>
-                                                <a href="" ng-click="dataInternalhiringreport()">
-                                                    <i class="metismenu-icon"></i>Internal Hiring
-                                                </a>
-                                            </li>
+                                        
                                         </ul>
                                     </li>
+									<li class="nav-item"><a href="" ng-click="dataInternalhiringreport()"  class="nav-link" ><i class='pe-7s-news-paper icon-gradient bg-premium-dark'></i> Internal Hiring</a></li>
+
 									
 								</ul>
 							</li>

@@ -418,7 +418,7 @@
 			</div>
 		</div>
 		<div class="col-md-6 col-lg-4 col-xl-3">
-			<div class="card-hover-shadow profile-responsive card-border border-inverse mb-3 card {{ ( pendingAdvance >0 || pendingAdvpayment >0 || pendingAdvexpense >0 )? 'divshake' : 'sss'}}" style="height:370px; ">
+			<div class="card-hover-shadow profile-responsive card-border border-inverse mb-3 card {{ ( pendingAdvance >0 )? 'divshake' : ''}}" style="height:370px; ">
 				<div class="dropdown-menu-header">
 					<div class="dropdown-menu-header-inner bg-grow-early">
 						<div class="menu-header-content btn-pane-right">
@@ -462,6 +462,25 @@
 							</div>
 						</div>
 					</li>
+		
+				</ul>
+			</div>
+		</div>
+		<div class="col-md-6 col-lg-4 col-xl-3">
+			<div class="card-hover-shadow profile-responsive card-border border-inverse mb-3 card {{ ( pendingAdvpayment >0 || pendingAdvexpense >0 )? 'divshake' : ''}}" style="height:370px; ">
+				<div class="dropdown-menu-header">
+					<div class="dropdown-menu-header-inner bg-grow-early">
+						<div class="menu-header-content btn-pane-right">
+							<div>
+								<h5 class="menu-header-title"><i class="pe-7s-cash"></i> Payment</h5>
+							</div>
+							<div class="menu-header-btn-pane">
+								<button class="mb-2 mr-2 btn-pill btn btn-success" tooltip="Module ini digunakan untuk proses pengajuan Cash Advance dan Payment Request/Claim" flow="left"><i class="fa fa-question"></i></button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<ul class="list-group list-group-flush" style="overflow-x: auto; font-size: 12px;">
 					<li class="list-group-item">
 						<div class="widget-content p-0">
 							<div class="widget-content-wrapper">

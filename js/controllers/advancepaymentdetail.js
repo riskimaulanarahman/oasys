@@ -657,12 +657,17 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 			},
 			insert: function(values) {
 				values.advpayment_id=$scope.Requestid;
-				CrudService.Create('advpaymentdetail',values).then(function (response) {
-					if(response.status=="error"){
-						DevExpress.ui.dialog.alert(response.message,"Error");
-					}
-					$scope.grid1Component.refresh();
-				});
+
+				if($scope.data.paymentform !== 0) {
+					CrudService.Create('advpaymentdetail',values).then(function (response) {
+						if(response.status=="error"){
+							DevExpress.ui.dialog.alert(response.message,"Error");
+						}
+						$scope.grid1Component.refresh();
+					});
+				} else {
+					DevExpress.ui.dialog.alert("Select Payment Form","Error");
+				}
 			},
 			update: function(key, values) {
 				CrudService.Update('advpaymentdetail',key.id,values).then(function (response) {

@@ -227,6 +227,10 @@ app.register.controller('rfcreportCtrl', ['$rootScope','$scope', '$http', '$inte
 			"columns[12].lookup.dataSource":"contractorDatasource",
             //"columns[3].lookup.dataSource":"divDatasource"
         },
+        masterDetail: {
+            enabled: true,
+            template: masterDetailTemplate,
+        },
         columnChooser: {
             enabled: true
         },
@@ -322,6 +326,334 @@ app.register.controller('rfcreportCtrl', ['$rootScope','$scope', '$http', '$inte
             $scope.gridInstance = e.component;
             $scope.ds = e.component.getDataSource();
         },                             
-    }; 
+    };
+    
+    function masterDetailTemplate(_, masterDetailOptions) {
+        return $("<div>").dxTabPanel({
+          items: [
+            {
+              title: "Scope Of Work",
+              template: detail1(masterDetailOptions.data),
+            },
+            {
+              title: "Other Term & Condition",
+              template: detail2(masterDetailOptions.data),
+            },
+            {
+              title: "Supporting Document",
+              template: supportingdocdata(masterDetailOptions.data),
+            },
+            {
+              title: "Approver list",
+              template: approverlist(masterDetailOptions.data),
+            },
+            {
+              title: "History Tracking",
+              template: history(masterDetailOptions.data),
+            },
+          ],
+        });
+      }
+
+      function detail1(masterDetailData) {
+        return function () {
+          return $("<div>").dxDataGrid({
+            dataSource: new DevExpress.data.DataSource({
+              store: new DevExpress.data.CustomStore({
+                key: "rfc_id",
+                load: function () {
+                  return CrudService.GetById("rfcdetail", masterDetailData.id);
+                },
+              }),
+            }),
+            allowColumnResizing: true,
+            columnResizingMode: "widget",
+            columnAutoWidth: true,
+            showBorders: true,
+            paging: {
+              pageSize: 5,
+            },
+            pager: {
+              showPageSizeSelector: false,
+              allowedPageSizes: [5, 10, 20],
+              showInfo: false,
+            },
+            showBorders: true,
+            columns: [
+                {
+                    dataField: 'description',
+                    width: 600,
+                    wordWrapEnabled: true,
+                    caption: 'Description of Work',
+                    encodeHtml: false,
+                    dataType: "string",
+                }
+            ],
+          });
+        };
+      }
+
+      function detail2(masterDetailData) {
+        return function () {
+          return $("<div>").dxDataGrid({
+            dataSource: new DevExpress.data.DataSource({
+              store: new DevExpress.data.CustomStore({
+                key: "rfc_id",
+                load: function () {
+                  return CrudService.GetById("rfcterm", masterDetailData.id);
+                },
+              }),
+            }),
+            allowColumnResizing: true,
+            columnResizingMode: "widget",
+            columnAutoWidth: true,
+            showBorders: true,
+            paging: {
+              pageSize: 5,
+            },
+            pager: {
+              showPageSizeSelector: false,
+              allowedPageSizes: [5, 10, 20],
+              showInfo: false,
+            },
+            showBorders: true,
+            columns: [
+                {
+                    dataField: 'term',
+                    caption: 'Other Term & Conditon',
+                    width: 600,
+                    encodeHtml: false,
+                    dataType: "string",
+                }
+            ],
+          });
+        };
+      }
+
+      function supportingdocdata(masterDetailData) {
+        return function () {
+          return $("<div>").dxDataGrid({
+            dataSource: new DevExpress.data.DataSource({
+              store: new DevExpress.data.CustomStore({
+                key: "rfc_id",
+                load: function () {
+                  return CrudService.GetById("rfcfile", masterDetailData.id);
+                },
+              }),
+            }),
+            allowColumnResizing: true,
+            columnResizingMode: "widget",
+            columnAutoWidth: true,
+            showBorders: true,
+            paging: {
+              pageSize: 5,
+            },
+            pager: {
+              showPageSizeSelector: false,
+              allowedPageSizes: [5, 10, 20],
+              showInfo: false,
+            },
+            showBorders: true,
+            columns: [
+              {
+                dataField: "file_descr",
+                caption: "File Description",
+                encodeHtml: false,
+                dataType: "string",
+              },
+              {
+                dataField: "file_loc",
+                caption: "FileLocation",
+                width: 100,
+                allowFiltering: false,
+                allowSorting: false,
+                formItem: { visible: false },
+                cellTemplate: function (container, options) {
+                  if (options.value != "") {
+                    $("<div />")
+                      .dxButton({
+                        icon: "download",
+                        stylingMode: "contained",
+                        type: "success",
+                        target: "_blank",
+                        width: 50,
+                        height: 25,
+                        onClick: function (e) {
+                          window.open(options.value, "_blank");
+                        },
+                      })
+                      .appendTo(container);
+                  }
+                },
+              },
+              {
+                dataField: "upload_date",
+                // width:150,
+                caption: "Upload Date",
+                dataType: "date",
+                format: "dd/MM/yyyy HH:mm:ss",
+                editorType: "dxDateBox",
+                editorOptions: {
+                  displayFormat: "dd/MM/yyyy HH:mm:ss",
+                  disabled: true,
+                },
+              },
+            ],
+          });
+        };
+      }
+
+      // start approver list and history
+
+      $scope.empDataSource = {
+        store: new DevExpress.data.CustomStore({
+          key: "id",
+          loadMode: "raw",
+          load: function () {
+            criteria = {
+              module: 'RFC',
+              mode: $scope.mode
+            };
+            return CrudService.FindData('appr', criteria);
+          },
+        }),
+        sort: "id"
+      }
+
+      CrudService.GetAll('approvaltype').then(function (resp) {
+        $scope.apptypeDatasource = resp;
+      });
+
+      function approverlist(masterDetailData) {
+        return function () {
+          return $("<div>").dxDataGrid({
+            dataSource: new DevExpress.data.DataSource({
+              store: new DevExpress.data.CustomStore({
+                key: "rfc_id",
+                load: function () {
+                  return CrudService.GetById(
+                    "rfcapp",
+                    masterDetailData.id
+                  );
+                },
+              }),
+            }),
+            allowColumnResizing: true,
+            columnResizingMode: "widget",
+            columnAutoWidth: true,
+            showBorders: true,
+            paging: {
+              pageSize: 5,
+            },
+            pager: {
+              showPageSizeSelector: false,
+              allowedPageSizes: [5, 10, 20],
+              showInfo: false,
+            },
+            showBorders: true,
+            columns: [{
+              dataField: "approver_id",
+              caption: "Employee",
+              width: 200,
+              allowSorting: false,
+              lookup: {
+                dataSource: $scope.empDataSource,
+                valueExpr: "id",
+                displayExpr: "fullname"
+              },
+              editCellTemplate: "dropDownBoxEditorTemplatex"
+            }, {
+              dataField: 'approvaldate',
+              width: 150,
+              dataType: "date",
+              format: "dd/MM/yyyy",
+              allowEditing: false,
+            }, {
+              dataField: 'approvaltype',
+              width: 200,
+              allowEditing: false,
+              lookup: {
+                dataSource: $scope.apptypeDatasource,
+                valueExpr: 'id',
+                displayExpr: 'approvaltype'
+              }
+            }, {
+              dataField: 'approvalstatus',
+              width: 150,
+              allowEditing: false,
+              encodeHtml: false,
+              customizeText: function (e) {
+                var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>", "<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>", "<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>", "<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>", ""];
+                return rDesc[e.value];
+              }
+            }, ],
+          });
+        };
+      }
+
+      function history(masterDetailData) {
+        return function () {
+          return $("<div>").dxDataGrid({
+            dataSource: new DevExpress.data.DataSource({
+              store: new DevExpress.data.CustomStore({
+                key: "rfc_id",
+                load: function () {
+                  return CrudService.GetById(
+                    "rfchist",
+                    masterDetailData.id
+                  );
+                },
+              }),
+            }),
+            allowColumnResizing: true,
+            columnResizingMode: "widget",
+            columnAutoWidth: true,
+            showBorders: true,
+            paging: {
+              pageSize: 5,
+            },
+            pager: {
+              showPageSizeSelector: false,
+              allowedPageSizes: [5, 10, 20],
+              showInfo: false,
+            },
+            showBorders: true,
+            columns: [{
+              dataField: 'date',
+              width: 150,
+              dataType: "date",
+              format: 'dd/MM/yyyy HH:mm:ss'
+            }, {
+              dataField: 'fullname',
+              width: 200,
+              caption: "Employee",
+              allowEditing: false,
+              dataType: "string"
+            }, {
+              dataField: 'approvaltype',
+              width: 150,
+              caption: "Role",
+              allowEditing: false,
+              dataType: "string"
+            }, {
+              dataField: 'actiontype',
+              width: 150,
+              caption: "Action",
+              allowEditing: false,
+              encodeHtml: false,
+              customizeText: function (e) {
+                var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-default'>Created</span>", "<span class='mb-2 mr-2 badge badge-pill badge-default'>Save as Draft</span>", "<span class='mb-2 mr-2 badge badge-pill badge-primary'>Submitted</span>", "<span class='mb-2 mr-2 badge badge-pill badge-warning'>Ask Rework</span>", "<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>", "<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>", ""];
+                return rDesc[e.value];
+              }
+            }, {
+              dataField: 'remarks',
+              encodeHtml: false
+            }],
+          });
+        };
+      }
+
+      // end approver list and history
+    
 }]);
 })(app || angular.module("kduApp"));
