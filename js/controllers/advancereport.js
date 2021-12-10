@@ -472,6 +472,14 @@
               title: "Supporting Document",
               template: supportingdocdata(masterDetailOptions.data),
             },
+            {
+              title: "Approver list",
+              template: approverlist(masterDetailOptions.data),
+            },
+            {
+              title: "History Tracking",
+              template: history(masterDetailOptions.data),
+            },
           ],
         });
       }
@@ -618,6 +626,159 @@
           });
         };
       }
+
+      // start approver list and history
+    
+      $scope.empDataSource = {
+        store: new DevExpress.data.CustomStore({
+          key: "id",
+          loadMode: "raw",
+          load: function () {
+            criteria = {
+              module: 'Advance',
+              mode: $scope.mode
+            };
+            return CrudService.FindData('appr', criteria);
+          },
+        }),
+        sort: "id"
+      }
+
+      CrudService.GetAll('approvaltype').then(function (resp) {
+        $scope.apptypeDatasource = resp;
+      });
+
+      function approverlist(masterDetailData) {
+        return function () {
+          return $("<div>").dxDataGrid({
+            dataSource: new DevExpress.data.DataSource({
+              store: new DevExpress.data.CustomStore({
+                key: "advance_id",
+                load: function () {
+                  return CrudService.GetById(
+                    "advanceapp",
+                    masterDetailData.id
+                  );
+                },
+              }),
+            }),
+            allowColumnResizing: true,
+            columnResizingMode: "widget",
+            columnAutoWidth: true,
+            showBorders: true,
+            paging: {
+              pageSize: 5,
+            },
+            pager: {
+              showPageSizeSelector: false,
+              allowedPageSizes: [5, 10, 20],
+              showInfo: false,
+            },
+            showBorders: true,
+            columns: [{
+              dataField: "approver_id",
+              caption: "Employee",
+              width: 200,
+              allowSorting: false,
+              lookup: {
+                dataSource: $scope.empDataSource,
+                valueExpr: "id",
+                displayExpr: "fullname"
+              },
+              editCellTemplate: "dropDownBoxEditorTemplatex"
+            }, {
+              dataField: 'approvaldate',
+              width: 150,
+              dataType: "date",
+              format: "dd/MM/yyyy",
+              allowEditing: false,
+            }, {
+              dataField: 'approvaltype',
+              width: 200,
+              allowEditing: false,
+              lookup: {
+                dataSource: $scope.apptypeDatasource,
+                valueExpr: 'id',
+                displayExpr: 'approvaltype'
+              }
+            }, {
+              dataField: 'approvalstatus',
+              width: 150,
+              allowEditing: false,
+              encodeHtml: false,
+              customizeText: function (e) {
+                var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>", "<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>", "<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>", "<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>", ""];
+                return rDesc[e.value];
+              }
+            }, ],
+          });
+        };
+      }
+
+      function history(masterDetailData) {
+        return function () {
+          return $("<div>").dxDataGrid({
+            dataSource: new DevExpress.data.DataSource({
+              store: new DevExpress.data.CustomStore({
+                key: "advance_id",
+                load: function () {
+                  return CrudService.GetById(
+                    "advancehist",
+                    masterDetailData.id
+                  );
+                },
+              }),
+            }),
+            allowColumnResizing: true,
+            columnResizingMode: "widget",
+            columnAutoWidth: true,
+            showBorders: true,
+            paging: {
+              pageSize: 5,
+            },
+            pager: {
+              showPageSizeSelector: false,
+              allowedPageSizes: [5, 10, 20],
+              showInfo: false,
+            },
+            showBorders: true,
+            columns: [{
+              dataField: 'date',
+              width: 150,
+              dataType: "date",
+              format: 'dd/MM/yyyy HH:mm:ss'
+            }, {
+              dataField: 'fullname',
+              width: 200,
+              caption: "Employee",
+              allowEditing: false,
+              dataType: "string"
+            }, {
+              dataField: 'approvaltype',
+              width: 150,
+              caption: "Role",
+              allowEditing: false,
+              dataType: "string"
+            }, {
+              dataField: 'actiontype',
+              width: 150,
+              caption: "Action",
+              allowEditing: false,
+              encodeHtml: false,
+              customizeText: function (e) {
+                var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-default'>Created</span>", "<span class='mb-2 mr-2 badge badge-pill badge-default'>Save as Draft</span>", "<span class='mb-2 mr-2 badge badge-pill badge-primary'>Submitted</span>", "<span class='mb-2 mr-2 badge badge-pill badge-warning'>Ask Rework</span>", "<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>", "<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>", ""];
+                return rDesc[e.value];
+              }
+            }, {
+              dataField: 'remarks',
+              encodeHtml: false
+            }],
+          });
+        };
+      }
+
+      // end approver list and history
+
     },
   ]);
 })(app || angular.module("kduApp"));
