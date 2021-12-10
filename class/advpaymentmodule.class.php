@@ -550,6 +550,25 @@ Class Advpaymentmodule extends Application{
 												$logger->SaveData();
 											}
 
+											if(($data['companycode']=="KPS" ||$data['companycode']=="KPSI" || $data['companycode']=="LDU") ){
+												$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist = 'KPS,KPSI,LDU'")));
+											}else if(($data['companycode']=="AHL")){
+												$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='AHL'")));
+											}else if(($data['companycode']=="BCL")){
+												$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='BCL'")));
+											}else {
+												$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='IHM'")));
+											}
+
+											if(count($ApproverHRV)>0){
+												$Advpaymentapproval = new Advpaymentapproval();
+												$Advpaymentapproval->advpayment_id = $Advpayment->id;
+												$Advpaymentapproval->approver_id = $ApproverHRV->id;
+												$Advpaymentapproval->save();
+												$logger = new Datalogger("Advpaymentapproval","add","Add initial HR Verifikator Approval ",json_encode($Advpaymentapproval->to_array()));
+												$logger->SaveData();
+											}
+
 											// $companyBU=( ($Employee->companycode=='KPA') || ($Employee->companycode=='AHL') )?"KPSI":$Employee->companycode;
 											// if (($Employee->company->sapcode=='RND') || ($Employee->company->sapcode=='NKF')){
 												$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and CompanyList like '%".$Employee->companycode."%' ")));

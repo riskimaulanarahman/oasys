@@ -494,6 +494,24 @@ Class Advancemodule extends Application{
 												$logger->SaveData();
 											}
 
+											if(($data['companycode']=="KPS" ||$data['companycode']=="KPSI" || $data['companycode']=="LDU") ){
+												$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist = 'KPS,KPSI,LDU'")));
+											}else if(($data['companycode']=="AHL")){
+												$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='AHL'")));
+											}else if(($data['companycode']=="BCL")){
+												$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='BCL'")));
+											}else {
+												$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='IHM'")));
+											}
+											if(count($ApproverHRV)>0){
+												$Advanceapproval = new Advanceapproval();
+												$Advanceapproval->advance_id = $Advance->id;
+												$Advanceapproval->approver_id = $ApproverHRV->id;
+												$Advanceapproval->save();
+												$logger = new Datalogger("Advanceapproval","add","Add initial HR Verifikator Approval ",json_encode($Advanceapproval->to_array()));
+												$logger->SaveData();
+											}
+
 											$hrd = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=36",$id)));	
 											foreach ($hrd as $result) {
 												$result->delete();

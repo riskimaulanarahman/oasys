@@ -844,55 +844,12 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 				allowUpdating:(($scope.mode=='approve') || ($scope.mode=='view') ||($scope.mode=='report') )?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?true:false):true,
 				allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 				allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
-				//allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
-				//allowAdding: ($rootScope.isAdmin)?true:false, // Enables insertion
 				form:{colCount: 1,
 				},
 			},
 			onInitialized:function (e){
 				$scope.grid1Component = e.component;
 			},
-			// onContentReady: function(e){
-			// 	$scope.grid1Component = e.component;
-			// },
-			// onRowInserting: function(e) {
-			// 	var amount = e.component.getTotalSummaryValue("amount");
-			// 	var formadv = $('#advformtype').val();
-
-			// 	console.log(amount);
-			// 	console.log(formadv);
-
-			// 	criteria = {status:'appcon',formtype:formadv,valamount:amount,advpayment_id:$scope.Requestid,employee_id:$scope.data.employee_id};
-			// 	CrudService.FindData('advpayment',criteria).then(function (response){
-			// 	})
-			// 	$scope.grid2Component.refresh();
-
-			// },
-			// onRowUpdating: function (e) {
-			// 	var amount = e.component.getTotalSummaryValue("amount");
-			// 	var formadv = $('#advformtype').val();
-
-			// 	console.log(amount);
-			// 	console.log(formadv);
-
-
-			// 	criteria = {status:'appcon',formtype:formadv,valamount:amount,advpayment_id:$scope.Requestid,employee_id:$scope.data.employee_id};
-			// 	CrudService.FindData('advpayment',criteria).then(function (response){
-			// 	})
-			// 	$scope.grid2Component.refresh();
-			// },
-			// onRowRemoved: function(e) {
-			// 	var amount = e.component.getTotalSummaryValue("amount");
-			// 	var formadv = $('#advformtype').val();
-
-			// 	console.log(formadv);
-			// 	console.log(amount);
-
-			// 	criteria = {status:'appcon',formtype:formadv,valamount:amount,advpayment_id:$scope.Requestid,employee_id:$scope.data.employee_id};
-			// 	CrudService.FindData('advpayment',criteria).then(function (response){
-			// 	})
-			// 	$scope.grid2Component.refresh();
-			// },
 			onEditorPreparing: function (e) {  
 				$scope.grid1Component = e.component;
 			},
