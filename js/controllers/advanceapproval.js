@@ -65,6 +65,7 @@ app.register.controller('advanceapprovalCtrl', ['$rootScope','$scope', '$http', 
                     allowSorting: false,
                     formItem: { visible: false},
                     cellTemplate: function (container, options) {
+                        if((options.data.requeststatus=='1')){	
                         $('<div style="padding:2px 15px 2px 15px;"/>').addClass('dx-icon-todo  btn-pill btn-shadow btn btn-primary')
                             .text('')
                             .on('dxclick', function () {
@@ -72,6 +73,9 @@ app.register.controller('advanceapprovalCtrl', ['$rootScope','$scope', '$http', 
 								$scope.loadAdvance(options.data,'approve',true);
                             })
                             .appendTo(container);
+                        }else{
+							$('<div style="padding:2px 15px 2px 15px;"/>').text('').appendTo(container);
+						}
                     }
                 }
                 ,{caption: '#',fixed: true,fixedPosition: "left",formItem: { visible: false},width: 40,

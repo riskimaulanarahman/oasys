@@ -369,7 +369,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								inputAttr:{ dataintro : 'startdate' },
 								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 								displayFormat:"dd/MM/yyyy",
-								min:Date.now(),
+								// min:Date.now(),
 								onValueChanged: function(e) {
 									if (suspendValueChagned) {
 										suspendValueChagned = false;
@@ -432,7 +432,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								inputAttr:{ dataintro : 'enddate' },
 								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 								displayFormat:"dd/MM/yyyy",
-								min:Date.now(),
+								// min:Date.now(),
 								// value: '',
 								onValueChanged: function(e) {
 									// e.preventDefault();

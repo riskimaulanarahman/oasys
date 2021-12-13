@@ -13,6 +13,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 			$scope.logout();
 		}else{
 			$scope.data = response;
+			$scope.remaksuser = $scope.data.remarks;
 			if(($scope.mode=='approve')){
 				$scope.data.remarks="";
 			}
@@ -203,7 +204,6 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 							var rDesc = ["Saved as Draft","Waiting Approval","Require Rework","Approved","Rejected","Not Saved"];
 							$('<span>').appendTo(itemElement).addClass(rClass[val]).text(rDesc[val]);
 						}},
-						{dataField:'remarks',colSpan:2,editorType:"dxHtmlEditor",editorOptions: {height: 190,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}},
 						{label: {
 								text: "Direct Superior"
 							},
@@ -290,6 +290,9 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 								message: "Please select your department head"
 							}]
 						},
+						{
+							template: "<span>Remarks by User : <b>" +$scope.remaksuser+ "</b></span>"
+						},
 						{label: {
 								text: "Approval Action"
 							},
@@ -308,6 +311,8 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 								message: "Action is required"
 							}]
 						},
+						{dataField:'remarks',colSpan:2,editorType:"dxHtmlEditor",editorOptions: {height: 190,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}},
+
 						]
 					}, {
 						template: "<span><font color='blue'>Approved Weekend / PH Coverage MTD : <b>" +$scope.data.mtd+"</b> day/s, YTD : <b>" +$scope.data.ytd+"</b> day/s</font></span> "

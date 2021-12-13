@@ -984,17 +984,21 @@ Class Advancemodule extends Application{
 						} else if(isset($query['pending'])){						
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$emp_id = $Employee->id;
-							// $Advance = Advance::find('all', array('conditions' => array("RequestStatus !=0"),'include' => array('employee')));
-							// print_r($Advance);
-							$Advance = Advance::find('all', array('conditions' => array("RequestStatus =1"),'include' => array('employee')));
+							
+							$Advance = Advance::find('all', array('conditions' => array("RequestStatus >0"),'include' => array('employee')));
+							// $Advance = Advance::find('all', array('conditions' => array("RequestStatus =1"),'include' => array('employee')));
 							foreach ($Advance as $result) {
 								$joinx   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";					
 								$Advanceapproval = Advanceapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and advance_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 								if($Advanceapproval->approver->employee_id==$emp_id){
 									$request[]=$result->id;
 								}
+								$Advanceapproval = Advanceapproval::find('first',array('joins'=>$joinx,'conditions' => array("advance_id=? and tbl_approver.employee_id = ? and approvalstatus!=0",$result->id,$emp_id),'include' => array('approver'=>array('employee'))));							
+								if(count($Advanceapproval)>0){
+									$request[]=$result->id;
+								}
 							}
-							$Advance = Advance::find('all', array('conditions' => array("id in (?)",$request),'include' => array('employee')));
+							$Advance = Advance::find('all', array('conditions' => array("id in (?)",$request),'order'=>"tbl_advance.requeststatus",'include' => array('employee')));
 							foreach ($Advance as &$result) {
 								$fullname	= $result->employee->fullname;		
 								$result		= $result->to_array();
