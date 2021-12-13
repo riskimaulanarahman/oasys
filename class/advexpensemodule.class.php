@@ -438,16 +438,17 @@ Class Advexpensemodule extends Application{
 											// 	$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and tbl_employee.location_id='8'")));
 											// }
 
-											if(($data['companycode']=="KPS" ||$data['companycode']=="KPSI" || $data['companycode']=="LDU") ){
-												$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist = 'KPS,KPSI,LDU'")));
-											}else if(($data['companycode']=="AHL")){
-												$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='AHL'")));
-											}else if(($data['companycode']=="BCL")){
-												$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='BCL'")));
-											}else {
-												$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='IHM'")));
-											}
-
+											// if(($data['companycode']=="KPS" ||$data['companycode']=="KPSI" || $data['companycode']=="LDU") ){
+											// 	$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist = 'KPS,KPSI,LDU'")));
+											// }else if(($data['companycode']=="AHL")){
+											// 	$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='AHL'")));
+											// }else if(($data['companycode']=="BCL")){
+											// 	$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='BCL'")));
+											// }else {
+											// 	$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='IHM'")));
+											// }
+											$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and FIND_IN_SET(?, CompanyList) > 0 ",$Employee->companycode)));
+											
 											
 
 											if(count($ApproverHRV)>0){
@@ -502,7 +503,7 @@ Class Advexpensemodule extends Application{
 											// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
 												
 												
-												$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=36 and CompanyList like '%".$Employee->companycode."%' ")));
+												$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=36 and FIND_IN_SET(?, CompanyList) > 0 ",$Employee->companycode)));
 												if(count($Approver2)>0){
 													$Advexpenseapproval = new Advexpenseapproval();
 													$Advexpenseapproval->advexpense_id = $Advexpense->id;
@@ -561,7 +562,7 @@ Class Advexpensemodule extends Application{
 
 											// $companyBU=( ($Employee->companycode=='KPA') || ($Employee->companycode=='AHL') )?"KPSI":$Employee->companycode;
 											// if (($Employee->company->sapcode=='RND') || ($Employee->company->sapcode=='NKF')){
-												$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and CompanyList like '%".$Employee->companycode."%' ")));
+												$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and FIND_IN_SET(?, CompanyList) > 0 ",$Employee->companycode)));
 											// }else{
 											// 	$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$companyBU,$Employee->id)));
 											// }
@@ -647,15 +648,18 @@ Class Advexpensemodule extends Application{
 								// 		$Advexpenseapproval->save();
 								// 	}
 								// }
-								if(($Employee->companycode=="KPS" ||$Employee->companycode=="KPSI" || $Employee->companycode=="LDU") ){
-									$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist = 'KPS,KPSI,LDU'")));
-								}else if(($Employee->companycode=="AHL")){
-									$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='AHL'")));
-								}else if(($Employee->companycode=="BCL")){
-									$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='BCL'")));
-								}else {
-									$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='IHM'")));
-								}
+
+								// if(($Employee->companycode=="KPS" ||$Employee->companycode=="KPSI" || $Employee->companycode=="LDU") ){
+								// 	$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist = 'KPS,KPSI,LDU'")));
+								// }else if(($Employee->companycode=="AHL")){
+								// 	$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='AHL'")));
+								// }else if(($Employee->companycode=="BCL")){
+								// 	$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='BCL'")));
+								// }else {
+								// 	$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='IHM'")));
+								// }
+								$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and FIND_IN_SET(?, CompanyList) > 0 ",$Employee->companycode)));
+
 
 								if(count($ApproverHRV)>0){
 									$Advexpenseapproval = new Advexpenseapproval();
@@ -667,7 +671,7 @@ Class Advexpensemodule extends Application{
 								}
 
 								// if($Employee->companycode == 'BCL') {
-									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and CompanyList like '%".$Employee->companycode."%' ")));
+									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and FIND_IN_SET(?, CompanyList) > 0 ",$Employee->companycode)));
 								// }else {
 								// 	$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and not(tbl_employee.companycode='BCL')")));
 								// }
