@@ -317,7 +317,8 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 									readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
                                     dataSource:$scope.getlessadv,  
                                     valueExpr: 'advanceno',
-                                    displayExpr: 'advanceno',
+                                    // displayExpr: 'advanceno',
+									displayExpr: getDisplayExpr,
                                     // value: '',
 									onValueChanged: function(e) {
 										console.log(e.value);
@@ -344,7 +345,8 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 									readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
                                     dataSource:$scope.getlessadvfinal,  
                                     valueExpr: 'advanceno',
-                                    displayExpr: 'advanceno',
+                                    // displayExpr: 'advanceno',
+									displayExpr: getDisplayExpr,
                                 },
 								
                             },
@@ -681,6 +683,15 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 				// }			
 			};
 		}
+
+		function getDisplayExpr(item) {
+			if (!item) {
+			  return '';
+			}
+		
+			return `${item.advanceno} | Amount : ${item.amount}`;
+		  }
+
 		var myStore = new DevExpress.data.CustomStore({
 			load: function() {			
 				$scope.isLoaded =true;

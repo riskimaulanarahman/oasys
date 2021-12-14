@@ -277,13 +277,14 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 									readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
                                     dataSource:$scope.getlessadv,  
                                     valueExpr: 'advanceno',
-                                    displayExpr: 'advanceno',
+                                    // displayExpr: 'advanceno',
+									displayExpr: getDisplayExpr,
                                     // value: '',
 									onValueChanged: function(e) {
 										console.log(e.value);
 										criteria = {status:'savelessadv',advanceno:e.value,advpayment_id:$scope.Requestid,employee_id:$scope.data.employee_id};
 										CrudService.FindData('advpayment',criteria).then(function (response){
-											console.log(response);
+											console.log(response.amount);
 											// $scope.getadvance = response;
 											// 	var lessadv = $scope.formInstance.getEditor('lessadvance');
 											// 	lessadv.getDataSource().filter('advanceform','=',e.value);
@@ -308,7 +309,8 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 									readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
                                     dataSource:$scope.getlessadvfinal,  
                                     valueExpr: 'advanceno',
-                                    displayExpr: 'advanceno',
+                                    // displayExpr: 'advanceno',
+									displayExpr: getDisplayExpr,
                                     // value: '',
                                 },
 								
@@ -329,6 +331,11 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
                                 },
 								
                             },
+							// {
+							// 	label:{text:"Amount : 100"},
+							// 	template: "<span>Amount : <b>100</b></span>",
+							// 	visible:($scope.data.paymenttype==1 && $scope.data.requeststatus !=3)?true:false,
+							// },
 							
 						{dataField:'createddate',editorType: "dxDateBox",label: {text: "Creation Date"},editorOptions: {inputAttr:{ dataintro : 'createddate' },displayFormat:"dd/MM/yyyy",readOnly: true}},
 						
@@ -645,6 +652,15 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 				],			
 			};
 		}
+
+		function getDisplayExpr(item) {
+			if (!item) {
+			  return '';
+			}
+		
+			return `${item.advanceno} | Amount : ${item.amount}`;
+		  }
+
 		var myStore = new DevExpress.data.CustomStore({
 			load: function() {			
 				$scope.isLoaded =true;

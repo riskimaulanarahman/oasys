@@ -1502,7 +1502,7 @@ Class Advancemodule extends Application{
 			if($Advance->advanceform == 1) {
 				$Worksheet->Range("F6")->Value = $fullname;
 				$Worksheet->Range("F7")->Value = $department;
-				$Worksheet->Range("F8")->Value = $Advance->employee_id;
+				$Worksheet->Range("F8")->Value = $Advance->employee->sapid;
 
 				$Worksheet->Range("F10")->Value = $Advance->beneficiary;
 				$Worksheet->Range("F11")->Value = $Advance->accountname;
@@ -1511,7 +1511,7 @@ Class Advancemodule extends Application{
 			} else {
 				$Worksheet->Range("E6")->Value = $fullname;
 				$Worksheet->Range("E7")->Value = $department;
-				$Worksheet->Range("E8")->Value = $Advance->employee_id;
+				$Worksheet->Range("E8")->Value = $Advance->employee->sapid;
 
 				$Worksheet->Range("E10")->Value = $Advance->beneficiary;
 				$Worksheet->Range("E11")->Value = $Advance->accountname;

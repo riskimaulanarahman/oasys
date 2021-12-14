@@ -265,14 +265,14 @@ Class Advpaymentmodule extends Application{
 													$Advpayment->lessadvance = $val_tamount;
 													$Advpayment->save();
 													
-												echo 'adaa';
+												// echo 'adaa';
 												
 											} else {
 												$Advpayment->advanceno = null;
 												$Advpayment->lessadvance = null;
 												$Advpayment->save();
 												
-												echo 'tidaak';
+												// echo 'tidaak';
 											}
 										}
 
@@ -281,6 +281,7 @@ Class Advpaymentmodule extends Application{
 
 										if($Advpayment) {
 											$item['message']=200;
+											$item['amount']=$Advpayment->lessadvance;
 											echo json_encode($item, JSON_NUMERIC_CHECK);
 										} else {
 											$item['message']=404;
@@ -555,23 +556,23 @@ Class Advpaymentmodule extends Application{
 
 											// if(($data['companycode']=="KPS" ||$data['companycode']=="KPSI" || $data['companycode']=="LDU") ){
 												// $ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist = 'KPS,KPSI,LDU'")));
-												$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and FIND_IN_SET(?, CompanyList) > 0 ",$Employee->companycode)));
-											// }else if(($data['companycode']=="AHL")){
-											// 	$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='AHL'")));
-											// }else if(($data['companycode']=="BCL")){
-											// 	$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='BCL'")));
-											// }else {
-											// 	$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='IHM'")));
+												// }else if(($data['companycode']=="AHL")){
+													// 	$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='AHL'")));
+													// }else if(($data['companycode']=="BCL")){
+														// 	$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='BCL'")));
+														// }else {
+															// 	$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='IHM'")));
+															// }
+															
+											// $ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and FIND_IN_SET(?, CompanyList) > 0 ",$Employee->companycode)));
+											// if(count($ApproverHRV)>0){
+											// 	$Advpaymentapproval = new Advpaymentapproval();
+											// 	$Advpaymentapproval->advpayment_id = $Advpayment->id;
+											// 	$Advpaymentapproval->approver_id = $ApproverHRV->id;
+											// 	$Advpaymentapproval->save();
+											// 	$logger = new Datalogger("Advpaymentapproval","add","Add initial HR Verifikator Approval ",json_encode($Advpaymentapproval->to_array()));
+											// 	$logger->SaveData();
 											// }
-
-											if(count($ApproverHRV)>0){
-												$Advpaymentapproval = new Advpaymentapproval();
-												$Advpaymentapproval->advpayment_id = $Advpayment->id;
-												$Advpaymentapproval->approver_id = $ApproverHRV->id;
-												$Advpaymentapproval->save();
-												$logger = new Datalogger("Advpaymentapproval","add","Add initial HR Verifikator Approval ",json_encode($Advpaymentapproval->to_array()));
-												$logger->SaveData();
-											}
 
 											// $companyBU=( ($Employee->companycode=='KPA') || ($Employee->companycode=='AHL') )?"KPSI":$Employee->companycode;
 											// if (($Employee->company->sapcode=='RND') || ($Employee->company->sapcode=='NKF')){
@@ -1510,7 +1511,7 @@ Class Advpaymentmodule extends Application{
 			// if($Advpayment->paymentform == 1) {
 				$Worksheet->Range("E10")->Value = $fullname;
 				$Worksheet->Range("E11")->Value = $department;
-				$Worksheet->Range("E12")->Value = $Advpayment->employee_id;
+				$Worksheet->Range("E12")->Value = $Advpayment->employee->sapid;
 
 				$Worksheet->Range("M10")->Value = $payment;
 				$Worksheet->Range("E14")->Value = $Advpayment->beneficiary;

@@ -35,7 +35,9 @@ Class ListmodModule extends Application{
 				switch ($this->post['criteria']){
 					case 'byid':
 						$id = $this->post['id'];
-						$Advance = Advance::find('all', array('conditions' => array("employee_id=? and RequestStatus=3 and isused=0",$id),'include' => array('employee')));
+						$join = "LEFT JOIN tbl_advancedetail v on v.advance_id=tbl_advance.id";
+						$sel = "advanceform,advanceno, SUM(v.amount) AS amount";
+						$Advance = Advance::find('all', array('joins'=>$join,'select'=>$sel,'conditions' => array("employee_id=? and RequestStatus=3 and isused=0",$id),"group"=>"tbl_advance.advanceno"));
 						foreach ($Advance as &$result) {
 							$result = $result->to_array();
 						}
@@ -64,7 +66,9 @@ Class ListmodModule extends Application{
 				switch ($this->post['criteria']){
 					case 'byid':
 						$id = $this->post['id'];
-						$Advance = Advance::find('all', array('conditions' => array("employee_id=? and RequestStatus=3 and isused=1",$id),'include' => array('employee')));
+						$join = "LEFT JOIN tbl_advancedetail v on v.advance_id=tbl_advance.id";
+						$sel = "advanceform,advanceno, SUM(v.amount) AS amount";
+						$Advance = Advance::find('all', array('joins'=>$join,'select'=>$sel,'conditions' => array("employee_id=? and RequestStatus=3 and isused=0",$id),"group"=>"tbl_advance.advanceno"));
 						foreach ($Advance as &$result) {
 							$result = $result->to_array();
 						}
