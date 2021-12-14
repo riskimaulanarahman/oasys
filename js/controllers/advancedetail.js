@@ -58,6 +58,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 			}
 			$scope.AppAction = ($scope.data.approvalstep==2)?[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Verify"}]:[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
 			$scope.AdvanceForm =[{id:0,advanceform:"- Select -"},{id:1,advanceform:"HR Related"},{id:2,advanceform:"Ops Related"}];
+			$scope.OpsCategory =[{id:1,opscategory:"General"},{id:2,opscategory:"Pajak"},{id:3,opscategory:"PSDH (Pajak Sumber Daya Hutan"},{id:4,opscategory:"Direct Purchased"}];
 			$scope.reqStatus = 0;
 			$scope.gridSelectedRowKeys =[];
 
@@ -70,6 +71,10 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 					if (e.rowType === "header" && e.column.dataField === "advanceform") {  
 						e.element.attr("title", "My title");  
 					}  
+
+					if($scope.data.advanceform == 2) {
+						$scope.formInstance.itemOption('groupa.opscategory', 'visible', true);
+					}
 				},
 				readOnly : (($scope.mode=='view')||($scope.mode=='report'))?true:false,
 				labelLocation : "top",
@@ -78,6 +83,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 				formData:$scope.data,	
 				items: [{	
 						itemType: "group",
+						name: "groupa",
 						caption: "Request by : "+$scope.data.fullname+" / Dept : "+$scope.data.department+" / Advance No : "+$scope.data.advanceno,
 						colCount : 2,
 						colSpan :2,
@@ -108,6 +114,12 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 											$('#advformtype').val(e.value);
 										// }
 
+										var vis1 =(e.value==2)?true:false;
+
+										$scope.formInstance.itemOption('groupa.opscategory', 'visible', vis1);
+										$scope.formInstance.updateData('opscategory', null);
+
+
 									}
                                 },
 								
@@ -120,8 +132,29 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 							inputAttr:{ dataintro : 'createddate' },
 
 						}},
-						
-						
+						{
+							dataField:'opscategory',
+							name:'opscategory',
+							editorType: "dxSelectBox",
+							label:{text:"Category"},
+							validationRules: [{type: "required",message: "Action is required"}],
+							visible:false,
+							editorOptions: { 
+								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+								dataSource:$scope.OpsCategory,  
+								valueExpr: 'id',
+								displayExpr: 'opscategory',
+
+								onValueChanged: function(e) {
+									criteria = {status:'opscategory',categorytype:e.value,advance_id:$scope.Requestid,employee_id:$scope.data.employee_id};
+									CrudService.FindData('advance',criteria).then(function (response){
+										$scope.grid2Component.refresh();
+									})
+
+								}
+							},
+							
+						},
 						{
 							dataField:'beneficiary',
 							label: {
@@ -456,16 +489,19 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 			insert: function(values) {
 				values.advance_id=$scope.Requestid;
 				// console.log();
-				if($scope.data.advanceform !== 0) {
+				if($scope.data.advanceform == 0) {
 
+					DevExpress.ui.dialog.alert("Select Advance Form","Error");
+				} else if($scope.data.advanceform == 2 && ($scope.data.opscategory == 0 || $scope.data.opscategory == null)) {
+					DevExpress.ui.dialog.alert("Select Category","Error");
+
+				} else {
 					CrudService.Create('advancedetail',values).then(function (response) {
 						if(response.status=="error"){
 							DevExpress.ui.dialog.alert(response.message,"Error");
 						}
 						$scope.grid1Component.refresh();
 					});
-				} else {
-					DevExpress.ui.dialog.alert("Select Advance Form","Error");
 				}
 			},
 			update: function(key, values) {

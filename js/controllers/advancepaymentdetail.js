@@ -224,8 +224,8 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 									onValueChanged: function (e) {
 									var vis1 =(e.value==1)?true:false;
 
-									// $scope.formInstance.itemOption('group.paymenttype', 'visibleIndex', 0);
 									$scope.formInstance.itemOption('subgroup.advanceno', 'visible', vis1);
+									// $scope.formInstance.itemOption('group.paymenttype', 'visibleIndex', 0);
 
 									criteria = {status:'savelessadv',paymenttype:e.value,advpayment_id:$scope.Requestid,employee_id:$scope.data.employee_id};
 									CrudService.FindData('advpayment',criteria).then(function (response){
