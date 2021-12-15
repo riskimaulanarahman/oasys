@@ -1316,11 +1316,11 @@ Class Advancemodule extends Application{
 									$request[]=$result->id;
 								}
 								$Advanceapproval = Advanceapproval::find('first',array('joins'=>$joinx,'conditions' => array("advance_id=? and tbl_approver.employee_id = ? and approvalstatus!=0",$result->id,$emp_id),'include' => array('approver'=>array('employee'))));							
-								if(count($Advanceapproval)>0){
+								if(count($Advanceapproval)>0 && ($result->requeststatus==3 || $result->requeststatus==4)){
 									$request[]=$result->id;
 								}
 							}
-							$Advance = Advance::find('all', array('conditions' => array("id in (?) and requeststatus>1",$request),'order'=>"tbl_advance.requeststatus",'include' => array('employee')));
+							$Advance = Advance::find('all', array('conditions' => array("id in (?)",$request),'order'=>"tbl_advance.requeststatus",'include' => array('employee')));
 							foreach ($Advance as &$result) {
 								$fullname	= $result->employee->fullname;		
 								$result		= $result->to_array();
