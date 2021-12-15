@@ -98,6 +98,8 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 			$scope.AppAction = ($scope.data.approvalstep==2)?[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Verify"}]:[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
 			$scope.AdvanceForm =[{id:0,paymentform:"- Select -"},{id:1,paymentform:"Payment Req HR"},{id:2,paymentform:"Payment Req OPR"}];
 			$scope.Paymentopt =[{id:1,payment:"Cash"},{id:2,payment:"Bank"}];
+			$scope.OpsCategory =[{id:1,opscategory:"General"},{id:2,opscategory:"Pajak"},{id:3,opscategory:"PSDH (Pajak Sumber Daya Hutan"}];
+
 			// console.log($scope.Paymentopt);
 			$scope.reqStatus = 0;
 			$scope.gridSelectedRowKeys =[];
@@ -135,7 +137,9 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 						$scope.formInstance.itemOption('group.paymenttype', 'visible', vis);
 						// $scope.formInstance.updateData('paymenttype',  "");
 
-
+						if($scope.data.paymentform == 2) {
+							$scope.formInstance.itemOption('subgroup.opscategory', 'visible', true);
+						}
 
 						if($scope.grid2Component) {
 							$scope.grid2Component.refresh();
@@ -194,7 +198,10 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 											$scope.formInstance.itemOption('group.paymenttype', 'visible', vis);
 											$scope.formInstance.updateData('paymenttype',  "");
 											
+											var vis1 =(e.value==2)?true:false;
 
+											$scope.formInstance.itemOption('subgroup.opscategory', 'visible', vis1);
+											$scope.formInstance.updateData('opscategory', null);
 
 				
 											if($scope.grid2Component) {
@@ -315,6 +322,29 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
                                 },
 								
                             },
+							{
+								dataField:'opscategory',
+								name:'opscategory',
+								editorType: "dxSelectBox",
+								label:{text:"Category"},
+								validationRules: [{type: "required",message: "Action is required"}],
+								visible:false,
+								editorOptions: { 
+									readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+									dataSource:$scope.OpsCategory,  
+									valueExpr: 'id',
+									displayExpr: 'opscategory',
+	
+									onValueChanged: function(e) {
+										criteria = {status:'opscategory',categorytype:e.value,advpayment_id:$scope.Requestid,employee_id:$scope.data.employee_id};
+										CrudService.FindData('advpayment',criteria).then(function (response){
+											$scope.grid2Component.refresh();
+										})
+	
+									}
+								},
+								
+							},
 							{
                                 dataField:'payment',
 								name:'payment',
@@ -674,15 +704,17 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 			insert: function(values) {
 				values.advpayment_id=$scope.Requestid;
 
-				if($scope.data.paymentform !== 0) {
+				if($scope.data.paymentform == 0) {
+					DevExpress.ui.dialog.alert("Select Payment Form","Error");
+				} else if($scope.data.paymentform == 2 && ($scope.data.opscategory == 0 || $scope.data.opscategory == null)) {
+					DevExpress.ui.dialog.alert("Select Category","Error");		
+				} else {
 					CrudService.Create('advpaymentdetail',values).then(function (response) {
 						if(response.status=="error"){
 							DevExpress.ui.dialog.alert(response.message,"Error");
 						}
 						$scope.grid1Component.refresh();
 					});
-				} else {
-					DevExpress.ui.dialog.alert("Select Payment Form","Error");
 				}
 			},
 			update: function(key, values) {
