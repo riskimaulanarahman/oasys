@@ -981,10 +981,10 @@ Class Advexpensemodule extends Application{
 									
 								}
 
-								$breakfast = ($data->breakfast == 0) ? $data->breakfast : $sppd->breakfast;
-								$lunch = ($data->lunch == 0) ? $data->lunch : $sppd->lunch;
-								$dinner = ($data->dinner == 0) ? $data->dinner : $sppd->dinner;
-								$pocket = ($data->pocket == 0) ? $data->pocket : $sppd->pocket;
+								$breakfast = ($data->breakfast == 1) ? 0 : $sppd->breakfast;
+								$lunch = ($data->lunch == 1) ? 0 : $sppd->lunch;
+								$dinner = ($data->dinner == 1) ? 0 : $sppd->dinner;
+								$pocket = ($data->pocket == 1) ? 0 : $sppd->pocket;
 
 								$jml_breakfast += $breakfast;
 								$jml_lunch += $lunch;
@@ -1437,10 +1437,10 @@ Class Advexpensemodule extends Application{
 								
 							}
 
-							$breakfast = ($data->breakfast == 0) ? $data->breakfast : $sppd->breakfast;
-							$lunch = ($data->lunch == 0) ? $data->lunch : $sppd->lunch;
-							$dinner = ($data->dinner == 0) ? $data->dinner : $sppd->dinner;
-							$pocket = ($data->pocket == 0) ? $data->pocket : $sppd->pocket;
+							$breakfast = ($data->breakfast == 1) ? 0 : $sppd->breakfast;
+							$lunch = ($data->lunch == 1) ? 0 : $sppd->lunch;
+							$dinner = ($data->dinner == 1) ? 0 : $sppd->dinner;
+							$pocket = ($data->pocket == 1) ? 0 : $sppd->pocket;
 
 							$jml_breakfast += $breakfast;
 							$jml_lunch += $lunch;
@@ -1919,10 +1919,10 @@ Class Advexpensemodule extends Application{
 						
 					}
 
-					$breakfast = ($data->breakfast == 0) ? $data->breakfast : $sppd->breakfast;
-					$lunch = ($data->lunch == 0) ? $data->lunch : $sppd->lunch;
-					$dinner = ($data->dinner == 0) ? $data->dinner : $sppd->dinner;
-					$pocket = ($data->pocket == 0) ? $data->pocket : $sppd->pocket;
+					$breakfast = ($data->breakfast == 1) ? 0 : $sppd->breakfast;
+					$lunch = ($data->lunch == 1) ? 0 : $sppd->lunch;
+					$dinner = ($data->dinner == 1) ? 0 : $sppd->dinner;
+					$pocket = ($data->pocket == 1) ? 0 : $sppd->pocket;
 
 					$jml_breakfast += $breakfast;
 					$jml_lunch += $lunch;

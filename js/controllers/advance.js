@@ -117,7 +117,7 @@ app.register.controller('advanceCtrl', ['$rootScope','$scope', '$http', '$interv
 				{dataField:'advanceno',caption:"Advance No",width: 200},
 				{dataField:'requeststatus',caption:"Request Status",encodeHtml: false ,width: 300,
 					customizeText: function (e) {
-						var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Saved as Draft</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Payment</span>",""];
+						var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Saved as Draft</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
 						return rDesc[e.value];
 					}},
 				{dataField:'remarks',encodeHtml: false },

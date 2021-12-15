@@ -569,22 +569,22 @@ Class Advancemodule extends Application{
 												$logger->SaveData();
 											}
 
-											if(($tdetailamount>=5000000)){
+											// if(($tdetailamount>=5000000)){
 
-													if(count($Advanceapprovalproc)==0){
-														$ApproverPROC = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='42' ")));
-														// print_r($ApproverPROC);
-														if(count($ApproverPROC)>0){
-															$Advanceapproval = new Advanceapproval();
-															$Advanceapproval->advance_id =$Advance->id;
-															$Advanceapproval->approver_id = $ApproverPROC->id;
-															$Advanceapproval->save();
-															$logger = new Datalogger("Advanceapproval","add","Add initial PROC",json_encode($Advanceapproval->to_array()));
-															$logger->SaveData();
-														}
-													}
+											// 		if(count($Advanceapprovalproc)==0){
+											// 			$ApproverPROC = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='42' ")));
+											// 			// print_r($ApproverPROC);
+											// 			if(count($ApproverPROC)>0){
+											// 				$Advanceapproval = new Advanceapproval();
+											// 				$Advanceapproval->advance_id =$Advance->id;
+											// 				$Advanceapproval->approver_id = $ApproverPROC->id;
+											// 				$Advanceapproval->save();
+											// 				$logger = new Datalogger("Advanceapproval","add","Add initial PROC",json_encode($Advanceapproval->to_array()));
+											// 				$logger->SaveData();
+											// 			}
+											// 		}
 	
-											}
+											// }
 										}
 
 
@@ -645,6 +645,13 @@ Class Advancemodule extends Application{
 											foreach ($buhead as $result) {
 												$result->delete();
 												$logger = new Datalogger("Advanceapproval","delete",json_encode($result->to_array()),"delete Approval BU Head");
+												$logger->SaveData();
+											}
+
+											$proc = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=42",$id)));	
+											foreach ($proc as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advanceapproval","delete",json_encode($result->to_array()),"delete Approval PROC");
 												$logger->SaveData();
 											}
 
@@ -714,6 +721,13 @@ Class Advancemodule extends Application{
 												$logger->SaveData();
 											}
 
+											$proc = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=42",$id)));	
+											foreach ($proc as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advanceapproval","delete",json_encode($result->to_array()),"delete Approval PROC");
+												$logger->SaveData();
+											}
+
 											$ApproverFC = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=41")));
 											if(count($ApproverFC)>0){
 												$Advanceapproval = new Advanceapproval();
@@ -743,6 +757,13 @@ Class Advancemodule extends Application{
 											foreach ($buhead as $result) {
 												$result->delete();
 												$logger = new Datalogger("Advanceapproval","delete",json_encode($result->to_array()),"delete Approval BU Head");
+												$logger->SaveData();
+											}
+
+											$proc = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=42",$id)));	
+											foreach ($proc as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advanceapproval","delete",json_encode($result->to_array()),"delete Approval PROC");
 												$logger->SaveData();
 											}
 
