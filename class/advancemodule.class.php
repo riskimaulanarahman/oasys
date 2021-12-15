@@ -1320,7 +1320,7 @@ Class Advancemodule extends Application{
 									$request[]=$result->id;
 								}
 							}
-							$Advance = Advance::find('all', array('conditions' => array("id in (?)",$request),'order'=>"tbl_advance.requeststatus",'include' => array('employee')));
+							$Advance = Advance::find('all', array('conditions' => array("id in (?) and requeststatus>1",$request),'order'=>"tbl_advance.requeststatus",'include' => array('employee')));
 							foreach ($Advance as &$result) {
 								$fullname	= $result->employee->fullname;		
 								$result		= $result->to_array();
