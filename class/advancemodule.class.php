@@ -677,6 +677,16 @@ Class Advancemodule extends Application{
 												$logger->SaveData();
 											}
 
+											$ApproverFC = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=41")));
+											if(count($ApproverFC)>0){
+												$Advanceapproval = new Advanceapproval();
+												$Advanceapproval->advance_id = $Advance->id;
+												$Advanceapproval->approver_id = $ApproverFC->id;
+												$Advanceapproval->save();
+												$logger = new Datalogger("Advanceapproval","add","Add initial Finance Commite Approval ",json_encode($Advanceapproval->to_array()));
+												$logger->SaveData();
+											}
+
 											// $hrd = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=36",$id)));	
 											// foreach ($hrd as $result) {
 											// 	$result->delete();
@@ -1283,7 +1293,7 @@ Class Advancemodule extends Application{
 							} else if(($tdetailamount>=5000000 && $tdetailamount<10000000) && $Advance->advanceform ==1 && $dx->approver->approvaltype_id == 39) {
 								$data=array("jml"=>1);
 								// start advanceform 2
-							} else if(($tdetailamount<5000000) && $Advance->advanceform ==2 && $Advance->opscategory==1 && $dx->approver->approvaltype_id == 38) {
+							} else if(($tdetailamount<5000000) && $Advance->advanceform ==2 && $Advance->opscategory==1 && $dx->approver->approvaltype_id == 41) {
 								$data=array("jml"=>1);
 							} else if(($tdetailamount<5000000) && $Advance->advanceform ==2 && $Advance->opscategory==2 && $dx->approver->approvaltype_id == 41) {
 								$data=array("jml"=>1);
@@ -1527,7 +1537,7 @@ Class Advancemodule extends Application{
 
 											} else if($Advance->advanceform == 2) {
 
-												if(($tdetailamount<5000000) && $Advance->opscategory==1 && $Advanceapproval->approver->approvaltype_id == 38) {
+												if(($tdetailamount<5000000) && $Advance->opscategory==1 && $Advanceapproval->approver->approvaltype_id == 41) {
 													$Advance->requeststatus = 3;
 													$emto=$email;$emname=$Advance->employee->fullname;
 													$this->mail->Subject = "Online Approval System -> Approval Completed";
