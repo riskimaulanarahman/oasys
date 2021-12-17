@@ -81,12 +81,17 @@
                     },
                     {dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200},
                     {dataField:'fullname',caption: "Request by",width: 150},
+                    {dataField:'paymentno',caption:"Payment No"},
                     {dataField:'paymentform',caption:"Form Type",encodeHtml: false ,width: 300,
                         customizeText: function (e) {
                             var rDesc = ["","<span class='mb-2 mr-2 badge badge-pill badge-info'>Payment Req HR</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Payment Req OPS</span>",""];
                             return rDesc[e.value];
                     }},
-                    {dataField:'paymentno',caption:"Payment No"},
+                    {dataField:'opscategory',caption:"Category OPS Related",encodeHtml: false ,width: 300,
+                        customizeText: function (e) {
+                            var rDesc = ["","<span class='mb-2 mr-2 badge badge-pill badge-primary'>General</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Pajak</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>PSDH (Provisi Sumber Daya Hutan)</span>",""];
+                            return rDesc[e.value];
+                    }},
                     // {dataField:'datework',caption:"Date Work",dataType:"date", format:"dd/MM/yyyy",width: 200},
                     {dataField:'requeststatus',caption:"Request Status",encodeHtml: false ,width: 300,
                         customizeText: function (e) {
