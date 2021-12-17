@@ -67,7 +67,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 			// 	opscategory: "Pajak"
 			// }, {
 			// 	id: 3,
-			// 	opscategory: "PSDH (Pajak Sumber Daya Hutan"
+			// 	opscategory: "PSDH (Provisi Sumber Daya Hutan"
 			// }, 
 			{
 				id: 4,
