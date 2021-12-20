@@ -18,6 +18,16 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 				$scope.data.remarks="";
 			}
 
+			CrudService.checkAccess('Paymentreq',$rootScope.curUser.username).then(function (access) {
+				// $rootScope.viewDivision = access.allowview;
+				console.log(access);
+				if(access.allowview == 1) {
+					$scope.viewcompany = 1;
+				} else {
+					$scope.viewcompany = 0;
+				}
+			});
+
 			$scope.allEmpDataSource = {
 				store: new DevExpress.data.CustomStore({
 					key: "id",
@@ -159,6 +169,10 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 							$scope.formInstance.itemOption('subgroup.opscategory', 'visible', true);
 						}
 
+						if($scope.viewcompany==1) {
+							$scope.formInstance.itemOption('maingroup.companycode', 'visible', true);
+						}
+
 						if($scope.grid2Component) {
 							$scope.grid2Component.refresh();
 						}
@@ -175,6 +189,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 				items: [
 					{	
 						itemType: "group",
+						name: "maingroup",
 						caption: "Request by : "+$scope.data.fullname+" / Dept : "+$scope.data.department+" / Payment No : "+$scope.data.paymentno,
 						colSpan:2,
 						colCount : 2,
@@ -233,6 +248,34 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 								
                             },
 							{
+								dataField: 'companycode',
+								label: {
+									text: "Company Code"
+								},
+								name: 'companycode',
+								visible: ($scope.viewcompany==1) ? true:false,
+								editorType: "dxSelectBox",
+								editorOptions: {
+									readOnly: (($scope.mode == 'approve') || ($scope.mode == 'view') || ($scope.mode == 'report')) ? true : false,
+									dataSource: $scope.compDatasource,
+									displayExpr: "companycode",
+									valueExpr: "companycode",
+
+									onValueChanged: function(e) {
+										criteria = {status:'companycode',company:e.value,advpayment_id:$scope.Requestid,employee_id:$scope.data.employee_id};
+										CrudService.FindData('advpayment',criteria).then(function (response){
+											$scope.grid2Component.refresh();
+										})
+	
+									}
+								},
+								validationRules: [{
+									type: "required",
+									message: "Company is required"
+								}]
+
+							},
+							{
                                 dataField:'paymenttype',
                                 name:'paymenttype',
                                 label:{text:"With Advance ?"},
@@ -251,6 +294,8 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 
 									$scope.formInstance.itemOption('subgroup.advanceno', 'visible', vis1);
 									// $scope.formInstance.itemOption('group.paymenttype', 'visibleIndex', 0);
+									$scope.formInstance.updateData('companycode',  null);
+
 
 									criteria = {status:'savelessadv',paymenttype:e.value,advpayment_id:$scope.Requestid,employee_id:$scope.data.employee_id};
 									CrudService.FindData('advpayment',criteria).then(function (response){
@@ -363,19 +408,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 								},
 								
 							},
-							// {dataField:'companycode',label:{text:"Company Code"},
-							// 	editorType: "dxSelectBox",
-							// 	editorOptions: {
-							// 		readOnly: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
-							// 		dataSource: $scope.compDatasource,
-							// 		displayExpr: "companycode",
-							// 		valueExpr: "companycode",
-							// 	},validationRules: [{
-							// 			type: "required",
-							// 			message: "Company is required"
-							// 		}]
-								
-							// },
+							
 							{
                                 dataField:'payment',
 								name:'payment',
@@ -1256,7 +1289,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 			// delete data.lessadvance;
 			delete data.payment;
 			delete data.beneficiary;
-			// delete data.companycode;
+			delete data.companycode;
 			delete data.accountName;
 			delete data.bank;
 			delete data.accountnumber;
@@ -1307,7 +1340,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 					// delete data.lessadvance;
 					delete data.payment;
 					delete data.beneficiary;
-					// delete data.companycode;
+					delete data.companycode;
 					delete data.accountName;
 					delete data.bank;
 					delete data.accountnumber;
