@@ -9,6 +9,13 @@ app.register.controller('rfcCtrl', ['$rootScope','$scope', '$http', '$interval',
 	CrudService.GetAll('rfccontractor').then(function (resp) {
         $scope.contractorDatasource=resp;
     });
+
+    // criteria = {criteria:'getcompany',username:$rootScope.curUser.username};
+    // CrudService.FindData('user',criteria).then(function (resp) {
+    //     $scope.companycode=resp;
+    //     console.log($scope.companycode);
+    // });
+
     var myStore = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;

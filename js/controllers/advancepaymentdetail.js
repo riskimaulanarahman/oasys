@@ -190,7 +190,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 					{	
 						itemType: "group",
 						name: "maingroup",
-						caption: "Request by : "+$scope.data.fullname+" / Dept : "+$scope.data.department+" / Payment No : "+$scope.data.paymentno,
+						caption: "Request by : "+$scope.data.fullname+" / Dept : "+$scope.data.department,
 						colSpan:2,
 						colCount : 2,
 						items: [
@@ -264,6 +264,8 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 									onValueChanged: function(e) {
 										criteria = {status:'companycode',company:e.value,advpayment_id:$scope.Requestid,employee_id:$scope.data.employee_id};
 										CrudService.FindData('advpayment',criteria).then(function (response){
+											console.log(response)
+											$scope.formInstance.updateData('paymentno', response.paymentno);
 											$scope.grid2Component.refresh();
 										})
 	
@@ -431,7 +433,8 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 							// 	visible:($scope.data.paymenttype==1 && $scope.data.requeststatus !=3)?true:false,
 							// },
 							
-						{dataField:'createddate',editorType: "dxDateBox",label: {text: "Creation Date"},editorOptions: {inputAttr:{ dataintro : 'createddate' },displayFormat:"dd/MM/yyyy",readOnly: true}},
+							{dataField:'paymentno',name: "paymentno",label: {text: "Payment No"},editorOptions: {readOnly: true}},
+							{dataField:'createddate',editorType: "dxDateBox",label: {text: "Creation Date"},editorOptions: {inputAttr:{ dataintro : 'createddate' },displayFormat:"dd/MM/yyyy",readOnly: true}},
 						
 						
 						{

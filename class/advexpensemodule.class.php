@@ -1117,18 +1117,21 @@ Class Advexpensemodule extends Application{
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$emp_id = $Employee->id;
 
-							// $Advexpense = Advexpense::find('all', array('conditions' => array("RequestStatus !=0"),'include' => array('employee')));
-							$Advexpense = Advexpense::find('all', array('conditions' => array("RequestStatus=1"),'include' => array('employee')));
-							// print_r($Advexpense);
+							// $Advexpense = Advexpense::find('all', array('conditions' => array("RequestStatus=1"),'include' => array('employee')));
+							$Advexpense = Advexpense::find('all', array('conditions' => array("RequestStatus >0"),'include' => array('employee')));
+
 							foreach ($Advexpense as $result) {
 								$joinx   = "LEFT JOIN tbl_approver ON (tbl_advexpenseapproval.approver_id = tbl_approver.id) ";					
 								$Advexpenseapproval = Advexpenseapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and advexpense_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
-								// echo $Advexpenseapproval;
 								if($Advexpenseapproval->approver->employee_id==$emp_id){
 									$request[]=$result->id;
 								}
+								$Advexpenseapproval = Advexpenseapproval::find('first',array('joins'=>$joinx,'conditions' => array("advexpense_id=? and tbl_approver.employee_id = ? and approvalstatus!=0",$result->id,$emp_id),'include' => array('approver'=>array('employee'))));							
+								if(count($Advexpenseapproval)>0 && ($result->requeststatus==3 || $result->requeststatus==4)){
+									$request[]=$result->id;
+								}
 							}
-							$Advexpense = Advexpense::find('all', array('conditions' => array("id in (?)",$request),'include' => array('employee')));
+							$Advexpense = Advexpense::find('all', array('conditions' => array("id in (?)",$request),'order'=>"tbl_advexpense.requeststatus",'include' => array('employee')));
 							foreach ($Advexpense as &$result) {
 								$fullname	= $result->employee->fullname;		
 								$result		= $result->to_array();

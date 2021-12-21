@@ -135,6 +135,15 @@ Class UserManager extends Application{
 						}					
 						echo json_encode($user, JSON_NUMERIC_CHECK);
 						break;
+					case 'getcompany':
+						$username = $this->post['username'];
+						$Employee = Employee::find('first', array('conditions' => array("LoginName=?",$username),"include"=>array("location","department","company")));
+						// $user = User::all();
+						foreach ($Employee as &$result) {
+							$result = $result->to_array();
+						}					
+						echo json_encode($Employee, JSON_NUMERIC_CHECK);
+						break;
 					default:
 						$user = User::all();
 						foreach ($user as &$result) {

@@ -1115,8 +1115,10 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 		editing: {
             useIcons:true,
             mode: "cell",
-			allowUpdating: ($rootScope.isAdmin)?true:false,
-			allowAdding: ($rootScope.isAdmin)?true:false,
+			allowUpdating: true,
+			// allowUpdating: ($rootScope.isAdmin)?true:false,
+			allowAdding: true,
+			// allowAdding: ($rootScope.isAdmin)?true:false,
 			allowDeleting: ($rootScope.isAdmin)?true:false,
             form:{colCount: 1,
             },

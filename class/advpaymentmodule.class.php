@@ -842,6 +842,16 @@ Class Advpaymentmodule extends Application{
 											}
 										}
 
+										$codenew = Advpayment::find('first',array('select' => "CONCAT('Payment/','".$categorytype."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(paymentno,-4,4)) is null then 1 else max(substring(paymentno,-4,4))+1 end,4,'0')) as paymentno","conditions"=>array("substring(paymentno,9,".strlen($categorytype).")=? and not(id = ?) and substring(paymentno,".(strlen($categorytype)+10).",4)=YEAR(CURDATE()) ",$categorytype,$query['advpayment_id'])));
+										$Advpayment =Advpayment::find($id);
+										// $Advpayment->companycode =$company;
+										$Advpayment->paymentno =$codenew->paymentno;
+										$Advpayment->save();
+										$data=array("paymentno"=>$codenew->paymentno);
+										// $code = Advpayment::find('first',array('select' => "CONCAT('Payment/','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(paymentno,-4,4)) is null then 1 else max(substring(paymentno,-4,4))+1 end,4,'0')) as paymentno","conditions"=>array("substring(paymentno,9,".strlen($Employee->companycode).")=? and substring(paymentno,".(strlen($Employee->companycode)+10).",4)=YEAR(CURDATE())",$Employee->companycode)));
+										echo json_encode($data, JSON_NUMERIC_CHECK);
+
+
 									break;
 								default:
 									$Employee = Employee::find('first', array('conditions' => array("loginName=?",$query['username'])));
@@ -1239,18 +1249,21 @@ Class Advpaymentmodule extends Application{
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$emp_id = $Employee->id;
 
-							// $Advpayment = Advpayment::find('all', array('conditions' => array("RequestStatus !=0"),'include' => array('employee')));
-							$Advpayment = Advpayment::find('all', array('conditions' => array("RequestStatus=1"),'include' => array('employee')));
-							// print_r($Advpayment);
+							// $Advpayment = Advpayment::find('all', array('conditions' => array("RequestStatus=1"),'include' => array('employee')));
+							$Advpayment = Advpayment::find('all', array('conditions' => array("RequestStatus >0"),'include' => array('employee')));
+
 							foreach ($Advpayment as $result) {
 								$joinx   = "LEFT JOIN tbl_approver ON (tbl_advpaymentapproval.approver_id = tbl_approver.id) ";					
 								$Advpaymentapproval = Advpaymentapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and advpayment_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
-								// echo $Advpaymentapproval;
 								if($Advpaymentapproval->approver->employee_id==$emp_id){
 									$request[]=$result->id;
 								}
+								$Advpaymentapproval = Advpaymentapproval::find('first',array('joins'=>$joinx,'conditions' => array("advpayment_id=? and tbl_approver.employee_id = ? and approvalstatus!=0",$result->id,$emp_id),'include' => array('approver'=>array('employee'))));							
+								if(count($Advpaymentapproval)>0 && ($result->requeststatus==3 || $result->requeststatus==4)){
+									$request[]=$result->id;
+								}
 							}
-							$Advpayment = Advpayment::find('all', array('conditions' => array("id in (?)",$request),'include' => array('employee')));
+							$Advpayment = Advpayment::find('all', array('conditions' => array("id in (?)",$request),'order'=>"tbl_advpayment.requeststatus",'include' => array('employee')));
 							foreach ($Advpayment as &$result) {
 								$fullname	= $result->employee->fullname;		
 								$result		= $result->to_array();
