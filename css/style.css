@@ -241,3 +241,6 @@ table td {
 .border-right{
   border-right: 1.3px solid #888;
 }
+.list-group-item{
+	padding : 0 1.25rem !important;
+}
