@@ -415,6 +415,9 @@ Class Advpaymentmodule extends Application{
 										if($Advpayment->companycode == null) {
 											$Advpayment->companycode = $Employee->companycode;
 										}
+										if($advpayment_form == 1) {
+											$Advpayment->opscategory = 0;
+										}
 										$Advpayment->save();
 										
 
