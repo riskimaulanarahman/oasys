@@ -851,8 +851,6 @@ Class Mmfmodule extends Application{
 							$nTrapproval = Mmfapproval::find('first',array('joins'=>$joinx,'conditions' => array("mmf28_id=? and ApprovalStatus=0",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 							$username = $nTrapproval->approver->employee->loginname;
 							$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
-							// $Trschedule=Trschedule::find('all',array('conditions'=>array("mmf28_id=?",$doid),'include'=>array('mmf'=>array('employee'=>array('company','department','designation','grade','location')))));
-							// $Trticket=Trticket::find('all',array('conditions'=>array("mmf28_id=?",$doid),'include'=>array('mmf'=>array('employee'=>array('company','department','designation','grade','location')))));
 							$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Tr->employee->loginname)));
 							$email=$usr->email;
 							$superiorId=$Tr->depthead;
@@ -882,7 +880,6 @@ Class Mmfmodule extends Application{
 										$this->mail->Subject = "Online Approval System -> Approval Completed";
 										$red = '<p>Your MMF 28. request has been approved</p>
 													<p><b><span lang=EN-US style=\'color:#002060\'>Note : Please <u>forward</u> this electronic approval to your respective PR Creator.<br>All prices in the MMF are valid for 14 days</span></b></p>';
-										//delete unnecessary approver
 										$Trapproval = Mmfapproval::find('all', array('joins'=>$join,'conditions' => array("mmf28_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
 										foreach ($Trapproval as $data) {
 											if($data->approvalstatus==0){

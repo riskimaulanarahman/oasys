@@ -613,7 +613,7 @@
 								name:'estimatecost',
 								editorOptions: {
 									format: "#,##0.##",
-									value: 0,
+									// value: 0,
 									min: 0
 								},
                                 visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
@@ -1411,7 +1411,7 @@
 				var date = new Date();
                 var d= $filter("date")(date, "yyyy-MM-dd HH:mm");
                 data.materialreturneddate = $filter("date")(data.materialreturneddate, "yyyy-MM-dd HH:mm");
-                data.action = 'form'
+                data.action = 'form';
 				data.approvaldate = d;
 				data.mode="approve";
 				delete data.createddate;
@@ -1444,7 +1444,7 @@
 				delete data.pono;
 				delete data.materialreturneddate;
 				delete data.supplierdodnno;
-				delete data.action;
+				// delete data.action;
 				delete data.depthead;
 				// delete data.buyer;
 				delete data.apprstatuscode;
@@ -1476,7 +1476,7 @@
 						var date = new Date();
                         var d= $filter("date")(date, "yyyy-MM-dd HH:mm");
                         data.materialreturneddate = $filter("date")(data.materialreturneddate, "yyyy-MM-dd HH:mm");
-                		data.action = 'form'
+                		data.action = 'form';
 						data.approvaldate = d;
 						data.mode="approve";
 						delete data.createddate;
@@ -1509,7 +1509,7 @@
                         delete data.pono;
                         delete data.materialreturneddate;
                         delete data.supplierdodnno;
-                        delete data.action;
+                        // delete data.action;
                         delete data.depthead;
                         // delete data.buyer;
 				        delete data.apprstatuscode;
