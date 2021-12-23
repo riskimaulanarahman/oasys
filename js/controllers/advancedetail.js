@@ -39,7 +39,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 					key: "id",
 					loadMode: "raw",
 					load: function() {
-						criteria = {filter:'bydept3',dept:$scope.data.department};
+						criteria = {filter:'bydept2',dept:$scope.data.department};
 						return CrudService.FindData('emp',criteria);
 					}
 				}),
@@ -102,6 +102,58 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 						colCount : 2,
 						colSpan :2,
 						items: [
+							// 	{label: {
+							// 		text: "Create for Employee"
+							// 	},
+							// 	dataField:"employee_id",
+							// 	editorType: "dxDropDownBox",
+							// 	visible: true,
+							// 	editorOptions: { 
+							// 		readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+							// 		dataSource:$scope.allDeptEmpDataSource,
+							// 		valueExpr: 'id',
+							// 		displayExpr: 'fullname',
+							// 		searchEnabled: true,
+							// 		contentTemplate: function(e){
+							// 			var $dataGrid = $("<div>").dxDataGrid({
+							// 				dataSource: e.component.option("dataSource"),
+							// 				columns: [{dataField:"fullname",width:100},{dataField:"company",width:50}, {dataField:"department",width:200}],
+							// 				height: 265,
+							// 				selection: { mode: "single" },
+							// 				selectedRowKeys: [e.component.option("value")],
+							// 				focusedRowEnabled: true,
+							// 				focusedRowKey: e.component.option("value"),
+							// 				searchPanel: {
+							// 					visible: true,
+							// 					width: 265,
+							// 					placeholder: "Search..."
+							// 				},
+							// 				onSelectionChanged: function(selectedItems){
+							// 					var keys = selectedItems.selectedRowKeys,
+							// 						hasSelection = keys.length;
+							// 					if(hasSelection){
+															
+							// 						e.component.option("value", keys[0]); 
+							// 						e.component.close();
+													
+							// 					}
+							// 				}
+							// 			});
+							// 			return $dataGrid;
+							// 		},
+							// 		onValueChanged: function(e){
+							// 			console.log(e);
+							// 			// criteria = {status:'chemp',employee_id:e.value,advance_id:$scope.Requestid};
+							// 			// CrudService.FindData('advance',criteria).then(function (response){
+							// 			// 	$scope.grid2Component.refresh();
+							// 			// })
+							// 		}
+							// 	},
+							// 	validationRules: [{
+							// 		type: "required",
+							// 		message: "Please select employee"
+							// 	}]
+							// },
 							{
                                 dataField:'advanceform',
 								name:'advanceform',
@@ -804,8 +856,8 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 				// allowAdding:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
 				allowUpdating:($rootScope.isAdmin)?true:false,
 				allowAdding:($rootScope.isAdmin)?true:false,
-				// allowDeleting:($rootScope.isAdmin)?true:false,
-				allowDeleting:true,
+				allowDeleting:($rootScope.isAdmin)?true:false,
+				// allowDeleting:true,
 				form:{colCount: 1,
 				},
 			},
@@ -1070,6 +1122,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 			delete data.createddate;
 			// delete data.advanceno;
 			delete data.employee_id;
+			// delete data.createdby;
 			delete data.requeststatus;
 			delete data.depthead;
 			delete data.beneficiary;
@@ -1116,6 +1169,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 					delete data.createddate;
 					// delete data.advanceno;
 					delete data.employee_id;
+					// delete data.createdby;
 					delete data.requeststatus;
 					delete data.depthead;
 					delete data.beneficiary;

@@ -131,6 +131,7 @@ Class Advancemodule extends Application{
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 						if ($Employee){
 							$Advance = Advance::find('all', array('conditions' => array("employee_id=?",$Employee->id),'include' => array('employee')));
+							// $Advance = Advance::find('all', array('conditions' => array("createdby=?",$Employee->id),'include' => array('employee')));
 							foreach ($Advance as &$result) {
 								$fullname=$result->employee->fullname;
 								$result = $result->to_array();
@@ -858,6 +859,18 @@ Class Advancemodule extends Application{
 
 										}
 
+
+									break;
+
+									case 'chemp':
+
+										$advance_form = $query['formtype'];
+										$employee_id = $query['employee_id'];
+										$id= $query['advance_id'];
+
+										$Advance = Advance::find($id);
+										$Advance->employee_id = $employee_id;
+										$Advance->save();
 
 									break;
 								default:
