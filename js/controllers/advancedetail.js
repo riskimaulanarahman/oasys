@@ -39,7 +39,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 					key: "id",
 					loadMode: "raw",
 					load: function() {
-						criteria = {filter:'bydept2',dept:$scope.data.department};
+						criteria = {filter:'bydept4',dept:$scope.data.department};
 						return CrudService.FindData('emp',criteria);
 					}
 				}),
@@ -98,62 +98,69 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 				items: [{	
 						itemType: "group",
 						name: "groupa",
-						caption: "Request by : "+$scope.data.fullname+" / Dept : "+$scope.data.department+" / Advance No : "+$scope.data.advanceno,
+						caption: "Request by : "+$scope.data.fullname+" / Dept : "+$scope.data.department,
 						colCount : 2,
 						colSpan :2,
 						items: [
-							// 	{label: {
-							// 		text: "Create for Employee"
-							// 	},
-							// 	dataField:"employee_id",
-							// 	editorType: "dxDropDownBox",
-							// 	visible: true,
-							// 	editorOptions: { 
-							// 		readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-							// 		dataSource:$scope.allDeptEmpDataSource,
-							// 		valueExpr: 'id',
-							// 		displayExpr: 'fullname',
-							// 		searchEnabled: true,
-							// 		contentTemplate: function(e){
-							// 			var $dataGrid = $("<div>").dxDataGrid({
-							// 				dataSource: e.component.option("dataSource"),
-							// 				columns: [{dataField:"fullname",width:100},{dataField:"company",width:50}, {dataField:"department",width:200}],
-							// 				height: 265,
-							// 				selection: { mode: "single" },
-							// 				selectedRowKeys: [e.component.option("value")],
-							// 				focusedRowEnabled: true,
-							// 				focusedRowKey: e.component.option("value"),
-							// 				searchPanel: {
-							// 					visible: true,
-							// 					width: 265,
-							// 					placeholder: "Search..."
-							// 				},
-							// 				onSelectionChanged: function(selectedItems){
-							// 					var keys = selectedItems.selectedRowKeys,
-							// 						hasSelection = keys.length;
-							// 					if(hasSelection){
+							// new
+								{label: {
+									text: "Create for Employee"
+								},
+								dataField:"employee_id",
+								editorType: "dxDropDownBox",
+								visible: true,
+								editorOptions: { 
+									readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+									dataSource:$scope.allDeptEmpDataSource,
+									valueExpr: 'id',
+									displayExpr: 'fullname',
+									searchEnabled: true,
+									contentTemplate: function(e){
+										var $dataGrid = $("<div>").dxDataGrid({
+											dataSource: e.component.option("dataSource"),
+											columns: [{dataField:"fullname",width:100},{dataField:"company",width:50}, {dataField:"department",width:200}],
+											height: 265,
+											selection: { mode: "single" },
+											selectedRowKeys: [e.component.option("value")],
+											focusedRowEnabled: true,
+											focusedRowKey: e.component.option("value"),
+											searchPanel: {
+												visible: true,
+												width: 265,
+												placeholder: "Search..."
+											},
+											onSelectionChanged: function(selectedItems){
+												var keys = selectedItems.selectedRowKeys,
+													hasSelection = keys.length;
+												if(hasSelection){
 															
-							// 						e.component.option("value", keys[0]); 
-							// 						e.component.close();
+													e.component.option("value", keys[0]); 
+													e.component.close();
 													
-							// 					}
-							// 				}
-							// 			});
-							// 			return $dataGrid;
-							// 		},
-							// 		onValueChanged: function(e){
-							// 			console.log(e);
-							// 			// criteria = {status:'chemp',employee_id:e.value,advance_id:$scope.Requestid};
-							// 			// CrudService.FindData('advance',criteria).then(function (response){
-							// 			// 	$scope.grid2Component.refresh();
-							// 			// })
-							// 		}
-							// 	},
-							// 	validationRules: [{
-							// 		type: "required",
-							// 		message: "Please select employee"
-							// 	}]
-							// },
+												}
+											}
+										});
+										return $dataGrid;
+									},
+									onValueChanged: function(e){
+										console.log(e);
+										criteria = {status:'chemp',employee_id:e.value,advance_id:$scope.Requestid,mode:$scope.mode};
+										if($scope.mode == 'edit' || $scope.mode == 'add') {
+
+											CrudService.FindData('advance',criteria).then(function (response){
+												$scope.formInstance.updateData('advanceno', response.advanceno);
+												$scope.grid2Component.refresh();
+											})
+											$scope.formInstance.updateData('advanceform', 0);
+										}
+
+									}
+								},
+								validationRules: [{
+									type: "required",
+									message: "Please select employee"
+								}]
+							},
 							{
                                 dataField:'advanceform',
 								name:'advanceform',
@@ -170,26 +177,28 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 
 									// value: "",
 									onValueChanged: function(e) {
-										criteria = {status:'appform',formtype:e.value,advance_id:$scope.Requestid,employee_id:$scope.data.employee_id};
-										CrudService.FindData('advance',criteria).then(function (response){
-											$scope.grid2Component.refresh();
-											// console.log(response);
-										})
-										console.log(e.value);
-										// if(e.value != 0 || e.value != '') {
-											$('#advformtype').val(e.value);
-										// }
+										if($scope.mode == 'edit' || $scope.mode == 'add') {
+											criteria = {status:'appform',formtype:e.value,advance_id:$scope.Requestid,employee_id:$scope.data.employee_id};
+											CrudService.FindData('advance',criteria).then(function (response){
+												$scope.grid2Component.refresh();
+												// console.log(response);
+											})
+											console.log(e.value);
+											// if(e.value != 0 || e.value != '') {
+												$('#advformtype').val(e.value);
+											// }
 
-										var vis1 =(e.value==2)?true:false;
+											var vis1 =(e.value==2)?true:false;
 
-										$scope.formInstance.itemOption('groupa.opscategory', 'visible', vis1);
-										$scope.formInstance.updateData('opscategory', null);
-
+											$scope.formInstance.itemOption('groupa.opscategory', 'visible', vis1);
+											$scope.formInstance.updateData('opscategory', null);
+										}
 
 									}
                                 },
 								
                             },
+						{dataField:'advanceno',name: "advanceno",label: {text: "Advance No"},editorOptions: {readOnly: true}},
 						{dataField:'createddate',editorType: "dxDateBox",label: {text: "Creation Date"},
 						editorOptions: {
 							displayFormat:"dd/MM/yyyy",
@@ -1118,11 +1127,11 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 			var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
 			data.approvaldate = d;
 			data.mode="approve";
-			// delete data.advanceform;
+			delete data.advanceform;
 			delete data.createddate;
-			// delete data.advanceno;
+			delete data.advanceno;
 			delete data.employee_id;
-			// delete data.createdby;
+			delete data.createdby;
 			delete data.requeststatus;
 			delete data.depthead;
 			delete data.beneficiary;
@@ -1165,11 +1174,11 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 					var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
 					data.approvaldate = d;
 					data.mode="approve";
-					// delete data.advanceform;
+					delete data.advanceform;
 					delete data.createddate;
-					// delete data.advanceno;
+					delete data.advanceno;
 					delete data.employee_id;
-					// delete data.createdby;
+					delete data.createdby;
 					delete data.requeststatus;
 					delete data.depthead;
 					delete data.beneficiary;

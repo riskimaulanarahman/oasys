@@ -998,11 +998,9 @@ Class Advpaymentmodule extends Application{
 
 										$codenew = Advpayment::find('first',array('select' => "CONCAT('Payment/','".$categorytype."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(paymentno,-4,4)) is null then 1 else max(substring(paymentno,-4,4))+1 end,4,'0')) as paymentno","conditions"=>array("substring(paymentno,9,".strlen($categorytype).")=? and not(id = ?) and substring(paymentno,".(strlen($categorytype)+10).",4)=YEAR(CURDATE()) ",$categorytype,$query['advpayment_id'])));
 										$Advpayment =Advpayment::find($id);
-										// $Advpayment->companycode =$company;
 										$Advpayment->paymentno =$codenew->paymentno;
 										$Advpayment->save();
 										$data=array("paymentno"=>$codenew->paymentno);
-										// $code = Advpayment::find('first',array('select' => "CONCAT('Payment/','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(paymentno,-4,4)) is null then 1 else max(substring(paymentno,-4,4))+1 end,4,'0')) as paymentno","conditions"=>array("substring(paymentno,9,".strlen($Employee->companycode).")=? and substring(paymentno,".(strlen($Employee->companycode)+10).",4)=YEAR(CURDATE())",$Employee->companycode)));
 										echo json_encode($data, JSON_NUMERIC_CHECK);
 
 
@@ -1944,7 +1942,7 @@ Class Advpaymentmodule extends Application{
 		
 		$superiorId=$Advpayment->depthead;
 		$Superior = Employee::find($superiorId);
-		$compx = Company::find('first',array('conditions'=>array("companycode=?",$Advpayment->employee->companycode)));
+		$compx = Company::find('first',array('conditions'=>array("companycode=?",$Advpayment->companycode)));
 		$supAdb = Addressbook::find('first',array('conditions'=>array("username=?",$Superior->loginname)));
 		$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Advpayment->employee->loginname)));
 		$email=$usr->email;
@@ -1981,7 +1979,7 @@ Class Advpaymentmodule extends Application{
 				$Worksheet = $Workbook->Worksheets(1);
 				$Worksheet->Activate;
 
-				if($Advpayment->employee->companycode == 'NKF' || $Advpayment->employee->companycode == 'RND') {
+				if($Advpayment->companycode == 'NKF' || $Advpayment->companycode == 'RND') {
 					$Worksheet->Range("A1")->Value = 'PT. ITCI Hutani Manunggal';
 				} else {
 					$Worksheet->Range("A1")->Value = $compx->companyname;

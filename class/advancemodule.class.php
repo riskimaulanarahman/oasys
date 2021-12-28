@@ -130,8 +130,9 @@ Class Advancemodule extends Application{
 					default:
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 						if ($Employee){
-							$Advance = Advance::find('all', array('conditions' => array("employee_id=?",$Employee->id),'include' => array('employee')));
-							// $Advance = Advance::find('all', array('conditions' => array("createdby=?",$Employee->id),'include' => array('employee')));
+							// $Advance = Advance::find('all', array('conditions' => array("employee_id=?",$Employee->id),'include' => array('employee')));
+							//new
+							$Advance = Advance::find('all', array('conditions' => array("createdby=?",$Employee->id),'include' => array('employee')));
 							foreach ($Advance as &$result) {
 								$fullname=$result->employee->fullname;
 								$result = $result->to_array();
@@ -688,28 +689,6 @@ Class Advancemodule extends Application{
 												$logger->SaveData();
 											}
 
-											// $hrd = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=36",$id)));	
-											// foreach ($hrd as $result) {
-											// 	$result->delete();
-											// 	$logger = new Datalogger("Advanceapproval","delete",json_encode($result->to_array()),"delete Approval HRD");
-											// 	$logger->SaveData();
-											// }
-
-											// if(($tdetailamount>=5000000)){
-
-											// 		if(count($Advanceapprovalproc)==0){
-											// 			$ApproverPROC = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='42' ")));
-											// 			if(count($ApproverPROC)>0){
-											// 				$Advanceapproval = new Advanceapproval();
-											// 				$Advanceapproval->advance_id =$Advance->id;
-											// 				$Advanceapproval->approver_id = $ApproverPROC->id;
-											// 				$Advanceapproval->save();
-											// 				$logger = new Datalogger("Advanceapproval","add","Add initial PROC",json_encode($Advanceapproval->to_array()));
-											// 				$logger->SaveData();
-											// 			}
-											// 		}
-	
-											// }
 										} else if($Advance->opscategory == 2) {
 
 											$hrverifikator = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=44",$id)));	
@@ -777,16 +756,6 @@ Class Advancemodule extends Application{
 												$logger = new Datalogger("Advanceapproval","delete",json_encode($result->to_array()),"delete Approval PROC");
 												$logger->SaveData();
 											}
-
-											// $ApproverFC = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=41")));
-											// if(count($ApproverFC)>0){
-											// 	$Advanceapproval = new Advanceapproval();
-											// 	$Advanceapproval->advance_id = $Advance->id;
-											// 	$Advanceapproval->approver_id = $ApproverFC->id;
-											// 	$Advanceapproval->save();
-											// 	$logger = new Datalogger("Advanceapproval","add","Add initial Finance Commite Approval ",json_encode($Advanceapproval->to_array()));
-											// 	$logger->SaveData();
-											// }
 
 										} else if($Advance->opscategory == 4) {
 
@@ -862,15 +831,30 @@ Class Advancemodule extends Application{
 
 									break;
 
-									case 'chemp':
+									case 'chemp': //new
 
 										$advance_form = $query['formtype'];
 										$employee_id = $query['employee_id'];
 										$id= $query['advance_id'];
+										$mode= $query['mode'];
 
+										$Employee = Employee::find('first', array('conditions' => array("id=?",$employee_id),"include"=>array("location","department","company")));
+
+
+										$codenew = Advpayment::find('first',array('select' => "CONCAT('Advance/','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(advanceno,-4,4)) is null then 1 else max(substring(advanceno,-4,4))+1 end,4,'0')) as advanceno","conditions"=>array("substring(advanceno,9,".strlen($Employee->companycode).")=? and not(id = ?) and substring(advanceno,".(strlen($Employee->companycode)+10).",4)=YEAR(CURDATE()) ",$Employee->companycode,$query['advance_id'])));
 										$Advance = Advance::find($id);
-										$Advance->employee_id = $employee_id;
-										$Advance->save();
+										if($employee_id) {
+											$Advance->employee_id = $employee_id;
+										}
+										$Advance->advanceno =$codenew->advanceno;
+										// $Advance->companycode = $Employee->companycode;
+										if($mode == 'edit') {
+
+											$Advance->save();
+										}
+
+
+										$data=array("advanceno"=>$codenew->advanceno);
 
 									break;
 								default:
@@ -895,6 +879,7 @@ Class Advancemodule extends Application{
 							unset($data['__KEY__']);
 							unset($data['username']);
 							$data['employee_id']=$Employee->id;
+							$data['createdby']=$Employee->id; //new
 							$data['RequestStatus']=0;
 							$data['isUsed']=0;
 							try{
@@ -1443,6 +1428,7 @@ Class Advancemodule extends Application{
 							// $Advance->save();
 
 							unset($data['advanceform']);
+							unset($data['createdby']);
 							unset($data['opscategory']);
 							unset($data['lessadvance']);
 							unset($data['advanceno']);
@@ -1461,14 +1447,18 @@ Class Advancemodule extends Application{
 
 						if (isset($mode) && ($mode=='approve')){
 								$Advance = Advance::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
+								$joincrb   = "LEFT JOIN tbl_employee ON (tbl_advance.createdby = tbl_employee.id) ";
+								$Advancecrb = Advance::find($doid,array('select'=>"tbl_advance.*,tbl_employee.loginname",'joins'=>$joincrb));
 								$joinx   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";					
 								$nAdvanceapproval = Advanceapproval::find('first',array('joins'=>$joinx,'conditions' => array("advance_id=? and ApprovalStatus=0",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
-								print_r($nAdvanceapproval);
 								$username = $nAdvanceapproval->approver->employee->loginname;
+								print_r($username);
 								$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
 
 								$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Advance->employee->loginname)));
+								$usrcrb = Addressbook::find('first',array('conditions'=>array("username=?",$Advancecrb->loginname)));
 								$email=$usr->email;
+								$emailcrb=$usrcrb->email;
 								
 								$complete = false;
 								$Advancehistory = new Advancehistory();
@@ -1481,7 +1471,12 @@ Class Advancemodule extends Application{
 								switch ($data['approvalstatus']){
 									case '1':
 										$Advance->requeststatus = 2;
-										$emto=$email;$emname=$Advance->employee->fullname;
+										if($Advance->createdby == $Advance->employee_id) {
+											$emto=$email;
+										} else {
+											$emto=$emailcrb;
+										}
+										$emname=$Advance->employee->fullname;
 										$this->mail->Subject = "Online Approval System -> Need Rework";
 										$red = 'Your Advance request require some rework : <br>Remarks from Approver : <font color="red">'.$data['remarks']."</font>";
 										$Advancehistory->actiontype = 3;
@@ -1489,7 +1484,12 @@ Class Advancemodule extends Application{
 									case '2':
 										if ($Advanceapproval->approver->isfinal == 1){
 											$Advance->requeststatus = 3;
-											$emto=$email;$emname=$Advance->employee->fullname;
+											if($Advance->createdby == $Advance->employee_id) {
+												$emto=$email;
+											} else {
+												$emto=$emailcrb;
+											}
+											$emname=$Advance->employee->fullname;
 											$this->mail->Subject = "Online Approval System -> Approval Completed";
 											$red = 'Your Advance request has been approved';
 											//delete unnecessary approver
@@ -1513,7 +1513,13 @@ Class Advancemodule extends Application{
 
 												if(($tdetailamount<5000000) && $Advanceapproval->approver->approvaltype_id == 41) {
 													$Advance->requeststatus = 3;
-													$emto=$email;$emname=$Advance->employee->fullname;
+													if($Advance->createdby == $Advance->employee_id) {
+														$emto=$email;
+													} else {
+														$emto=$emailcrb;
+													}
+													$emname=$Advance->employee->fullname;
+
 													$this->mail->Subject = "Online Approval System -> Approval Completed";
 													$red = 'Your Advance request has been approved';
 													//delete unnecessary approver
@@ -1528,7 +1534,12 @@ Class Advancemodule extends Application{
 													$complete =true;
 												} else if(($tdetailamount>=5000000 && $tdetailamount<10000000) && $Advanceapproval->approver->approvaltype_id == 39) {
 													$Advance->requeststatus = 3;
-													$emto=$email;$emname=$Advance->employee->fullname;
+													if($Advance->createdby == $Advance->employee_id) {
+														$emto=$email;
+													} else {
+														$emto=$emailcrb;
+													}
+													$emname=$Advance->employee->fullname;
 													$this->mail->Subject = "Online Approval System -> Approval Completed";
 													$red = 'Your Advance request has been approved';
 													//delete unnecessary approver
@@ -1552,7 +1563,12 @@ Class Advancemodule extends Application{
 
 												if(($tdetailamount<5000000) && $Advance->opscategory==1 && $Advanceapproval->approver->approvaltype_id == 41) {
 													$Advance->requeststatus = 3;
-													$emto=$email;$emname=$Advance->employee->fullname;
+													if($Advance->createdby == $Advance->employee_id) {
+														$emto=$email;
+													} else {
+														$emto=$emailcrb;
+													};
+													$emname=$Advance->employee->fullname;
 													$this->mail->Subject = "Online Approval System -> Approval Completed";
 													$red = 'Your Advance request has been approved';
 													//delete unnecessary approver
@@ -1567,7 +1583,12 @@ Class Advancemodule extends Application{
 													$complete =true;
 												} else if(($tdetailamount<5000000) && $Advance->opscategory==2 && $Advanceapproval->approver->approvaltype_id == 41) {
 													$Advance->requeststatus = 3;
-													$emto=$email;$emname=$Advance->employee->fullname;
+													if($Advance->createdby == $Advance->employee_id) {
+														$emto=$email;
+													} else {
+														$emto=$emailcrb;
+													}
+													$emname=$Advance->employee->fullname;
 													$this->mail->Subject = "Online Approval System -> Approval Completed";
 													$red = 'Your Advance request has been approved';
 													//delete unnecessary approver
@@ -1582,7 +1603,12 @@ Class Advancemodule extends Application{
 													$complete =true;
 												} else if(($tdetailamount<5000000) && $Advance->opscategory==3 && $Advanceapproval->approver->approvaltype_id == 37) {
 													$Advance->requeststatus = 3;
-													$emto=$email;$emname=$Advance->employee->fullname;
+													if($Advance->createdby == $Advance->employee_id) {
+														$emto=$email;
+													} else {
+														$emto=$emailcrb;
+													}
+													$emname=$Advance->employee->fullname;
 													$this->mail->Subject = "Online Approval System -> Approval Completed";
 													$red = 'Your Advance request has been approved';
 													//delete unnecessary approver
@@ -1597,7 +1623,12 @@ Class Advancemodule extends Application{
 													$complete =true;
 												} else if(($tdetailamount<5000000) && $Advance->opscategory==4 && $Advanceapproval->approver->approvaltype_id == 41) {
 													$Advance->requeststatus = 3;
-													$emto=$email;$emname=$Advance->employee->fullname;
+													if($Advance->createdby == $Advance->employee_id) {
+														$emto=$email;
+													} else {
+														$emto=$emailcrb;
+													}
+													$emname=$Advance->employee->fullname;
 													$this->mail->Subject = "Online Approval System -> Approval Completed";
 													$red = 'Your Advance request has been approved';
 													//delete unnecessary approver
@@ -1612,7 +1643,12 @@ Class Advancemodule extends Application{
 													$complete =true;
 												} else if(($tdetailamount>=5000000 && $tdetailamount<10000000) && $Advanceapproval->approver->approvaltype_id == 39) {
 													$Advance->requeststatus = 3;
-													$emto=$email;$emname=$Advance->employee->fullname;
+													if($Advance->createdby == $Advance->employee_id) {
+														$emto=$email;
+													} else {
+														$emto=$emailcrb;
+													}
+													$emname=$Advance->employee->fullname;
 													$this->mail->Subject = "Online Approval System -> Approval Completed";
 													$red = 'Your Advance request has been approved';
 													//delete unnecessary approver
@@ -1639,7 +1675,12 @@ Class Advancemodule extends Application{
 										break;
 									case '3':
 										$Advance->requeststatus = 4;
-										$emto=$email;$emname=$Advance->employee->fullname;
+										if($Advance->createdby == $Advance->employee_id) {
+											$emto=$email;
+										} else {
+											$emto=$emailcrb;
+										}
+										$emname=$Advance->employee->fullname;
 										$Advancehistory->actiontype = 5;
 										$this->mail->Subject = "Online Approval System -> Request Rejected";
 										$red = 'Your Advance request has been rejected <br>Remarks from Approver : <font color="red">'.$data['remarks']."</font>";
