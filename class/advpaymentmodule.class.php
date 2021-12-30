@@ -2174,8 +2174,13 @@ Class Advpaymentmodule extends Application{
 				$title = 'payment_hr';
 				$file= SITE_PATH."/doc/hr/paymenthr.xlsx";
 			} else {
-				$title = 'payment_ops';
-				$file= SITE_PATH."/doc/hr/paymentops.xlsx";
+				if($Advpayment->opscategory == 4) {
+					$title = 'payment_ops_ssl';
+					$file= SITE_PATH."/doc/hr/paymentopsssl.xlsx";
+				} else {
+					$title = 'payment_ops';
+					$file= SITE_PATH."/doc/hr/paymentops.xlsx";
+				}
 			}
 
 				
@@ -2263,6 +2268,11 @@ Class Advpaymentmodule extends Application{
 						$procname = $data->approver->employee->fullname;
 						$procdate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
 					}
+
+					if($data->approver->approvaltype->id==45) {
+						$kfsslname = $data->approver->employee->fullname;
+						$kfssldate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
+					}
 				}
 				$picpath= SITE_PATH."/images/approved.png";
 				
@@ -2312,45 +2322,86 @@ Class Advpaymentmodule extends Application{
 					}
 				
 				} else {
-					if(!empty($deptheadname)) {
-						$Worksheet->Range("E34")->Value = $deptheadname;
-						$Worksheet->Range("E35")->Value = $deptheaddate;
-						$pic1=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-						$pic1->Height  = 20;
-						$pic1->Top = $excel->Cells(30, 5)->Top ;
-						$pic1->Left = $excel->Cells(30, 5)->Left ;
-					}
-	
-					if(!empty($bufcname)) {
-						$Worksheet->Range("H34")->Value = $bufcname;
-						$Worksheet->Range("H35")->Value = $bufcdate;
-						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-						$pic2->Height  = 20;
-						$pic2->Top = $excel->Cells(30, 8)->Top ;
-						$pic2->Left = $excel->Cells(30, 8)->Left ;
-					}
-	
-					if(!empty($buheadname)) {
-						$Worksheet->Range("K34")->Value = $buheadname;
-						$Worksheet->Range("K35")->Value = $buheaddate;
-						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-						$pic2->Height  = 20;
-						$pic2->Top = $excel->Cells(30, 11)->Top ;
-						$pic2->Left = $excel->Cells(30, 11)->Left ;
-					}
 
-					if(!empty($financename)) {
-						$Worksheet->Range("K28")->Value = 'BG FC';
-						$Worksheet->Range("K34")->Value = $financename;
-						$Worksheet->Range("K35")->Value = $financedate;
-						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-						$pic2->Height  = 20;
-						$pic2->Top = $excel->Cells(30, 11)->Top ;
-						$pic2->Left = $excel->Cells(30, 11)->Left ;
+					if($Advpayment->opscategory == 4) {
+						if(!empty($deptheadname)) {
+							$Worksheet->Range("D34")->Value = $deptheadname;
+							$Worksheet->Range("D35")->Value = $deptheaddate;
+							$pic1=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+							$pic1->Height  = 20;
+							$pic1->Top = $excel->Cells(30, 4)->Top ;
+							$pic1->Left = $excel->Cells(30, 4)->Left ;
+						}
+
+						if(!empty($kfsslname)) {
+							$Worksheet->Range("F34")->Value = $kfsslname;
+							$Worksheet->Range("F35")->Value = $kfssldate;
+							$pic1=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+							$pic1->Height  = 20;
+							$pic1->Top = $excel->Cells(30, 6)->Top ;
+							$pic1->Left = $excel->Cells(30, 6)->Left ;
+						}
+						
+						if(!empty($bufcname)) {
+							$Worksheet->Range("I34")->Value = $bufcname;
+							$Worksheet->Range("I35")->Value = $bufcdate;
+							$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+							$pic2->Height  = 20;
+							$pic2->Top = $excel->Cells(30, 9)->Top ;
+							$pic2->Left = $excel->Cells(30, 9)->Left ;
+						}
+						
+						if(!empty($buheadname)) {
+							$Worksheet->Range("K34")->Value = $buheadname;
+							$Worksheet->Range("K35")->Value = $buheaddate;
+							$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+							$pic2->Height  = 20;
+							$pic2->Top = $excel->Cells(30, 11)->Top ;
+							$pic2->Left = $excel->Cells(30, 11)->Left ;
+						}
+						
+					} else {
+
+						if(!empty($deptheadname)) {
+							$Worksheet->Range("E34")->Value = $deptheadname;
+							$Worksheet->Range("E35")->Value = $deptheaddate;
+							$pic1=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+							$pic1->Height  = 20;
+							$pic1->Top = $excel->Cells(30, 5)->Top ;
+							$pic1->Left = $excel->Cells(30, 5)->Left ;
+						}
+						
+						if(!empty($bufcname)) {
+							$Worksheet->Range("H34")->Value = $bufcname;
+							$Worksheet->Range("H35")->Value = $bufcdate;
+							$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+							$pic2->Height  = 20;
+							$pic2->Top = $excel->Cells(30, 8)->Top ;
+							$pic2->Left = $excel->Cells(30, 8)->Left ;
+						}
+						
+						if(!empty($buheadname)) {
+							$Worksheet->Range("K34")->Value = $buheadname;
+							$Worksheet->Range("K35")->Value = $buheaddate;
+							$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+							$pic2->Height  = 20;
+							$pic2->Top = $excel->Cells(30, 11)->Top ;
+							$pic2->Left = $excel->Cells(30, 11)->Left ;
+						}
+						
+						if(!empty($financename)) {
+							$Worksheet->Range("K28")->Value = 'BG FC';
+							$Worksheet->Range("K34")->Value = $financename;
+							$Worksheet->Range("K35")->Value = $financedate;
+							$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+							$pic2->Height  = 20;
+							$pic2->Top = $excel->Cells(30, 11)->Top ;
+							$pic2->Left = $excel->Cells(30, 11)->Left ;
+						}
 					}
-				
+					
 				}
-
+				
 				foreach ($Advpaymentdetail as $data){
 					$val_tamount += $data->amount;
 				}
