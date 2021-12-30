@@ -117,7 +117,7 @@
                     }},
                     {dataField:'opscategory',caption:"Category OPS Related",encodeHtml: false ,width: 300,
                         customizeText: function (e) {
-                            var rDesc = ["","<span class='mb-2 mr-2 badge badge-pill badge-primary'>General</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Pajak</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>PSDH (Provisi Sumber Daya Hutan)</span>",""];
+                            var rDesc = ["","<span class='mb-2 mr-2 badge badge-pill badge-primary'>General</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Pajak</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>PSDH (Provisi Sumber Daya Hutan)</span>","<span class='mb-2 mr-2 badge badge-pill badge-info'>SSL</span>",""];
                             return rDesc[e.value];
                     }},
 				    

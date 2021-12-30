@@ -126,7 +126,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 			$scope.AppAction = ($scope.data.approvalstep==2)?[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Verify"}]:[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
 			$scope.AdvanceForm =[{id:0,paymentform:"- Select -"},{id:1,paymentform:"Payment Req HR"},{id:2,paymentform:"Payment Req OPR"}];
 			$scope.Paymentopt =[{id:1,payment:"Cash"},{id:2,payment:"Bank"}];
-			$scope.OpsCategory =[{id:1,opscategory:"General"},{id:2,opscategory:"Pajak"},{id:3,opscategory:"PSDH (Provisi Sumber Daya Hutan"}];
+			$scope.OpsCategory =[{id:1,opscategory:"General"},{id:2,opscategory:"Pajak"},{id:3,opscategory:"PSDH (Provisi Sumber Daya Hutan"},{id:4,opscategory:"SSL"}];
 
 			// console.log($scope.Paymentopt);
 			$scope.reqStatus = 0;
@@ -341,7 +341,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 								name:'advanceno',
                                 editorType: "dxSelectBox",
                                 label:{text:"Less Advance"},
-								visible:($scope.data.paymenttype==1 && $scope.data.requeststatus !=3)?true:false,
+								visible:(($scope.data.paymenttype==1 ||$scope.data.paymenttype==2) && $scope.data.requeststatus !=3)?true:false,
                                 // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
                                 validationRules: [{type: "required",message: "Action is required"}],
                                 editorOptions: { 
@@ -373,7 +373,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 								name:'advanceno2',
                                 editorType: "dxSelectBox",
                                 label:{text:"Less Advance"},
-								visible:($scope.data.paymenttype==1 && $scope.data.requeststatus ==3)?true:false,
+								visible:(($scope.data.paymenttype==1 ||$scope.data.paymenttype==2) && $scope.data.requeststatus ==3)?true:false,
                                 // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
                                 validationRules: [{type: "required",message: "Action is required"}],
                                 editorOptions: { 

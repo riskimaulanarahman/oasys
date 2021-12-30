@@ -418,6 +418,13 @@ Class Advancemodule extends Application{
 												$logger->SaveData();
 											}
 
+											$kfssl = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=45",$id)));	
+											foreach ($kfssl as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advanceapproval","delete",json_encode($result->to_array()),"delete Approval KF SSL");
+												$logger->SaveData();
+											}
+
 											$financecomit = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=41",$id)));	
 											foreach ($financecomit as $result) {
 												$result->delete();
@@ -537,6 +544,13 @@ Class Advancemodule extends Application{
 												$logger->SaveData();
 											}
 
+											$kfssl = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=45",$id)));	
+											foreach ($kfssl as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advanceapproval","delete",json_encode($result->to_array()),"delete Approval KF SSL");
+												$logger->SaveData();
+											}
+
 											$financecomit = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=41",$id)));	
 											foreach ($financecomit as $result) {
 												$result->delete();
@@ -640,6 +654,13 @@ Class Advancemodule extends Application{
 											foreach ($hrv as $result) {
 												$result->delete();
 												$logger = new Datalogger("Advanceapproval","delete",json_encode($result->to_array()),"delete Approval HR Verifikator");
+												$logger->SaveData();
+											}
+
+											$kfssl = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=45",$id)));	
+											foreach ($kfssl as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advanceapproval","delete",json_encode($result->to_array()),"delete Approval KF SSL");
 												$logger->SaveData();
 											}
 
@@ -766,6 +787,13 @@ Class Advancemodule extends Application{
 												$logger->SaveData();
 											}
 
+											$kfssl = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=45",$id)));	
+											foreach ($kfssl as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advanceapproval","delete",json_encode($result->to_array()),"delete Approval KF SSL");
+												$logger->SaveData();
+											}
+
 											$buhead = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=38",$id)));	
 											foreach ($buhead as $result) {
 												$result->delete();
@@ -824,6 +852,75 @@ Class Advancemodule extends Application{
 													}
 												}
 	
+											}
+
+										} else if($Advance->opscategory == 5) {
+											$hrverifikator = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=44",$id)));	
+											foreach ($hrverifikator as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advanceapproval","delete",json_encode($result->to_array()),"delete Approval HR Verifikator");
+												$logger->SaveData();
+											}
+
+											$kfssl = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=45",$id)));	
+											foreach ($kfssl as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advanceapproval","delete",json_encode($result->to_array()),"delete Approval KF SSL");
+												$logger->SaveData();
+											}
+
+											$buhead = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=38",$id)));	
+											foreach ($buhead as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advanceapproval","delete",json_encode($result->to_array()),"delete Approval BU Head");
+												$logger->SaveData();
+											}
+											$financecomit = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=41",$id)));	
+											foreach ($financecomit as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advanceapproval","delete",json_encode($result->to_array()),"delete Approval Finance Commite");
+												$logger->SaveData();
+											}
+
+											// $ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and FIND_IN_SET(?, CompanyList) > 0 ",$Employee->companycode)));
+
+											// if(count($ApproverHRV)>0){
+											// 	$Advanceapproval = new Advanceapproval();
+											// 	$Advanceapproval->advance_id = $Advance->id;
+											// 	$Advanceapproval->approver_id = $ApproverHRV->id;
+											// 	$Advanceapproval->save();
+											// 	$logger = new Datalogger("Advanceapproval","add","Add initial HR Verifikator Approval ",json_encode($Advanceapproval->to_array()));
+											// 	$logger->SaveData();
+											// }
+
+											$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and FIND_IN_SET(?, CompanyList) > 0 ",$Employee->companycode)));
+											if(count($ApproverBU)>0){
+												$Advanceapproval = new Advanceapproval();
+												$Advanceapproval->advance_id = $Advance->id;
+												$Advanceapproval->approver_id = $ApproverBU->id;
+												$Advanceapproval->save();
+												$logger = new Datalogger("Advanceapproval","add","Add initial BU Head Approval ",json_encode($Advanceapproval->to_array()));
+												$logger->SaveData();
+											}
+
+											$ApproverKFSSL = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='45' ")));
+											if(count($ApproverKFSSL)>0){
+												$Advanceapproval = new Advanceapproval();
+												$Advanceapproval->advance_id = $Advance->id;
+												$Advanceapproval->approver_id = $ApproverKFSSL->id;
+												$Advanceapproval->save();
+												$logger = new Datalogger("Advanceapproval","add","Add initial KF SSL Approval ",json_encode($Advanceapproval->to_array()));
+												$logger->SaveData();
+											}
+
+											$ApproverFC = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=41")));
+											if(count($ApproverFC)>0){
+												$Advanceapproval = new Advanceapproval();
+												$Advanceapproval->advance_id = $Advance->id;
+												$Advanceapproval->approver_id = $ApproverFC->id;
+												$Advanceapproval->save();
+												$logger = new Datalogger("Advanceapproval","add","Add initial Finance Commite Approval ",json_encode($Advanceapproval->to_array()));
+												$logger->SaveData();
 											}
 
 										}
@@ -1299,6 +1396,8 @@ Class Advancemodule extends Application{
 								$data=array("jml"=>1);
 							} else if(($tdetailamount<5000000) && $Advance->advanceform ==2 && $Advance->opscategory==4 && $dx->approver->approvaltype_id == 41) {
 								$data=array("jml"=>1);
+							} else if(($tdetailamount<5000000) && $Advance->advanceform ==2 && $Advance->opscategory==5 && $dx->approver->approvaltype_id == 41) {
+								$data=array("jml"=>1);
 							} else if(($tdetailamount>=5000000 && $tdetailamount<10000000) && $Advance->advanceform ==2 && $dx->approver->approvaltype_id == 39) {
 								$data=array("jml"=>1);
 							} else{
@@ -1622,6 +1721,26 @@ Class Advancemodule extends Application{
 													}
 													$complete =true;
 												} else if(($tdetailamount<5000000) && $Advance->opscategory==4 && $Advanceapproval->approver->approvaltype_id == 41) {
+													$Advance->requeststatus = 3;
+													if($Advance->createdby == $Advance->employee_id) {
+														$emto=$email;
+													} else {
+														$emto=$emailcrb;
+													}
+													$emname=$Advance->employee->fullname;
+													$this->mail->Subject = "Online Approval System -> Approval Completed";
+													$red = 'Your Advance request has been approved';
+													//delete unnecessary approver
+													$Advanceapproval = Advanceapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
+													foreach ($Advanceapproval as $data) {
+														if($data->approvalstatus==0){
+															$logger = new Datalogger("Advanceapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
+															$logger->SaveData();
+															$data->delete();
+														}
+													}
+													$complete =true;
+												} else if(($tdetailamount<5000000) && $Advance->opscategory==5 && $Advanceapproval->approver->approvaltype_id == 41) {
 													$Advance->requeststatus = 3;
 													if($Advance->createdby == $Advance->employee_id) {
 														$emto=$email;
@@ -2039,6 +2158,11 @@ Class Advancemodule extends Application{
 						$procname = $data->approver->employee->fullname;
 						$procdate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
 					}
+
+					if($data->approver->approvaltype->id==45) {
+						$kfsslname = $data->approver->employee->fullname;
+						$kfssldate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
+					}
 				}
 				$picpath= SITE_PATH."/images/approved.png";
 				
@@ -2133,6 +2257,16 @@ Class Advancemodule extends Application{
 					if(!empty($procname)) {
 						$Worksheet->Range("L32")->Value = $procname;
 						$Worksheet->Range("L33")->Value = $procdate;
+						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic2->Height  = 20;
+						$pic2->Top = $excel->Cells(29, 12)->Top ;
+						$pic2->Left = $excel->Cells(29, 12)->Left ;
+					}
+
+					if(!empty($kfsslname)) {
+						$Worksheet->Range("L26")->Value = 'KF SSL';
+						$Worksheet->Range("L32")->Value = $kfsslname;
+						$Worksheet->Range("L33")->Value = $kfssldate;
 						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 						$pic2->Height  = 20;
 						$pic2->Top = $excel->Cells(29, 12)->Top ;

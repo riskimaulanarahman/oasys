@@ -58,21 +58,27 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 			}
 			$scope.AppAction = ($scope.data.approvalstep==2)?[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Verify"}]:[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
 			$scope.AdvanceForm =[{id:0,advanceform:"- Select -"},{id:1,advanceform:"HR Related"},{id:2,advanceform:"Ops Related"}];
-			$scope.OpsCategory = [{
-				id: 1,
-				opscategory: "General"
-			}, 
-			// {
-			// 	id: 2,
-			// 	opscategory: "Pajak"
-			// }, {
-			// 	id: 3,
-			// 	opscategory: "PSDH (Provisi Sumber Daya Hutan"
-			// }, 
-			{
-				id: 4,
-				opscategory: "Direct Purchased"
-			}];
+			$scope.OpsCategory = [
+				{
+					id: 1,
+					opscategory: "General"
+				}, 
+				// {
+				// 	id: 2,
+				// 	opscategory: "Pajak"
+				// }, {
+				// 	id: 3,
+				// 	opscategory: "PSDH (Provisi Sumber Daya Hutan"
+				// }, 
+				{
+					id: 4,
+					opscategory: "Direct Purchased"
+				},
+				{
+					id: 5,
+					opscategory: "SSL"
+				}
+			];
 			$scope.reqStatus = 0;
 			$scope.gridSelectedRowKeys =[];
 

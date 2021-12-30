@@ -458,6 +458,13 @@ Class Advpaymentmodule extends Application{
 												echo json_encode($item, JSON_NUMERIC_CHECK);
 											}
 
+											$kfssl = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=45",$id)));	
+											foreach ($kfssl as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval KF SSL");
+												$logger->SaveData();
+											}
+
 											$financecomit = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=41",$id)));	
 											foreach ($financecomit as $result) {
 												$result->delete();
@@ -535,6 +542,7 @@ Class Advpaymentmodule extends Application{
 											}
 
 										} else if($advpayment_form == 2) {
+											
 
 											$bufc = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=37",$id)));	
 											foreach ($bufc as $result) {
@@ -648,6 +656,13 @@ Class Advpaymentmodule extends Application{
 
 										if($Advpayment->opscategory == 1) {
 
+											$kfssl = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=45",$id)));	
+											foreach ($kfssl as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval KF SSL");
+												$logger->SaveData();
+											}
+
 											$financecomit = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=41",$id)));	
 											foreach ($financecomit as $result) {
 												$result->delete();
@@ -693,6 +708,13 @@ Class Advpaymentmodule extends Application{
 
 										} else if($Advpayment->opscategory == 2) {
 
+											$kfssl = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=45",$id)));	
+											foreach ($kfssl as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval KF SSL");
+												$logger->SaveData();
+											}
+
 											$financecomit = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=41",$id)));	
 											foreach ($financecomit as $result) {
 												$result->delete();
@@ -735,6 +757,13 @@ Class Advpaymentmodule extends Application{
 
 										} else if($Advpayment->opscategory == 3) {
 
+											$kfssl = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=45",$id)));	
+											foreach ($kfssl as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval KF SSL");
+												$logger->SaveData();
+											}
+
 											$bufc = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=37",$id)));	
 											foreach ($bufc as $result) {
 												$result->delete();
@@ -752,6 +781,67 @@ Class Advpaymentmodule extends Application{
 											foreach ($buhead as $result) {
 												$result->delete();
 												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval BU Head");
+												$logger->SaveData();
+											}
+
+											$Approverbufc = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='37' and FIND_IN_SET(?, CompanyList) > 0 ",$Advpayment->companycode)));
+											if(count($Approverbufc)>0){
+												$Advpaymentapproval = new Advpaymentapproval();
+												$Advpaymentapproval->advpayment_id = $Advpayment->id;
+												$Advpaymentapproval->approver_id = $Approverbufc->id;
+												$Advpaymentapproval->save();
+												$logger = new Datalogger("Advpaymentapproval","add","Add initial BU FC Approval ",json_encode($Advpaymentapproval->to_array()));
+												$logger->SaveData();
+											}
+
+										} else if($Advpayment->opscategory == 4) {
+
+											$financecomit = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=41",$id)));	
+											foreach ($financecomit as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval Finance Commite");
+												$logger->SaveData();
+											}
+
+											$bufc = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=37",$id)));	
+											foreach ($bufc as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval BUFC");
+												$logger->SaveData();
+											}
+
+											$buhead = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=38",$id)));	
+											foreach ($buhead as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval BU Head");
+												$logger->SaveData();
+											}
+
+											$kfssl = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=45",$id)));	
+											foreach ($kfssl as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval KF SSL");
+												$logger->SaveData();
+											}
+
+
+											$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and FIND_IN_SET(?, CompanyList) > 0 ",$Advpayment->companycode)));
+											if(count($ApproverBU)>0){
+												$Advpaymentapproval = new Advpaymentapproval();
+												$Advpaymentapproval->advpayment_id = $Advpayment->id;
+												$Advpaymentapproval->approver_id = $ApproverBU->id;
+												$Advpaymentapproval->save();
+												$logger = new Datalogger("Advpaymentapproval","add","Add initial BU Head Approval ",json_encode($Advpaymentapproval->to_array()));
+												$logger->SaveData();
+											}
+
+											$Approverkfssl = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='45' ")));
+											if(count($Approverkfssl)>0){
+												$Advpaymentapproval = new Advpaymentapproval();
+												$Advpaymentapproval->advpayment_id = $Advpayment->id;
+												$Advpaymentapproval->approver_id = $Approverkfssl->id;
+												$Advpaymentapproval->save();
+												$logger = new Datalogger("Advpaymentapproval","add","Add initial KF SSL Approval ",json_encode($Advpaymentapproval->to_array()));
 												$logger->SaveData();
 											}
 
@@ -799,6 +889,13 @@ Class Advpaymentmodule extends Application{
 
 										}
 										if($Advpayment->paymentform == 1) {
+											$kfssl = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=45",$id)));	
+											foreach ($kfssl as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval KF SSL");
+												$logger->SaveData();
+											}
+
 											$financecomit = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=41",$id)));	
 											foreach ($financecomit as $result) {
 												$result->delete();
@@ -877,6 +974,13 @@ Class Advpaymentmodule extends Application{
 										} else if($Advpayment->paymentform == 2) {
 											if($Advpayment->opscategory == 1) {
 
+												$kfssl = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=45",$id)));	
+												foreach ($kfssl as $result) {
+													$result->delete();
+													$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval KF SSL");
+													$logger->SaveData();
+												}
+
 												$financecomit = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=41",$id)));	
 												foreach ($financecomit as $result) {
 													$result->delete();
@@ -921,6 +1025,13 @@ Class Advpaymentmodule extends Application{
 
 											} else if($Advpayment->opscategory == 2) {
 
+												$kfssl = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=45",$id)));	
+												foreach ($kfssl as $result) {
+													$result->delete();
+													$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval KF SSL");
+													$logger->SaveData();
+												}
+
 												$bufc = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=37",$id)));	
 												foreach ($bufc as $result) {
 													$result->delete();
@@ -963,6 +1074,13 @@ Class Advpaymentmodule extends Application{
 
 											} else if($Advpayment->opscategory == 3) {
 
+												$kfssl = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=45",$id)));	
+												foreach ($kfssl as $result) {
+													$result->delete();
+													$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval KF SSL");
+													$logger->SaveData();
+												}
+
 												$bufc = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=37",$id)));	
 												foreach ($bufc as $result) {
 													$result->delete();
@@ -980,6 +1098,67 @@ Class Advpaymentmodule extends Application{
 												foreach ($buhead as $result) {
 													$result->delete();
 													$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval BU Head");
+													$logger->SaveData();
+												}
+
+												$Approverbufc = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='37' and FIND_IN_SET(?, CompanyList) > 0 ",$Advpayment->companycode)));
+												if(count($Approverbufc)>0){
+													$Advpaymentapproval = new Advpaymentapproval();
+													$Advpaymentapproval->advpayment_id = $Advpayment->id;
+													$Advpaymentapproval->approver_id = $Approverbufc->id;
+													$Advpaymentapproval->save();
+													$logger = new Datalogger("Advpaymentapproval","add","Add initial BU FC Approval ",json_encode($Advpaymentapproval->to_array()));
+													$logger->SaveData();
+												}
+
+											} else if($Advpayment->opscategory == 4) {
+
+												$financecomit = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=41",$id)));	
+												foreach ($financecomit as $result) {
+													$result->delete();
+													$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval Finance Commite");
+													$logger->SaveData();
+												}
+
+												$bufc = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=37",$id)));	
+												foreach ($bufc as $result) {
+													$result->delete();
+													$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval BUFC");
+													$logger->SaveData();
+												}
+
+												$buhead = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=38",$id)));	
+												foreach ($buhead as $result) {
+													$result->delete();
+													$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval BU Head");
+													$logger->SaveData();
+												}
+
+												$kfssl = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=45",$id)));	
+												foreach ($kfssl as $result) {
+													$result->delete();
+													$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval KF SSL");
+													$logger->SaveData();
+												}
+
+
+												$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and FIND_IN_SET(?, CompanyList) > 0 ",$Advpayment->companycode)));
+												if(count($ApproverBU)>0){
+													$Advpaymentapproval = new Advpaymentapproval();
+													$Advpaymentapproval->advpayment_id = $Advpayment->id;
+													$Advpaymentapproval->approver_id = $ApproverBU->id;
+													$Advpaymentapproval->save();
+													$logger = new Datalogger("Advpaymentapproval","add","Add initial BU Head Approval ",json_encode($Advpaymentapproval->to_array()));
+													$logger->SaveData();
+												}
+
+												$Approverkfssl = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='45' ")));
+												if(count($Approverkfssl)>0){
+													$Advpaymentapproval = new Advpaymentapproval();
+													$Advpaymentapproval->advpayment_id = $Advpayment->id;
+													$Advpaymentapproval->approver_id = $Approverkfssl->id;
+													$Advpaymentapproval->save();
+													$logger = new Datalogger("Advpaymentapproval","add","Add initial KF SSL Approval ",json_encode($Advpaymentapproval->to_array()));
 													$logger->SaveData();
 												}
 
@@ -1387,6 +1566,8 @@ Class Advpaymentmodule extends Application{
 								$data=array("jml"=>1);
 							}else if (($Advpayment->paymentform == 2 && $Advpayment->opscategory == 3) && $dx->approver->approvaltype_id == 37){
 								$data=array("jml"=>1);
+							}else if (($Advpayment->paymentform == 2 && $Advpayment->opscategory == 4) && $dx->approver->approvaltype_id == 38){
+								$data=array("jml"=>1);
 							}else{
 								$join   = "LEFT JOIN tbl_approver ON (tbl_advpaymentapproval.approver_id = tbl_approver.id) ";
 								$Advpaymentapproval = Advpaymentapproval::find('all', array('joins'=>$join,'conditions' => array("advpayment_id=? and ApprovalStatus<=1 and not tbl_approver.employee_id=?",$query['advpayment_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
@@ -1646,6 +1827,29 @@ Class Advpaymentmodule extends Application{
 
 											$complete =true;
 										} else if (($Advpayment->paymentform == 2 && $Advpayment->opscategory == 3) && $Advpaymentapproval->approver->approvaltype_id == 37){
+											$Advpayment->requeststatus = 3;
+											$emto=$email;$emname=$Advpayment->employee->fullname;
+											$this->mail->Subject = "Online Approval System -> Approval Completed";
+											$red = 'Your Payment request has been approved';
+											//delete unnecessary approver
+											$Advpaymentapproval = Advpaymentapproval::find('all', array('joins'=>$join,'conditions' => array("advpayment_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
+											foreach ($Advpaymentapproval as $data) {
+												if($data->approvalstatus==0){
+													$logger = new Datalogger("Advpaymentapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
+													$logger->SaveData();
+													$data->delete();
+												}
+											}
+
+											if($Advpayment->advanceno == null || $Advpayment->advanceno == '') {
+											} else {
+												$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND advanceno=?",$Advpayment->employee->id,$Advpayment->advanceno)));
+												$Advance->isused=1;
+												$Advance->save();
+											}
+
+											$complete =true;
+										} else if (($Advpayment->paymentform == 2 && $Advpayment->opscategory == 4) && $Advpaymentapproval->approver->approvaltype_id == 38){
 											$Advpayment->requeststatus = 3;
 											$emto=$email;$emname=$Advpayment->employee->fullname;
 											$this->mail->Subject = "Online Approval System -> Approval Completed";

@@ -114,6 +114,11 @@ app.register.controller('advanceCtrl', ['$rootScope','$scope', '$http', '$interv
                         var rDesc = ["","<span class='mb-2 mr-2 badge badge-pill badge-info'>HR Related</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>OPS Related</span>",""];
 						return rDesc[e.value];
 				}},
+                {dataField:'opscategory',caption:"Category OPS Related",encodeHtml: false ,width: 300,
+                        customizeText: function (e) {
+                            var rDesc = ["","<span class='mb-2 mr-2 badge badge-pill badge-primary'>General</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Pajak</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>PSDH (Provisi Sumber Daya Hutan)</span>","<span class='mb-2 mr-2 badge badge-pill badge-inverse'>Direct Purchase</span>","<span class='mb-2 mr-2 badge badge-pill badge-info'>SSL</span>",""];
+                            return rDesc[e.value];
+                    }},
 				{dataField:'advanceno',caption:"Advance No",width: 200},
 				{dataField:'requeststatus',caption:"Request Status",encodeHtml: false ,width: 300,
 					customizeText: function (e) {
