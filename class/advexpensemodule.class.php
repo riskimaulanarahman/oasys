@@ -1850,9 +1850,40 @@ Class Advexpensemodule extends Application{
 				// $Worksheet->Range("E23")->Value = number_format($lessadvance);
 				// $Worksheet->Range("E25")->Value = number_format($val_tamount-$lessadvance);
 
-				$Worksheet->Range("E21")->Value = $val_tamount;
+				for ($b=22;$b<22+count($Advexpensedetailbt);$b++){
+					if($Advexpensedetailbt[$b-22]->ispapua == 0) {
+						$sppd = Advexpsppd::find('first',
+							array(
+								'conditions'=>array("level=? and ispapua=0",$Employee->level_id)
+							)
+						);
+
+					} else if($Advexpensedetailbt[$b-22]->ispapua == 1) {
+						$sppd = Advexpsppd::find('first',
+							array(
+								'conditions'=>array("level=? and ispapua=1",$Employee->level_id)
+							)
+						);
+
+						
+					}
+
+					$breakfastro = ($Advexpensedetailbt[$b-22]->breakfast == 1) ? 0 : $sppd->breakfast;
+					$lunchro = ($Advexpensedetailbt[$b-22]->lunch == 1) ? 0 : $sppd->lunch;
+					$dinnerro = ($Advexpensedetailbt[$b-22]->dinner == 1) ? 0 : $sppd->dinner;
+					$pocketro = ($Advexpensedetailbt[$b-22]->pocket == 1) ? 0 : $sppd->pocket;
+
+					$jml_breakfastro += $breakfastro;
+					$jml_lunchro += $lunchro;
+					$jml_dinnerro += $dinnerro;
+					$jml_pocketro += $pocketro;
+
+					$totalbtro = $jml_breakfastro+$jml_lunchro+$jml_dinnerro+$jml_pocketro;
+				}
+
+				$Worksheet->Range("E21")->Value = $val_tamount+$totalbtro;
 				$Worksheet->Range("E23")->Value = $lessadvance;
-				$Worksheet->Range("E25")->Value = $val_tamount-$lessadvance;
+				$Worksheet->Range("E25")->Value = ($val_tamount+$totalbtro)-$lessadvance;
 				
 	
 				$xlShiftDown=-4121;
@@ -1863,80 +1894,22 @@ Class Advexpensemodule extends Application{
 					$Worksheet->Rows($a+1)->Copy();
 					$Worksheet->Rows($a+1)->Insert($xlShiftDown);
 					// $Worksheet->Range("A".$a)->Value = $no++;
-					$Worksheet->Range("B".$a)->Value = $Advexpensedetail[$a-19]->expensetype;
-					$Worksheet->Range("C".$a)->Value = $Advexpensedetail[$a-19]->purpose;
-					$Worksheet->Range("D".$a)->Value = $Advexpensedetail[$a-19]->receiptdate;
-					$Worksheet->Range("E".$a)->Value = $Advexpensedetail[$a-19]->amount;
-					$Worksheet->Range("F".$a)->Value = $Advexpensedetail[$a-19]->currency;
-					$Worksheet->Range("G".$a)->Value = $Advexpensedetail[$a-19]->exchangerate;
-					$Worksheet->Range("H".$a)->Value = $Advexpensedetail[$a-19]->paymentamount;
-					$Worksheet->Range("I".$a)->Value = $Advexpensedetail[$a-19]->costcentre;
-					$Worksheet->Range("J".$a)->Value = $Advexpensedetail[$a-19]->country;
-					$Worksheet->Range("K".$a)->Value = $Advexpensedetail[$a-19]->location;
-					$Worksheet->Range("L".$a)->Value = $Advexpensedetail[$a-19]->remarks;
+					$Worksheet->Range("B".$a)->Value = $Advexpensedetail[$a-20]->expensetype;
+					$Worksheet->Range("C".$a)->Value = $Advexpensedetail[$a-20]->purpose;
+					$Worksheet->Range("D".$a)->Value = $Advexpensedetail[$a-20]->receiptdate;
+					$Worksheet->Range("E".$a)->Value = $Advexpensedetail[$a-20]->amount;
+					$Worksheet->Range("F".$a)->Value = $Advexpensedetail[$a-20]->currency;
+					$Worksheet->Range("G".$a)->Value = $Advexpensedetail[$a-20]->exchangerate;
+					$Worksheet->Range("H".$a)->Value = $Advexpensedetail[$a-20]->paymentamount;
+					$Worksheet->Range("I".$a)->Value = $Advexpensedetail[$a-20]->costcentre;
+					$Worksheet->Range("J".$a)->Value = $Advexpensedetail[$a-20]->country;
+					$Worksheet->Range("K".$a)->Value = $Advexpensedetail[$a-20]->location;
+					$Worksheet->Range("L".$a)->Value = $Advexpensedetail[$a-20]->remarks;
 				}
 
+				
 
-				// foreach ($Advexpensedetailbt as $data){
-					// if($data->ispapua == 0) {
-					// 	$sppd = Advexpsppd::find('first',
-					// 		array(
-					// 			'conditions'=>array("level=? and ispapua=0",$Employee->level_id)
-					// 		)
-					// 	);
-
-					// } else if($data->ispapua == 1) {
-					// 	$sppd = Advexpsppd::find('first',
-					// 		array(
-					// 			'conditions'=>array("level=? and ispapua=1",$Employee->level_id)
-					// 		)
-					// 	);
-
-						
-					// }
-
-					// $breakfast = ($data->breakfast == 0) ? $data->breakfast : $sppd->breakfast;
-					// $lunch = ($data->lunch == 0) ? $data->lunch : $sppd->lunch;
-					// $dinner = ($data->dinner == 0) ? $data->dinner : $sppd->dinner;
-					// $pocket = ($data->pocket == 0) ? $data->pocket : $sppd->pocket;
-
-					// $jml_breakfast += $breakfast;
-					// $jml_lunch += $lunch;
-					// $jml_dinner += $dinner;
-					// $jml_pocket += $pocket;
-
-					// if($data->ispapua == 0) {
-					// 	$sppd = Advexpsppd::find('first',
-					// 		array(
-					// 			'conditions'=>array("level=? and ispapua=0",$Employee->level_id)
-					// 		)
-					// 	);
-
-					// } else if($data->ispapua == 1) {
-					// 	$sppd = Advexpsppd::find('first',
-					// 		array(
-					// 			'conditions'=>array("level=? and ispapua=1",$Employee->level_id)
-					// 		)
-					// 	);
-
-						
-					// }
-
-					// $breakfast = ($data->breakfast == 1) ? 0 : $sppd->breakfast;
-					// $lunch = ($data->lunch == 1) ? 0 : $sppd->lunch;
-					// $dinner = ($data->dinner == 1) ? 0 : $sppd->dinner;
-					// $pocket = ($data->pocket == 1) ? 0 : $sppd->pocket;
-
-					// $jml_breakfast += $breakfast;
-					// $jml_lunch += $lunch;
-					// $jml_dinner += $dinner;
-					// $jml_pocket += $pocket;
-
-					// $totalbt = $jml_breakfast+$jml_lunch+$jml_dinner+$jml_pocket;
-
-					// $Worksheet->Range("G54")->Value = $totalbt;
-
-				// }
+			
 				$jmldetail = count($Advexpensedetail);
 
 				for ($b=51;$b<51+count($Advexpensedetailbt);$b++){
@@ -1962,6 +1935,13 @@ Class Advexpensemodule extends Application{
 					$dinner = ($Advexpensedetailbt[$b-51]->dinner == 1) ? 0 : $sppd->dinner;
 					$pocket = ($Advexpensedetailbt[$b-51]->pocket == 1) ? 0 : $sppd->pocket;
 
+					$jml_breakfast += $breakfast;
+					$jml_lunch += $lunch;
+					$jml_dinner += $dinner;
+					$jml_pocket += $pocket;
+
+					$totalbt = $jml_breakfast+$jml_lunch+$jml_dinner+$jml_pocket;
+
 					$Worksheet->Rows($b+$jmldetail+1)->Copy();
 					$Worksheet->Rows($b+$jmldetail+1)->Insert($xlShiftDown);
 					$Worksheet->Range("B".($b+$jmldetail))->Value = $nos++;
@@ -1975,7 +1955,18 @@ Class Advexpensemodule extends Application{
 					$Worksheet->Range("I".($b+$jmldetail))->Value = $dinner;
 					$Worksheet->Range("J".($b+$jmldetail))->Value = $pocket;
 				}
-		
+				
+				$Worksheet->Range("B19")->Value = '';
+				$Worksheet->Range("C19")->Value = 'Meals & Pocket';
+				$Worksheet->Range("D19")->Value = '';
+				$Worksheet->Range("E19")->Value = $totalbt;
+				$Worksheet->Range("F19")->Value = 'IDR';
+				$Worksheet->Range("G19")->Value = '';
+				$Worksheet->Range("H19")->Value = '';
+				$Worksheet->Range("I19")->Value = '';
+				$Worksheet->Range("J19")->Value = '';
+				$Worksheet->Range("K19")->Value = '';
+				$Worksheet->Range("L19")->Value = '';
 
 				//end condition
 
