@@ -90,6 +90,7 @@
                             var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Saved as Draft</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
                             return rDesc[e.value];
                         }},
+                    {dataField:'reason', caption:"Reason for requisition/purchase",encodeHtml: false },
                     {dataField:'remarks',width: '60%',encodeHtml: false },
                     ],	
             "export": {
