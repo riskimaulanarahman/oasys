@@ -866,7 +866,12 @@ Class Advpaymentmodule extends Application{
 
 										$Advpayment = Advpayment::find($id);
 										$Advpayment->companycode = $categorytype;
+										// $Advpayment->save();
+										$codenew = Advpayment::find('first',array('select' => "CONCAT('Payment/','".$categorytype."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(paymentno,-4,4)) is null then 1 else max(substring(paymentno,-4,4))+1 end,4,'0')) as paymentno","conditions"=>array("substring(paymentno,9,".strlen($categorytype).")=? and not(id = ?) and substring(paymentno,".(strlen($categorytype)+10).",4)=YEAR(CURDATE()) ",$categorytype,$query['advpayment_id'])));
+										// $Advpayment =Advpayment::find($id);
+										$Advpayment->paymentno =$codenew->paymentno;
 										$Advpayment->save();
+										
 
 										$Employee = Employee::find('first', array('conditions' => array("id=?",$employee_id),"include"=>array("location","department","company")));
 
@@ -1175,10 +1180,6 @@ Class Advpaymentmodule extends Application{
 											}
 										}
 
-										$codenew = Advpayment::find('first',array('select' => "CONCAT('Payment/','".$categorytype."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(paymentno,-4,4)) is null then 1 else max(substring(paymentno,-4,4))+1 end,4,'0')) as paymentno","conditions"=>array("substring(paymentno,9,".strlen($categorytype).")=? and not(id = ?) and substring(paymentno,".(strlen($categorytype)+10).",4)=YEAR(CURDATE()) ",$categorytype,$query['advpayment_id'])));
-										$Advpayment =Advpayment::find($id);
-										$Advpayment->paymentno =$codenew->paymentno;
-										$Advpayment->save();
 										$data=array("paymentno"=>$codenew->paymentno);
 										echo json_encode($data, JSON_NUMERIC_CHECK);
 
