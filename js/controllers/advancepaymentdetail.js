@@ -262,12 +262,15 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 									valueExpr: "companycode",
 
 									onValueChanged: function(e) {
-										criteria = {status:'companycode',company:e.value,advpayment_id:$scope.Requestid,employee_id:$scope.data.employee_id};
-										CrudService.FindData('advpayment',criteria).then(function (response){
-											console.log(response)
-											$scope.formInstance.updateData('paymentno', response.paymentno);
-											$scope.grid2Component.refresh();
-										})
+										if($scope.data.requeststatus == 0) {
+
+											criteria = {status:'companycode',company:e.value,advpayment_id:$scope.Requestid,employee_id:$scope.data.employee_id};
+											CrudService.FindData('advpayment',criteria).then(function (response){
+												console.log(response)
+												$scope.formInstance.updateData('paymentno', response.paymentno);
+												$scope.grid2Component.refresh();
+											})
+										}
 	
 									}
 								},
