@@ -1792,49 +1792,49 @@ Class Advexpensemodule extends Application{
 				}
 				$picpath= SITE_PATH."/images/approved.png";
 				
-				$Worksheet->Range("B35")->Value = $Advexpense->name;
-				$Worksheet->Range("B44")->Value = 'Name / SAP : '.$Advexpense->name;
-				$Worksheet->Range("D35")->Value = date("d/m/Y",strtotime($Advexpense->createddate));
-				$Worksheet->Range("B58")->Value = $Advexpense->name;
-				$Worksheet->Range("D58")->Value = date("d/m/Y",strtotime($Advexpense->createddate));
+				$Worksheet->Range("B36")->Value = $Advexpense->name;
+				$Worksheet->Range("B45")->Value = 'Name / SAP : '.$Advexpense->name;
+				$Worksheet->Range("D36")->Value = date("d/m/Y",strtotime($Advexpense->createddate));
+				$Worksheet->Range("B59")->Value = $Advexpense->name;
+				$Worksheet->Range("D59")->Value = date("d/m/Y",strtotime($Advexpense->createddate));
 
 				$pic=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 				$pic->Height  = 20;
-				$pic->Top = $excel->Cells(35, 3)->Top ;
-				$pic->Left = $excel->Cells(35, 3)->Left + 80;
+				$pic->Top = $excel->Cells(36, 3)->Top ;
+				$pic->Left = $excel->Cells(36, 3)->Left + 80;
 				$picc=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 				$picc->Height  = 20;
-				$picc->Top = $excel->Cells(58, 3)->Top ;
-				$picc->Left = $excel->Cells(58, 3)->Left + 80 ;
+				$picc->Top = $excel->Cells(59, 3)->Top ;
+				$picc->Left = $excel->Cells(59, 3)->Left + 80 ;
 
 					if(!empty($superiorname)) {
-						$Worksheet->Range("F35")->Value = $superiorname;
-						$Worksheet->Range("F58")->Value = $superiorname;
-						$Worksheet->Range("H35")->Value = $superiordate;
-						$Worksheet->Range("H58")->Value = $superiordate;
+						$Worksheet->Range("F36")->Value = $superiorname;
+						$Worksheet->Range("F59")->Value = $superiorname;
+						$Worksheet->Range("H36")->Value = $superiordate;
+						$Worksheet->Range("H59")->Value = $superiordate;
 						$pic1=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 						$pic1->Height  = 20;
-						$pic1->Top = $excel->Cells(35, 7)->Top ;
-						$pic1->Left = $excel->Cells(35, 7)->Left ;
+						$pic1->Top = $excel->Cells(36, 7)->Top ;
+						$pic1->Left = $excel->Cells(36, 7)->Left ;
 						$pic11=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 						$pic11->Height  = 20;
-						$pic11->Top = $excel->Cells(58, 7)->Top ;
-						$pic11->Left = $excel->Cells(58, 7)->Left ;
+						$pic11->Top = $excel->Cells(59, 7)->Top ;
+						$pic11->Left = $excel->Cells(59, 7)->Left ;
 					}
 	
 					if(!empty($hrdheadname)) {
-						$Worksheet->Range("K35")->Value = $hrdheadname;
-						$Worksheet->Range("K58")->Value = $hrdheadname;
-						$Worksheet->Range("L35")->Value = $hrdheaddate;
-						$Worksheet->Range("L58")->Value = $hrdheaddate;
+						$Worksheet->Range("K36")->Value = $hrdheadname;
+						$Worksheet->Range("K59")->Value = $hrdheadname;
+						$Worksheet->Range("L36")->Value = $hrdheaddate;
+						$Worksheet->Range("L59")->Value = $hrdheaddate;
 						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 						$pic2->Height  = 20;
-						$pic2->Top = $excel->Cells(35, 12)->Top ;
-						$pic2->Left = $excel->Cells(35, 12)->Left +20 ;
+						$pic2->Top = $excel->Cells(36, 12)->Top ;
+						$pic2->Left = $excel->Cells(36, 12)->Left +20 ;
 						$pic22=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 						$pic22->Height  = 20;
-						$pic22->Top = $excel->Cells(58, 12)->Top ;
-						$pic22->Left = $excel->Cells(58, 12)->Left +20 ;
+						$pic22->Top = $excel->Cells(59, 12)->Top ;
+						$pic22->Left = $excel->Cells(59, 12)->Left +20 ;
 					}
 	
 				foreach ($Advexpensedetail as $data){
@@ -1881,16 +1881,16 @@ Class Advexpensemodule extends Application{
 					$totalbtro = $jml_breakfastro+$jml_lunchro+$jml_dinnerro+$jml_pocketro;
 				}
 
-				$Worksheet->Range("E21")->Value = $val_tamount+$totalbtro;
-				$Worksheet->Range("E23")->Value = $lessadvance;
-				$Worksheet->Range("E25")->Value = ($val_tamount+$totalbtro)-$lessadvance;
+				$Worksheet->Range("E22")->Value = $val_tamount+$totalbtro;
+				$Worksheet->Range("E24")->Value = $lessadvance;
+				$Worksheet->Range("E26")->Value = ($val_tamount+$totalbtro)-$lessadvance;
 				
 	
 				$xlShiftDown=-4121;
 				$no = 1;
 				$nos = 1;
 
-				for ($a=19;$a<19+count($Advexpensedetail);$a++){
+				for ($a=20;$a<20+count($Advexpensedetail);$a++){
 					$Worksheet->Rows($a+1)->Copy();
 					$Worksheet->Rows($a+1)->Insert($xlShiftDown);
 					// $Worksheet->Range("A".$a)->Value = $no++;
@@ -1912,15 +1912,15 @@ Class Advexpensemodule extends Application{
 			
 				$jmldetail = count($Advexpensedetail);
 
-				for ($b=51;$b<51+count($Advexpensedetailbt);$b++){
-					if($Advexpensedetailbt[$b-51]->ispapua == 0) {
+				for ($b=52;$b<52+count($Advexpensedetailbt);$b++){
+					if($Advexpensedetailbt[$b-52]->ispapua == 0) {
 						$sppd = Advexpsppd::find('first',
 							array(
 								'conditions'=>array("level=? and ispapua=0",$Employee->level_id)
 							)
 						);
 
-					} else if($Advexpensedetailbt[$b-51]->ispapua == 1) {
+					} else if($Advexpensedetailbt[$b-52]->ispapua == 1) {
 						$sppd = Advexpsppd::find('first',
 							array(
 								'conditions'=>array("level=? and ispapua=1",$Employee->level_id)
@@ -1930,10 +1930,10 @@ Class Advexpensemodule extends Application{
 						
 					}
 
-					$breakfast = ($Advexpensedetailbt[$b-51]->breakfast == 1) ? 0 : $sppd->breakfast;
-					$lunch = ($Advexpensedetailbt[$b-51]->lunch == 1) ? 0 : $sppd->lunch;
-					$dinner = ($Advexpensedetailbt[$b-51]->dinner == 1) ? 0 : $sppd->dinner;
-					$pocket = ($Advexpensedetailbt[$b-51]->pocket == 1) ? 0 : $sppd->pocket;
+					$breakfast = ($Advexpensedetailbt[$b-52]->breakfast == 1) ? 0 : $sppd->breakfast;
+					$lunch = ($Advexpensedetailbt[$b-52]->lunch == 1) ? 0 : $sppd->lunch;
+					$dinner = ($Advexpensedetailbt[$b-52]->dinner == 1) ? 0 : $sppd->dinner;
+					$pocket = ($Advexpensedetailbt[$b-52]->pocket == 1) ? 0 : $sppd->pocket;
 
 					$jml_breakfast += $breakfast;
 					$jml_lunch += $lunch;
@@ -1945,12 +1945,12 @@ Class Advexpensemodule extends Application{
 					$Worksheet->Rows($b+$jmldetail+1)->Copy();
 					$Worksheet->Rows($b+$jmldetail+1)->Insert($xlShiftDown);
 					$Worksheet->Range("B".($b+$jmldetail))->Value = $nos++;
-					$Worksheet->Range("C".($b+$jmldetail))->Value = $Advexpensedetailbt[$b-51]->departdate;
-					$Worksheet->Range("D".($b+$jmldetail))->Value = $Advexpensedetailbt[$b-51]->departtime;
-					$Worksheet->Range("E".($b+$jmldetail))->Value = $Advexpensedetailbt[$b-51]->returndate;
-					$Worksheet->Range("F".($b+$jmldetail))->Value = $Advexpensedetailbt[$b-51]->returntime;
+					$Worksheet->Range("C".($b+$jmldetail))->Value = $Advexpensedetailbt[$b-52]->departdate;
+					$Worksheet->Range("D".($b+$jmldetail))->Value = $Advexpensedetailbt[$b-52]->departtime;
+					$Worksheet->Range("E".($b+$jmldetail))->Value = $Advexpensedetailbt[$b-52]->returndate;
+					$Worksheet->Range("F".($b+$jmldetail))->Value = $Advexpensedetailbt[$b-52]->returntime;
 					$Worksheet->Range("G".($b+$jmldetail))->Value = $breakfast;
-					// $Worksheet->Range("G".($b+$jmldetail))->Value = $Advexpensedetailbt[$b-51]->breakfast;
+					// $Worksheet->Range("G".($b+$jmldetail))->Value = $Advexpensedetailbt[$b-52]->breakfast;
 					$Worksheet->Range("H".($b+$jmldetail))->Value = $lunch;
 					$Worksheet->Range("I".($b+$jmldetail))->Value = $dinner;
 					$Worksheet->Range("J".($b+$jmldetail))->Value = $pocket;
