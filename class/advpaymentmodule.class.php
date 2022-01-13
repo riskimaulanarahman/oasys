@@ -2151,7 +2151,11 @@ Class Advpaymentmodule extends Application{
 		$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Advpayment->employee->loginname)));
 		$email=$usr->email;
 		$fullname=$Advpayment->employee->fullname;
-		$department = $Advpayment->employee->department->departmentname;
+		if($Advpayment->companycode == $Advpayment->employee->companycode) {
+			$department = $Advpayment->employee->department->departmentname;
+		} else {
+			$department = '';
+		}
 
 		// $duedate = date("d/m/Y",strtotime($Advpayment->duedate));
 		$duedate = $Advpayment->duedate;
