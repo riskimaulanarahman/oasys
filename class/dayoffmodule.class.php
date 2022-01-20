@@ -815,7 +815,8 @@ Class DayoffModule extends Application{
 					case 'create':
 						try{
 							$data = $this->post['data'];
-							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+							$Dayoff = Dayoff::find($data['dayoff_id'], array('include' => array('employee'=>array('company','department','designation'))));
+							$Employee = Employee::find('first', array('conditions' => array("id=?",$Dayoff->employee_id)));
 							unset($data['__KEY__']);
 							if(!isset($data['dateworked'])){
 								echo json_encode(array("status"=>"error","message"=>"Date worked not selected, please select date first"));
