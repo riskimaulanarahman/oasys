@@ -157,7 +157,7 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 												$scope.formInstance.updateData('advanceno', response.advanceno);
 												$scope.grid2Component.refresh();
 											})
-											$scope.formInstance.updateData('advanceform', 0);
+											$scope.formInstance.updateData('advanceform', null);
 										}
 
 									}
