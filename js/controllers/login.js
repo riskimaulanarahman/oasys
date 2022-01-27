@@ -23,6 +23,7 @@
                         $scope.loading = false;
                         $rootScope.isAdmin= user.isadmin;
                         $rootScope.curUser = user;
+						// $('#sapid').text('1000');
 						CrudService.checkAccess('Company',$rootScope.curUser.username).then(function (access) {
 							$rootScope.viewCompany = access.allowview;
 						});

@@ -1015,7 +1015,8 @@ Class Advancemodule extends Application{
 								}
 
 								// $companyFC=(($data['companycode']=='BCL') || ($data['companycode']=='KPA'))?"KPSI":((($data['companycode']=='KPSI'))?"LDU":$Employee->companycode);
-								$ApproverBUFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='37' and CompanyList like '%".$Employee->companycode."%'")));
+								// $ApproverBUFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='37' and CompanyList like '%".$Employee->companycode."%'")));
+								$ApproverBUFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='37' and and FIND_IN_SET(?, CompanyList) > 0 ",$Employee->companycode)));
 								if(count($ApproverBUFC)>0){
 									$Advanceapproval = new Advanceapproval();
 									$Advanceapproval->advance_id = $Advance->id;
