@@ -1085,7 +1085,7 @@ Class RfcModule extends Application{
 										$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='11' and tbl_employee.companycode=? ",$id,$companyBU)));	
 									}
 									*/
-									$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='11' and tbl_approver.CompanyList like '%".$company."%' ",$id)));
+									$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='11' and FIND_IN_SET(?, tbl_approver.CompanyList) > 0 ",$id,$company)));
 									foreach ($Rfcapproval as &$result) {
 										$result		= $result->to_array();
 										$result['no']=1;
@@ -1105,7 +1105,7 @@ Class RfcModule extends Application{
 											$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='11' and tbl_employee.companycode=?",$companyBU)));
 										}
 										*/
-										$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='11' and CompanyList like '%".$company."%'")));
+										$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='11' and FIND_IN_SET(?, CompanyList) > 0 ",$company)));
 										if(count($ApproverBU)>0){
 											$Rfcapproval = new Rfcapproval();
 											$Rfcapproval->rfc_id = $id;
@@ -1116,7 +1116,7 @@ Class RfcModule extends Application{
 										}
 									}
 									$companyFC=(( ($company=='KPA') ) ?"LDU":$company);
-									$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='10' and tbl_approver.CompanyList like '%".$company."%' ",$id)));	
+									$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='10' and FIND_IN_SET(?, tbl_approver.CompanyList) > 0  ",$id,$company)));	
 									foreach ($Rfcapproval as &$result) {
 										$result		= $result->to_array();
 										$result['no']=1;
@@ -1129,7 +1129,7 @@ Class RfcModule extends Application{
 											$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete BU FC Approval because of change Company Code");
 											$logger->SaveData();
 										}
-										$ApproverBUFC = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='10' and CompanyList like '%".$company."%' ")));
+										$ApproverBUFC = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='10' and FIND_IN_SET(?, CompanyList) > 0",$company)));
 										if(count($ApproverBUFC)>0){
 											$Rfcapproval = new Rfcapproval();
 											$Rfcapproval->rfc_id = $id;
@@ -1146,7 +1146,7 @@ Class RfcModule extends Application{
 										$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='14' and not(tbl_employee.companycode='BCL') ",$id)));	
 									}
 									*/
-									$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='14' and tbl_approver.CompanyList like '%".$company."%' ",$id)));	
+									$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='14' and FIND_IN_SET(?, tbl_approver.CompanyList) > 0 ",$company,$id)));	
 									foreach ($Rfcapproval as &$result) {
 										$result		= $result->to_array();
 										$result['no']=1;
@@ -1166,7 +1166,7 @@ Class RfcModule extends Application{
 											$ApproverMD = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='14' and not(tbl_employee.companycode='BCL')")));
 										}
 										*/
-										$ApproverMD = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='14' and CompanyList like '%".$company."%'")));
+										$ApproverMD = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='14' and FIND_IN_SET(?, CompanyList) > 0",$company)));
 										if(count($ApproverMD)>0){
 											$Rfcapproval = new Rfcapproval();
 											$Rfcapproval->rfc_id = $id;
@@ -1202,7 +1202,7 @@ Class RfcModule extends Application{
 										}
 										if (($company=='IHM') || ($company=='AHL')  || ($company=='KPS')|| ($company=='KPA')) {
 											//$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='9' and tbl_employee.companycode=? ",$id,$company)));	
-											$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='9' and tbl_approver.CompanyList like '%".$company."%' ",$id)));	
+											$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='9' and FIND_IN_SET(?, tbl_approver.CompanyList) > 0  ",$id,$company)));	
 											foreach ($Rfcapproval as &$result) {
 												$result		= $result->to_array();
 												$result['no']=1;
@@ -1216,7 +1216,7 @@ Class RfcModule extends Application{
 													$logger->SaveData();
 												}
 												//$ApproverHRFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='9' and tbl_employee.companycode=?",$company)));
-												$ApproverHRFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='9' and CompanyList like '%".$company."%'")));
+												$ApproverHRFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='9' and FIND_IN_SET(?, tbl_approver.CompanyList) > 0 ",$company)));
 												if(count($ApproverHRFU)>0){
 													$Rfcapproval = new Rfcapproval();
 													$Rfcapproval->rfc_id = $id;
@@ -1279,7 +1279,7 @@ Class RfcModule extends Application{
 									}
 									
 									//$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='7' and tbl_employee.companycode=? ",$id,$company)));	
-									$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='7' and tbl_approver.CompanyList like '%".$company."%' ",$id)));	
+									$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='7'and FIND_IN_SET(?, tbl_approver.CompanyList) > 0  and tbl_approver.CompanyList like '%".$company."%' ",$id,$company)));	
 									foreach ($Rfcapproval as &$result) {
 										$result		= $result->to_array();
 										$result['no']=1;
@@ -1293,7 +1293,7 @@ Class RfcModule extends Application{
 											$logger->SaveData();
 										}
 										//$ApproverCADFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='7' and tbl_employee.companycode=?",$company)));
-										$ApproverCADFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='7' and CompanyList like '%".$company."%'")));
+										$ApproverCADFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='7' and FIND_IN_SET(?, CompanyList) > 0 ",$company)));
 										if(count($ApproverCADFU)>0){
 											$Rfcapproval = new Rfcapproval();
 											$Rfcapproval->rfc_id = $id;
@@ -1358,7 +1358,7 @@ Class RfcModule extends Application{
 											$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='14' and not(tbl_employee.companycode='BCL')",$id)));
 										}
 										*/
-										$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='14' and CompanyList like '%".$company."%'",$id)));	
+										$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='14' and FIND_IN_SET(?, CompanyList) > 0 and CompanyList like '%".$company."%'",$id,$company)));	
 										foreach ($Rfcapproval as &$result) {
 											$result		= $result->to_array();
 											$result['no']=1;
@@ -1373,7 +1373,7 @@ Class RfcModule extends Application{
 											}
 											*/
 											//$data= print_r($ApproverMD,true);
-											$ApproverMD = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='14' and tbl_approver.CompanyList like '%".$company."%'")));
+											$ApproverMD = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='14' and FIND_IN_SET(?, tbl_approver.CompanyList) > 0 ",$company)));
 											if(count($ApproverMD)>0){
 												$Rfcapproval = new Rfcapproval();
 												$Rfcapproval->rfc_id = $id;
@@ -1471,7 +1471,7 @@ Class RfcModule extends Application{
 										}
 										if (($Rfc->companycode=='IHM') || ($Rfc->companycode=='AHL')  || ($Rfc->companycode=='KPS') || ($Rfc->companycode=='KPA')) {
 											//$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='9' and tbl_employee.companycode=? ",$id,$Rfc->companycode)));
-											$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='9' and CompanyList like '%".$Rfc->companycode."%'",$id)));
+											$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='9' and FIND_IN_SET(?, CompanyList) > 0 and CompanyList like '%".$Rfc->companycode."%'",$id,$Rfc->companycode)));
 											foreach ($Rfcapproval as &$result) {
 												$result		= $result->to_array();
 												$result['no']=1;
@@ -1485,7 +1485,7 @@ Class RfcModule extends Application{
 													$logger->SaveData();
 												}
 												//$ApproverHRFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='9' and tbl_employee.companycode=?",$Rfc->companycode)));
-												$ApproverHRFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='9' and CompanyList like '%".$Rfc->companycode."%'")));
+												$ApproverHRFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='9' and FIND_IN_SET(?, CompanyList) > 0 ",$Rfc->companycode)));
 												if(count($ApproverHRFU)>0){
 													$Rfcapproval = new Rfcapproval();
 													$Rfcapproval->rfc_id = $id;
@@ -1587,7 +1587,7 @@ Class RfcModule extends Application{
 								}
 								$companyFC=(( ($data['companycode']=='KPA'))?"LDU":$Employee->companycode);
 								//$ApproverBUFC = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='10' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$companyFC,$Employee->id)));
-								$ApproverBUFC = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='10' and CompanyList like '%".$data['companycode']."%' and not(tbl_employee.id=?)",$Employee->id)));
+								$ApproverBUFC = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='10' and FIND_IN_SET(?, CompanyList) > 0  and not(tbl_employee.id=?)",$data['companycode'],$Employee->id)));
 								if(count($ApproverBUFC)>0){
 									$Rfcapproval = new Rfcapproval();
 									$Rfcapproval->rfc_id = $Rfc->id;
@@ -1598,7 +1598,7 @@ Class RfcModule extends Application{
 								}
 								if(($data['companycode']=="IHM") || ($data['companycode']=='AHL') || ($data['companycode']=='KPS')|| ($data['companycode']=='KPA')){
 									//$ApproverHRDFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='9' and tbl_employee.companycode=?  and not(tbl_employee.id=?)",$Employee->companycode,$Employee->id)));
-									$ApproverHRDFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='9' and CompanyList like '%".$data['companycode']."%'  and not(tbl_employee.id=?)",$Employee->id)));
+									$ApproverHRDFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='9' and FIND_IN_SET(?, CompanyList) > 0  and not(tbl_employee.id=?)",$data['companycode'],$Employee->id)));
 									if(count($ApproverHRDFU)>0){
 										$Rfcapproval = new Rfcapproval();
 										$Rfcapproval->rfc_id = $Rfc->id;
@@ -1628,7 +1628,7 @@ Class RfcModule extends Application{
 								}
 							// }
 								//$ApproverCADFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='7' and tbl_employee.companycode=?  and not(tbl_employee.id=?)",$Employee->companycode,$Employee->id)));
-								$ApproverCADFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='7' and CompanyList like '%".$data['companycode']."%'  and not(tbl_employee.id=?)",$Employee->id)));
+								$ApproverCADFU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='7' and FIND_IN_SET(?, CompanyList) > 0  and not(tbl_employee.id=?)",$data['companycode'],$Employee->id)));
 								if(count($ApproverCADFU)>0){
 									$Rfcapproval = new Rfcapproval();
 									$Rfcapproval->rfc_id = $Rfc->id;
