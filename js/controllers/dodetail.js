@@ -538,7 +538,37 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 	var myData3 = new DevExpress.data.DataSource({
 		store: myStore3
     });
+	var myStoreScheduler = new DevExpress.data.CustomStore({
+		load: function() {			
+            $scope.isLoaded =true;
+			// return CrudService.GetAll('dobalance');   
+			// $scope.isLoaded =true;
+            return CrudService.GetAll('dobalance').then(function (response) {
+				if(response.status=="error"){
+					DevExpress.ui.notify(response.message,"error");
+				}else{
+					return response;
+				}
+			});         		
+		},
+		// byKey: function(key) {
+            //
+		// },
+		insert: function(values) {
+			//
+		},
+		update: function(key, values) {
+			//
+		},
+		remove: function(key) {
+			//
+		}
+    });
+	var myDataScheduler = new DevExpress.data.DataSource({
+		store: myStoreScheduler
+    });
 	$scope.tabs = [
+		// { id:4, TabName : "Dayoff Schedule", title: 'Detail Dayoff Schedule', template: "tab4"   },
 		{ id:1, TabName : "Dayoff Detail", title: 'Detail Dayoff Request', template: "tab1"   },
 		{ id:2, TabName : "Approver List", title: 'Approver List', template: "tab2"   },
 		{ id:3, TabName : "History Tracking", title: 'History Tracking', template: "tab3"   },
@@ -546,6 +576,76 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 	$scope.showHistory = true;
 	$scope.appText = ["No","Yes"];
 	$scope.loadPanelVisible = false;
+
+	// const url = 'https://js.devexpress.com/Demos/Mvc/api/SchedulerData';
+
+	$scope.schedulerOptions = {
+		// timeZone: 'America/Los_Angeles',
+		timeZone: 'Asia/Singapore',
+		dataSources: myDataScheduler,
+		// views: [
+		// 	{
+		// 		name: '3 Months', type: 'month', intervalCount: 3
+		// 	}
+		// ],
+		views: ['month'],
+		currentView: 'month',
+		currentDate: new Date(),
+		// currentDate: new Date(2021, 2, 28),
+		// startDayHour: 9,
+		height: 600,
+		onInitialized:function (e){
+			$scope.scheduleComponent = e.component;
+		},
+		onEditorPreparing: function (e) {  
+			$scope.scheduleComponent = e.component;
+		},
+		onEditorPreparing: function (e) {  
+			$scope.scheduleComponent = e.component;
+		},
+		onToolbarPreparing: function(e) {   
+            e.toolbarOptions.items.unshift({						
+                location: "after",
+                widget: "dxButton",
+                options: {
+                    hint: "Refresh Data",
+                    icon: "refresh",
+                    onClick: function() {
+                        $scope.scheduleComponent.refresh();
+                    }
+                }
+            });
+        },
+	}
+
+	// $scope.schedulerOptions = {
+	// 	timeZone: 'America/Los_Angeles',
+	// 	dataSource: DevExpress.data.AspNet.createStore({
+	// 	key: 'AppointmentId',
+	// 	loadUrl: `${url}/Get`,
+	// 	insertUrl: `${url}/Post`,
+	// 	updateUrl: `${url}/Put`,
+	// 	deleteUrl: `${url}/Delete`,
+	// 	onBeforeSend(method, ajaxOptions) {
+	// 		ajaxOptions.xhrFields = { withCredentials: true };
+	// 	},
+	// 	}),
+	// 	remoteFiltering: true,
+	// 	dateSerializationFormat: 'yyyy-MM-ddTHH:mm:ssZ',
+	// 	views: ['day', 'workWeek', 'month'],
+	// 	currentView: 'day',
+	// 	currentDate: new Date(2021, 3, 27),
+	// 	startDayHour: 9,
+	// 	endDayHour: 19,
+	// 	height: 600,
+	// 	textExpr: 'Text',
+	// 	startDateExpr: 'StartDate',
+	// 	endDateExpr: 'EndDate',
+	// 	allDayExpr: 'AllDay',
+	// 	recurrenceRuleExpr: 'RecurrenceRule',
+	// 	recurrenceExceptionExpr: 'RecurrenceException',
+	// }
+
 	$scope.grid1Options = {
 		dataSource: myData,
 		allowColumnResizing: true,

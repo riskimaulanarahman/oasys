@@ -36,7 +36,9 @@ Class Login extends Application{
 		$ldap->server = LDAP_SERVER;
 		$ldap->domain = DOMAIN;
 		$ldap2=new LDAP();
-		$ldap2->server = 'ns.lcl';
+		// $ldap2->server = 'ns.lcl';
+		// $ldap2->server = 'ldap://172.18.209.1';
+		$ldap2->server = 'ldap://172.24.8.2';
 		$ldap2->domain = 'NS' ;
 		$data = json_decode(file_get_contents("php://input"));
 		$username = isset($this->post['username'])?$this->post['username']:"";
