@@ -764,9 +764,6 @@ Class DayoffModule extends Application{
 								$result		= $result->to_array();
 								$result['isapproved'] = $appText;
 								$result['isused'] = $usedText;
-								$result['startDate'] = $result['startdate'];
-								$result['endDate'] = $result['enddate'];
-								// print_r($result['endDate']);
 							}
 							echo json_encode($Dayoffdetail, JSON_NUMERIC_CHECK);
 						}else{
@@ -821,8 +818,8 @@ Class DayoffModule extends Application{
 							$Dayoff = Dayoff::find($data['dayoff_id'], array('include' => array('employee'=>array('company','department','designation'))));
 							$Employee = Employee::find('first', array('conditions' => array("id=?",$Dayoff->employee_id)));
 							unset($data['__KEY__']);
-							if(!isset($data['startDate'])){
-								echo json_encode(array("status"=>"error","message"=>"Date worked not selected, please select startdate first"));
+							if(!isset($data['dateworked'])){
+								echo json_encode(array("status"=>"error","message"=>"Date worked not selected, please select date first"));
 							}else{
 								$joinx   = "LEFT JOIN tbl_dayoffreq as r ON (dayoff_id = r.id) ";	
 								$dd = Dayoffdetail::find('all', array('joins'=>$joinx,'conditions' => array("dateworked=? and r.employee_id=? and (isapproved='1' or isapproved is null) ",$data['dateworked'],$Employee->id),'include'=>array("dayoff")));
@@ -888,55 +885,42 @@ Class DayoffModule extends Application{
 						try {
 							$id = $this->post['id'];
 							$data = $this->post['data'];
-							unset($data['startdate']);
-							unset($data['enddate']);
-							print_r($data);
-
-							// $data['startdate'] = $data['startDate'];
-							// $data['enddate'] = $data['endDate'];
-							// $data['startDate'] = $data['startdate'];
-							// $data['endDate'] = $data['enddate'];
 							$Dayoffdetail = Dayoffdetail::find($id);
-							// $Dayoff = Dayoff::find($Dayoffdetail->dayoff_id);
-							// $Employee = Employee::find('first', array('conditions' => array("id=?",$Dayoff->employee_id)));
-							// $joinx   = "LEFT JOIN tbl_dayoffreq as r ON (dayoff_id = r.id) ";	
-							// $dd = Dayoffdetail::find('all', array('joins'=>$joinx,'conditions' => array("startdate=? and r.employee_id=?  and (isapproved='1' or isapproved is null) ",$data['startdate'],$Employee->id),'include'=>array("dayoff")));
-							// if (count($dd)>0){
-							// 	echo json_encode(array("status"=>"error","message"=>"You have another Dayoff Request for selected date"));
-							// }else{
-								// $joins   = "LEFT JOIN tbl_dayoffreq as r ON (dayoff_id = r.id) ";	
-								// $do = Dayoffdetail::find('all', array('joins'=>$joins,'conditions' => array("weekday(startdate)='6' and abs(datediff(startdate,?))=7 and r.employee_id=? and not(tbl_dayoffdetail.id=?) and (isapproved='1' or isapproved is null)",$data['startdate'],$Employee->id,$id),'include'=>array("dayoff")));
+							$Dayoff = Dayoff::find($Dayoffdetail->dayoff_id);
+							$Employee = Employee::find('first', array('conditions' => array("id=?",$Dayoff->employee_id)));
+							$joinx   = "LEFT JOIN tbl_dayoffreq as r ON (dayoff_id = r.id) ";	
+							$dd = Dayoffdetail::find('all', array('joins'=>$joinx,'conditions' => array("dateworked=? and r.employee_id=?  and (isapproved='1' or isapproved is null) ",$data['dateworked'],$Employee->id),'include'=>array("dayoff")));
+							if (count($dd)>0){
+								echo json_encode(array("status"=>"error","message"=>"You have another Dayoff Request for selected date"));
+							}else{
+								$joins   = "LEFT JOIN tbl_dayoffreq as r ON (dayoff_id = r.id) ";	
+								$do = Dayoffdetail::find('all', array('joins'=>$joins,'conditions' => array("weekday(dateworked)='6' and abs(datediff(dateworked,?))=7 and r.employee_id=? and not(tbl_dayoffdetail.id=?) and (isapproved='1' or isapproved is null)",$data['dateworked'],$Employee->id,$id),'include'=>array("dayoff")));
 									
-								// if((date('N',strtotime($data['startdate']))==7) && (count($do)>0)){
-								// 	echo json_encode(array("status"=>"error","message"=>"Based on SOP employee cannot work more than 14 days"));
-								// }else{
-								// 	$Holiday = Holiday::find('all',array('conditions' => array("month(HolidayDate)=? and not(weekday(HolidayDate)='6')",date("m", strtotime($data['startdate'])))));
-								// 	$sun= total_sun(date("m", strtotime($data['startdate'])),date("Y", strtotime($data['startdate'])));
-								// 	$hol= count($Holiday)>2?2:count($Holiday);
-								// 	$max = ($sun+$hol)-2;
-								// 	$joins   = "LEFT JOIN tbl_dayoffreq as r ON (dayoff_id = r.id) ";	
-								// 	$do = Dayoffdetail::find('all', array('joins'=>$joins,'conditions' => array("month(startdate)=? and year(startdate)=? and r.employee_id=? and not(tbl_dayoffdetail.id=?)",date("m", strtotime($data['startdate'])),date("Y", strtotime($data['startdate'])),$Employee->id,$id),'include'=>array("dayoff")));
-								// 	if (count($do)>=$max){
-								// 		echo json_encode(array("status"=>"error","message"=>"You have reached maximum number of Dayoff Request ( ".$max." days) for the month ".date("F", strtotime($data['startdate']))));
-								// 	}else{
-										// $Dayoffdetail = Dayoffdetail::find($id);
+								if((date('N',strtotime($data['dateworked']))==7) && (count($do)>0)){
+									echo json_encode(array("status"=>"error","message"=>"Based on SOP employee cannot work more than 14 days"));
+								}else{
+									$Holiday = Holiday::find('all',array('conditions' => array("month(HolidayDate)=? and not(weekday(HolidayDate)='6')",date("m", strtotime($data['dateworked'])))));
+									$sun= total_sun(date("m", strtotime($data['dateworked'])),date("Y", strtotime($data['dateworked'])));
+									$hol= count($Holiday)>2?2:count($Holiday);
+									$max = ($sun+$hol)-2;
+									$joins   = "LEFT JOIN tbl_dayoffreq as r ON (dayoff_id = r.id) ";	
+									$do = Dayoffdetail::find('all', array('joins'=>$joins,'conditions' => array("month(dateworked)=? and year(dateworked)=? and r.employee_id=? and not(tbl_dayoffdetail.id=?)",date("m", strtotime($data['dateworked'])),date("Y", strtotime($data['dateworked'])),$Employee->id,$id),'include'=>array("dayoff")));
+									if (count($do)>=$max){
+										echo json_encode(array("status"=>"error","message"=>"You have reached maximum number of Dayoff Request ( ".$max." days) for the month ".date("F", strtotime($data['dateworked']))));
+									}else{
+										//$Dayoffdetail = Dayoffdetail::find($id);
 										$olddata = $Dayoffdetail->to_array();
-										
-										// foreach($data as $key=>$val){					
-										// foreach($data as $datas){					
-											// $val=($val=='No')?false:(($val=='Yes')?true:$val);
-											// $Dayoffdetail->$key=$val;
-											// print_r($val);
-
-											// $Dayoffdetail->save();
-										// }
-										$Dayoffdetail->update_attributes($data);
+										foreach($data as $key=>$val){					
+											$val=($val=='No')?false:(($val=='Yes')?true:$val);
+											$Dayoffdetail->$key=$val;
+										}
+										$Dayoffdetail->save();
 										$logger = new Datalogger("Dayoffdetail","update",json_encode($olddata),json_encode($data));
 										$logger->SaveData();
 										echo json_encode($Dayoffdetail);
-								// 	}
-								// }
-							// }
+									}
+								}
+							}
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "UpdateDayoffDetail";
