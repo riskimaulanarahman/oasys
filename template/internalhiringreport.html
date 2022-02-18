@@ -1,13 +1,22 @@
-<div  ng-controller="internalhiringreportCtrl as internalhiringreport">
+<!-- <div  ng-controller="internalhiringreportCtrl as internalhiringreport">
 	<div class="mb3 card">
 		<div class="card-header-tab card-header">
 			<div class="card-header-title font-size-lg text-capitalize font-weight-normal">
 				<i class="header-icon fa fa-file-signature "></i>
-				Internal Hiring Data
+				Internal Hiring Applyment
 			</div>
 		</div>
 		<div  style="width:100%" class="row widget-chart widget-chart2 border-primary" >	
-			<div style="width:100%" ng-include src="'template/panel.html'"></div>
+			<div style="width:100%" ng-include src="'template/panel2.html'"></div>
 		</div>
 	</div>
-</div>
+</div> -->
+
+<div  ng-controller="internalhiringreportCtrl as internalhiringreport">
+	<div class='panel panel-default'>
+	  <div class='panel-heading'> <i class="fas fa-file-signature"></i> Internal Hiring Applyment </div>
+	  <div class='panel-body' id="maincontainer">
+		<div ng-include src="'template/panel.html'"></div>
+	  </div>
+	</div>
+  </div>

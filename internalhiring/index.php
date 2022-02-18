@@ -108,8 +108,8 @@
 					<div class="col-md-12 col-sm-6">
                         <div class="box wow fadeInUp" data-wow-duration=".5s">
                             <div style="text-align: right;">
-                                <a href="../internalhiring/internalhiring.pdf" target="_blank" class="btn btn-warning" style="margin-bottom:5px;"><i class="fa fa-download"></i> Internal Hiring PDF</a><br>
-                                <a href="#" target="_blank" class="btn btn-info"><i class="fa fa-download"></i> Letter Approval Template</a><br>
+                                <!-- <a href="../internalhiring1/internalhiring.pdf" target="_blank" class="btn btn-warning" style="margin-bottom:5px;"><i class="fa fa-download"></i> Internal Hiring PDF</a><br> -->
+                                <a href="../internalhiring/surat_persetujuan_internalhiring.docx" target="_blank" class="btn btn-info"><i class="fa fa-download"></i> Letter Approval Template</a><br>
                             </div>
                             <div style="text-align: left;">
                                 <b>Kalimantan Fiber</b>
@@ -257,6 +257,7 @@ function internalhiring() {
                                 formInstance = e.component;
                                 vacantid = id;
                                 vacantlevel = level;
+                                vacantpostno = postno;
                             },
                             colCount: 2,
                             items: [
@@ -536,7 +537,7 @@ function internalhiring() {
                                                     }
                                                     });
                                                     var data = formInstance.option("formData");	
-                                                    submitform(vacantid,vacantlevel,data);
+                                                    submitform(vacantid,vacantlevel,vacantpostno,data);
                                                 } else {
                                                     DevExpress.ui.notify({
                                                         message: "Your form is not complete or has invalid value, please recheck before submit",
@@ -573,10 +574,11 @@ function internalhiring() {
             closeOnOutsideClick: false
     };
 
-    var showForm = function(vid,vlevel) {
+    var showForm = function(vid,vlevel,vpostno) {
         id = vid;
         level = vlevel;
-        console.log('id : '+id+' & level :'+level);
+        postno = vpostno;
+        console.log('id : '+id+' & level :'+level+' & postno :'+postno);
 
         if(popup) {
             popup.option("contentTemplate", popupOptions.contentTemplate.bind(this));
@@ -632,10 +634,14 @@ function internalhiring() {
                             // DevExpress.ui.notify("Loading detail data for "+options.data.requestdate,"info",600);
                             // $scope.loadMMF(options.data,"report",true);
                             // alert(options.data.id +'&'+options.data.level);
-                            showForm(options.data.id,options.data.level);
+                            showForm(options.data.id,options.data.level,options.data.postno);
                         })
                         .appendTo(container);
                 }
+            },
+            { 
+                dataField: "postno",
+                width: 180
             },
             { 
                 dataField: "bu",
@@ -700,12 +706,12 @@ function internalhiring() {
 //load
 internalhiring();
 
-function submitform(id,level,data) {
+function submitform(id,level,postno,data) {
 
     data.joindate = new Date(data.joindate).toLocaleDateString('fr-CA');
     data.dob = new Date(data.dob).toLocaleDateString('fr-CA');
 
-    var criteria = {criteria : 'create',ih_id : id,ih_level : level,data:data};
+    var criteria = {criteria : 'create',ih_id : id,ih_level : level,ih_postno : postno,data:data};
     
     console.log(criteria)
     $.post('/oasys/api/apiinternalhiringdetail', criteria ,function(response){
@@ -825,7 +831,8 @@ $('#btn-search').click(function(){
                 '<td>'+detail.expireddate+'</td>'+
                 '<td>'+arraystatus[data.status]+'</td>'
             );
-            if(data.status > 0 && data.status < 5) {
+            // if(data.status > 0 && data.status < 5) {
+            if(data.status <= 1) {
                 $('#td-status').append(
                     '<td><button class="btn btn-danger" onclick="cancelposition('+data.id+')">Cancel</button></td>'
                 );

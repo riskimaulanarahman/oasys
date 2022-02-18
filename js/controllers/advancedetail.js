@@ -740,10 +740,10 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 				{dataField:'amount',caption: "Amount",width:150,dataType: "number" ,format: "fixedPoint",validationRules: [{ type: "required" }],
                 editorOptions: {
 					format: "fixedPoint",
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || (($scope.data.apprstatuscode==2 && $scope.mode=='approve'))?false:true):false
                 }},
 				{dataField:'remarks',width:150,dataType: "string" , editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || (($scope.data.apprstatuscode==2 && $scope.mode=='approve'))?false:true):false
                 }},	
 			],
 			summary: {

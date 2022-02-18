@@ -9,7 +9,7 @@
     var myStore = new DevExpress.data.CustomStore({
       load: function () {
         $scope.isLoaded = true;
-        return CrudService.GetAll('internalhiring').then(function (response) {
+        return CrudService.GetAll('internalhiringmaster').then(function (response) {
           if (response.status == "error") {
             DevExpress.ui.notify(response.message, "error");
           } else {
@@ -25,7 +25,7 @@
       },
 
       insert: function (values) {
-        CrudService.Create('emp', values).then(function (response) {
+        CrudService.Create('internalhiringmaster', values).then(function (response) {
           if (response.status == "error") {
             DevExpress.ui.notify(response.message, "error");
           }
@@ -34,7 +34,7 @@
       },
 
       update: function (key, values) {
-        CrudService.Update('emp', key.id, values).then(function (response) {
+        CrudService.Update('internalhiringmaster', key.id, values).then(function (response) {
           if (response.status == "error") {
             DevExpress.ui.notify(response.message, "error");
           }
@@ -43,7 +43,7 @@
 
       },
       remove: function (key) {
-        CrudService.Delete('emp', key.id).then(function (response) {
+        CrudService.Delete('internalhiringmaster', key.id).then(function (response) {
           if (response.status == "error") {
             DevExpress.ui.notify(response.message, "error");
           }
@@ -130,6 +130,12 @@
           }
         },
         {
+          dataField: "postno",
+          editorOptions: {
+            disabled: true,
+          }
+        },
+        {
           dataField: "bu",
           caption: "BU",
           sortOrder: "asc",
@@ -161,11 +167,11 @@
           dataField: "position",
           caption: "Position",
           sortOrder: "asc",
-          // lookup: {
-          //   dataSource: $scope.compDatasource,
-          //   valueExpr: "id",
-          //   displayExpr: "companyname" 
-          // }		
+        },
+        {
+          dataField: "positioncode",
+          caption: "Position Code",
+          // dataType: 'string'
         },
         {
           dataField: 'level',
@@ -179,7 +185,7 @@
           dataField: 'expireddate',
           caption: "Expired Date",
           dataType: "date",
-          format: "dd/MM/yyyy"
+          format: "dd/MM/yyyy",
         },
         // {
         //   dataField: "department_id",
@@ -362,9 +368,9 @@
             },
             icon: "trash",
             onClick: function () {
-              if (!$scope.allowDel) {
-                DevExpress.ui.notify("You don't have authority to delete data", "error");
-              } else {
+              // if (!$scope.allowDel) {
+              //   DevExpress.ui.notify("You don't have authority to delete data", "error");
+              // } else {
                 var result = DevExpress.ui.dialog.confirm("Are you sure you want to delete selected?", "Delete row");
                 result.done(function (dialogResult) {
                   if (dialogResult) {
@@ -374,7 +380,7 @@
                     $scope.dataGrid.refresh();
                   }
                 });
-              }
+              // }
             }
           }
         }, 

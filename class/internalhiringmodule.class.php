@@ -47,6 +47,9 @@ Class Internalhiringmodule extends Application{
 				case 'apiinternalhiringdetail':
 					$this->internalhiringDetail();
 					break;
+				case 'apiinternalhiringmaster':
+					$this->internalhiringMaster();
+					break;
 				case 'uploadlampiran':
 					$this->uploadLampiran();
 					break;
@@ -328,33 +331,17 @@ Class Internalhiringmodule extends Application{
 					break;
 				case 'delete':				
 					$id = $this->post['id'];
-					$Advance = Advance::find($id);
-					if ($Advance->requeststatus==0){
+					$Internalhiringdetail = Internalhiringdetail::find($id);
+					if ($Internalhiringdetail->status==0 || $Internalhiringdetail->status==6){
 						try {
-							$approval = Advanceapproval::find("all",array('conditions' => array("advance_id=?",$id)));
-							foreach ($approval as $delr){
-								$delr->delete();
-							}
-							$approval = Advanceattachment::find("all",array('conditions' => array("advance_id=?",$id)));
-							foreach ($approval as $delr){
-								$delr->delete();
-							}
-							$detail = Advancedetail::find("all",array('conditions' => array("advance_id=?",$id)));
-							foreach ($detail as $delr){
-								$delr->delete();
-							}
-							$hist = Advancehistory::find("all",array('conditions' => array("advance_id=?",$id)));
-							foreach ($hist as $delr){
-								$delr->delete();
-							}
-							$data = $Advance->to_array();
-							$Advance->delete();
-							$logger = new Datalogger("Advance","delete",json_encode($data),null);
+							$data = $Internalhiringdetail->to_array();
+							$Internalhiringdetail->delete();
+							$logger = new Datalogger("Internalhiringdetail","delete",json_encode($data),null);
 							$logger->SaveData();
 							$data = array("status"=>"success","message"=>"Data has been deleted");
 						}catch (Exception $e){
 							$err = new Errorlog();
-							$err->errortype = "DeleteAdvance";
+							$err->errortype = "DeleteInternalhiringdetail";
 							$err->errordate = date("Y-m-d h:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
@@ -373,196 +360,26 @@ Class Internalhiringmodule extends Application{
 				case 'update':
 					$id = $this->post['id'];
 					$data = $this->post['data'];
-					$Advance = Advance::find($id,array('include'=>array('employee'=>array('company','department','designation','grade'))));
-					$olddata = $Advance->to_array();
-					$depthead = $data['depthead'];
-					unset($data['approvalstatus']);
-					unset($data['fullname']);
-					unset($data['department']);
-					unset($data['apprstatuscode']);
-					//unset($data['employee']);
-					$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+					$Internalhiring = Internalhiringdetail::find($id);
+					$olddata = $Internalhiring->to_array();
 
-					foreach($data as $key=>$val){
-						$Advance->$key=$val;
-					}
-					$Advance->save();
-					
-					if (isset($data['depthead'])){
-						$joins   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";					
-						$dx = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=35 and not(tbl_approver.employee_id=?)",$id,$depthead)));	
-						foreach ($dx as $result) {
-							//delete same type approver
-							$result->delete();
-							$logger = new Datalogger("Advanceapproval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
-						}				
-						$Advanceapproval = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.employee_id=?",$id,$depthead)));	
-						foreach ($Advanceapproval as &$result) {
-							$result		= $result->to_array();
-							$result['no']=1;
-						}			
-						if(count($Advanceapproval)==0){ 
-							$Approver = Approver::find('first',array('conditions'=>array("module='Advance' and employee_id=? and approvaltype_id=35",$depthead)));
-							if(count($Approver)>0){
-								$Advanceapproval = new Advanceapproval();
-								$Advanceapproval->advance_id = $Advance->id;
-								$Advanceapproval->approver_id = $Approver->id;
-								$Advanceapproval->save();
-							}else{
-								$approver = new Approver();
-								$approver->module = "Advance";
-								$approver->employee_id=$depthead;
-								$approver->sequence=0;
-								$approver->approvaltype_id = 35;
-								$approver->isfinal = false;
-								$approver->save();
-								$Advanceapproval = new Advanceapproval();
-								$Advanceapproval->advance_id = $Advance->id;
-								$Advanceapproval->approver_id = $approver->id;
-								$Advanceapproval->save();
-							}
-						}
-					}
-					if($data['requeststatus']==1){
-						$Advanceapproval = Advanceapproval::find('all', array('conditions' => array("advance_id=?",$id)));					
-						foreach($Advanceapproval as $data){
-							$data->approvalstatus=0;
-							$data->save();
-						}
-						$joinx   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";					
-						$Advanceapproval = Advanceapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and advance_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
-						$username = $Advanceapproval->approver->employee->loginname;
-						$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
-						$email = $adb->email;
-						$title = 'Advance';
-						// $Advancedetail=Advancedetail::find('all',array('conditions'=>array("advance_id=?",$id),'include'=>array('advance','employee'=>array('company','department','designation','grade'))));
-						$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$adb->fullname.',</span></p>
-									<p class=MsoNormal><span style="color:#1F497D">new '.$title.' Request is awaiting for your approval:</span></p>
-									<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
-									<table border=1 cellspacing=0 cellpadding=3 width=683>
-									<tr><td><p class=MsoNormal>Created By</p></td><td>:</td><td><p class=MsoNormal><b>'.$Advance->employee->fullname.'</b></p></td></tr>
-									<tr><td><p class=MsoNormal>SAP ID</p></td><td>:</td><td><p class=MsoNormal><b>'.$Advance->employee->sapid.'</b></p></td></tr>
-									<tr><td><p class=MsoNormal>Position</p></td><td>:</td><td><p class=MsoNormal><b>'.$Advance->employee->designation->designationname.'</b></p></td></tr>
-									<tr><td><p class=MsoNormal>Business Group / Business Unit</p></td><td>:</td><td><p class=MsoNormal><b>'.$Advance->employee->company->companyname.'</b></p></td></tr>
-									<tr><td><p class=MsoNormal>Location</p></td><td>:</td><td><p class=MsoNormal><b>'.$Advance->employee->location->location.'</b></p></td></tr>
-									<tr><td><p class=MsoNormal>Email</p></td><td>:</td><td><p class=MsoNormal><b>'.$email.'</b></p></td></tr>
-									</table>
-									<br>
+					// $codenew = Internalhiring::find('first',array('select' => "CONCAT('IH/','".$Internalhiring->bu."/','".$data['positioncode']."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(postno,-4,4)) is null then 1 else max(substring(postno,-4,4))+1 end,4,'0')) as postno","conditions"=>array("substring(postno,9,".strlen($Internalhiring->bu).")=? and substring(postno,".(strlen($Internalhiring->bu)+10).",4)=YEAR(CURDATE())",$Internalhiring->bu)));
+					// $codenew = Internalhiring::find('first',array('select' => "CONCAT('IH/','".$Internalhiring->bu."/','".$data['positioncode']."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0')) as postno"));
 
-									';
-						if($Advance->advanceform == 1) {
-							$form = "HR Related";
-						} else if($Advance->advanceform == 2){
-							$form = "Ops Related";
-						}
-						$Advancedetail = Advancedetail::find('all',array('conditions'=>array("advance_id=?",$id),'include'=>array('advance'=>array('employee'=>array('company','department','designation','grade','location')))));	
+					// echo $codenew->postno;
 
-						$this->mailbody .='
-							<table border=1 cellspacing=0 cellpadding=3 width=683>
-							<tr>
-								<th><p class=MsoNormal>Advance Form</p></th>
-								<th><p class=MsoNormal>Beneficiary</p></th>
-								<th><p class=MsoNormal>Account Name</p></th>
-								<th><p class=MsoNormal>Bank</p></th>
-								<th><p class=MsoNormal>Account Number</p></th>
-								<th><p class=MsoNormal>Due Date</p></th>
-								<th><p class=MsoNormal>Expected Date</p></th>
-								<th><p class=MsoNormal>Remarks</p></th>
-							</tr>
-							<tr style="height:22.5pt">
-								<td><p class=MsoNormal> '.$form.'</p></td>
-								<td><p class=MsoNormal> '.$Advance->beneficiary.'</p></td>
-								<td><p class=MsoNormal> '.$Advance->accountname.'</p></td>
-								<td><p class=MsoNormal> '.$Advance->bank.'</p></td>
-								<td><p class=MsoNormal> '.$Advance->accountnumber.'</p></td>
-								<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Advance->duedate)).'</p></td>
-								<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Advance->expecteddate)).'</p></td>
-								<td><p class=MsoNormal> '.$Advance->remarks.'</p></td>
-							</tr>
-							</table>
-							<table border=1 cellspacing=0 cellpadding=3 width=683>
-									<tr><th><p class=MsoNormal>No</p></th>
-										<th><p class=MsoNormal>Description</p></th>
-										<th><p class=MsoNormal>Account Code</p></th>
-										<th><p class=MsoNormal>Amount</p></th>
-									</tr>
-						';
-						$no=1;
-						foreach ($Advancedetail as $data){
-							$val_tamount += $data->amount;
-							$this->mailbody .='<tr style="height:22.5pt">
-										<td><p class=MsoNormal> '.$no.'</p></td>
-										<td><p class=MsoNormal> '.$data->description.'</p></td>
-										<td><p class=MsoNormal> '.$data->accountcode.'</p></td>
-										<td><p class=MsoNormal> '.number_format($data->amount).'</p></td>
-							</tr>';
-							$no++;
-						}
-						$this->mailbody .='</table>
-						<p><b><span>Total Amount : '.number_format($val_tamount).'</span></b></p><br>
-						<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.83.18/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.83.18/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
-						$this->mail->addAddress($adb->email, $adb->fullname);
-						$this->mail->Subject = "Online Approval System -> Advance";
-						$this->mail->msgHTML($this->mailbody);
-						if (!$this->mail->send()) {
-							$err = new Errorlog();
-							$err->errortype = "Advance Mail";
-							$err->errordate = date("Y-m-d h:i:s");
-							$err->errormessage = $this->mail->ErrorInfo;
-							$err->user = $this->currentUser->username;
-							$err->ip = $this->ip;
-							$err->save();
-							echo "Mailer Error: " . $this->mail->ErrorInfo;
-						} else {
-							echo "Message sent!";
-						}
-
-						// if($Advance->advanceform == 2) {
-
-						// 	$dx = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=36",$id)));	
-						// 	foreach ($dx as $result) {
-						// 		$result->delete();
-						// 		$logger = new Datalogger("Advanceapproval","delete",json_encode($result->to_array()),"delete Approval Advance");
-						// 		$logger->SaveData();
-						// 	}
-
-						// 	if($val_tamount >= 5000000) {
-
-						// 		$ApproverProc = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='42' and tbl_employee.location_id='8'")));
-						// 		if(count($ApproverProc)>0){
-						// 			$Advanceapproval = new Advanceapproval();
-						// 			$Advanceapproval->advance_id =$Advance->id;
-						// 			$Advanceapproval->approver_id = $ApproverProc->id;
-						// 			$Advanceapproval->save();
-						// 			$logger = new Datalogger("Advanceapproval","add","Add initial Proc Approval",json_encode($Advanceapproval->to_array()));
-						// 			$logger->SaveData();
-						// 		}
-								
-						// 	}
-
-
-							
-						// }
-
-						$Advancehistory = new Advancehistory();
-						$Advancehistory->date = date("Y-m-d h:i:s");
-						$Advancehistory->fullname = $Employee->fullname;
-						$Advancehistory->advance_id = $id;
-						$Advancehistory->approvaltype = "Originator";
-						$Advancehistory->actiontype = 2;
-						$Advancehistory->save();
-					}else{
-						$Advancehistory = new Advancehistory();
-						$Advancehistory->date = date("Y-m-d h:i:s");
-						$Advancehistory->fullname = $Employee->fullname;
-						$Advancehistory->advance_id = $id;
-						$Advancehistory->approvaltype = "Originator";
-						$Advancehistory->actiontype = 1;
-						$Advancehistory->save();
-					}
-					$logger = new Datalogger("Advance","update",json_encode($olddata),json_encode($data));
+					// foreach($data as $key=>$val){
+					// 	$Internalhiring->$key=$val;
+						
+					// }
+					// if($data['positioncode']) {
+					// 	$Internalhiring->postno = $codenew->postno;
+					// }
+					$Internalhiring->save();
+					$Internalhiring->update_attributes($data);
+					$logger = new Datalogger("Internalhiringreport","update",json_encode($olddata),json_encode($data));
 					$logger->SaveData();
-					//echo json_encode($Advance);
+					echo json_encode($Internalhiring);
 					
 					break;
 				default:
@@ -609,6 +426,7 @@ Class Internalhiringmodule extends Application{
 				case 'create':	
 					$ihid	= $this->post['ih_id'];
 					$level	= $this->post['ih_level'];
+					$postno	= $this->post['ih_postno'];
 					$data = $this->post['data'];
 					// unset($data['__KEY__']);
 					$data['ih_id'] = $ihid;
@@ -617,6 +435,8 @@ Class Internalhiringmodule extends Application{
 					} else {
 						$data['isdeclaration'] = 0;
 					}
+					$Internalhiring = Internalhiring::find($ihid);
+
 					$join = "LEFT JOIN tbl_empjoindate ON tbl_employee.SAPID = tbl_empjoindate.SAPID";
 					$select = "tbl_employee.*,tbl_empjoindate.joindate as sapidjd";
 					$Employee = Employee::find('first', array('joins'=>$join,'select'=>$select,'conditions' => array("tbl_employee.SAPID=?",$data['sapid'])));
@@ -630,16 +450,18 @@ Class Internalhiringmodule extends Application{
 						$data['joindate'] = $Employee->sapidjd;
 						$data['status'] = 1;
 
+						$codenew = Internalhiringdetail::find('first',array('select' => "CONCAT('IH/','".$Internalhiring->bu."/','".$Internalhiring->positioncode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(postno,-4,4)) is null then 1 else max(substring(postno,-4,4))+1 end,4,'0')) as postno","conditions"=>array("substring(postno,1,".strlen($Internalhiring->postno).")=? ",$Internalhiring->postno)));
+						// $codenew = Internalhiringdetail::find('first',array('select' => "CONCAT('IH/','".$Internalhiring->bu."/','".$Internalhiring->positioncode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(postno,-4,4)) is null then 1 else max(substring(postno,-4,4))+1 end,4,'0')) as postno","conditions"=>array("substring(postno,4,".strlen($Internalhiring->bu).")=? and substring(postno,".(strlen($Internalhiring->bu)+1).",8)=YEAR(CURDATE())",$Internalhiring->bu)));
+
+
 						//get age from date or birthdate
+						$data['postno'] = $codenew->postno;
+
 						
 						
 						$findih = Internalhiringdetail::find('all', array('conditions' => array("SAPID=? and status>=0 ",$data['sapid']))); //check sapid and status
-						// $findih = Internalhiringdetail::find('all', array('conditions' => array("SAPID=? and (status='1' or status='0') ",$data['sapid']))); //check sapid and status
 						$checkih = Internalhiringdetail::find('all', array('conditions' => array("SAPID=? and (status>0 and status<5) ",$data['sapid']))); //check sapid
 						$checkihreject = Internalhiringdetail::find('all', array('conditions' => array("SAPID=? and status=6 ",$data['sapid']))); //check sapid
-						// $findih = Internalhiringdetail::find('all', array('conditions' => array("SAPID=? and ih_id=?",$data['sapid'],$ihid))); //check sapid and ih_id
-						// print_r(count($findih));
-						// if(count($findih)>2) {
 
 							if(count($checkih)>0) {
 								echo '406'; //already submit
@@ -718,6 +540,115 @@ Class Internalhiringmodule extends Application{
 						$result = $result->to_array();
 					}
 					echo json_encode($Internalhiringdetail, JSON_NUMERIC_CHECK);
+					break;
+			}
+
+		}
+	}
+
+	function internalhiringMaster(){
+		if (count($this->post)==0){
+			http_response_code(405);
+    		echo json_encode(array("message" => "Method not Allowed"));
+		}else{
+		
+			switch ($this->post['criteria']){
+				case 'byid':
+					$id = $this->post['id'];
+					if ($id!=""){
+						$Advancedetail = Advancedetail::find('all', array('conditions' => array("advance_id=?",$id)));
+						foreach ($Advancedetail as &$result) {
+							$result	= $result->to_array();
+						}
+
+						echo json_encode($Advancedetail, JSON_NUMERIC_CHECK);
+					}else{
+						$Advancedetail = new Advancedetail();
+						echo json_encode($Advancedetail);
+					}
+					break;
+				case 'find':
+					$data = $this->post['data'];
+
+					$Employee = Employee::find('first', array('conditions' => array("SAPID=?",$data['sapid'])));
+					$result = $Employee->to_array();
+					
+					echo json_encode($result, JSON_NUMERIC_CHECK);
+					break;
+				case 'create':	
+					try{
+						$data = $this->post['data'];
+						unset($data['__KEY__']);
+						$codenew = Internalhiring::find('first',array('select' => "CONCAT('IH/','".$data['bu']."/','".$data['positioncode']."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0')) as postno"));
+						$data['postno'] = $codenew->postno;
+						$Internalhiring = Internalhiring::create($data);
+						$logger = new Datalogger("Internalhiring","create",null,json_encode($data));
+						$logger->SaveData();
+					}catch (Exception $e){
+						$err = new Errorlog();
+						$err->errortype = "CreateInternalhiring";
+						$err->errordate = date("Y-m-d h:i:s");
+						$err->errormessage = $e->getMessage();
+						$err->user = $this->currentUser->username;
+						$err->ip = $this->ip;
+						$err->save();
+						$data = array("status"=>"error","message"=>$e->getMessage());
+					}
+					
+					break;
+				case 'delete':				
+					$id = $this->post['id'];
+					$Internalhiring = Internalhiring::find($id);
+					$data=$Internalhiring->to_array();
+					$Internalhiring->delete();
+					$logger = new Datalogger("Internalhiring","delete",json_encode($data),null);
+					$logger->SaveData();
+					echo json_encode($Internalhiring);
+					break;
+				case 'update':				
+					$id = $this->post['id'];
+					$data = $this->post['data'];
+					
+					$Internalhiring = Internalhiring::find($id);
+					$olddata = $Internalhiring->to_array();
+					// foreach($data as $key=>$val){
+					// 	$Internalhiring->$key=$val;
+					// }
+					// foreach($data as $key=>$val){
+					// 	// $val=($val=='true')?1:0;
+					// 	if($val=='true') {
+					// 		$val = 1;
+					// 	}else if($val=='false') {
+					// 		$val = 0;
+					// 	}
+					// 	$Internalhiring->$key=$val;
+						
+					// }
+					// $codenew = Internalhiring::find('first',array('select' => "CONCAT('IH/','".$Internalhiring->bu."/','".$data['positioncode']."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(postno,-4,4)) is null then 1 else max(substring(postno,-4,4))+1 end,4,'0')) as postno","conditions"=>array("substring(postno,9,".strlen($Internalhiring->bu).")=? and substring(postno,".(strlen($Internalhiring->bu)+10).",4)=YEAR(CURDATE())",$Internalhiring->bu)));
+					$codenew = Internalhiring::find('first',array('select' => "CONCAT('IH/','".$Internalhiring->bu."/','".$data['positioncode']."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0')) as postno"));
+
+					// echo $codenew->postno;
+
+					foreach($data as $key=>$val){
+						$Internalhiring->$key=$val;
+						
+					}
+					if($data['positioncode']) {
+						$Internalhiring->postno = $codenew->postno;
+					}
+					$Internalhiring->save();
+					// $Internalhiring->update_attributes($data);
+					$logger = new Datalogger("Internalhiring","update",json_encode($olddata),json_encode($data));
+					$logger->SaveData();
+					echo json_encode($Internalhiring);
+					
+					break;
+				default:
+					$Internalhiring = Internalhiring::all();
+					foreach ($Internalhiring as &$result) {
+						$result = $result->to_array();
+					}
+					echo json_encode($Internalhiring, JSON_NUMERIC_CHECK);
 					break;
 			}
 

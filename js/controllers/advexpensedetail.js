@@ -935,7 +935,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 				{dataField:'amount',caption: "Amount", validationRules: [{type: "required"}], width:150,dataType: "number" ,format: "fixedPoint",
                 editorOptions: {
 					format: "fixedPoint",
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || (($scope.data.apprstatuscode==2 && $scope.mode=='approve'))?false:true):false
                 }},
 				// {dataField: "currency",caption: "currency", lookup: { 
 				// 	displayExpr: 'nama',  
@@ -976,7 +976,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 					disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin)?false:true):false,
 				}},
 				{dataField:'remarks',width:150,dataType: "string" , editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || (($scope.data.apprstatuscode==2 && $scope.mode=='approve'))?false:true):false
                 }},	
 			],
 			summary: {
@@ -1333,28 +1333,28 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 					dataField:'breakfast',
 					dataType: "boolean",
 					editorOptions: {
-						disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
+						disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || (($scope.data.apprstatuscode==2 && $scope.mode=='approve'))?false:true):false
 					}
 				},
 				{
 					dataField:'lunch',
 					dataType: "boolean",
 					editorOptions: {
-						disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
+						disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || (($scope.data.apprstatuscode==2 && $scope.mode=='approve'))?false:true):false
 					}
 				},
 				{
 					dataField:'dinner',
 					dataType: "boolean",
 					editorOptions: {
-						disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
+						disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || (($scope.data.apprstatuscode==2 && $scope.mode=='approve'))?false:true):false
 					}
 				},
 				{
 					dataField:'pocket',
 					dataType: "boolean",
 					editorOptions: {
-						disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
+						disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || (($scope.data.apprstatuscode==2 && $scope.mode=='approve'))?false:true):false
 					}
 				},
 				{
@@ -1362,12 +1362,12 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 					caption:'isPapua ?',
 					dataType: "boolean",
 					editorOptions: {
-						disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
+						disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || (($scope.data.apprstatuscode==2 && $scope.mode=='approve'))?false:true):false
 					}
 				},
 				
 				{dataField:'remarks',width:150,dataType: "string" , editorOptions: {
-                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?false:true):false
+                    disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || (($scope.data.apprstatuscode==2 && $scope.mode=='approve'))?false:true):false
                 }},	
 			],
 		

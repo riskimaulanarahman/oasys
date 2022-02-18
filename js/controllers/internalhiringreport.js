@@ -40,7 +40,7 @@
           },
   
           byKey: function (key) {
-            CrudService.GetById("advanceapp", encodeURIComponent(key)).then(
+            CrudService.GetById("internalhiring", encodeURIComponent(key)).then(
               function (response) {
                 return response;
               }
@@ -55,12 +55,12 @@
             // });
           },
           update: function (key, values) {
-            values.materialreturneddate = $filter("date")(
-              values.materialreturneddate,
-              "yyyy-MM-dd HH:mm"
-            );
-            values.action = "updatereport";
-            CrudService.Update("advance", key.id, values).then(function (
+            // values.materialreturneddate = $filter("date")(
+            //   values.materialreturneddate,
+            //   "yyyy-MM-dd HH:mm"
+            // );
+            // values.action = "updatereport";
+            CrudService.Update("internalhiring", key.id, values).then(function (
               response
             ) {
               if (response.status == "error") {
@@ -70,12 +70,12 @@
             });
           },
           remove: function (key) {
-            // CrudService.Delete('advance',key.id).then(function (response) {
-            //     if(response.status=="error"){
-            //          DevExpress.ui.notify(response.message,"error");
-            //     }
-            //     $scope.dataGrid.refresh();
-            // });
+            CrudService.Delete('internalhiring',key.id).then(function (response) {
+                if(response.status=="error"){
+                     DevExpress.ui.notify(response.message,"error");
+                }
+                $scope.dataGrid.refresh();
+            });
           },
         });
         // $scope.allowDel = false;
@@ -91,6 +91,90 @@
             width: 80,
           });
         }
+
+        $scope.Companyid = {
+          store: new DevExpress.data.CustomStore({
+            key: "id",
+            loadMode: "raw",
+            load: function() {
+              return CrudService.GetAll('company').then(function (response) {
+                if(response.status=="error"){
+                  DevExpress.ui.notify(response.message,"error");
+                }else{
+                  return response;
+                }
+              });
+            },
+          }),
+          sort: "id"
+        }
+        $scope.Departmentid = {
+          store: new DevExpress.data.CustomStore({
+            key: "id",
+            loadMode: "raw",
+            load: function() {
+              return CrudService.GetAll('dept').then(function (response) {
+                if(response.status=="error"){
+                  DevExpress.ui.notify(response.message,"error");
+                }else{
+                  return response;
+                }
+              });
+            },
+          }),
+          sort: "id"
+        }
+        $scope.Loc = {
+          store: new DevExpress.data.CustomStore({
+            key: "id",
+            loadMode: "raw",
+            load: function() {
+              return CrudService.GetAll('loc').then(function (response) {
+                if(response.status=="error"){
+                  DevExpress.ui.notify(response.message,"error");
+                }else{
+                  return response;
+                }
+              });
+            },
+          }),
+          sort: "id"
+        }
+        $scope.Des = {
+          store: new DevExpress.data.CustomStore({
+            key: "id",
+            loadMode: "raw",
+            load: function() {
+              return CrudService.GetAll('des').then(function (response) {
+                if(response.status=="error"){
+                  DevExpress.ui.notify(response.message,"error");
+                }else{
+                  return response;
+                }
+              });
+            },
+          }),
+          sort: "id"
+        }
+        $scope.Level = {
+          store: new DevExpress.data.CustomStore({
+            key: "id",
+            loadMode: "raw",
+            load: function() {
+              return CrudService.GetAll('level').then(function (response) {
+                if(response.status=="error"){
+                  DevExpress.ui.notify(response.message,"error");
+                }else{
+                  return response;
+                }
+              });
+            },
+          }),
+          sort: "id"
+        }
+
+        
+		  	$scope.Status = [{id:0,namastatus:"Canceled"},{id:1,namastatus:"Waiting"},{id:2,namastatus:"Doc. Selection"},{id:3,namastatus:"Assesment"},{id:4,namastatus:"Interview"},{id:5,namastatus:"Approved"},{id:6,namastatus:"Rejected"}];
         //$scope.myData = myData;
         $scope.dataGridOptions = {
           dataSource: myData,
@@ -99,84 +183,20 @@
           rowAlternationEnabled: true,
           allowColumnResizing: true,
           columnResizingMode: "widget",
-          columnAutoWidth: true,
+          columnHidingEnabled: true,
+          columnsAutoWidth: false,
+          columnMinWidth: 80,
+          wordWrapEnabled: false,
           showBorders: true,
           height: 600,
           headerFilter: {
             visible: true,
           },
+          groupPanel: {
+            emptyPanelText: 'Use the context menu of header columns to group data',
+            visible: false,
+          },
           columns: [
-            // {
-            //   caption: "Actions",
-            //   fixed: true,
-            //   fixedPosition: "left",
-            //   width: 120,
-            //   allowFiltering: false,
-            //   allowSorting: false,
-            //   formItem: { visible: false },
-            //   cellTemplate: function (container, options) {
-            //     $(
-            //       '<div style="padding:2px 15px 2px 15px;" title="View Detail" />'
-            //     )
-            //       .addClass(
-            //         "dx-icon-detailslayout btn-pill btn-shadow btn btn-primary"
-            //       )
-            //       .text("")
-            //       .on("dxclick", function () {
-            //         DevExpress.ui.notify(
-            //           "Loading detail data for " + options.data.requestdate,
-            //           "info",
-            //           600
-            //         );
-            //         $scope.loadAdvance(options.data, "report", true);
-            //       })
-            //       .appendTo(container);
-            //       if((options.data.approveddoc=='' || options.data.approveddoc==null)  && (options.data.requeststatus=='3')){
-            //           $('<div style="padding:2px 15px 2px 15px;"/>').addClass('dx-icon-repeat  btn-pill btn-shadow btn btn-success')
-            //               .text('')
-            //               .on('dxclick', function () {
-            //                   DevExpress.ui.notify("Please Wait...","info");
-            //                   $.ajax({
-            //                       url: 'api/apiadvancepdf?id='+options.data.id,
-            //                       type: 'get',
-            //                       cache: false,
-            //                       success: function(data){
-            //                           console.log(data);
-            //                           if(data == 200) {
-            //                               DevExpress.ui.notify("Success Re-PDF","success");
-            //                           }else {
-            //                               alert(data); 
-            //                           }
-            //                           $scope.dataGrid.refresh();
-  
-            //                        },
-            //                        error: function(data){
-            //                           var json = $.parseJSON(data);
-            //                           alert('error '+json);
-            //                           $scope.dataGrid.refresh();
-  
-            //                        }
-            //                     });
-            //               })
-            //               .appendTo(container);
-            //       }
-            //     // if((options.data.requeststatus=='0') || (options.data.requeststatus=='2')){
-            //     // if((options.data.requeststatus=='3')){
-            //     //     $('<div style="padding:2px 15px 2px 15px;" title="Edit" />').addClass('dx-icon-edit btn-pill btn-shadow btn btn-success')
-            //     //     .text('')
-            //     //     .on('dxclick', function () {
-            //     // if (!$scope.allowEdit){
-            //     //     DevExpress.ui.notify("You don't have authority to edit data","error");
-            //     // } else{
-            //     // $scope.loadMMF(options.data,"editb",true);
-            //     // }
-            //     //     })
-            //     //     .appendTo(container);
-            //     // }else{
-            //     //     $('<div style="padding:2px 15px 2px 15px;"/>').text('').appendTo(container);
-            //     // }
-            //   },
-            // },
             {
               caption: "#",
               formItem: { visible: false },
@@ -185,9 +205,61 @@
                 container.text(options.rowIndex + 1);
               },
             },
-            // {dataField:'mmfnumber',caption:"MMF Number", editorOptions: {
-            //     disabled: true,
-            // }},
+            {
+              dataField: "status",
+              caption: "Status",
+              editorType: "dxSelectBox",
+              encodeHtml: false,
+              width: 100,
+              customizeText: function (e) {
+                var rDesc = [
+                  "<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Canceled</span>",
+                  "<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting</span>",
+                  "<span class='mb-2 mr-2 badge badge-pill badge-primary'>Doc. Selection</span>",
+                  "<span class='mb-2 mr-2 badge badge-pill badge-warning'>Assesment</span>",
+                  "<span class='mb-2 mr-2 badge badge-pill badge-warning'>Interview</span>",
+                  "<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>",
+                  "<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",
+                  "",
+                ];
+                return rDesc[e.value];
+              },
+              editorOptions: {
+                dataSource: $scope.Status,
+                valueExpr: "id",
+                displayExpr: "namastatus",
+                disabled: false,
+              },
+              // editorOptions: {
+              //   disabled: false,
+              // },
+            },
+            {
+              dataField: "lampiran",
+              caption: "Letter Approval",
+              allowFiltering: false,
+              allowSorting: false,
+              formItem: { visible: false },
+              editorOptions: {
+                disabled: true,
+              },
+              cellTemplate: function (container, options) {
+                if (options.value != "" && options.value) {
+                  $("<div />")
+                    .dxButton({
+                      icon: "download",
+                      stylingMode: "contained",
+                      type: "success",
+                      target: "_blank",
+                      width: 50,
+                      onClick: function (e) {
+                        window.open(options.value, "_blank");
+                      },
+                    })
+                    .appendTo(container);
+                }
+              },
+            },
             {
                 dataField: "createddate",
                 caption: "Creation Date",
@@ -213,6 +285,13 @@
                 },
             },
             {
+                dataField: "postno",
+                editorOptions: {
+                    disabled: true,
+                },
+                width: 220
+            },
+            {
                 dataField: "fullname",
                 caption: "fullname",
                 editorOptions: {
@@ -226,78 +305,175 @@
                     disabled: true,
                 },
             },
-    
             {
-              dataField: "status",
-              encodeHtml: false,
-              width: 300,
-              customizeText: function (e) {
-                var rDesc = [
-                  "<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Canceled</span>",
-                  "<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting</span>",
-                  "<span class='mb-2 mr-2 badge badge-pill badge-primary'>Doc. Selection</span>",
-                  "<span class='mb-2 mr-2 badge badge-pill badge-warning'>Assesment</span>",
-                  "<span class='mb-2 mr-2 badge badge-pill badge-warning'>Interview</span>",
-                  "<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>",
-                  "<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",
-                  "",
-                ];
-                return rDesc[e.value];
+              dataField: "company_id",
+              caption: "Company",
+              lookup: {
+                dataSource: $scope.Companyid,
+                valueExpr: "id",
+                displayExpr: "companycode",
+                disabled: true,
               },
               editorOptions: {
                 disabled: true,
               },
+              hidingPriority: 0,
             },
-  
-            // {
-            //   dataField: "personholding",
-            //   caption: "Next Approver",
-            //   editorOptions: {
-            //     disabled: true,
-            //   },
-            // },
-            // {
-            //   dataField: "remarks",
-            //   encodeHtml: false,
-            //   editorOptions: {
-            //     disabled: true,
-            //   },
-            // },
             {
-              dataField: "lampiran",
-              caption: "Letter Approval",
-            //   width: 100,
-              allowFiltering: false,
-              allowSorting: false,
-              formItem: { visible: false },
+              dataField: "department_id",
+              caption: "Department",
+              lookup: {
+                dataSource: $scope.Departmentid,
+                valueExpr: "id",
+                displayExpr: "departmentname",
+                disabled: true,
+              },
               editorOptions: {
                 disabled: true,
               },
-              cellTemplate: function (container, options) {
-                if (options.value != "" && options.value) {
-                  $("<div />")
-                    .dxButton({
-                      icon: "download",
-                      stylingMode: "contained",
-                      type: "success",
-                      target: "_blank",
-                      width: 50,
-                      onClick: function (e) {
-                        window.open(options.value, "_blank");
-                      },
-                    })
-                    .appendTo(container);
-                }
-              },
+              hidingPriority: 1,
             },
+            {
+              dataField: "location_id",
+              caption: "Location",
+              lookup: {
+                dataSource: $scope.Loc,
+                valueExpr: "id",
+                displayExpr: "location",
+                disabled: true,
+              },
+              editorOptions: {
+                disabled: true,
+              },
+              hidingPriority: 2,
+            },
+            {
+              dataField: "designation_id",
+              caption: "Designation",
+              lookup: {
+                dataSource: $scope.Des,
+                valueExpr: "id",
+                displayExpr: "designationname",
+                disabled: true,
+              },
+              editorOptions: {
+                disabled: true,
+              },
+              hidingPriority: 3,
+            },
+            {
+              dataField: "level_id",
+              caption: "Level",
+              lookup: {
+                dataSource: $scope.Level,
+                valueExpr: "id",
+                displayExpr: "level",
+                disabled: true,
+              },
+              editorOptions: {
+                disabled: true,
+              },
+              hidingPriority: 3,
+            },
+            {
+                dataField: "dob",
+                caption: "Date of Birth",
+                dataType: "date",
+                editorOptions: {
+                    disabled: true,
+                },
+            },
+            {
+                dataField: "age",
+                caption: "age",
+                editorOptions: {
+                    disabled: true,
+                },
+            },
+            {
+                dataField: "joindate",
+                caption: "Join Date",
+                dataType: "date",
+                editorOptions: {
+                    disabled: true,
+                },
+            },
+            {
+                dataField: "los",
+                caption: "LOS",
+                editorOptions: {
+                    disabled: true,
+                },
+            },
+            {
+                dataField: "gender",
+                caption: "gender",
+                editorOptions: {
+                    disabled: true,
+                },
+            },
+            {
+                dataField: "education",
+                caption: "education",
+                editorOptions: {
+                    disabled: true,
+                },
+            },
+            {
+                dataField: "educationothers",
+                caption: "education others",
+                editorOptions: {
+                    disabled: true,
+                },
+            },
+            {
+                dataField: "reasonmove",
+                caption: "reason move",
+                editorOptions: {
+                    disabled: true,
+                },
+            },
+            {
+                dataField: "reasondeserve",
+                caption: "reason deserve",
+                editorOptions: {
+                    disabled: true,
+                },
+            },
+            {
+                dataField: "reasoncontribution",
+                caption: "reason contribution",
+                editorOptions: {
+                    disabled: true,
+                },
+            },
+            {
+                dataField: "score1",
+                caption: "score 1",
+                editorOptions: {
+                    disabled: true,
+                },
+            },
+            {
+                dataField: "score2",
+                caption: "score 2",
+                editorOptions: {
+                    disabled: true,
+                },
+            },
+            {
+                dataField: "score3",
+                caption: "score3",
+                editorOptions: {
+                    disabled: true,
+                },
+            },
+            
           ],
           export: {
             enabled: true,
-            fileName: "ExportGrid",
+            fileName: "internal hiring applyment "+ new Date(),
             allowExportSelectedData: false,
-          },
-          bindingOptions: {
-            // "editing.allowUpdating": "allowEdit" ,
           },
         //   masterDetail: {
         //     enabled: true,
@@ -323,9 +499,9 @@
           editing: {
             useIcons: true,
             mode: "row",
-            allowUpdating: false,
+            allowUpdating: true,
             allowAdding: false,
-            allowDeleting: false,
+            allowDeleting: ($rootScope.isAdmin)?true:false,
             form: { colCount: 1 },
             popup: {
               title: "Form Data access directory",
@@ -337,45 +513,25 @@
             width: 240,
             placeholder: "Search...",
           },
-          scrolling: {
-            mode: "infinite",
-          },
+          // scrolling: {
+          //   mode: "infinite",
+          // },
           onContentReady: function (e) {
             moveEditColumnToLeft(e.component);
           },
           onCellPrepared: function (e) {
-            // if (e.columnIndex == 0 && e.rowType == "data") {
-            //     if((e.data.requeststatus!==0) && (e.data.requeststatus!==2) ){
-            //         e.cellElement.find(".dx-link-delete").remove();
-            //     }
-            // }
+
           },
           onEditingStart: function (e) {
             e.component.columnOption("id", "allowEditing", false);
           },
           onEditorPreparing: function (e) {
-            $scope.formComponent = e.component;
-            if (e.dataField == "isfinal") {
-              e.editorName = "dxSwitch";
-              e.editorOptions.switchedOnText = "Yes";
-              e.editorOptions.switchedOffText = "No";
-            }
-            if (e.dataField == "isactive") {
-              e.editorName = "dxSwitch";
-              e.editorOptions.switchedOnText = "Yes";
-              e.editorOptions.switchedOffText = "No";
-            }
-            if (e.row && e.row.data.requeststatus !== 3) {
-              e.editorOptions.disabled = true;
-            }
+         
           },
           onEditorPrepared: function (e) {},
           onInitNewRow: function (e) {
-            e.component.columnOption("id", "allowEditing", false);
           },
           onSelectionChanged: function (data) {
-            $scope.selectedItems = data.selectedRowsData;
-            $scope.disabled = !$scope.selectedItems.length;
           },
           onRowUpdated: function (e) {
             $scope.editors = {};

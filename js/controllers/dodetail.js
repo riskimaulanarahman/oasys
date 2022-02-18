@@ -446,22 +446,27 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 			});
 		},
 		insert: function(values) {
-			values.dateworked = $filter("date")(values.dateworked, "yyyy-MM-dd HH:mm")
+			// values.startDate = $filter("date")(values.startDate, "yyyy-MM-dd HH:mm")
+			// values.endDate = $filter("date")(values.endDate, "yyyy-MM-dd HH:mm")
 			values.dayoff_id=$scope.Requestid;
             CrudService.Create('dodetail',values).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.dialog.alert(response.message,"Error");
 				}
-				$scope.grid1Component.refresh();
+				// $scope.scheduleComponent.refresh();
 			});
 		},
 		update: function(key, values) {
-			values.dateworked = $filter("date")(values.dateworked, "yyyy-MM-dd HH:mm")
+			delete values.startdate;
+			delete values.enddate;
+			// values.startDate = $filter("date")(values.startDate, "yyyy-MM-dd HH:mm")
+			// values.endDate = $filter("date")(values.endDate, "yyyy-MM-dd HH:mm")
+			console.log(values)
             CrudService.Update('dodetail',key.id,values).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.dialog.alert(response.message,"Error");
 				}
-				$scope.grid1Component.refresh();
+				// $scope.scheduleComponent.refresh();
 			});
 		},
 		remove: function(key) {
@@ -469,7 +474,7 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 				if(response.status=="error"){
 					DevExpress.ui.dialog.alert(response.message,"Error");
 				}
-				$scope.grid1Component.refresh();
+				// $scope.scheduleComponent.refresh();
 			});
 		}
     });
@@ -538,38 +543,10 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 	var myData3 = new DevExpress.data.DataSource({
 		store: myStore3
     });
-	var myStoreScheduler = new DevExpress.data.CustomStore({
-		load: function() {			
-            $scope.isLoaded =true;
-			// return CrudService.GetAll('dobalance');   
-			// $scope.isLoaded =true;
-            return CrudService.GetAll('dobalance').then(function (response) {
-				if(response.status=="error"){
-					DevExpress.ui.notify(response.message,"error");
-				}else{
-					return response;
-				}
-			});         		
-		},
-		// byKey: function(key) {
-            //
-		// },
-		insert: function(values) {
-			//
-		},
-		update: function(key, values) {
-			//
-		},
-		remove: function(key) {
-			//
-		}
-    });
-	var myDataScheduler = new DevExpress.data.DataSource({
-		store: myStoreScheduler
-    });
+
 	$scope.tabs = [
-		// { id:4, TabName : "Dayoff Schedule", title: 'Detail Dayoff Schedule', template: "tab4"   },
-		{ id:1, TabName : "Dayoff Detail", title: 'Detail Dayoff Request', template: "tab1"   },
+		{ id:4, TabName : "Dayoff Schedule", title: 'Detail Dayoff Schedule', template: "tab4"   },
+		// { id:1, TabName : "Dayoff Detail", title: 'Detail Dayoff Request', template: "tab1"   },
 		{ id:2, TabName : "Approver List", title: 'Approver List', template: "tab2"   },
 		{ id:3, TabName : "History Tracking", title: 'History Tracking', template: "tab3"   },
 	];
@@ -577,74 +554,141 @@ app.register.controller('dodetailCtrl', ['$rootScope','$scope', '$http', '$inter
 	$scope.appText = ["No","Yes"];
 	$scope.loadPanelVisible = false;
 
-	// const url = 'https://js.devexpress.com/Demos/Mvc/api/SchedulerData';
+	function showToast(event, value, type) {
+		DevExpress.ui.notify(`${event} "${value}" task`, type, 800);
+	}
+
+	$scope.editing = {
+		allowAdding: true,
+		allowDeleting: true,
+		allowUpdating: true,
+		allowResizing: false,
+		allowDragging: true,
+	};
 
 	$scope.schedulerOptions = {
-		// timeZone: 'America/Los_Angeles',
 		timeZone: 'Asia/Singapore',
-		dataSources: myDataScheduler,
-		// views: [
-		// 	{
-		// 		name: '3 Months', type: 'month', intervalCount: 3
-		// 	}
-		// ],
-		views: ['month'],
+		dataSource: myData,
+		views: [
+			{
+				name: '3 Months', type: 'month', intervalCount: 3
+			}
+		],
 		currentView: 'month',
 		currentDate: new Date(),
-		// currentDate: new Date(2021, 2, 28),
-		// startDayHour: 9,
 		height: 600,
-		onInitialized:function (e){
-			$scope.scheduleComponent = e.component;
+		bindingOptions: {
+			editing: 'editing',
 		},
-		onEditorPreparing: function (e) {  
-			$scope.scheduleComponent = e.component;
+		dataCellTemplate(itemData, itemIndex, itemElement) {
+			const date = itemData.startDate;
+			const isDisabled = isWeekend(date);
+			// const element = $('<div />');
+			const element = $(`<div>${itemData.text}</div>`);
+
+			if (isDisabled) {
+				element.addClass('disable-date');
+			}
+	  
+			return itemElement.append(element);
+		  },
+	  
+		  dateCellTemplate(itemData, itemIndex, itemElement) {
+			const element = $(`<div>${itemData.text}</div>`);
+	  
+			if (isWeekend(itemData.date)) {
+			  element.addClass('disable-date');
+			}
+	  
+			return itemElement.append(element);
+		  },
+		onAppointmentAdded(e) {
+			showToast('Added', e.appointmentData.text, 'success');
+			e.component.option("dataSource",myData);
 		},
-		onEditorPreparing: function (e) {  
-			$scope.scheduleComponent = e.component;
+		onAppointmentFormOpening(e) {
+			const startDate = new Date(e.appointmentData.startDate);
+			if (!isValidAppointmentDate(startDate)) {
+				e.cancel = true;
+				notifyDisableDate();
+			}
+			// applyDisableDatesToDateEditors(e.form);
 		},
-		onToolbarPreparing: function(e) {   
-            e.toolbarOptions.items.unshift({						
-                location: "after",
-                widget: "dxButton",
-                options: {
-                    hint: "Refresh Data",
-                    icon: "refresh",
-                    onClick: function() {
-                        $scope.scheduleComponent.refresh();
-                    }
-                }
-            });
+		onAppointmentAdding(e) {
+			if (!isValidAppointment(e.component, e.appointmentData)) {
+				e.cancel = true;
+				notifyDisableDate();
+			}
+		},
+		onAppointmentUpdated(e) {
+			showToast('Updated', e.appointmentData.text, 'info');
+			e.component.option("dataSource",myData);
+		},
+		onAppointmentDeleted(e) {
+			showToast('Deleted', e.appointmentData.text, 'warning');
+			e.component.option("dataSource",myData);
+		},
+		onInitialized: function (e) {
+            $scope.schedulerComponent = e.component;
         },
 	}
 
-	// $scope.schedulerOptions = {
-	// 	timeZone: 'America/Los_Angeles',
-	// 	dataSource: DevExpress.data.AspNet.createStore({
-	// 	key: 'AppointmentId',
-	// 	loadUrl: `${url}/Get`,
-	// 	insertUrl: `${url}/Post`,
-	// 	updateUrl: `${url}/Put`,
-	// 	deleteUrl: `${url}/Delete`,
-	// 	onBeforeSend(method, ajaxOptions) {
-	// 		ajaxOptions.xhrFields = { withCredentials: true };
-	// 	},
-	// 	}),
-	// 	remoteFiltering: true,
-	// 	dateSerializationFormat: 'yyyy-MM-ddTHH:mm:ssZ',
-	// 	views: ['day', 'workWeek', 'month'],
-	// 	currentView: 'day',
-	// 	currentDate: new Date(2021, 3, 27),
-	// 	startDayHour: 9,
-	// 	endDayHour: 19,
-	// 	height: 600,
-	// 	textExpr: 'Text',
-	// 	startDateExpr: 'StartDate',
-	// 	endDateExpr: 'EndDate',
-	// 	allDayExpr: 'AllDay',
-	// 	recurrenceRuleExpr: 'RecurrenceRule',
-	// 	recurrenceExceptionExpr: 'RecurrenceException',
+	function notifyDisableDate() {
+		DevExpress.ui.notify('Cannot create or move an appointment/event to disabled time/date regions.', 'warning', 1000);
+	}
+
+	function isValidAppointment(component, appointmentData) {
+		const startDate = new Date(appointmentData.startDate);
+		const endDate = new Date(appointmentData.endDate);
+		const cellDuration = component.option('cellDuration');
+		return isValidAppointmentInterval(startDate, endDate, cellDuration);
+	  }
+	  
+	function isValidAppointmentInterval(startDate, endDate, cellDuration) {
+		const edgeEndDate = new Date(endDate.getTime() - 1);
+		
+		if (!isValidAppointmentDate(edgeEndDate)) {
+			return false;
+		}
+		
+		const durationInMs = cellDuration * 60 * 1000;
+		const date = startDate;
+		while (date <= endDate) {
+			if (!isValidAppointmentDate(date)) {
+			return false;
+			}
+			const newDateTime = date.getTime() + durationInMs - 1;
+			date.setTime(newDateTime);
+		}
+		
+		return true;
+	}
+
+	function isValidAppointmentDate(date) {
+		return !isWeekend(date);
+	}
+	
+	function isWeekend(date) {
+		const day = date.getDay();
+		return day === 1 || day === 2 || day === 3 || day === 4 || day === 5;
+	}
+
+	// function applyDisableDatesToDateEditors(form) {
+	// 	const startDateEditor = form.getEditor('startDate');
+	// 	startDateEditor.option('disabledDates', holidays);
+		
+	// 	const endDateEditor = form.getEditor('endDate');
+	// 	endDateEditor.option('disabledDates', holidays);
 	// }
+
+	$scope.plusButton = {
+		icon: 'refresh',
+		onClick() {
+			DevExpress.ui.notify('The button was clicked');
+			$scope.schedulerComponent.option("dataSource", myData);
+
+		},
+	};
 
 	$scope.grid1Options = {
 		dataSource: myData,

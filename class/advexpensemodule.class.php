@@ -1426,14 +1426,14 @@ Class Advexpensemodule extends Application{
 							if($data->ispapua == 0) {
 								$sppd = Advexpsppd::find('first',
 									array(
-										'conditions'=>array("level=? and ispapua=0",$Employee->level_id)
+										'conditions'=>array("level=? and ispapua=0",$Advexpense->employee->level_id)
 									)
 								);
 
 							} else if($data->ispapua == 1) {
 								$sppd = Advexpsppd::find('first',
 									array(
-										'conditions'=>array("level=? and ispapua=1",$Employee->level_id)
+										'conditions'=>array("level=? and ispapua=1",$Advexpense->employee->level_id)
 									)
 								);
 

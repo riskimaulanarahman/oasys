@@ -37,6 +37,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 	<link rel='stylesheet' href='css/dx.common.css' type='text/css'>
 	<link rel='stylesheet' href='css/dx.light.compact.css' type='text/css'>
     <link href="css/custom.css" rel="stylesheet">
+    <link href="css/dateschedule.css" rel="stylesheet">
     <!-- tooltip -->
 	<link rel='stylesheet' href='css/introjs.min.css' type='text/css'>
 	<!-- <link rel='stylesheet' href='css/landing.css' type='text/css'> -->
@@ -892,7 +893,26 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                         
                                         </ul>
                                     </li>
-									<li class="nav-item"><a href="" ng-click="dataInternalhiringreport()"  class="nav-link" ><i class='pe-7s-news-paper icon-gradient bg-premium-dark'></i> Internal Hiring</a></li>
+                                    <li class="">
+                                        <a href="#" aria-expanded="false">
+                                            <i class="metismenu-icon"></i><i class='pe-7s-news-paper icon-gradient bg-premium-dark'></i> Internal Hiring
+                                            <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                                        </a>
+                                        <ul class="mm-collapse" style="height: 7.04px;">
+                                            <li>
+                                                <a href="" ng-click="dataInternalhiringmaster()">
+                                                    <i class="metismenu-icon"></i>Requirement
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="" ng-click="dataInternalhiringreport()">
+                                                    <i class="metismenu-icon"></i>Applyment
+                                                </a>
+                                            </li>
+                                        
+                                        </ul>
+                                    </li>
+									<!-- <li class="nav-item"><a href="" ng-click="dataInternalhiringreport()"  class="nav-link" ><i class='pe-7s-news-paper icon-gradient bg-premium-dark'></i> Internal Hiring</a></li> -->
 
 									
 								</ul>
@@ -948,7 +968,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 	<script language="JavaScript" src="js/lib/dx.all.js" type="text/javascript"></script>
 	<script language="JavaScript" src="js/lib/FileSaver.min.js" type="text/javascript"></script>
     <!-- <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/globalize/0.1.1/globalize.min.js"></script> -->
-    <script src="https://unpkg.com/devextreme-aspnet-data/js/dx.aspnet.data.js"></script>
+    <!-- <script src="https://unpkg.com/devextreme-aspnet-data/js/dx.aspnet.data.js"></script> -->
     
 	<script language="JavaScript" src="js/app.js?v=5.42" type="text/javascript"></script>
 	<script language="JavaScript" src="js/directive.js?v=5.42" type="text/javascript"></script>
