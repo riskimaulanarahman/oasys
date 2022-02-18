@@ -1279,7 +1279,7 @@ Class RfcModule extends Application{
 									}
 									
 									//$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='7' and tbl_employee.companycode=? ",$id,$company)));	
-									$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='7'and FIND_IN_SET(?, tbl_approver.CompanyList) > 0  and tbl_approver.CompanyList like '%".$company."%' ",$id,$company)));	
+									$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='7'and FIND_IN_SET(?, tbl_approver.CompanyList) > 0 ",$id,$company)));	
 									foreach ($Rfcapproval as &$result) {
 										$result		= $result->to_array();
 										$result['no']=1;
@@ -1471,7 +1471,7 @@ Class RfcModule extends Application{
 										}
 										if (($Rfc->companycode=='IHM') || ($Rfc->companycode=='AHL')  || ($Rfc->companycode=='KPS') || ($Rfc->companycode=='KPA')) {
 											//$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='9' and tbl_employee.companycode=? ",$id,$Rfc->companycode)));
-											$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='9' and FIND_IN_SET(?, CompanyList) > 0 and CompanyList like '%".$Rfc->companycode."%'",$id,$Rfc->companycode)));
+											$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='9' and FIND_IN_SET(?, CompanyList) > 0 ",$id,$Rfc->companycode)));
 											foreach ($Rfcapproval as &$result) {
 												$result		= $result->to_array();
 												$result['no']=1;
