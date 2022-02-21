@@ -3,7 +3,7 @@
     $scope.ds = {};
     $scope.test = [];
     $scope.disabled = true;
-    if ((!$rootScope.isAdmin) && (!$rootScope.viewEmployee)) {
+    if ((!$rootScope.isAdmin) && (!$rootScope.viewInternalhiringmaster)) {
       $location.path("/");
     }
     var myStore = new DevExpress.data.CustomStore({

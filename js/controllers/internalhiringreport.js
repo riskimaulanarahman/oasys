@@ -21,7 +21,7 @@
         $scope.ds = {};
         $scope.test = [];
         $scope.disabled = true;
-        if (!$rootScope.isAdmin && !$rootScope.viewAdvance) {
+        if (!$rootScope.isAdmin && !$rootScope.viewInternalhiringreport) {
           $location.path("/");
         }
         var myStore = new DevExpress.data.CustomStore({
