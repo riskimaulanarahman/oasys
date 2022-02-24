@@ -762,8 +762,9 @@ Class DayoffModule extends Application{
 								$appText = ($result->isapproved==null)?"":(($result->isapproved)?"Yes":"No");
 								$usedText = ($result->isused==null)?"":(($result->isused)?"Yes":"No");
 								$result		= $result->to_array();
-								$result['isApproved'] = $result['isapproved'];;
+								// $result['isApproved'] = $result['isapproved'];
 								// $result['isused'] = $usedText;
+								$result['isapproved'] = $appText;
 								$result['startDate'] = $result['startdate'];
 								$result['endDate'] = $result['enddate'];
 								// print_r($result['endDate']);
@@ -806,8 +807,8 @@ Class DayoffModule extends Application{
 								$result['bu']=$Dayoff->employee->companycode;
 								$result['superior']=$Dayoff->superior;
 								$result['depthead']=$Dayoff->depthead;
-								// $result['isapproved'] = $appText;
-								$result['isApproved'] = $Dayoff->isapproved;
+								$result['isapproved'] = $appText;
+								// $result['isApproved'] = $Dayoff->isapproved;
 								// $result['isused'] = $usedText;
 							}
 							$data=$Dayoffdetail;
