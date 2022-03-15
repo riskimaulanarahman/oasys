@@ -247,8 +247,16 @@
             },
           },
           {
+            dataField: "createdby",
+            caption: "Created by",
+            width: 200,
+            editorOptions: {
+              disabled: true,
+            },
+          },
+          {
             dataField: "fullname",
-            caption: "Name",
+            caption: "Request for",
             width: 200,
             editorOptions: {
               disabled: true,

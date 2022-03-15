@@ -416,6 +416,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 
 										})
 									}
+									$scope.grid1Component.refresh();
 
 								}
 							},
@@ -968,7 +969,9 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
                 // }},
 				// {dataField:'exchangerate'},
 				// {dataField:'paymentamount'},
-				{dataField:'costcentre', caption: 'Cost Centre'},
+				{dataField:'costcentre', caption: 'Cost Centre',editorOptions: {
+					disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin)?false:true):false,
+				}},
 				{dataField:'country',editorOptions: {
 					disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin)?false:true):false,
 				}},
@@ -995,9 +998,15 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 				useIcons:true,
 				mode: "cell",
 				// allowUpdating:(($scope.mode=='approve') || ($scope.mode=='view') ||($scope.mode=='report') )?(($rootScope.isAdmin)?true:false):true,
-				allowUpdating:(($scope.mode=='approve') || ($scope.mode=='view') ||($scope.mode=='report') )?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?true:false):true,
 				allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
-				allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+				// allowUpdating:(($scope.mode=='approve') || ($scope.mode=='view') ||($scope.mode=='report') )?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?true:false):true,
+				allowUpdating(e) {
+					return (($scope.mode=='approve') || ($scope.mode=='view') ||($scope.mode=='report') || (e.row.data.expensetype == 'MNP') )?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?true:false):true;
+				},
+				// allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+				allowDeleting(e) {
+					return (($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report') || (e.row.data.expensetype == 'MNP') )?(($rootScope.isAdmin)?true:false):true;
+				},
 				//allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
 				//allowAdding: ($rootScope.isAdmin)?true:false, // Enables insertion
 				form:{colCount: 1,
@@ -1296,6 +1305,10 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 			// 	Globalize.culture().numberFormat.currency.symbol = "Rp";  
 			// 	return Globalize.format(arg.value, "c")  
 			// },
+			groupPanel: {
+				emptyPanelText: 'if you got meals/pocket from your trip, please tick the column breakfast,lunch,dinner or pocket',
+				visible: true,
+			},
 			columns: [
 				{dataField:'departdate',width:150,dataType: "date" ,
 				format: 'dd/MM/yyyy',editorType: "dxDateBox",
@@ -1407,6 +1420,35 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 		};
 		
 	});
+
+	$scope.calculateStatistics = function () {
+		// $scope.dataGrid.getSelectedRowsData().then((rowData) => {
+			// let commonDuration = 0;
+			// for (let i = 0; i < rowData.length; i += 1) {
+			// commonDuration += rowData[i].Task_Due_Date
+			// 			- rowData[i].Task_Start_Date;
+			// }
+			// commonDuration /= MILLISECONDS_IN_DAY;
+
+			// $scope.$apply(() => {
+				criteria = {checkmnp:'all',advexpense_id:$scope.Requestid};
+				CrudService.FindData('advexpensedetail',criteria).then(function (response){
+				const { statistic } = $scope;
+				statistic.count = response.jml;
+				// statistic.count = rowData.length;
+				});
+		// });
+	};
+
+	$scope.buttonOptionsbt = {
+		text: 'Check Amount',
+		type: 'default',
+		onClick: $scope.calculateStatistics,
+	};
+
+	$scope.statistic = {
+		count: 0,
+	};
 	$scope.tabs = [
 		{ id:1, TabName : "Detail Expense", title: 'Detail Expense', template: "tab1"   },
 		{ id:5, TabName : "Bisnis Trip", title: 'Bisnis Trip', template: "tab5"   },
@@ -1597,40 +1639,63 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 		// 		   }
 		// 		});
 		// 	}else{
-				criteria = {status:'approver',advexpense_id:$scope.Requestid};
-				CrudService.FindData('advexpenseapp',criteria).then(function (response){
+			criteria = {status:'approver',advexpense_id:$scope.Requestid};
+			CrudService.FindData('advexpenseapp',criteria).then(function (response){
 					if(response.jml>0){
 						criteria = {status:'approver',advexpense_id:$scope.Requestid};
 						CrudService.FindData('advexpensedetail',criteria).then(function (response){
 							if(response.jml>0){
-								CrudService.FindData('advexpensedetail',criteria).then(function (responsed){
-									if(responsed.jml>0){
-										var data = $scope.formInstance.option("formData");
-										data.requeststatus = 1;
-										delete data.approvalstatus;
-										// data.startdate = $filter("date")(data.startdate, "yyyy-MM-dd HH:mm")
-										// data.enddate = $filter("date")(data.enddate, "yyyy-MM-dd HH:mm")
-										CrudService.Update('advexpense',data.id,data).then(function (response) {
-
-										if(response.status=="error"){
-											DevExpress.ui.notify(response.message,"error");
-										}else{
-											DevExpress.ui.notify({
-												message: "Data has been Updated",
-												type: "success",
-												displayTime: 2000,
-												height: 80,
-												position: {
-												my: 'top center', 
-												at: 'center center', 
-												of: window, 
-												offset: '0 0' 
-											}
-											});
-											$location.path( "/advexpense" );
-										}
+										criterias = {status:'approver',advexpense_id:$scope.Requestid};
 										
+										CrudService.FindData('advexpensedetailbt',criterias).then(function (responsed){
+										if(responsed.jml>0){
+
+											criterias = {status:'checktime',advexpense_id:$scope.Requestid};
+										
+											CrudService.FindData('advexpensedetailbt',criterias).then(function (responsedbt){
+											if(responsedbt.jml==0){
+
+												var data = $scope.formInstance.option("formData");
+												data.requeststatus = 1;
+												delete data.approvalstatus;
+
+												CrudService.Update('advexpense',data.id,data).then(function (response) {
+													
+													if(response.status=="error"){
+														DevExpress.ui.notify(response.message,"error");
+													}else{
+														DevExpress.ui.notify({
+															message: "Data has been Updated",
+															type: "success",
+															displayTime: 2000,
+															height: 80,
+															position: {
+																my: 'top center', 
+																at: 'center center', 
+																of: window, 
+																offset: '0 0' 
+															}
+														});
+														$location.path( "/advexpense" );
+													}
+													
+												});
+											} else {
+												DevExpress.ui.notify({
+													message: "Please add detail bisnis trip, first and last (depart time & return time) of the request",
+													type: "error",
+													displayTime: 5000,
+													height: 80,
+													position: {
+														my: 'top center', 
+														at: 'center center', 
+														of: window, 
+														offset: '0 0' 
+													}
+												});
+											}
 										});
+											
 									} else {
 										DevExpress.ui.notify({
 											message: "Please add detail bisnis trip of the request",
@@ -1638,11 +1703,11 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 											displayTime: 5000,
 											height: 80,
 											position: {
-											my: 'top center', 
-											at: 'center center', 
-											of: window, 
-											offset: '0 0' 
-										}
+												my: 'top center', 
+												at: 'center center', 
+												of: window, 
+												offset: '0 0' 
+											}
 										});
 									}
 								});
@@ -1653,11 +1718,11 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 									displayTime: 5000,
 									height: 80,
 									position: {
-									my: 'top center', 
-									at: 'center center', 
-									of: window, 
-									offset: '0 0' 
-								}
+										my: 'top center', 
+										at: 'center center', 
+										of: window, 
+										offset: '0 0' 
+									}
 								});
 							}
 						})

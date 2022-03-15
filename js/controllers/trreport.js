@@ -179,8 +179,14 @@
             width: 90,
           },
           {
+            dataField: "createdby",
+            caption: "Request by",
+            fixed: true,
+            fixedPosition: "left",
+          },
+          {
             dataField: "fullname",
-            caption: "Request By",
+            caption: "Request for",
             fixed: true,
             fixedPosition: "left",
           },

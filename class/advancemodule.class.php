@@ -1457,20 +1457,23 @@ Class Advancemodule extends Application{
 							$data=array("jml"=>count($Advance));
 						} else if(isset($query['filter'])){
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-							$join = "LEFT JOIN vwadvancereport v on tbl_advance.id=v.id LEFT JOIN tbl_employee ON (tbl_advance.employee_id = tbl_employee.id) ";
-							$sel = 'tbl_advance.*,v.personholding ';
-							$Advance = Advance::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
+							$join = "LEFT JOIN vwadvancereport v on tbl_advance.id=v.id LEFT JOIN tbl_employee a ON (tbl_advance.employee_id = a.id) LEFT JOIN tbl_employee b ON (tbl_advance.createdby = b.id)  ";
+							$sel = 'tbl_advance.*,v.personholding, b.fullname as createdbys ';
+							// $Advance = Advance::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
 							
 							// if($Employee->location->sapcode=='0200' || $this->currentUser->isadmin){
-								$Advance = Advance::find('all',array('joins'=>$join,'conditions' => array('tbl_advance.CreatedDate between ? and ?',$query['startDate'],$query['endDate'] ),'select'=>$sel,'include' => array('employee'=>array('company','department'))));
+							$Advance = Advance::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_advance.CreatedDate between ? and ?',$query['startDate'],$query['endDate'] ),'include' => array('employee'=>array('company','department'))));
 							// }else{
 							// 	$Advance = Advance::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_advance.RequestStatus=3 or tbl_advance.RequestStatus=5 and tbl_employee.company_id=?',$Employee->company_id ),'include' => array('employee'=>array('company','department'))));
 							// }
+							// print_r($Advance);
 							
 							foreach ($Advance as &$result) {
-								$fullname	= $result->employee->fullname;		
+								$fullname	= $result->employee->fullname;
+								$createdby	= $result->createdbys;	
 								$result		= $result->to_array();
 								$result['fullname']=$fullname;
+								$result['createdby']=$createdby;
 							}
 							$data=$Advance;
 						} else{

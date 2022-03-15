@@ -442,15 +442,20 @@ Class RfcModule extends Application{
 						} else if(isset($query['pending'])){						
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$emp_id = $Employee->id;
-							$Rfc = Rfc::find('all', array('conditions' => array("RequestStatus =1"),'include' => array('employee')));
+							$Rfc = Rfc::find('all', array('conditions' => array("RequestStatus >0"),'include' => array('employee')));
+							// $Rfc = Rfc::find('all', array('conditions' => array("RequestStatus =1"),'include' => array('employee')));
 							foreach ($Rfc as $result) {
 								$joinx   = "LEFT JOIN tbl_approver ON (tbl_rfcapproval.approver_id = tbl_approver.id) ";					
 								$Rfcapproval = Rfcapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and rfc_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 								if($Rfcapproval->approver->employee_id==$emp_id){
 									$request[]=$result->id;
 								}
+								$Rfcapproval = Rfcapproval::find('first',array('joins'=>$joinx,'conditions' => array("rfc_id=? and tbl_approver.employee_id = ? and approvalstatus!=0",$result->id,$emp_id),'include' => array('approver'=>array('employee'))));							
+								if(count($Rfcapproval)>0 && ($result->requeststatus==3 || $result->requeststatus==4)){
+									$request[]=$result->id;
+								}
 							}
-							$Rfc = Rfc::find('all', array('conditions' => array("id in (?)",$request),'include' => array('employee')));
+							$Rfc = Rfc::find('all', array('conditions' => array("id in (?)",$request),'order'=>"tbl_rfc.requeststatus",'include' => array('employee')));
 							foreach ($Rfc as &$result) {
 								$fullname	= $result->employee->fullname;		
 								$result		= $result->to_array();

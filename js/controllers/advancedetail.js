@@ -13,7 +13,8 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 			$scope.logout();
 		}else{
 			$scope.data = response;
-			console.log($scope.data);
+			$scope.remaksuser = $scope.data.remarks;
+			// console.log($scope.data);
 			if(($scope.mode=='approve')){
 				$scope.data.remarks="";
 			}
@@ -386,6 +387,10 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 							var rDesc = ["Saved as Draft","Waiting Approval","Require Rework","Approved","Rejected","Waiting Payment","Not Saved"];
 							$('<span>').appendTo(itemElement).addClass(rClass[val]).text(rDesc[val]);
 						}},
+						{
+							template: "<span>Remarks by User : <b>" +$scope.remaksuser+ "</b></span>",
+							visible: ($scope.mode=='approve') ?true:false,
+						},
 						{label: {
 							text: "Approval Action"
 						},
@@ -436,7 +441,8 @@ app.register.controller('AdvancedetailCtrl', ['$rootScope','$scope', '$http', '$
 								// text:"Please Check Your Detail & Approval list, before submit this form. Any Problem Contact Developer",
 								text: "Agree/Setuju"
 							}
-						}
+						},
+						
 
 
 						]

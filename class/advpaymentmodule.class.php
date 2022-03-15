@@ -1408,8 +1408,8 @@ Class Advpaymentmodule extends Application{
 									<th><p class=MsoNormal>Account Name</p></th>
 									<th><p class=MsoNormal>Bank</p></th>
 									<th><p class=MsoNormal>Account Number</p></th>
-									<th><p class=MsoNormal>Due Date</p></th>
 									<th><p class=MsoNormal>Payment Date</p></th>
+									<th><p class=MsoNormal>Due Date</p></th>
 									<th><p class=MsoNormal>Remarks</p></th>
 								</tr>
 								<tr style="height:22.5pt">
@@ -1419,8 +1419,8 @@ Class Advpaymentmodule extends Application{
 									<td><p class=MsoNormal> '.$Advpayment->accountname.'</p></td>
 									<td><p class=MsoNormal> '.$Advpayment->bank.'</p></td>
 									<td><p class=MsoNormal> '.$Advpayment->accountnumber.'</p></td>
-									<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Advpayment->duedate)).'</p></td>
 									<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Advpayment->paymentdate)).'</p></td>
+									<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Advpayment->duedate)).'</p></td>
 									<td><p class=MsoNormal> '.$Advpayment->remarks.'</p></td>
 								</tr>
 								</table>
@@ -1940,8 +1940,8 @@ Class Advpaymentmodule extends Application{
 								<th><p class=MsoNormal>Account Name</p></th>
 								<th><p class=MsoNormal>Bank</p></th>
 								<th><p class=MsoNormal>Account Number</p></th>
+								<th><p class=MsoNormal>Payment Date</p></th>
 								<th><p class=MsoNormal>Due Date</p></th>
-								<th><p class=MsoNormal>Expected Date</p></th>
 								<th><p class=MsoNormal>Remarks</p></th>
 							</tr>
 							<tr style="height:22.5pt">
@@ -1951,8 +1951,8 @@ Class Advpaymentmodule extends Application{
 								<td><p class=MsoNormal> '.$Advpayment->accountname.'</p></td>
 								<td><p class=MsoNormal> '.$Advpayment->bank.'</p></td>
 								<td><p class=MsoNormal> '.$Advpayment->accountnumber.'</p></td>
-								<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Advpayment->duedate)).'</p></td>
 								<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Advpayment->paymentdate)).'</p></td>
+								<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Advpayment->duedate)).'</p></td>
 								<td><p class=MsoNormal> '.$Advpayment->remarks.'</p></td>
 							</tr>
 							</table>

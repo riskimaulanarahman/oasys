@@ -718,8 +718,8 @@ Class TrModule extends Application{
 							$data=array("jml"=>count($Tr));
 						} else if(isset($query['filter'])){
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-							$join = "LEFT JOIN vwtrreport v on tbl_tr.id=v.id LEFT JOIN tbl_employee ON (tbl_tr.employee_id = tbl_employee.id) ";
-							$sel = 'tbl_tr.*, v.laststatus,v.personholding ';
+							$join = "LEFT JOIN vwtrreport v on tbl_tr.id=v.id LEFT JOIN tbl_employee a ON (tbl_tr.employee_id = a.id) LEFT JOIN tbl_employee b ON (tbl_tr.createdby = b.id) ";
+							$sel = 'tbl_tr.*, v.laststatus,v.personholding, b.fullname as createdbys ';
 
 							// if($Employee->location->sapcode=='0200' || $this->currentUser->isadmin){
 							// 	$Tr = Tr::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee'=>array('company','department'))));
@@ -729,9 +729,11 @@ Class TrModule extends Application{
 
 							$Tr = Tr::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_tr.CreatedDate between ? and ?',$query['startDate'],$query['endDate'] ),'include' => array('employee'=>array('company','department'))));
 							foreach ($Tr as &$result) {
-								$fullname	= $result->employee->fullname;		
+								$fullname	= $result->employee->fullname;	
+								$createdby	= $result->createdbys;	
 								$result		= $result->to_array();
 								$result['fullname']=$fullname;
+								$result['createdby']=$createdby;
 							}
 							$data=$Tr;
 						} else{

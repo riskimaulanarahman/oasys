@@ -248,13 +248,17 @@ Class Advexpensemodule extends Application{
 											foreach ($detailbt as $delr){
 												$delr->delete();
 											}
+
+											
 										} else {
 											$Advexpense->startdate = $valstart;
 											$Advexpense->enddate = $valend;
 										}
-										
-
 										$Advexpense->save();
+
+										$Advexpensebt = Advexpensedetail::find('first',array('conditions'=> array("advexpense_id=? and expensetype='MNP' ",$Advexpense->id)));
+										$Advexpensebt->delete();
+
 
 										if($check == 'enddate') {
 											$Advexpensecheckenddate = Advexpense::find('first',array('conditions' => array('id=? and enddate is null',$id)));
@@ -301,7 +305,7 @@ Class Advexpensemodule extends Application{
 													$AdvanceDetail = AdvanceDetail::find('all',array('conditions'=> array("advance_id=?",$Advance->id)));
 													foreach ($AdvanceDetail as $val) {
 														$val_tamount += $val->amount;
-												}
+													}
 												
 												$Advexpense->advanceno = $advanceno;
 												$Advexpense->lessadvance = $val_tamount;
@@ -1016,7 +1020,7 @@ Class Advexpensemodule extends Application{
 								<li><b><span>Total Amount Detail : '.number_format($val_tamount).'</span></b></li>
 								<li><b><span>Total Bisnis Trip : '.number_format($totalbt).'</span></b></li>
 								<li><b><span>Less Advance : '.number_format($less).'</span></b></li>
-								<li><b><span>Balance To Be Paid : '.number_format(($val_tamount+$totalbt)-$less).'</span></b></li>
+								<li><b><span>Balance To Be Paid : '.number_format(($val_tamount)-$less).'</span></b></li>
 							</ul>
 							<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.83.18/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.83.18/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 							$this->mail->addAddress($adb->email, $adb->fullname);
@@ -1280,7 +1284,7 @@ Class Advexpensemodule extends Application{
 										$Advexpensehistory->actiontype = 3;
 										break;
 									case '2':
-										if ($Advexpenseapproval->approver->approvaltype_id == 36){
+										if ($Advexpenseapproval->approver->approvaltype_id == 36 || $Advexpenseapproval->approver->isfinal == 1){
 											$Advexpense->requeststatus = 3;
 											$emto=$email;$emname=$Advexpense->employee->fullname;
 											$this->mail->Subject = "Online Approval System -> Approval Completed";
@@ -1475,7 +1479,7 @@ Class Advexpensemodule extends Application{
 								<li><b><span>Total Amount Detail : '.number_format($val_tamount).'</span></b></li>
 								<li><b><span>Total Bisnis Trip : '.number_format($totalbt).'</span></b></li>
 								<li><b><span>Less Advance : '.number_format($less).'</span></b></li>
-								<li><b><span>Balance To Be Paid : '.number_format(($val_tamount+$totalbt)-$less).'</span></b></li>
+								<li><b><span>Balance To Be Paid : '.number_format(($val_tamount)-$less).'</span></b></li>
 						</ul>
 						<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.83.18/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.83.18/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 						
@@ -1551,6 +1555,9 @@ Class Advexpensemodule extends Application{
 						if(isset($query['status'])){
 							$Advexpensedetail = Advexpensedetail::find('all', array('conditions' => array("advexpense_id=?",$query['advexpense_id'])));
 							$data=array("jml"=>count($Advexpensedetail));
+						} else if(isset($query['checkmnp'])){
+							$Advexpensedetailmnp = Advexpensedetail::find('first', array('conditions' => array("advexpense_id=? and expensetype='MNP' ",$query['advexpense_id'])));
+							$data=array("jml"=>number_format($Advexpensedetailmnp->amount));
 						}else{
 							$data=array();
 						}
@@ -1640,7 +1647,13 @@ Class Advexpensemodule extends Application{
 					case 'find':
 						$query=$this->post['query'];
 						if(isset($query['status'])){
-							$Advexpensedetailbt = Advexpensedetailbt::find('all', array('conditions' => array("advexpense_id=?",$query['advexpense_id'])));
+							if($query['status'] == 'approver') {
+								$Advexpensedetailbt = Advexpensedetailbt::find('all', array('conditions' => array("advexpense_id=?",$query['advexpense_id'])));
+							} else if($query['status'] == 'checktime') {
+								$Advexpensedetailbt = Advexpensedetailbtcheck::all(array('group' => 'advexpense_id', 'having' => 'advexpense_id = '.$query['advexpense_id']));
+								// $Advexpensedetailbt = Advexpensedetailbtcheck::find('all', array('having' =>"advexpense_id=?",$query['advexpense_id']));
+
+							}
 							$data=array("jml"=>count($Advexpensedetailbt));
 						}else{
 							$data=array();
@@ -1686,6 +1699,67 @@ Class Advexpensemodule extends Application{
 						// $exprice = $Advexpensedetailbt->unitprice * $Advexpensedetailbt->qty;
 						// $Advexpensedetailbt->extendedprice = $exprice;
 						$Advexpensedetailbt->save();
+
+						$Advexpense = Advexpense::find($Advexpensedetailbt->advexpense_id);
+						$creatorId=$Advexpense->employee_id;
+						$Employee = Employee::find($creatorId);
+						$Expensebt = Advexpensedetailbt::find('all',array('conditions'=>array("advexpense_id=?",$Advexpensedetailbt->advexpense_id),'include'=>array('advexpense'=>array('employee'=>array('company','department','designation','grade','location')))));	
+						
+						foreach($Expensebt as $vals) {
+							if($vals->ispapua == 0) {
+								$sppd = Advexpsppd::find('first',
+									array(
+										'conditions'=>array("level=? and ispapua=0",$Employee->level_id)
+									)
+								);
+							} else if($vals->ispapua == 1) {
+								$sppd = Advexpsppd::find('first',
+									array(
+										'conditions'=>array("level=? and ispapua=1",$Employee->level_id)
+									)
+								);
+							}
+
+							// $jml_breakfast = 0;
+							// $jml_lunch = 0;
+							// $jml_dinner = 0;
+							// $jml_pocket = 0;
+
+							$breakfast = ($vals->breakfast == 1) ? 0 : $sppd->breakfast;
+							$lunch = ($vals->lunch == 1) ? 0 : $sppd->lunch;
+							$dinner = ($vals->dinner == 1) ? 0 : $sppd->dinner;
+							$pocket = ($vals->pocket == 1) ? 0 : $sppd->pocket;
+		
+							$jml_breakfast += $breakfast;
+							$jml_lunch += $lunch;
+							$jml_dinner += $dinner;
+							$jml_pocket += $pocket;
+		
+							$totalbt = $jml_breakfast+$jml_lunch+$jml_dinner+$jml_pocket;
+
+							// print_r($sppd);
+							
+						}
+
+						// echo $totalbt;
+						$Expensedetail = Advexpensedetail::find('first',array('conditions'=>array("advexpense_id=? and purpose='Meals & Pocket'",$Advexpense->id),'include'=>array('advexpense'=>array('employee'=>array('company','department','designation','grade','location')))));	
+						// print_r($Expensedetail);
+						if(count($Expensedetail)==0) {
+
+							$databt['advexpense_id'] = $Advexpense->id;
+							$databt['expensetype'] = 'MNP';
+							$databt['purpose'] = 'Meals & Pocket';
+							$databt['amount'] = $totalbt;
+							$databt['currency'] = 'IDR';
+							
+							$Advexpensedetail = Advexpensedetail::create($databt);
+							$loggers = new Datalogger("Advexpensedetail from bt","create",null,json_encode($data));
+							$loggers->SaveData();
+						} else {
+							$Expensedetail->amount = $totalbt;
+							$Expensedetail->save();
+						}
+
 						$logger = new Datalogger("Advexpensedetailbt","update",json_encode($olddata),json_encode($data));
 						$logger->SaveData();
 						echo json_encode($Advexpensedetailbt);
@@ -1881,30 +1955,32 @@ Class Advexpensemodule extends Application{
 					$totalbtro = $jml_breakfastro+$jml_lunchro+$jml_dinnerro+$jml_pocketro;
 				}
 
-				$Worksheet->Range("E22")->Value = $val_tamount+$totalbtro;
+				// $Worksheet->Range("E22")->Value = $val_tamount+$totalbtro;
+				$Worksheet->Range("E22")->Value = $val_tamount;
 				$Worksheet->Range("E24")->Value = $lessadvance;
-				$Worksheet->Range("E26")->Value = ($val_tamount+$totalbtro)-$lessadvance;
+				$Worksheet->Range("E26")->Value = ($val_tamount)-$lessadvance;
+				// $Worksheet->Range("E26")->Value = ($val_tamount+$totalbtro)-$lessadvance;
 				
 	
 				$xlShiftDown=-4121;
 				$no = 1;
 				$nos = 1;
 
-				for ($a=20;$a<20+count($Advexpensedetail);$a++){
+				for ($a=19;$a<19+count($Advexpensedetail);$a++){
 					$Worksheet->Rows($a+1)->Copy();
 					$Worksheet->Rows($a+1)->Insert($xlShiftDown);
 					// $Worksheet->Range("A".$a)->Value = $no++;
-					$Worksheet->Range("B".$a)->Value = $Advexpensedetail[$a-20]->expensetype;
-					$Worksheet->Range("C".$a)->Value = $Advexpensedetail[$a-20]->purpose;
-					$Worksheet->Range("D".$a)->Value = $Advexpensedetail[$a-20]->receiptdate;
-					$Worksheet->Range("E".$a)->Value = $Advexpensedetail[$a-20]->amount;
-					$Worksheet->Range("F".$a)->Value = $Advexpensedetail[$a-20]->currency;
-					$Worksheet->Range("G".$a)->Value = $Advexpensedetail[$a-20]->exchangerate;
-					$Worksheet->Range("H".$a)->Value = $Advexpensedetail[$a-20]->paymentamount;
-					$Worksheet->Range("I".$a)->Value = $Advexpensedetail[$a-20]->costcentre;
-					$Worksheet->Range("J".$a)->Value = $Advexpensedetail[$a-20]->country;
-					$Worksheet->Range("K".$a)->Value = $Advexpensedetail[$a-20]->location;
-					$Worksheet->Range("L".$a)->Value = $Advexpensedetail[$a-20]->remarks;
+					$Worksheet->Range("B".$a)->Value = $Advexpensedetail[$a-19]->expensetype;
+					$Worksheet->Range("C".$a)->Value = $Advexpensedetail[$a-19]->purpose;
+					$Worksheet->Range("D".$a)->Value = $Advexpensedetail[$a-19]->receiptdate;
+					$Worksheet->Range("E".$a)->Value = $Advexpensedetail[$a-19]->amount;
+					$Worksheet->Range("F".$a)->Value = $Advexpensedetail[$a-19]->currency;
+					$Worksheet->Range("G".$a)->Value = $Advexpensedetail[$a-19]->exchangerate;
+					$Worksheet->Range("H".$a)->Value = $Advexpensedetail[$a-19]->paymentamount;
+					$Worksheet->Range("I".$a)->Value = $Advexpensedetail[$a-19]->costcentre;
+					$Worksheet->Range("J".$a)->Value = $Advexpensedetail[$a-19]->country;
+					$Worksheet->Range("K".$a)->Value = $Advexpensedetail[$a-19]->location;
+					$Worksheet->Range("L".$a)->Value = $Advexpensedetail[$a-19]->remarks;
 				}
 
 				
@@ -1956,17 +2032,17 @@ Class Advexpensemodule extends Application{
 					$Worksheet->Range("J".($b+$jmldetail))->Value = $pocket;
 				}
 				
-				$Worksheet->Range("B19")->Value = '';
-				$Worksheet->Range("C19")->Value = 'Meals & Pocket';
-				$Worksheet->Range("D19")->Value = '';
-				$Worksheet->Range("E19")->Value = $totalbt;
-				$Worksheet->Range("F19")->Value = 'IDR';
-				$Worksheet->Range("G19")->Value = '';
-				$Worksheet->Range("H19")->Value = '';
-				$Worksheet->Range("I19")->Value = '';
-				$Worksheet->Range("J19")->Value = '';
-				$Worksheet->Range("K19")->Value = '';
-				$Worksheet->Range("L19")->Value = '';
+				// $Worksheet->Range("B19")->Value = '';
+				// $Worksheet->Range("C19")->Value = 'Meals & Pocket';
+				// $Worksheet->Range("D19")->Value = '';
+				// $Worksheet->Range("E19")->Value = $totalbt;
+				// $Worksheet->Range("F19")->Value = 'IDR';
+				// $Worksheet->Range("G19")->Value = '';
+				// $Worksheet->Range("H19")->Value = '';
+				// $Worksheet->Range("I19")->Value = '';
+				// $Worksheet->Range("J19")->Value = '';
+				// $Worksheet->Range("K19")->Value = '';
+				// $Worksheet->Range("L19")->Value = '';
 
 				//end condition
 

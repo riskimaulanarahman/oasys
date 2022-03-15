@@ -51,7 +51,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
     <div class="app-container app-theme-white body-tabs-shadow">
         <div class="app-container">
             <div class="h-100 bg-plum-plate bg-animation">
-            <!-- <div class="h-100 bg-animation" style="background-image: url('assets/images/bg1.jpg') !important; background-repeat: no-repeat !important; background-size: 100% 100% !important;"> -->
+            <div class="h-100 bg-animation" style="background-image: url('assets/images/bg1.png') !important; background-repeat: no-repeat !important; background-size: 100% 100% !important;">
                 <div class="d-flex h-100 justify-content-center align-items-center">
                     <div class="mx-auto app-login-box col-md-8">
                     <div class="app-logo-inverse mx-auto mb-3"></div>
@@ -61,16 +61,18 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                     <div class="h5 modal-title text-center">
                                         <h4 class="mt-2">
                                             <div ng-if="loading" class="ball-scale-multiple">
-                                                    <div style="background-color: rgb(121, 76, 138);"></div>
-                                                    <div style="background-color: rgb(121, 76, 138);"></div>
-                                                    <div style="background-color: rgb(121, 76, 138);"></div>
+                                                    <div style="background-color: rgb(58, 196, 125);"></div>
+                                                    <div style="background-color: rgb(58, 196, 125);"></div>
+                                                    <div style="background-color: rgb(58, 196, 125);"></div>
                                             </div>
                                             <div style="font-weight: 900;">Online Approval System</div>
                                         </h4>
                                     </div>
                                     <form name="form" method="post" ng-submit="form.$valid && login()" novalidate>
                                         <div class="form-row">
+                                            
                                             <div class="col-md-12">
+                                                <div ng-if="error" class="alert alert-danger" ng-bind="error"></div>
                                                 <div class="position-relative form-group" ng-class="{ 'has-error': form.$submitted && form.username.$invalid }">
                                                     <input name="username" id="username" placeholder="Username" type="text" class="form-control" ng-model="username" required >
                                                     <div ng-messages="form.$submitted && form.username.$error" class="help-block">
@@ -79,28 +81,41 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
-                                                <div class="position-relative form-group">
+                                                <!-- <div class="position-relative form-group"> -->
+                                                    
+                                                    <!-- Show password <input type='checkbox' id='check' /> -->
+                                                
+                                                    
+                                                <!-- </div> -->
+                                                <div class="input-group">
                                                     <input name="password" id="password" placeholder="Password" type="password" class="form-control" ng-model="password" required>
+                                                    <div class="input-group-append">
+                                                        <button id="check" class="btn btn-secondary" style="margin-top:0px !important; margin-bottom:0px !important;"><i id="iconid" class="fa fa-eye"></i></button>
+                                                        <button id="nocheck" class="btn btn-secondary" style="margin-top:0px !important; margin-bottom:0px !important;"><i id="iconid" class="fa fa-eye-slash"></i></button>
+                                                    </div>
                                                     <div ng-messages="form.$submitted && form.password.$error" class="help-block">
                                                         <div ng-message="required">Password is required</div>
                                                     </div>
                                                 </div>
+                                                
                                             </div>
+                                            
+                                            
                                         </div>
                                         <div class="divider"></div>
-                                        <div ng-if="error" class="alert alert-danger" ng-bind="error"></div>
+                                        <div class="float-right">
+                                            <button type="submit" ng-disabled="loading" class="btn btn-success btn-lg" ng-click="login()" >Login</button>
+                                        </div>
                                     </div>
-                                    <div class="modal-footer clearfix">
-                                        <!-- <div class="float-right"> -->
-                                            <button type="submit" ng-disabled="loading" class="btn btn-alternate btn-block btn-lg" ng-click="login()" >Login</button>
-                                        <!-- </div> -->
+                                    <!-- <div class="modal-footer clearfix"> -->
+                                        
                                     </form>
                                     
-                                </div>
-                                <div class="divider"></div>
-                                <div class="col-md-6">
+                                <!-- </div> -->
+                                <!-- <div class="divider"></div> -->
+                                <!-- <div class="col-md-6"> -->
                                     <!-- <a href="/oasys/internalhiring" class="btn-icon btn-shadow btn-outline-2x btn btn-outline-primary" ><i class="fa fa-users btn-icon-wrapper"> </i>Internal Hiring</a> -->
-                                </div>
+                                <!-- </div> -->
 
                             </div>
                         </div>
@@ -970,14 +985,14 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
     <!-- <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/globalize/0.1.1/globalize.min.js"></script> -->
     <!-- <script src="https://unpkg.com/devextreme-aspnet-data/js/dx.aspnet.data.js"></script> -->
     
-	<script language="JavaScript" src="js/app.js?v=5.44" type="text/javascript"></script>
-	<script language="JavaScript" src="js/directive.js?v=5.44" type="text/javascript"></script>
-	<script language="JavaScript" src="js/services.js?v=5.44" type="text/javascript"></script>
-	<script language="JavaScript" src="js/filter.js?v=5.44" type="text/javascript"></script>
-	<script language="JavaScript" src="js/factory.js?v=5.44" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/maincontroller.js?v=5.44" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/login.js?v=5.44" type="text/javascript"></script>
-	<script language="JavaScript" src="js/script.js?v=5.44" type="text/javascript"></script>
+	<script language="JavaScript" src="js/app.js?v=5.50" type="text/javascript"></script>
+	<script language="JavaScript" src="js/directive.js?v=5.50" type="text/javascript"></script>
+	<script language="JavaScript" src="js/services.js?v=5.50" type="text/javascript"></script>
+	<script language="JavaScript" src="js/filter.js?v=5.50" type="text/javascript"></script>
+	<script language="JavaScript" src="js/factory.js?v=5.50" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/maincontroller.js?v=5.50" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/login.js?v=5.50" type="text/javascript"></script>
+	<script language="JavaScript" src="js/script.js?v=5.50" type="text/javascript"></script>
     <!-- <script type="text/javascript" src="https://demo.dashboardpack.com/architectui-html-pro/assets/scripts/main.d810cf0ae7f39f28f336.js"></script> -->
     
 	<script type="text/javascript" src="assets/scripts/main.js"></script>
@@ -990,3 +1005,28 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
     </script>
 </body>
 </html>
+<script type='text/javascript'>
+    $(document).ready(function(){
+        $('#nocheck').hide();
+        $('#check').click(function(e){
+            e.preventDefault();
+            // $("#iconid").toggle();
+            // $('#check').attr('id', 'nocheck');
+            $('#password').attr('type', 'text');
+            $('#nocheck').show();
+            $('#check').hide();
+
+            // $('#iconid').attr('class', 'fa fa-eye-slash');
+            // alert($(this).is(':checked'));
+            // $(this).is(':checked') ? $('#password').attr('type', 'text') : $('#password').attr('type', 'password');
+        });
+        $('#nocheck').click(function(e){
+            e.preventDefault();
+            // $('#nocheck').attr('id', 'check');
+            $('#password').attr('type', 'password');
+            $('#nocheck').hide();
+            $('#check').show();
+            // $('#iconid').attr('class', 'fa fa-eye');
+        });
+    });
+</script>
