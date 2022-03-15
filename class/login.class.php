@@ -147,8 +147,7 @@ Class Login extends Application{
 							echo json_encode(array("message" => "Successful login. ok","jwt" => $jwt));								
 						}
 					}				
-				}
-				// else{
+				}else{
 				// 	 if ($ldap2->connect()) {
 				// 		if($ldap2->bind()){
 				// 			$log = Userlog::find('first', array('conditions' => array("ldap_userid=? and isActive='1'",$ldap2->username )));
@@ -208,16 +207,16 @@ Class Login extends Application{
 				// 			exit;
 				// 		}
 				// 	}
-				// 	$err = new Errorlog();
-				// 	$err->errortype = "LDAPLogin";
-				// 	$err->errordate = date("Y-m-d h:i:s");
-				// 	$err->errormessage = $ldap->error;
-				// 	$err->user = $username;
-				// 	$err->ip = $this->ip;
-				// 	$err->save();
-				// 	http_response_code(401);
-				// 	echo json_encode(array("message" => "Login Error : ".$ldap->error));
-				// }
+					$err = new Errorlog();
+					$err->errortype = "LDAPLogin";
+					$err->errordate = date("Y-m-d h:i:s");
+					$err->errormessage = $ldap->error;
+					$err->user = $username;
+					$err->ip = $this->ip;
+					$err->save();
+					http_response_code(401);
+					echo json_encode(array("message" => "Login Error : ".$ldap->error));
+				}
 			}else{
 				$err = new Errorlog();
 				$err->errortype = "GlobalLogin";
