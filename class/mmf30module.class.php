@@ -815,15 +815,19 @@ Class Mmf30module extends Application{
 						} else if(isset($query['pending'])){						
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$emp_id = $Employee->id;
-							$Mmf = Mmf30::find('all', array('conditions' => array("RequestStatus =1"),'include' => array('employee')));
+							$Mmf = Mmf30::find('all', array('conditions' => array("RequestStatus >0"),'include' => array('employee')));
 							foreach ($Mmf as $result) {
 								$joinx   = "LEFT JOIN tbl_approver ON (tbl_mmf30approval.approver_id = tbl_approver.id) ";					
 								$Mmfapproval = Mmf30approval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and mmf30_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 								if($Mmfapproval->approver->employee_id==$emp_id){
 									$request[]=$result->id;
 								}
+								$Mmf30approval = Mmf30approval::find('first',array('joins'=>$joinx,'conditions' => array("mmf30_id=? and tbl_approver.employee_id = ? and approvalstatus!=0",$result->id,$emp_id),'include' => array('approver'=>array('employee'))));							
+								if(count($Mmf30approval)>0 && ($result->requeststatus==3 || $result->requeststatus==4)){
+									$request[]=$result->id;
+								}
 							}
-							$Mmf = Mmf30::find('all', array('conditions' => array("id in (?)",$request),'include' => array('employee')));
+							$Mmf = Mmf30::find('all', array('conditions' => array("id in (?)",$request),'order'=>"tbl_mmf30.requeststatus",'include' => array('employee')));
 							foreach ($Mmf as &$result) {
 								$fullname	= $result->employee->fullname;
 								$department	= $result->employee->department->departmentname;

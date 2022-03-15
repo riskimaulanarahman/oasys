@@ -65,6 +65,7 @@
                         allowSorting: false,
                         formItem: { visible: false},
                         cellTemplate: function (container, options) {
+                            if((options.data.requeststatus=='1')){	
                             var icon = 'dx-icon-todo';
                             $('<div style="padding:2px 15px 2px 15px;"/>').addClass(icon+'  btn-pill btn-shadow btn btn-primary')
                                 .text('')
@@ -74,6 +75,9 @@
                                     $scope.loadMMF30(options.data,mode,$scope.Filter);
                                 })
                                 .appendTo(container);
+                            }else{
+                                $('<div style="padding:2px 15px 2px 15px;"/>').text('').appendTo(container);
+                            }
                         }
                     }
                     ,{caption: '#',formItem: { visible: false},width: 40,
