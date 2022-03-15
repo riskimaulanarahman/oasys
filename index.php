@@ -50,7 +50,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 
     <div class="app-container app-theme-white body-tabs-shadow">
         <div class="app-container">
-            <div class="h-100 bg-plum-plate bg-animation">
+            <!-- <div class="h-100 bg-plum-plate bg-animation"> -->
             <div class="h-100 bg-animation" style="background-image: url('assets/images/bg1.png') !important; background-repeat: no-repeat !important; background-size: 100% 100% !important;">
                 <div class="d-flex h-100 justify-content-center align-items-center">
                     <div class="mx-auto app-login-box col-md-8">
