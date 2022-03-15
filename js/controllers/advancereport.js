@@ -248,7 +248,7 @@
           },
           {
             dataField: "createdby",
-            caption: "Created by",
+            caption: "Request by",
             width: 200,
             editorOptions: {
               disabled: true,
