@@ -273,9 +273,11 @@ Class RfcModule extends Application{
 			exit;
 		}
 		// var_dump($_FILES['myFile']['type']);
-		if((strpos($_FILES['myFile']['type'], "octet-stream") === false) && (strpos($_FILES['myFile']['type'], "image") === false) && (strpos($_FILES['myFile']['type'], "pdf") === false) && (strpos($_FILES['myFile']['type'], "officedocument") === false)  && (strpos($_FILES['myFile']['type'], "msword") === false) && (strpos($_FILES['myFile']['type'], "excel") === false)){
+		$ext = pathinfo($_FILES['myFile']['name'], PATHINFO_EXTENSION);
+		// echo $ext;
+		if((strpos($_FILES['myFile']['type'], "octet-stream") === false || $ext !== 'msg') && (strpos($_FILES['myFile']['type'], "image") === false) && (strpos($_FILES['myFile']['type'], "pdf") === false) && (strpos($_FILES['myFile']['type'], "officedocument") === false)  && (strpos($_FILES['myFile']['type'], "msword") === false) && (strpos($_FILES['myFile']['type'], "excel") === false)){
 			http_response_code(415);
-			echo "Only Accept Image File, pdf or Office Document (Excel & Word) ";
+			echo "Only Accept Image File, pdf or Office Document (Excel & Word & Outlook) ";
 			exit;
 		}
 		$path_to_file = "upload/rfc/".$id."_".time()."_".$_FILES['myFile']['name'];
