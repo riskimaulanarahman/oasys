@@ -90,8 +90,8 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                                 <div class="input-group">
                                                     <input name="password" id="password" placeholder="Password" type="password" class="form-control" ng-model="password" required>
                                                     <div class="input-group-append">
-                                                        <button id="check" class="btn btn-secondary" style="margin-top:0px !important; margin-bottom:0px !important;"><i id="iconid" class="fa fa-eye"></i></button>
-                                                        <button id="nocheck" class="btn btn-secondary" style="margin-top:0px !important; margin-bottom:0px !important;"><i id="iconid" class="fa fa-eye-slash"></i></button>
+                                                        <button id="check" type="button" class="btn btn-secondary" style="margin-top:0px !important; margin-bottom:0px !important;"><i id="iconid" class="fa fa-eye"></i></button>
+                                                        <button id="nocheck" type="button" class="btn btn-secondary" style="margin-top:0px !important; margin-bottom:0px !important;"><i id="iconid" class="fa fa-eye-slash"></i></button>
                                                     </div>
                                                     <div ng-messages="form.$submitted && form.password.$error" class="help-block">
                                                         <div ng-message="required">Password is required</div>

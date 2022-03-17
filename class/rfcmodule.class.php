@@ -261,7 +261,7 @@ Class RfcModule extends Application{
 			echo "There is no file to upload";
 			exit;
 		}
-		$max_image_size = 5242880;
+		$max_image_size = 6242880;
 		if(!is_uploaded_file($_FILES['myFile']['tmp_name'])) {
 			http_response_code(400);
 			echo "Unable to upload File";
@@ -269,10 +269,11 @@ Class RfcModule extends Application{
 		}
 		if($_FILES['myFile']['size'] > $max_image_size) {
 			http_response_code(413);
-			echo "File Size too Large, Maximum 5MB";
+			echo "File Size too Large, Maximum 6MB";
 			exit;
 		}
-		if((strpos($_FILES['myFile']['type'], "image") === false) && (strpos($_FILES['myFile']['type'], "pdf") === false) && (strpos($_FILES['myFile']['type'], "officedocument") === false)  && (strpos($_FILES['myFile']['type'], "msword") === false) && (strpos($_FILES['myFile']['type'], "excel") === false)){
+		// var_dump($_FILES['myFile']['type']);
+		if((strpos($_FILES['myFile']['type'], "octet-stream") === false) && (strpos($_FILES['myFile']['type'], "image") === false) && (strpos($_FILES['myFile']['type'], "pdf") === false) && (strpos($_FILES['myFile']['type'], "officedocument") === false)  && (strpos($_FILES['myFile']['type'], "msword") === false) && (strpos($_FILES['myFile']['type'], "excel") === false)){
 			http_response_code(415);
 			echo "Only Accept Image File, pdf or Office Document (Excel & Word) ";
 			exit;

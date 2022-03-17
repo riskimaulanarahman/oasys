@@ -1034,7 +1034,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 				e.editorName = "dxFileUploader";
 				e.editorOptions.uploadMode = "useButtons";
 				e.editorOptions.name = "myFile";
-				e.editorOptions.accept = "image/*,application/pdf,application/msword,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+				e.editorOptions.accept = "image/*,application/pdf,application/vnd.ms-outlook,application/msword,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 				e.editorOptions.uploadUrl= "api.php?action=uploadrfcfile&id="+$scope.Requestid;
 				e.editorOptions.onUploaded= function (e) {						
 					$scope.path = e.request.response;
