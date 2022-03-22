@@ -836,19 +836,25 @@ Class Advexpensemodule extends Application{
 						
 						if (isset($data['superior'])){
 							$joins   = "LEFT JOIN tbl_approver ON (tbl_advexpenseapproval.approver_id = tbl_approver.id) ";					
-							$dx = Advexpenseapproval::find('all',array('joins'=>$joins,'conditions' => array("advexpense_id=? and tbl_approver.approvaltype_id=35 and not(tbl_approver.employee_id=?)",$id,$superior)));	
+							$dx = Advexpenseapproval::find('all',array('joins'=>$joins,'conditions' => array("advexpense_id=? and (tbl_approver.approvaltype_id=35 or tbl_approver.approvaltype_id=49) and not(tbl_approver.employee_id=?)",$id,$superior)));	
 							foreach ($dx as $result) {
 								//delete same type approver
 								$result->delete();
 								$logger = new Datalogger("Advexpenseapproval","delete",json_encode($result->to_array()),"delete approver to prevent duplicate same type approver");
-							}				
+							}			
+								
 							$Advexpenseapproval = Advexpenseapproval::find('all',array('joins'=>$joins,'conditions' => array("advexpense_id=? and tbl_approver.employee_id=?",$id,$superior)));	
 							foreach ($Advexpenseapproval as &$result) {
 								$result		= $result->to_array();
 								$result['no']=1;
 							}			
 							if(count($Advexpenseapproval)==0){ 
-								$Approver = Approver::find('first',array('conditions'=>array("module='Advance' and employee_id=? and approvaltype_id=35",$superior)));
+								if($superior == 789) {
+									$Approver = Approver::find('first',array('conditions'=>array("module='Advance' and employee_id=? and approvaltype_id=49",$superior)));
+								} else {
+									$Approver = Approver::find('first',array('conditions'=>array("module='Advance' and employee_id=? and approvaltype_id=35",$superior)));
+								}
+								// $Approver = Approver::find('first',array('conditions'=>array("module='Advance' and employee_id=? and approvaltype_id=35",$superior)));
 								if(count($Approver)>0){
 									$Advexpenseapproval = new Advexpenseapproval();
 									$Advexpenseapproval->advexpense_id = $Advexpense->id;

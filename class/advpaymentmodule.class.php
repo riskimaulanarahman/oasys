@@ -1316,8 +1316,12 @@ Class Advpaymentmodule extends Application{
 						$Advpayment->save();
 						
 						if (isset($data['depthead'])){
-							$joins   = "LEFT JOIN tbl_approver ON (tbl_advpaymentapproval.approver_id = tbl_approver.id) ";					
-							$dx = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=35 and not(tbl_approver.employee_id=?)",$id,$depthead)));	
+							$joins   = "LEFT JOIN tbl_approver ON (tbl_advpaymentapproval.approver_id = tbl_approver.id) ";		
+							// if($depthead == 789) {
+							// 	$dx = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=49 and not(tbl_approver.employee_id=?)",$id,$depthead)));	
+							// } else {
+								$dx = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and (tbl_approver.approvaltype_id=35 or tbl_approver.approvaltype_id=49) and not(tbl_approver.employee_id=?)",$id,$depthead)));	
+							// }			
 							foreach ($dx as $result) {
 								//delete same type approver
 								$result->delete();
@@ -1329,7 +1333,13 @@ Class Advpaymentmodule extends Application{
 								$result['no']=1;
 							}			
 							if(count($Advpaymentapproval)==0){ 
-								$Approver = Approver::find('first',array('conditions'=>array("module='Advance' and employee_id=? and approvaltype_id=35",$depthead)));
+								// if($Advpayment->paymentform == 1) {
+									if($depthead == 789) {
+										$Approver = Approver::find('first',array('conditions'=>array("module='Advance' and employee_id=? and approvaltype_id=49",$depthead)));
+									} else {
+										$Approver = Approver::find('first',array('conditions'=>array("module='Advance' and employee_id=? and approvaltype_id=35",$depthead)));
+									}
+								// }
 								if(count($Approver)>0){
 									$Advpaymentapproval = new Advpaymentapproval();
 									$Advpaymentapproval->advpayment_id = $Advpayment->id;

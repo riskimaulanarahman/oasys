@@ -108,7 +108,7 @@
                         }
                     },
                     {dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200},
-                    {dataField:'prno',caption: "PR No",width: 250},
+                    {dataField:'mmfnumber',caption: "MMF No",width: 250},
                     {dataField:'fullname',caption:"Request For Employee",width: 200},
                     {dataField:'requeststatus',encodeHtml: false ,width: 300,
                         customizeText: function (e) {

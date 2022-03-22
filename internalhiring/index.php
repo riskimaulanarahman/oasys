@@ -85,7 +85,7 @@
                                             </div>
                                         </div>
                          
-									<li><button class="button wow fadeInUp" id="btn-search" data-wow-duration=".5s" data-wow-delay=".6s">Check Status</button></li>
+									<li><button class="button wow fadeInUp" id="btn-search" data-wow-duration=".5s" data-wow-delay=".6s">Check Status Applyment</button></li>
                                     <small style="color: white;">*Internal Hiring Position is below</small>
 								</ul>
 							</div>
@@ -330,6 +330,19 @@ function internalhiring() {
                                 itemType: 'group',
                                 caption: 'Letter of Approval from the Department Head',
                                  items: [
+                                        {
+                                            itemType: "button",
+                                            horizontalAlignment: "left",
+                                            buttonOptions: {
+                                                text: "Download Letter Approval Template",
+                                                type: "default",
+                                                onClick: function(){
+                                                    var path = "../internalhiring/surat_persetujuan_internalhiring.docx";
+                                                    location.href = path;
+                                                },
+                                                // useSubmitBehavior: false
+                                            }
+                                        },
 										{
 											template: function(data, itemElement) {
 												itemElement.append($("<div>").attr("id", "lampiran").dxFileUploader({
