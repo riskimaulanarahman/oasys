@@ -1389,10 +1389,10 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 				mode: "cell",
 				allowUpdating:(($scope.mode=='approve') || ($scope.mode=='view') ||($scope.mode=='report') )?(($rootScope.isAdmin) || ($scope.data.apprstatuscode==2)?true:false):true,
 				// allowUpdating:(($scope.mode=='approve') || ($scope.mode=='view') ||($scope.mode=='report') )?(($rootScope.isAdmin)?true:false):true,
-				allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
-				allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
-				//allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
-				//allowAdding: ($rootScope.isAdmin)?true:false, // Enables insertion
+				// allowAdding:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+				// allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+				allowDeleting: ($rootScope.isAdmin)?true:false, // Enables editing
+				allowAdding: ($rootScope.isAdmin)?true:false, // Enables insertion
 				form:{colCount: 1,
 				},
 			},
