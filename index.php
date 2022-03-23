@@ -51,10 +51,10 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
     <div class="app-container app-theme-white body-tabs-shadow">
         <div class="app-container">
             <!-- <div class="h-100 bg-plum-plate bg-animation"> -->
-            <div class="h-100 bg-animation" style="background-image: url('assets/images/bg1.png') !important; background-repeat: no-repeat !important; background-size: 100% 100% !important;">
+            <div class="h-100" style="background-image: url('assets/images/loginpage4.png') !important; background-repeat: no-repeat !important; background-size: 100% 100% !important;">
                 <div class="d-flex h-100 justify-content-center align-items-center">
                     <div class="mx-auto app-login-box col-md-8">
-                    <div class="app-logo-inverse mx-auto mb-3"></div>
+                    <div class="app-logo mx-auto mb-3"></div>
                         <div class="modal-dialog w-100 mx-auto">
                             <div class="modal-content">
                                 <div class="modal-body">
@@ -65,7 +65,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                                     <div style="background-color: rgb(58, 196, 125);"></div>
                                                     <div style="background-color: rgb(58, 196, 125);"></div>
                                             </div>
-                                            <div style="font-weight: 900;">Online Approval System</div>
+                                            <div style="font-weight: 900;">Login Account</div>
                                         </h4>
                                     </div>
                                     <form name="form" method="post" ng-submit="form.$valid && login()" novalidate>
@@ -985,14 +985,14 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
     <!-- <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/globalize/0.1.1/globalize.min.js"></script> -->
     <!-- <script src="https://unpkg.com/devextreme-aspnet-data/js/dx.aspnet.data.js"></script> -->
     
-	<script language="JavaScript" src="js/app.js?v=5.51" type="text/javascript"></script>
-	<script language="JavaScript" src="js/directive.js?v=5.51" type="text/javascript"></script>
-	<script language="JavaScript" src="js/services.js?v=5.51" type="text/javascript"></script>
-	<script language="JavaScript" src="js/filter.js?v=5.51" type="text/javascript"></script>
-	<script language="JavaScript" src="js/factory.js?v=5.51" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/maincontroller.js?v=5.51" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/login.js?v=5.51" type="text/javascript"></script>
-	<script language="JavaScript" src="js/script.js?v=5.51" type="text/javascript"></script>
+	<script language="JavaScript" src="js/app.js?v=5.52" type="text/javascript"></script>
+	<script language="JavaScript" src="js/directive.js?v=5.52" type="text/javascript"></script>
+	<script language="JavaScript" src="js/services.js?v=5.52" type="text/javascript"></script>
+	<script language="JavaScript" src="js/filter.js?v=5.52" type="text/javascript"></script>
+	<script language="JavaScript" src="js/factory.js?v=5.52" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/maincontroller.js?v=5.52" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/login.js?v=5.52" type="text/javascript"></script>
+	<script language="JavaScript" src="js/script.js?v=5.52" type="text/javascript"></script>
     <!-- <script type="text/javascript" src="https://demo.dashboardpack.com/architectui-html-pro/assets/scripts/main.d810cf0ae7f39f28f336.js"></script> -->
     
 	<script type="text/javascript" src="assets/scripts/main.js"></script>

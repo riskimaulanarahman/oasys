@@ -171,6 +171,7 @@
         {
           dataField: "positioncode",
           caption: "Position Code",
+          validationRules: [{type: "required"}],
           // dataType: 'string'
         },
         {
