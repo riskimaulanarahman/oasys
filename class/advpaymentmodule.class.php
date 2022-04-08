@@ -2215,8 +2215,10 @@ Class Advpaymentmodule extends Application{
 				}
 
 				// $Worksheet->Range("N6")->Value = date("d/m/Y",strtotime($Advpayment->createddate));
-				$Worksheet->Range("M15")->Value = date("d/m/Y",strtotime($duedate));
-				$Worksheet->Range("M16")->Value = date("d/m/Y",strtotime($paymentdate));
+				// $Worksheet->Range("M15")->Value = date("d/m/Y",strtotime($duedate));
+				// $Worksheet->Range("M16")->Value = date("d/m/Y",strtotime($paymentdate));
+				$Worksheet->Range("M15")->Value = $duedate;
+				$Worksheet->Range("M16")->Value = $paymentdate;
 
 			// if($Advpayment->paymentform == 1) {
 				$Worksheet->Range("E10")->Value = $fullname;
