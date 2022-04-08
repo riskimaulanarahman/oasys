@@ -2101,8 +2101,10 @@ Class Advancemodule extends Application{
 				}
 
 				$Worksheet->Range("N6")->Value = date("d/m/Y",strtotime($Advance->createddate));
-				$Worksheet->Range("N8")->Value = date("d/m/Y",strtotime($duedate));
-				$Worksheet->Range("N7")->Value = date("d/m/Y",strtotime($expecteddate));
+				// $Worksheet->Range("N8")->Value = date("d/m/Y",strtotime($duedate));
+				// $Worksheet->Range("N7")->Value = date("d/m/Y",strtotime($expecteddate));
+				$Worksheet->Range("N8")->Value = $duedate;
+				$Worksheet->Range("N7")->Value = $expecteddate;
 
 			if($Advance->advanceform == 1) {
 				$Worksheet->Range("F6")->Value = $fullname;
