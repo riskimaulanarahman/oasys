@@ -329,7 +329,7 @@
             dataField: "approveddoc",
             caption: "Approval Doc",
             width: 100,
-            allowFiltering: false,
+            allowFiltering: true,
             allowSorting: false,
             formItem: { visible: false },
             editorOptions: {
