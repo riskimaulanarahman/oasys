@@ -148,6 +148,13 @@ app.register.controller('doreportCtrl', ['$rootScope','$scope', '$http', '$inter
 					}},
 				{dataField:'remarks',width: '60%',encodeHtml: false },
 				{
+          dataField: "personholding",
+          caption: "Next Approver",
+          editorOptions: {
+            disabled: true,
+          },
+        },
+				{
 							dataField: "approveddoc",
 							caption:"Approval Doc",
 							width: 100,

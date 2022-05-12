@@ -97,7 +97,40 @@
                                     // }
                                 })
                                 .appendTo(container);
-                            }else{
+                            } else if (
+                                (options.data.approveddoc == "" ||
+                                  options.data.approveddoc == null) &&
+                                options.data.requeststatus == "3"
+                              ) {
+                                $('<div style="padding:2px 15px 2px 15px;"/>')
+                                  .addClass(
+                                    "dx-icon-repeat  btn-pill btn-shadow btn btn-success"
+                                  )
+                                  .text("")
+                                  .on("dxclick", function () {
+                                    DevExpress.ui.notify("Please Wait...", "info");
+                                    $.ajax({
+                                      url: "api/apiadvexpensepdf?id=" + options.data.id,
+                                      type: "get",
+                                      cache: false,
+                                      success: function (data) {
+                                        console.log(data);
+                                        if (data == 200) {
+                                          DevExpress.ui.notify("Success Re-PDF", "success");
+                                        } else {
+                                          alert(data);
+                                        }
+                                        $scope.dataGrid.refresh();
+                                      },
+                                      error: function (data) {
+                                        var json = $.parseJSON(data);
+                                        alert("error " + json);
+                                        $scope.dataGrid.refresh();
+                                      },
+                                    });
+                                  })
+                                  .appendTo(container);
+                              } else{
                                 $('<div style="padding:2px 15px 2px 15px;"/>').text('').appendTo(container);
                             }
                         }
