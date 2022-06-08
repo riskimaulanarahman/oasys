@@ -301,25 +301,27 @@ Class TrModule extends Application{
 							$Tr = Tr::create($data);
 							$data=$Tr->to_array();
 							$joinx   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
-							if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
-								if( ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
-									$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='TR' and tbl_approver.isactive='1' and approvaltype_id=17 and tbl_employee.companycode=?",$Employee->companycode)));
-									if(count($Approver)>0){
-										$Trapproval = new Trapproval();
-										$Trapproval->tr_id = $Tr->id;
-										$Trapproval->approver_id = $Approver->id;
-										$Trapproval->save();
-									}
-								}
-							}else{
-								$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='TR' and tbl_approver.isactive='1' and approvaltype_id=17 and tbl_employee.company_id=?",$Employee->company_id)));
+							// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
+							// 	if( ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
+							// 		$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='TR' and tbl_approver.isactive='1' and approvaltype_id=17 and tbl_employee.companycode=?",$Employee->companycode)));
+							// 		if(count($Approver)>0){
+							// 			$Trapproval = new Trapproval();
+							// 			$Trapproval->tr_id = $Tr->id;
+							// 			$Trapproval->approver_id = $Approver->id;
+							// 			$Trapproval->save();
+							// 		}
+							// 	}
+							// }else{
+								$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='TR' and tbl_approver.isactive='1' and approvaltype_id=17 and FIND_IN_SET(?, CompanyList) > 0",$Employee->companycode)));
+								// print_r($Approver);
+								// $Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='TR' and tbl_approver.isactive='1' and approvaltype_id=17 and tbl_employee.company_id=?",$Employee->company_id)));
 								if(count($Approver)>0){
 									$Trapproval = new Trapproval();
 									$Trapproval->tr_id = $Tr->id;
 									$Trapproval->approver_id = $Approver->id;
 									$Trapproval->save();
 								}
-							}
+							// }
 							$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='TR' and tbl_approver.isactive='1' and approvaltype_id=18")));
 							if(count($Approver)>0){
 								$Trapproval = new Trapproval();
