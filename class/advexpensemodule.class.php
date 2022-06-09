@@ -941,11 +941,16 @@ Class Advexpensemodule extends Application{
 							$no=1;
 							foreach ($Advexpensedetail as $data){
 								$val_tamount += $data->amount;
+								if($data->receiptdate == null || $data->receiptdate == '') {
+									$recdate = '';
+								} else {
+									$recdate = $data->receiptdate;
+								}
 								$this->mailbody .='<tr style="height:22.5pt">
 											<td><p class=MsoNormal> '.$no.'</p></td>
 											<td><p class=MsoNormal> '.$data->expensetype.'</p></td>
 											<td><p class=MsoNormal> '.$data->purpose.'</p></td>
-											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($data->receiptdate)).'</p></td>
+											<td><p class=MsoNormal> '.$recdate.'</p></td>
 											<td><p class=MsoNormal> '.number_format($data->amount).'</p></td>
 											<td><p class=MsoNormal> '.$data->currency.'</p></td>
 											<td><p class=MsoNormal> '.number_format($data->exchangerate).'</p></td>
