@@ -1294,7 +1294,7 @@ Class Advancemodule extends Application{
 								$data=array("jml"=>1);
 							} else if(($tdetailamount<5000000) && $Advance->advanceform ==1 && $dx->approver->approvaltype_id == 41) {
 								$data=array("jml"=>1);
-							} else if(($tdetailamount>=5000000 && $tdetailamount<10000000) && $Advance->advanceform ==1 && $dx->approver->approvaltype_id == 39) {
+							} else if(($tdetailamount>=5000000 && $tdetailamount<10000000) && $Advance->advanceform ==1 && $dx->approver->approvaltype_id == 41) {
 								$data=array("jml"=>1);
 								// start advanceform 2
 							} else if(($tdetailamount<5000000) && $Advance->advanceform ==2 && $Advance->opscategory==1 && $dx->approver->approvaltype_id == 41) {
@@ -1307,7 +1307,7 @@ Class Advancemodule extends Application{
 								$data=array("jml"=>1);
 							} else if(($tdetailamount<5000000) && $Advance->advanceform ==2 && $Advance->opscategory==5 && $dx->approver->approvaltype_id == 41) {
 								$data=array("jml"=>1);
-							} else if(($tdetailamount>=5000000 && $tdetailamount<10000000) && $Advance->advanceform ==2 && $dx->approver->approvaltype_id == 39) {
+							} else if(($tdetailamount>=5000000 && $tdetailamount<10000000) && $Advance->advanceform ==2 && $dx->approver->approvaltype_id == 41) {
 								$data=array("jml"=>1);
 							} else{
 								$join   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";

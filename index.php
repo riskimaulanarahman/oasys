@@ -823,6 +823,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 									<li class="nav-item"><a href="" ng-click="dataDepartment()"  class="nav-link" ><i class='fa fa-id-badge'></i> Data Department</a></li>
 									<li class="nav-item"><a href="" ng-click="dataDivision()"  class="nav-link" ><i class="fa fa-address-card"></i> Data Division</a></li>
 									<li class="nav-item"><a href="" ng-click="dataDesignation()"  class="nav-link" ><i class='fa fa-id-card'></i> Data Designation</a></li>
+									<li class="nav-item"><a href="" ng-click=""  class="nav-link" ><i class='fa fa-address-book'></i> Data Balance</a></li>
 									<li class="nav-item"><a href="" ng-click="dataEmployee()"  class="nav-link" ><i class='fa fa-address-book'></i> Data Employee</a></li>
 									<li class="nav-item"><a href="" ng-click="dataInternalhiringmaster()"  class="nav-link" ><i class='fa fa-address-book'></i> Data Internal Hiring</a></li>
 									<li class="nav-item"><a href="" ng-click="dataApprover()"  class="nav-link" ><i class='fa fa-id-card'></i> Data Approver</a></li>
