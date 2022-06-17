@@ -1283,6 +1283,8 @@ Class Advancemodule extends Application{
 							$dx = Advanceapproval::find('first', array('joins'=>$join,'conditions' => array("advance_id=? and tbl_approver.employee_id = ? and ApprovalStatus = 0",$query['advance_id'],$Employee->id),'order'=>'tbl_approver.sequence','include' => array('approver'=>array('employee'))));
 							// print_r($dx);
 							$Advance = Advance::find($query['advance_id']);
+							$AdvEmp = Employee::find('first', array('conditions' => array("id=?",$Advance->employee_id)));
+
 							$amountdetail = Advancedetail::find('all', array('conditions' => array("advance_id=?",$Advance->id)));
 							$tdetailamount = 0;
 							foreach($amountdetail as $val) {
@@ -1290,35 +1292,51 @@ Class Advancemodule extends Application{
 							}
 							// print_r($tdetailamount);
 							// print_r($dx->approver->approvaltype_id);
-							if($dx->approver->isfinal==1){
-								$data=array("jml"=>1);
-							} else if(($tdetailamount<5000000) && $Advance->advanceform ==1 && $dx->approver->approvaltype_id == 41) {
-								$data=array("jml"=>1);
-							} else if(($tdetailamount>=5000000 && $tdetailamount<10000000) && $Advance->advanceform ==1 && $dx->approver->approvaltype_id == 41) {
-								$data=array("jml"=>1);
-								// start advanceform 2
-							} else if(($tdetailamount<5000000) && $Advance->advanceform ==2 && $Advance->opscategory==1 && $dx->approver->approvaltype_id == 41) {
-								$data=array("jml"=>1);
-							} else if(($tdetailamount<5000000) && $Advance->advanceform ==2 && $Advance->opscategory==2 && $dx->approver->approvaltype_id == 41) {
-								$data=array("jml"=>1);
-							} else if(($tdetailamount<5000000) && $Advance->advanceform ==2 && $Advance->opscategory==3 && $dx->approver->approvaltype_id == 37) {
-								$data=array("jml"=>1);
-							} else if(($tdetailamount<5000000) && $Advance->advanceform ==2 && $Advance->opscategory==4 && $dx->approver->approvaltype_id == 41) {
-								$data=array("jml"=>1);
-							} else if(($tdetailamount<5000000) && $Advance->advanceform ==2 && $Advance->opscategory==5 && $dx->approver->approvaltype_id == 41) {
-								$data=array("jml"=>1);
-							} else if(($tdetailamount>=5000000 && $tdetailamount<10000000) && $Advance->advanceform ==2 && $dx->approver->approvaltype_id == 41) {
-								$data=array("jml"=>1);
-							} else{
-								$join   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";
-								$Advanceapproval = Advanceapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=? and ApprovalStatus<=1 and not tbl_approver.employee_id=?",$query['advance_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
-								foreach ($Advanceapproval as &$result) {
-									$fullname	= $result->approver->employee->fullname;	
-									$result		= $result->to_array();
-									$result['fullname']=$fullname;
+							if($AdvEmp->companycode == 'LDU') {
+								if($dx->approver->approvaltype_id == 38) {
+									$data=array("jml"=>1);
+								} else{
+									$join   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";
+									$Advanceapproval = Advanceapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=? and ApprovalStatus<=1 and not tbl_approver.employee_id=?",$query['advance_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
+									foreach ($Advanceapproval as &$result) {
+										$fullname	= $result->approver->employee->fullname;	
+										$result		= $result->to_array();
+										$result['fullname']=$fullname;
+									}
+									$data=array("jml"=>count($Advanceapproval));
 								}
-								$data=array("jml"=>count($Advanceapproval));
-							}						
+							} else {
+
+								if($dx->approver->isfinal==1){
+									$data=array("jml"=>1);
+								} else if(($tdetailamount<5000000) && $Advance->advanceform ==1 && $dx->approver->approvaltype_id == 41) {
+									$data=array("jml"=>1);
+								} else if(($tdetailamount>=5000000 && $tdetailamount<10000000) && $Advance->advanceform ==1 && $dx->approver->approvaltype_id == 41) {
+									$data=array("jml"=>1);
+									// start advanceform 2
+								} else if(($tdetailamount<5000000) && $Advance->advanceform ==2 && $Advance->opscategory==1 && $dx->approver->approvaltype_id == 41) {
+									$data=array("jml"=>1);
+								} else if(($tdetailamount<5000000) && $Advance->advanceform ==2 && $Advance->opscategory==2 && $dx->approver->approvaltype_id == 41) {
+									$data=array("jml"=>1);
+								} else if(($tdetailamount<5000000) && $Advance->advanceform ==2 && $Advance->opscategory==3 && $dx->approver->approvaltype_id == 37) {
+									$data=array("jml"=>1);
+								} else if(($tdetailamount<5000000) && $Advance->advanceform ==2 && $Advance->opscategory==4 && $dx->approver->approvaltype_id == 41) {
+									$data=array("jml"=>1);
+								} else if(($tdetailamount<5000000) && $Advance->advanceform ==2 && $Advance->opscategory==5 && $dx->approver->approvaltype_id == 41) {
+									$data=array("jml"=>1);
+								} else if(($tdetailamount>=5000000 && $tdetailamount<10000000) && $Advance->advanceform ==2 && $dx->approver->approvaltype_id == 41) {
+									$data=array("jml"=>1);
+								} else{
+									$join   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";
+									$Advanceapproval = Advanceapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=? and ApprovalStatus<=1 and not tbl_approver.employee_id=?",$query['advance_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
+									foreach ($Advanceapproval as &$result) {
+										$fullname	= $result->approver->employee->fullname;	
+										$result		= $result->to_array();
+										$result['fullname']=$fullname;
+									}
+									$data=array("jml"=>count($Advanceapproval));
+								}						
+							}
 						} else if(isset($query['pending'])){						
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$emp_id = $Employee->id;
