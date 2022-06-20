@@ -1476,6 +1476,8 @@ Class Advancemodule extends Application{
 
 						if (isset($mode) && ($mode=='approve')){
 								$Advance = Advance::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
+								$AdvEmp = Employee::find('first', array('conditions' => array("id=?",$Advance->employee_id)));
+
 								$joincrb   = "LEFT JOIN tbl_employee ON (tbl_advance.createdby = tbl_employee.id) ";
 								$Advancecrb = Advance::find($doid,array('select'=>"tbl_advance.*,tbl_employee.loginname",'joins'=>$joincrb));
 								$joinx   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) ";					
@@ -1538,185 +1540,208 @@ Class Advancemodule extends Application{
 											foreach($amountdetail as $val) {
 												$tdetailamount += $val->amount;
 											}
-											if($Advance->advanceform == 1) {
-
-												if(($tdetailamount<5000000) && $Advanceapproval->approver->approvaltype_id == 41) {
-													$Advance->requeststatus = 3;
-													if($Advance->createdby == $Advance->employee_id) {
-														$emto=$email;
-													} else {
-														$emto=$emailcrb;
-													}
-													$emname=$Advance->employee->fullname;
-
-													$this->mail->Subject = "Online Approval System -> Approval Completed";
-													$red = 'Your Advance request has been approved';
-													//delete unnecessary approver
-													$Advanceapproval = Advanceapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
-													foreach ($Advanceapproval as $data) {
-														if($data->approvalstatus==0){
-															$logger = new Datalogger("Advanceapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
-															$logger->SaveData();
-															$data->delete();
-														}
-													}
-													$complete =true;
-												} else if(($tdetailamount>=5000000 && $tdetailamount<10000000) && $Advanceapproval->approver->approvaltype_id == 39) {
-													$Advance->requeststatus = 3;
-													if($Advance->createdby == $Advance->employee_id) {
-														$emto=$email;
-													} else {
-														$emto=$emailcrb;
-													}
-													$emname=$Advance->employee->fullname;
-													$this->mail->Subject = "Online Approval System -> Approval Completed";
-													$red = 'Your Advance request has been approved';
-													//delete unnecessary approver
-													$Advanceapproval = Advanceapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
-													foreach ($Advanceapproval as $data) {
-														if($data->approvalstatus==0){
-															$logger = new Datalogger("Advanceapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
-															$logger->SaveData();
-															$data->delete();
-														}
-													}
-													$complete =true;
+											if($AdvEmp->companycode == 'LDU' && $Advanceapproval->approver->approvaltype_id == 38) {
+												$Advance->requeststatus = 3;
+												if($Advance->createdby == $Advance->employee_id) {
+													$emto=$email;
 												} else {
-													$Advance->requeststatus = 1;
-													$emto=$adb->email;$emname=$adb->fullname;
-													$this->mail->Subject = "Online Approval System -> New Advance Submission";
-													$red = 'New Advance request awaiting for your approval:';
+													$emto=$emailcrb;
 												}
+												$emname=$Advance->employee->fullname;
 
-											} else if($Advance->advanceform == 2) {
-
-												if(($tdetailamount<5000000) && $Advance->opscategory==1 && $Advanceapproval->approver->approvaltype_id == 41) {
-													$Advance->requeststatus = 3;
-													if($Advance->createdby == $Advance->employee_id) {
-														$emto=$email;
-													} else {
-														$emto=$emailcrb;
-													};
-													$emname=$Advance->employee->fullname;
-													$this->mail->Subject = "Online Approval System -> Approval Completed";
-													$red = 'Your Advance request has been approved';
-													//delete unnecessary approver
-													$Advanceapproval = Advanceapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
-													foreach ($Advanceapproval as $data) {
-														if($data->approvalstatus==0){
-															$logger = new Datalogger("Advanceapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
-															$logger->SaveData();
-															$data->delete();
-														}
+												$this->mail->Subject = "Online Approval System -> Approval Completed";
+												$red = 'Your Advance request has been approved';
+												//delete unnecessary approver
+												$Advanceapproval = Advanceapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
+												foreach ($Advanceapproval as $data) {
+													if($data->approvalstatus==0){
+														$logger = new Datalogger("Advanceapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
+														$logger->SaveData();
+														$data->delete();
 													}
-													$complete =true;
-												} else if(($tdetailamount<5000000) && $Advance->opscategory==2 && $Advanceapproval->approver->approvaltype_id == 41) {
-													$Advance->requeststatus = 3;
-													if($Advance->createdby == $Advance->employee_id) {
-														$emto=$email;
-													} else {
-														$emto=$emailcrb;
-													}
-													$emname=$Advance->employee->fullname;
-													$this->mail->Subject = "Online Approval System -> Approval Completed";
-													$red = 'Your Advance request has been approved';
-													//delete unnecessary approver
-													$Advanceapproval = Advanceapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
-													foreach ($Advanceapproval as $data) {
-														if($data->approvalstatus==0){
-															$logger = new Datalogger("Advanceapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
-															$logger->SaveData();
-															$data->delete();
-														}
-													}
-													$complete =true;
-												} else if(($tdetailamount<5000000) && $Advance->opscategory==3 && $Advanceapproval->approver->approvaltype_id == 37) {
-													$Advance->requeststatus = 3;
-													if($Advance->createdby == $Advance->employee_id) {
-														$emto=$email;
-													} else {
-														$emto=$emailcrb;
-													}
-													$emname=$Advance->employee->fullname;
-													$this->mail->Subject = "Online Approval System -> Approval Completed";
-													$red = 'Your Advance request has been approved';
-													//delete unnecessary approver
-													$Advanceapproval = Advanceapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
-													foreach ($Advanceapproval as $data) {
-														if($data->approvalstatus==0){
-															$logger = new Datalogger("Advanceapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
-															$logger->SaveData();
-															$data->delete();
-														}
-													}
-													$complete =true;
-												} else if(($tdetailamount<5000000) && $Advance->opscategory==4 && $Advanceapproval->approver->approvaltype_id == 41) {
-													$Advance->requeststatus = 3;
-													if($Advance->createdby == $Advance->employee_id) {
-														$emto=$email;
-													} else {
-														$emto=$emailcrb;
-													}
-													$emname=$Advance->employee->fullname;
-													$this->mail->Subject = "Online Approval System -> Approval Completed";
-													$red = 'Your Advance request has been approved';
-													//delete unnecessary approver
-													$Advanceapproval = Advanceapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
-													foreach ($Advanceapproval as $data) {
-														if($data->approvalstatus==0){
-															$logger = new Datalogger("Advanceapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
-															$logger->SaveData();
-															$data->delete();
-														}
-													}
-													$complete =true;
-												} else if(($tdetailamount<5000000) && $Advance->opscategory==5 && $Advanceapproval->approver->approvaltype_id == 41) {
-													$Advance->requeststatus = 3;
-													if($Advance->createdby == $Advance->employee_id) {
-														$emto=$email;
-													} else {
-														$emto=$emailcrb;
-													}
-													$emname=$Advance->employee->fullname;
-													$this->mail->Subject = "Online Approval System -> Approval Completed";
-													$red = 'Your Advance request has been approved';
-													//delete unnecessary approver
-													$Advanceapproval = Advanceapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
-													foreach ($Advanceapproval as $data) {
-														if($data->approvalstatus==0){
-															$logger = new Datalogger("Advanceapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
-															$logger->SaveData();
-															$data->delete();
-														}
-													}
-													$complete =true;
-												} else if(($tdetailamount>=5000000 && $tdetailamount<10000000) && $Advanceapproval->approver->approvaltype_id == 39) {
-													$Advance->requeststatus = 3;
-													if($Advance->createdby == $Advance->employee_id) {
-														$emto=$email;
-													} else {
-														$emto=$emailcrb;
-													}
-													$emname=$Advance->employee->fullname;
-													$this->mail->Subject = "Online Approval System -> Approval Completed";
-													$red = 'Your Advance request has been approved';
-													//delete unnecessary approver
-													$Advanceapproval = Advanceapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
-													foreach ($Advanceapproval as $data) {
-														if($data->approvalstatus==0){
-															$logger = new Datalogger("Advanceapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
-															$logger->SaveData();
-															$data->delete();
-														}
-													}
-													$complete =true;
-												} else {
-													$Advance->requeststatus = 1;
-													$emto=$adb->email;$emname=$adb->fullname;
-													$this->mail->Subject = "Online Approval System -> New Advance Submission";
-													$red = 'New Advance request awaiting for your approval:';
 												}
+												$complete =true;
+											} else {
+												if($Advance->advanceform == 1) {
 
+													if(($tdetailamount<5000000) && $Advanceapproval->approver->approvaltype_id == 41) {
+														$Advance->requeststatus = 3;
+														if($Advance->createdby == $Advance->employee_id) {
+															$emto=$email;
+														} else {
+															$emto=$emailcrb;
+														}
+														$emname=$Advance->employee->fullname;
+
+														$this->mail->Subject = "Online Approval System -> Approval Completed";
+														$red = 'Your Advance request has been approved';
+														//delete unnecessary approver
+														$Advanceapproval = Advanceapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
+														foreach ($Advanceapproval as $data) {
+															if($data->approvalstatus==0){
+																$logger = new Datalogger("Advanceapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
+																$logger->SaveData();
+																$data->delete();
+															}
+														}
+														$complete =true;
+													} else if(($tdetailamount>=5000000 && $tdetailamount<10000000) && $Advanceapproval->approver->approvaltype_id == 39) {
+														$Advance->requeststatus = 3;
+														if($Advance->createdby == $Advance->employee_id) {
+															$emto=$email;
+														} else {
+															$emto=$emailcrb;
+														}
+														$emname=$Advance->employee->fullname;
+														$this->mail->Subject = "Online Approval System -> Approval Completed";
+														$red = 'Your Advance request has been approved';
+														//delete unnecessary approver
+														$Advanceapproval = Advanceapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
+														foreach ($Advanceapproval as $data) {
+															if($data->approvalstatus==0){
+																$logger = new Datalogger("Advanceapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
+																$logger->SaveData();
+																$data->delete();
+															}
+														}
+														$complete =true;
+													} else {
+														$Advance->requeststatus = 1;
+														$emto=$adb->email;$emname=$adb->fullname;
+														$this->mail->Subject = "Online Approval System -> New Advance Submission";
+														$red = 'New Advance request awaiting for your approval:';
+													}
+
+												} else if($Advance->advanceform == 2) {
+
+													if(($tdetailamount<5000000) && $Advance->opscategory==1 && $Advanceapproval->approver->approvaltype_id == 41) {
+														$Advance->requeststatus = 3;
+														if($Advance->createdby == $Advance->employee_id) {
+															$emto=$email;
+														} else {
+															$emto=$emailcrb;
+														};
+														$emname=$Advance->employee->fullname;
+														$this->mail->Subject = "Online Approval System -> Approval Completed";
+														$red = 'Your Advance request has been approved';
+														//delete unnecessary approver
+														$Advanceapproval = Advanceapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
+														foreach ($Advanceapproval as $data) {
+															if($data->approvalstatus==0){
+																$logger = new Datalogger("Advanceapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
+																$logger->SaveData();
+																$data->delete();
+															}
+														}
+														$complete =true;
+													} else if(($tdetailamount<5000000) && $Advance->opscategory==2 && $Advanceapproval->approver->approvaltype_id == 41) {
+														$Advance->requeststatus = 3;
+														if($Advance->createdby == $Advance->employee_id) {
+															$emto=$email;
+														} else {
+															$emto=$emailcrb;
+														}
+														$emname=$Advance->employee->fullname;
+														$this->mail->Subject = "Online Approval System -> Approval Completed";
+														$red = 'Your Advance request has been approved';
+														//delete unnecessary approver
+														$Advanceapproval = Advanceapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
+														foreach ($Advanceapproval as $data) {
+															if($data->approvalstatus==0){
+																$logger = new Datalogger("Advanceapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
+																$logger->SaveData();
+																$data->delete();
+															}
+														}
+														$complete =true;
+													} else if(($tdetailamount<5000000) && $Advance->opscategory==3 && $Advanceapproval->approver->approvaltype_id == 37) {
+														$Advance->requeststatus = 3;
+														if($Advance->createdby == $Advance->employee_id) {
+															$emto=$email;
+														} else {
+															$emto=$emailcrb;
+														}
+														$emname=$Advance->employee->fullname;
+														$this->mail->Subject = "Online Approval System -> Approval Completed";
+														$red = 'Your Advance request has been approved';
+														//delete unnecessary approver
+														$Advanceapproval = Advanceapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
+														foreach ($Advanceapproval as $data) {
+															if($data->approvalstatus==0){
+																$logger = new Datalogger("Advanceapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
+																$logger->SaveData();
+																$data->delete();
+															}
+														}
+														$complete =true;
+													} else if(($tdetailamount<5000000) && $Advance->opscategory==4 && $Advanceapproval->approver->approvaltype_id == 41) {
+														$Advance->requeststatus = 3;
+														if($Advance->createdby == $Advance->employee_id) {
+															$emto=$email;
+														} else {
+															$emto=$emailcrb;
+														}
+														$emname=$Advance->employee->fullname;
+														$this->mail->Subject = "Online Approval System -> Approval Completed";
+														$red = 'Your Advance request has been approved';
+														//delete unnecessary approver
+														$Advanceapproval = Advanceapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
+														foreach ($Advanceapproval as $data) {
+															if($data->approvalstatus==0){
+																$logger = new Datalogger("Advanceapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
+																$logger->SaveData();
+																$data->delete();
+															}
+														}
+														$complete =true;
+													} else if(($tdetailamount<5000000) && $Advance->opscategory==5 && $Advanceapproval->approver->approvaltype_id == 41) {
+														$Advance->requeststatus = 3;
+														if($Advance->createdby == $Advance->employee_id) {
+															$emto=$email;
+														} else {
+															$emto=$emailcrb;
+														}
+														$emname=$Advance->employee->fullname;
+														$this->mail->Subject = "Online Approval System -> Approval Completed";
+														$red = 'Your Advance request has been approved';
+														//delete unnecessary approver
+														$Advanceapproval = Advanceapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
+														foreach ($Advanceapproval as $data) {
+															if($data->approvalstatus==0){
+																$logger = new Datalogger("Advanceapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
+																$logger->SaveData();
+																$data->delete();
+															}
+														}
+														$complete =true;
+													} else if(($tdetailamount>=5000000 && $tdetailamount<10000000) && $Advanceapproval->approver->approvaltype_id == 39) {
+														$Advance->requeststatus = 3;
+														if($Advance->createdby == $Advance->employee_id) {
+															$emto=$email;
+														} else {
+															$emto=$emailcrb;
+														}
+														$emname=$Advance->employee->fullname;
+														$this->mail->Subject = "Online Approval System -> Approval Completed";
+														$red = 'Your Advance request has been approved';
+														//delete unnecessary approver
+														$Advanceapproval = Advanceapproval::find('all', array('joins'=>$join,'conditions' => array("advance_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
+														foreach ($Advanceapproval as $data) {
+															if($data->approvalstatus==0){
+																$logger = new Datalogger("Advanceapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
+																$logger->SaveData();
+																$data->delete();
+															}
+														}
+														$complete =true;
+													} else {
+														$Advance->requeststatus = 1;
+														$emto=$adb->email;$emname=$adb->fullname;
+														$this->mail->Subject = "Online Approval System -> New Advance Submission";
+														$red = 'New Advance request awaiting for your approval:';
+													}
+
+												}
 											}
 
 										}
