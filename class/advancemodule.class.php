@@ -1585,7 +1585,7 @@ Class Advancemodule extends Application{
 															}
 														}
 														$complete =true;
-													} else if(($tdetailamount>=5000000 && $tdetailamount<10000000) && $Advanceapproval->approver->approvaltype_id == 39) {
+													} else if(($tdetailamount>=5000000 && $tdetailamount<10000000) && $Advanceapproval->approver->approvaltype_id == 41) {
 														$Advance->requeststatus = 3;
 														if($Advance->createdby == $Advance->employee_id) {
 															$emto=$email;

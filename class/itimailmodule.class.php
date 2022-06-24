@@ -230,6 +230,8 @@ Class Itimailmodule extends Application{
 															$Itimailapproval->itimail_id = $Itimail->id;
 															$Itimailapproval->approver_id = $Approver2->id;
 															$Itimailapproval->save();
+															$logger = new Datalogger("Itimailapproval","add","Add Approval HRD Head",json_encode($Itimailapproval->to_array()));
+															$logger->SaveData();
 														}
 													}
 
