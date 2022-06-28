@@ -21,6 +21,17 @@
 			if(($scope.mode=='approve')){
 				$scope.data.remarks="";
 			}
+			// $scope.viewcompany;
+
+
+			CrudService.checkAccess('MMFreq',$rootScope.curUser.username).then(function (access) {
+				if(access.allowview == 1) {
+					$scope.viewcompany = true;
+				} else {
+					$scope.viewcompany = false;
+				}
+
+			});
 
 			$scope.allEmpDataSource = {
 				store: new DevExpress.data.CustomStore({
@@ -99,6 +110,25 @@
 				}),
 				sort: "id"
 			}
+
+			$scope.compDatasource = {
+				store: new DevExpress.data.CustomStore({
+					key: "companycode",
+					loadMode: "raw",
+					load: function() {
+						return CrudService.GetAll('company').then(function (response) {
+							if(response.status=="error"){
+								DevExpress.ui.notify(response.message,"error");
+							}else{
+								return response;
+							}
+						});
+					},
+				}),
+				filter:['isused','1'],
+				sort: "companycode"
+			}
+
 			CrudService.GetAll('unit').then(function (unit) {
 				$scope.units=unit;
 				console.log($scope.units);
@@ -120,6 +150,13 @@
 				},
 				onContentReady:function(e){
 					$scope.formInstance = e.component;
+
+					// if($scope.viewcompany==1) {
+					// 	$scope.formInstance.itemOption('group2.companycode', 'visible', true);
+					// }
+				},
+				bindingOptions :{
+					"items[0].items[0].visible":"viewcompany", 
 				},
 				readOnly : (($scope.mode=='view')||($scope.mode=='report'))?true:false,
 				labelLocation : "top",
@@ -133,6 +170,35 @@
                     colSpan:2,
                     colCount:2,
                     items: [
+						{
+							dataField: 'companycode',
+							label: {
+								text: "For Company"
+							},
+							name: 'companycode',
+							visible: false,
+							// visible: ($scope.viewcompany==1) ? true:false,
+							editorType: "dxSelectBox",
+							editorOptions: {
+								readOnly: (($scope.mode == 'approve') || ($scope.mode == 'view') || ($scope.mode == 'report')) ? true : false,
+								dataSource: $scope.compDatasource,
+								displayExpr: "companycode",
+								valueExpr: "companycode",
+
+								onValueChanged: function(e) {
+									if($scope.data.requeststatus == 0) {
+
+										criteria = {status:'companycode',company:e.value,mmf30_id:$scope.Requestid};
+										CrudService.FindData('mmf30',criteria).then(function (response){
+											console.log(response.prno)
+											$scope.formInstance.updateData('prno', response.prno);
+											// $scope.grid2Component.refresh();
+										})
+									}
+
+								}
+							},
+						},
                         {
                             dataField:'prtype',
                             editorType: "dxSelectBox",
@@ -1303,6 +1369,7 @@
 		delete data.department;
 		delete data.approvalstatus;
 		delete data.apprstatuscode;
+		delete data.companycode;
 		// data.receivedon = $filter("date")(data.receivedon, "yyyy-MM-dd HH:mm");
 		console.log(data);
 		CrudService.Update('mmf30',data.id,data).then(function (response) {
@@ -1366,6 +1433,8 @@
                 delete data.contractno;
                 delete data.reason;
 				delete data.remarksu;
+				delete data.companycode;
+
 				// delete data.remarks;
 				
 				
@@ -1419,6 +1488,8 @@
                         delete data.contractno;
                         delete data.reason;
                         delete data.remarksu;
+						delete data.companycode;
+
                         // delete data.remarks;
                         // delete data.ReceivedOn;
                         // delete data.proccomments;

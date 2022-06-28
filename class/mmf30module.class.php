@@ -175,6 +175,22 @@ Class Mmf30module extends Application{
 							switch ($query['status']){
 								case 'chemp':
 									break;
+								case 'companycode':
+
+									$categorytype = $query['company'];
+									$id= $query['mmf30_id'];
+
+									$mmf30 = Mmf30::find($id);
+									
+									$codenew = Mmf30::find('first',array('select' => "CONCAT('MMF30/','".$categorytype."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(prno,-4,4)) is null then 1 else max(substring(prno,-4,4))+1 end,4,'0')) as prno","conditions"=>array("substring(prno,7,".strlen($categorytype).")=? and not(id = ?) and substring(prno,".(strlen($categorytype)+8).",4)=YEAR(CURDATE())",$categorytype,$query['mmf30_id'])));
+									
+									$mmf30->prno =$codenew->prno;
+									$mmf30->save();
+									
+
+									$data=array("prno"=>$codenew->prno);
+
+									break;
 								case 'addbuyer':
 										// $data = $this->post['data'];
 										$buyer = $query['employee_id'];
@@ -464,6 +480,7 @@ Class Mmf30module extends Application{
 							unset($data['fullname']);
 							unset($data['department']);
 							unset($data['approvalstatus']);
+							unset($data['companycode']);
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							if($superior==$Employee->id){
 								$result= array("status"=>"error","message"=>"You cannot select yourself as your Direct superior");

@@ -868,6 +868,7 @@ Class Advpaymentmodule extends Application{
 										
 										$Advpayment->companycode = $categorytype;
 										$codenew = Advpayment::find('first',array('select' => "CONCAT('Payment/','".$categorytype."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(paymentno,-4,4)) is null then 1 else max(substring(paymentno,-4,4))+1 end,4,'0')) as paymentno","conditions"=>array("substring(paymentno,9,".strlen($categorytype).")=? and not(id = ?) and substring(paymentno,".(strlen($categorytype)+10).",4)=YEAR(CURDATE()) ",$categorytype,$query['advpayment_id'])));
+										
 										$Advpayment->paymentno =$codenew->paymentno;
 										$Advpayment->save();
 										
