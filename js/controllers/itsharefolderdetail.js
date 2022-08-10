@@ -891,7 +891,7 @@
                     },
                     {
                         dataField:'grantaccessto',
-                        caption: "Grant Access To",
+                        caption: "Grant Access To User",
                         dataType: "string",
                         width: "15%",
                         maxLength: 30,
