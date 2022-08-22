@@ -515,12 +515,14 @@ Class Itimailmodule extends Application{
 									$Itimailapproval->save();
 								}
 
-								$companyBU=( ($Employee->companycode=='KPA') || ($Employee->companycode=='AHL') )?"KPSI":$Employee->companycode;
-								if (($Employee->company->sapcode=='RND') || ($Employee->company->sapcode=='NKF')){
-									$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id='31' and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
-								}else{
-									$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id='31' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$companyBU,$Employee->id)));
-								}
+								// $companyBU=( ($Employee->companycode=='KPA') || ($Employee->companycode=='AHL') )?"KPSI":$Employee->companycode;
+								// if (($Employee->company->sapcode=='RND') || ($Employee->company->sapcode=='NKF')){
+								// 	$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id='31' and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+								// }else{
+								// 	$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id='31' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$companyBU,$Employee->id)));
+								// }
+								$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id='31' and FIND_IN_SET(?, CompanyList) > 0 ",$Employee->companycode)));
+
 								if(count($ApproverBU)>0){
 									$Itimailapproval = new Itimailapproval();
 									$Itimailapproval->itimail_id = $Itimail->id;

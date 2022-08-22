@@ -259,67 +259,84 @@ Class Iteiemodule extends Application{
 									$Iteieapproval->save();
 								}
 
-								if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
-									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=30 and tbl_employee.location_id='1'")));
-									if(count($Approver2)>0){
-										$Iteieapproval = new Iteieapproval();
-										$Iteieapproval->iteie_id = $Iteie->id;
-										$Iteieapproval->approver_id = $Approver2->id;
-										$Iteieapproval->save();
-									}
-									
-									if(($Employee->department->sapcode!="13000090") && ($Employee->department->sapcode!="13000121") && ($Employee->company->sapcode!="NKF") && ($Employee->company->sapcode!="RND")  && ($Employee->company->companycode!="BCL")  && ($Employee->company->companycode!="LDU")){
-										if(($Employee->level_id!=4) && ($Employee->level_id!=6) ){
-											$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and tbl_employee.companycode='KPSI' and not(tbl_employee.id=?)",$Employee->id)));
-											if(count($Approver)>0){
-												$Iteieapproval = new Iteieapproval();
-												$Iteieapproval->iteie_id = $Iteie->id;
-												$Iteieapproval->approver_id = $Approver->id;
-												$Iteieapproval->save();
-											}
-										}
-									}else{
-										$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and tbl_employee.company_id=? and not tbl_employee.companycode='KPSI'  and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
-										if(count($Approver)>0){
-											$Iteieapproval = new Iteieapproval();
-											$Iteieapproval->iteie_id = $Iteie->id;
-											$Iteieapproval->approver_id = $Approver->id;
-											$Iteieapproval->save();
-										}else{
-											$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
-											if(count($Approver)>0){
-												$Iteieapproval = new Iteieapproval();
-												$Iteieapproval->iteie_id = $Iteie->id;
-												$Iteieapproval->approver_id = $Approver->id;
-												$Iteieapproval->save();
-											}
-										}
-									}	
-								}else{
-									$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and not tbl_employee.companycode='KPSI' and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
-									if(count($Approver)>0){
-										$Iteieapproval = new Iteieapproval();
-										$Iteieapproval->iteie_id = $Iteie->id;
-										$Iteieapproval->approver_id = $Approver->id;
-										$Iteieapproval->save();
-									}else{
-										$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
-										if(count($Approver)>0){
-											$Iteieapproval = new Iteieapproval();
-											$Iteieapproval->iteie_id = $Iteie->id;
-											$Iteieapproval->approver_id = $Approver->id;
-											$Iteieapproval->save();
-										}
-									}
-
-									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=30 and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
-									if(count($Approver2)>0){
-										$Iteieapproval = new Iteieapproval();
-										$Iteieapproval->iteie_id = $Iteie->id;
-										$Iteieapproval->approver_id = $Approver2->id;
-										$Iteieapproval->save();
-									}
+								$ApproverHRD = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id='30' and FIND_IN_SET(?, CompanyList) > 0 ",$Employee->companycode)));
+								// $ApproverHRD = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=30 and tbl_employee.company_id=? )",$Employee->company_id)));
+								if(count($ApproverHRD)>0){
+									$Iteieapproval = new Iteieapproval();
+									$Iteieapproval->iteie_id = $Iteie->id;
+									$Iteieapproval->approver_id = $ApproverHRD->id;
+									$Iteieapproval->save();
 								}
+
+								$ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id='31' and FIND_IN_SET(?, CompanyList) > 0 ",$Employee->companycode)));
+								if(count($ApproverBU)>0){
+									$Iteieapproval = new Iteieapproval();
+									$Iteieapproval->iteie_id = $Iteie->id;
+									$Iteieapproval->approver_id = $ApproverBU->id;
+									$Iteieapproval->save();
+								}
+
+								// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
+								// 	$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=30 and tbl_employee.location_id='1'")));
+								// 	if(count($Approver2)>0){
+								// 		$Iteieapproval = new Iteieapproval();
+								// 		$Iteieapproval->iteie_id = $Iteie->id;
+								// 		$Iteieapproval->approver_id = $Approver2->id;
+								// 		$Iteieapproval->save();
+								// 	}
+									
+								// 	if(($Employee->department->sapcode!="13000090") && ($Employee->department->sapcode!="13000121") && ($Employee->company->sapcode!="NKF") && ($Employee->company->sapcode!="RND")  && ($Employee->company->companycode!="BCL")  && ($Employee->company->companycode!="LDU")){
+								// 		if(($Employee->level_id!=4) && ($Employee->level_id!=6) ){
+								// 			$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and tbl_employee.companycode='KPSI' and not(tbl_employee.id=?)",$Employee->id)));
+								// 			if(count($Approver)>0){
+								// 				$Iteieapproval = new Iteieapproval();
+								// 				$Iteieapproval->iteie_id = $Iteie->id;
+								// 				$Iteieapproval->approver_id = $Approver->id;
+								// 				$Iteieapproval->save();
+								// 			}
+								// 		}
+								// 	}else{
+								// 		$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and tbl_employee.company_id=? and not tbl_employee.companycode='KPSI'  and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+								// 		if(count($Approver)>0){
+								// 			$Iteieapproval = new Iteieapproval();
+								// 			$Iteieapproval->iteie_id = $Iteie->id;
+								// 			$Iteieapproval->approver_id = $Approver->id;
+								// 			$Iteieapproval->save();
+								// 		}else{
+								// 			$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+								// 			if(count($Approver)>0){
+								// 				$Iteieapproval = new Iteieapproval();
+								// 				$Iteieapproval->iteie_id = $Iteie->id;
+								// 				$Iteieapproval->approver_id = $Approver->id;
+								// 				$Iteieapproval->save();
+								// 			}
+								// 		}
+								// 	}	
+								// }else{
+								// 	$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and not tbl_employee.companycode='KPSI' and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+								// 	if(count($Approver)>0){
+								// 		$Iteieapproval = new Iteieapproval();
+								// 		$Iteieapproval->iteie_id = $Iteie->id;
+								// 		$Iteieapproval->approver_id = $Approver->id;
+								// 		$Iteieapproval->save();
+								// 	}else{
+								// 		$Approver = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=31 and tbl_employee.company_id=? and not(tbl_employee.id=?)",$Employee->company_id,$Employee->id)));
+								// 		if(count($Approver)>0){
+								// 			$Iteieapproval = new Iteieapproval();
+								// 			$Iteieapproval->iteie_id = $Iteie->id;
+								// 			$Iteieapproval->approver_id = $Approver->id;
+								// 			$Iteieapproval->save();
+								// 		}
+								// 	}
+
+								// 	$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=30 and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
+								// 	if(count($Approver2)>0){
+								// 		$Iteieapproval = new Iteieapproval();
+								// 		$Iteieapproval->iteie_id = $Iteie->id;
+								// 		$Iteieapproval->approver_id = $Approver2->id;
+								// 		$Iteieapproval->save();
+								// 	}
+								// }
 
 							$Iteihistory = new Iteiehistory();
 							$Iteihistory->date = date("Y-m-d h:i:s");
