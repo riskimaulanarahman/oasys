@@ -908,6 +908,11 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 			// 	return Globalize.format(arg.value, "c")  
 			// },
 			columns: [
+				{caption: '#',formItem: { visible: false},width: 40,
+					cellTemplate: function(container, options) {
+						container.text(options.rowIndex +1);
+					}
+				},
 				{
 					dataField: "expensetype",
 					name:'expensetype',
