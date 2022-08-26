@@ -1841,7 +1841,7 @@ Class Advexpensemodule extends Application{
 				$title = 'advexpense';
 				$file= SITE_PATH."/doc/hr/advexpense.xls";
 				
-				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
+				$Workbook = $excel->Workbooks->Open($file,false,true) or die("ERROR: Unable to open " . $file . "!\r\n");
 				$Worksheet = $Workbook->Worksheets(1);
 				$Worksheet->Activate;
 

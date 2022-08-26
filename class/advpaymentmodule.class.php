@@ -2199,7 +2199,7 @@ Class Advpaymentmodule extends Application{
 			}
 
 				
-				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
+				$Workbook = $excel->Workbooks->Open($file,false,true) or die("ERROR: Unable to open " . $file . "!\r\n");
 				$Worksheet = $Workbook->Worksheets(1);
 				$Worksheet->Activate;
 
