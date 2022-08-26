@@ -986,7 +986,7 @@ Class Iteiemodule extends Application{
 			$file= SITE_PATH."/doc/it/ad_template.xlsx";
 			// $file="";
 			// $file="D:/xampp/htdocs/oasys/doc/it/ad_template.xlsx";
-			$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
+			$Workbook = $excel->Workbooks->Open($file,false,true) or die("ERROR: Unable to open " . $file . "!\r\n");
 			$Worksheet = $Workbook->Worksheets(1);
 			$Worksheet->Activate;
 			// $xlShiftDown=-4121;
