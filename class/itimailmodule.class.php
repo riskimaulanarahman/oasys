@@ -1933,7 +1933,7 @@ Class Itimailmodule extends Application{
 			$title = 'INETACCESS';
 
 			$file= SITE_PATH."/doc/it/template_inetaccess.xls";
-				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
+				$Workbook = $excel->Workbooks->Open($file,false,true) or die("ERROR: Unable to open " . $file . "!\r\n");
 				$Worksheet = $Workbook->Worksheets(1);
 				$Worksheet->Activate;
 
@@ -1968,7 +1968,7 @@ Class Itimailmodule extends Application{
 			$title = 'INCMAILBOX';
 
 			$file= SITE_PATH."/doc/it/template_incmailbox.xlsx";
-				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
+				$Workbook = $excel->Workbooks->Open($file,false,true) or die("ERROR: Unable to open " . $file . "!\r\n");
 				$Worksheet = $Workbook->Worksheets(1);
 				$Worksheet->Activate;
 
@@ -2121,7 +2121,7 @@ Class Itimailmodule extends Application{
 			$title = 'RDWEB';
 
 			$file= SITE_PATH."/doc/it/template_rdweb.xlsx";
-				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
+				$Workbook = $excel->Workbooks->Open($file,false,true) or die("ERROR: Unable to open " . $file . "!\r\n");
 				$Worksheet = $Workbook->Worksheets(1);
 				$Worksheet->Activate;
 
@@ -2158,7 +2158,7 @@ Class Itimailmodule extends Application{
 
 
 				$file= SITE_PATH."/doc/it/template_mailgroup.xls";
-				$Workbook = $excel->Workbooks->Open($file) or die("ERROR: Unable to open " . $file . "!\r\n");
+				$Workbook = $excel->Workbooks->Open($file,false,true) or die("ERROR: Unable to open " . $file . "!\r\n");
 				$Worksheet = $Workbook->Worksheets(1);
 				$Worksheet->Activate;
 
