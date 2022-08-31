@@ -91,12 +91,6 @@
           );
         },
         insert: function (values) {
-          // CrudService.Create('advance',values).then(function (response) {
-          //     if(response.status=="error"){
-          //          DevExpress.ui.notify(response.message,"error");
-          //     }
-          //     $scope.dataGrid.refresh();
-          // });
         },
         update: function (key, values) {
           values.materialreturneddate = $filter("date")(
@@ -114,12 +108,6 @@
           });
         },
         remove: function (key) {
-          // CrudService.Delete('advance',key.id).then(function (response) {
-          //     if(response.status=="error"){
-          //          DevExpress.ui.notify(response.message,"error");
-          //     }
-          //     $scope.dataGrid.refresh();
-          // });
         },
       });
       //start filter date
@@ -145,9 +133,10 @@
         showColumnLines: true,
         showRowLines: true,
         rowAlternationEnabled: true,
-        allowColumnResizing: true,
-        columnResizingMode: "widget",
+        // allowColumnResizing: true,
+        // columnResizingMode: "widget",
         columnAutoWidth: true,
+        columnHidingEnabled: true,
         showBorders: true,
         height: 600,
         headerFilter: {
@@ -208,21 +197,6 @@
                         })
                         .appendTo(container);
                 }
-              // if((options.data.requeststatus=='0') || (options.data.requeststatus=='2')){
-              // if((options.data.requeststatus=='3')){
-              //     $('<div style="padding:2px 15px 2px 15px;" title="Edit" />').addClass('dx-icon-edit btn-pill btn-shadow btn btn-success')
-              //     .text('')
-              //     .on('dxclick', function () {
-              // if (!$scope.allowEdit){
-              //     DevExpress.ui.notify("You don't have authority to edit data","error");
-              // } else{
-              // $scope.loadMMF(options.data,"editb",true);
-              // }
-              //     })
-              //     .appendTo(container);
-              // }else{
-              //     $('<div style="padding:2px 15px 2px 15px;"/>').text('').appendTo(container);
-              // }
             },
           },
           {
@@ -233,15 +207,11 @@
               container.text(options.rowIndex + 1);
             },
           },
-          // {dataField:'mmfnumber',caption:"MMF Number", editorOptions: {
-          //     disabled: true,
-          // }},
           {
             dataField: "createddate",
             caption: "Creation Date",
             dataType: "date",
             format: "dd/MM/yyyy",
-            width: 200,
             editorOptions: {
               disabled: true,
             },
@@ -249,7 +219,6 @@
           {
             dataField: "createdby",
             caption: "Request by",
-            width: 200,
             editorOptions: {
               disabled: true,
             },
@@ -257,12 +226,11 @@
           {
             dataField: "fullname",
             caption: "Request for",
-            width: 200,
             editorOptions: {
               disabled: true,
             },
           },
-          {dataField:'advanceform',caption:"Form Type",encodeHtml: false ,width: 200,
+          {dataField:'advanceform',caption:"Form Type",encodeHtml: false ,
 					customizeText: function (e) {
               var rDesc = ["","<span class='mb-2 mr-2 badge badge-pill badge-info'>HR Related</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>OPS Related</span>",""];
               return rDesc[e.value];
@@ -270,7 +238,6 @@
           {
             dataField: "advanceno",
             caption: "Advance No",
-            width: 200,
             editorOptions: {
               disabled: true,
             },
@@ -279,7 +246,6 @@
             dataField: "requeststatus",
             caption:"Request Status",
             encodeHtml: false,
-            width: 300,
             customizeText: function (e) {
               var rDesc = [
                 "<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Saved as Draft</span>",
@@ -303,21 +269,6 @@
               disabled: true,
             },
           },
-          // {dataField:'apprbuyername',caption:"Buyer Name", editorOptions: {
-          //     disabled: true,
-          // }},
-          // {dataField:'apprprocheaddate',caption:"Appr ProcHead Date", editorOptions: {
-          //     disabled: true,
-          // }},
-          // {dataField:'apprbuyerdate',caption:"Appr Buyer Date", editorOptions: {
-          //     disabled: true,
-          // }},
-          // {dataField:'pono',caption:"PO Number"},
-          // {dataField:'materialreturneddate',caption:"Material Returned Date",dataType:"date", format:"dd/MM/yyyy",editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",disabled: false}},
-          // {dataField:'supplierdodnno',caption:"Supplier DO/DN No"},
-          // {dataField:'materialdispatchno',caption:"Material Dispatch No"},
-          // {dataField:'isrepair',caption:"Repair",dataType: "boolean", showEditorAlways: true },
-          // {dataField:'isscrap',caption:"Scrapped",dataType: "boolean", showEditorAlways: true },
           {
             dataField: "remarks",
             encodeHtml: false,

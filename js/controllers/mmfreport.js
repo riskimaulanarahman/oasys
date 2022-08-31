@@ -118,9 +118,10 @@
             showColumnLines: true,
             showRowLines: true,
             rowAlternationEnabled: true,
-            allowColumnResizing: true,
-            columnResizingMode: "widget",
+            // allowColumnResizing: true,
+            // columnResizingMode: "widget",
             columnAutoWidth: true,
+            columnHidingEnabled: true,
             showBorders: true,
             height: 600,
             headerFilter: {
@@ -152,13 +153,13 @@
                     {dataField:'mmfnumber',caption:"MMF Number", editorOptions: { 
                         disabled: true,
                     }},
-                    {dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200, editorOptions: { 
+                    {dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy", editorOptions: { 
                         disabled: true,
                     }},
-                    {dataField:'fullname',caption:"Request For Employee",width: 200, editorOptions: { 
+                    {dataField:'fullname',caption:"Request For Employee", editorOptions: { 
                         disabled: true,
                     }},
-                    {dataField:'requeststatus',encodeHtml: false ,width: 300,
+                    {dataField:'requeststatus',encodeHtml: false ,
                         customizeText: function (e) {
                             var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Saved as Draft</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
                             return rDesc[e.value];
