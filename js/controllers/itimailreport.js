@@ -117,9 +117,10 @@
             showColumnLines: true,
             showRowLines: true,
             rowAlternationEnabled: true,
-            allowColumnResizing: true,
-            columnResizingMode: "widget",
+            // allowColumnResizing: true,
+            // columnResizingMode: "widget",
             columnAutoWidth: true,
+            columnHidingEnabled: true,
             showBorders: true,
             height: 600,
             headerFilter: {
@@ -171,21 +172,6 @@
                                         })
                                         .appendTo(container);
                                 }
-                            // if((options.data.requeststatus=='0') || (options.data.requeststatus=='2')){
-                            // if((options.data.requeststatus=='3')){
-                            //     $('<div style="padding:2px 15px 2px 15px;" title="Edit" />').addClass('dx-icon-edit btn-pill btn-shadow btn btn-success')
-                            //     .text('')
-                            //     .on('dxclick', function () {
-                                    // if (!$scope.allowEdit){
-                                    //     DevExpress.ui.notify("You don't have authority to edit data","error");
-                                    // } else{
-                                        // $scope.loadMMF(options.data,"editb",true);
-                                    // }
-                            //     })
-                            //     .appendTo(container);
-                            // }else{
-                            //     $('<div style="padding:2px 15px 2px 15px;"/>').text('').appendTo(container);
-                            // }
                         }
                     }
                     ,{caption: '#',formItem: { visible: false},width: 40,
@@ -193,22 +179,19 @@
                             container.text(options.rowIndex +1);
                         }
                     },
-                    // {dataField:'mmfnumber',caption:"MMF Number", editorOptions: { 
-                    //     disabled: true,
-                    // }},
-                    {dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200, editorOptions: { 
+                    {dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy", editorOptions: { 
                         disabled: true,
                     }},
-                    {dataField:'formtype',caption:"Form Type",width: 200,
+                    {dataField:'formtype',caption:"Form Type",
                     customizeText: function (e) {
                         // console.log(e);
                         var rform = ["","Email Request","Internet Access","Increase Mailbox Size","RD Web Access","Email Group"];
                         return rform[e.value];
                     }},
-                    {dataField:'fullname',caption:"Request For Employee",width: 200, editorOptions: { 
+                    {dataField:'fullname',caption:"Request For Employee", editorOptions: { 
                         disabled: true,
                     }},
-                    {dataField:'requeststatus',encodeHtml: false ,width: 300,
+                    {dataField:'requeststatus',encodeHtml: false ,
                         customizeText: function (e) {
                             var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Saved as Draft</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
                             return rDesc[e.value];

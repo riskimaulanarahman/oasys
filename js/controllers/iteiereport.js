@@ -118,9 +118,10 @@
             showColumnLines: true,
             showRowLines: true,
             rowAlternationEnabled: true,
-            allowColumnResizing: true,
-            columnResizingMode: "widget",
+            // allowColumnResizing: true,
+            // columnResizingMode: "widget",
             columnAutoWidth: true,
+            columnHidingEnabled: true,
             showBorders: true,
             height: 600,
             headerFilter: {
@@ -172,21 +173,6 @@
                                         })
                                         .appendTo(container);
                                 }
-                            // if((options.data.requeststatus=='0') || (options.data.requeststatus=='2')){
-                            // if((options.data.requeststatus=='3')){
-                            //     $('<div style="padding:2px 15px 2px 15px;" title="Edit" />').addClass('dx-icon-edit btn-pill btn-shadow btn btn-success')
-                            //     .text('')
-                            //     .on('dxclick', function () {
-                                    // if (!$scope.allowEdit){
-                                    //     DevExpress.ui.notify("You don't have authority to edit data","error");
-                                    // } else{
-                                        // $scope.loadMMF(options.data,"editb",true);
-                                    // }
-                            //     })
-                            //     .appendTo(container);
-                            // }else{
-                            //     $('<div style="padding:2px 15px 2px 15px;"/>').text('').appendTo(container);
-                            // }
                         }
                     }
                     ,{caption: '#',formItem: { visible: false},width: 40,
@@ -194,19 +180,19 @@
                             container.text(options.rowIndex +1);
                         }
                     },
-                    {dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200, editorOptions: { 
+                    {dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy", editorOptions: { 
                         disabled: true,
                     }},
-                    {dataField:'fullname',caption:"Request For Employee",width: 200, editorOptions: { 
+                    {dataField:'fullname',caption:"Request For Employee", editorOptions: { 
                         disabled: true,
                     }},
-                    {dataField:'name',caption:"Name",width: 200, editorOptions: { 
+                    {dataField:'name',caption:"Name", editorOptions: { 
                         disabled: true,
                     }},
-                    {dataField:'bgbu',caption:"BG/BU",width: 200, editorOptions: { 
+                    {dataField:'bgbu',caption:"BG/BU", editorOptions: { 
                         disabled: true,
                     }},
-                    {dataField:'requeststatus',encodeHtml: false ,width: 300,
+                    {dataField:'requeststatus',encodeHtml: false ,
                         customizeText: function (e) {
                             var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Saved as Draft</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];
                             return rDesc[e.value];
@@ -217,21 +203,6 @@
                     {dataField:'personholding',caption:"Next Approver", editorOptions: { 
                         disabled: true,
                     }},
-                    // {dataField:'apprbuyername',caption:"Buyer Name", editorOptions: { 
-                    //     disabled: true,
-                    // }},
-                    // {dataField:'apprprocheaddate',caption:"Appr ProcHead Date", editorOptions: { 
-                    //     disabled: true,
-                    // }},
-                    // {dataField:'apprbuyerdate',caption:"Appr Buyer Date", editorOptions: { 
-                    //     disabled: true,
-                    // }},
-                    // {dataField:'pono',caption:"PO Number"},
-                    // {dataField:'materialreturneddate',caption:"Material Returned Date",dataType:"date", format:"dd/MM/yyyy",editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",disabled: false}},
-                    // {dataField:'supplierdodnno',caption:"Supplier DO/DN No"},
-                    // {dataField:'materialdispatchno',caption:"Material Dispatch No"},
-                    // {dataField:'isrepair',caption:"Repair",dataType: "boolean", showEditorAlways: true },
-                    // {dataField:'isscrap',caption:"Scrapped",dataType: "boolean", showEditorAlways: true },
                     {dataField:'remarks',encodeHtml: false , editorOptions: { 
                         disabled: true,
                     }},
