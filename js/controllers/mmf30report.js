@@ -65,12 +65,17 @@
       function initController() {
           $scope.dataGrid.refresh();
           CrudService.FindData('mmf30detail',{filter:'all',startDate:$filter("date")($scope.filterData.startDate, 'yyyy-MM-dd'),endDate:$filter("date")($scope.filterData.endDate, 'yyyy-MM-dd')}).then(function (resp) {
-            $scope.mmf30detail = resp;
+              $scope.mmf30detail = resp;
           });
       }
-      $scope.mmf30detail=[]
-      const getMMFDetail = (id) => {}
-        $scope.mmf30detail.filter((data) => data.mmf30_id === id);
+      const getMMFDetail = (id) => {
+        if (resp.length>0){
+          return $scope.mmf30detail.filter((data) => data.mmf30_id === id);
+        } else {
+          return []
+        }
+      }
+        
       //end filter date
       var myStore = new DevExpress.data.CustomStore({
         load: function () {
@@ -457,7 +462,7 @@
                   }
                 });
               });
-                getMMFDetail($scope.masterRows[i].data.id).forEach((detail, index) => {
+              getMMFDetail($scope.masterRows[i].data.id).forEach((detail, index) => {
                   row = insertRow(rowIndex+i, offset++, 1);
                   columns.forEach((columnName, currentColumnIndex) => {
                     Object.assign(row.getCell(columnIndex + currentColumnIndex), {
