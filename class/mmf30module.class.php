@@ -1207,6 +1207,14 @@ Class Mmf30module extends Application{
 						if(isset($query['status'])){
 							$Mmf30detail = Mmf30detail::find('all', array('conditions' => array("mmf30_id=?",$query['mmf30_id'])));
 							$data=array("jml"=>count($Mmf30detail));
+						}else if(isset($query['filter'])){
+							$join = "LEFT JOIN tbl_mmf30 on tbl_mmf30detail.mmf30_id=tbl_mmf30.id";
+							$sel = 'tbl_mmf30detail.*, tbl_mmf30.CreatedDate ';
+							$Mmf30detail = Mmf30detail::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_mmf30.CreatedDate between ? and ?',$query['startDate'],$query['endDate'] )));
+							foreach ($Mmf30detail as &$result) {	
+								$result	= $result->to_array();
+							}
+							$data=$Mmf30detail;
 						}else{
 							$data=array();
 						}
