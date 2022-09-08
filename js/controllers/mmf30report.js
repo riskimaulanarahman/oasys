@@ -68,8 +68,8 @@
             $scope.mmf30detail = resp;
           });
       }
-      
-      const getMMFDetail = (id) =>
+      $scope.mmf30detail=[]
+      const getMMFDetail = (id) => {}
         $scope.mmf30detail.filter((data) => data.mmf30_id === id);
       //end filter date
       var myStore = new DevExpress.data.CustomStore({
