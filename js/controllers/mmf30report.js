@@ -398,12 +398,15 @@
                   } else if(gridCell.value===1) {
                     excelCell.value = "Waiting Approval"
                     excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor:{argb :"49b6d6"}  };
-                  } else if(gridCell.value===3) {
+                  } else if(gridCell.value===2) {
                     excelCell.value = "Require Rework"
                     excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor:{argb :"f59c1a"}   };
-                  } else if(gridCell.value===4) {
+                  } else if(gridCell.value===3) {
                     excelCell.value = "Approved"
-                    excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor:{argb :"00acac"}  };
+                    excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor:{argb :"00ac56"}  };
+                  }else if(gridCell.value===4) {
+                    excelCell.value = "Rejected"
+                    excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor:{argb :"ffacac"}  };
                   }else{
                     excelCell.value = ""
                   }
