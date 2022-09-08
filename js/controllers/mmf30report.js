@@ -68,6 +68,9 @@
               $scope.mmf30detail = resp;
           });
       }
+      CrudService.FindData('mmf30detail',{filter:'all',startDate:$filter("date")($scope.filterData.startDate, 'yyyy-MM-dd'),endDate:$filter("date")($scope.filterData.endDate, 'yyyy-MM-dd')}).then(function (resp) {
+        $scope.mmf30detail = resp;
+      });
       const getMMFDetail = (id) => {
         if (resp.length>0){
           return $scope.mmf30detail.filter((data) => data.mmf30_id === id);
