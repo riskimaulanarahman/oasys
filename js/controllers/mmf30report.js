@@ -129,9 +129,10 @@
         showColumnLines: true,
         showRowLines: true,
         rowAlternationEnabled: true,
-        allowColumnResizing: true,
-        columnResizingMode: "widget",
+        // allowColumnResizing: true,
+        // columnResizingMode: "widget",
         columnAutoWidth: true,
+        columnHidingEnabled: true,
         showBorders: true,
         height: 600,
         headerFilter: {
@@ -185,17 +186,17 @@
             caption: "Creation Date",
             dataType: "date",
             format: "dd/MM/yyyy",
-            width: 200,
+            // width: 200,
           },
           {
             dataField: "fullname",
             caption: "Request For Employee",
-            width: 200,
+            // width: 200,
           },
           {
             dataField: "requeststatus",
             encodeHtml: false,
-            width: 300,
+            // width: 300,
             customizeText: function (e) {
               var rDesc = [
                 "<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Saved as Draft</span>",
