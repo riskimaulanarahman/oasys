@@ -65,6 +65,11 @@
       function initController() {
           $scope.dataGrid.refresh();
       }
+      CrudService.GetAll('mmf30detail').then(function (resp) {
+        $scope.mmf30detail = resp;
+      });
+      const getMMFDetail = (id) =>
+        $scope.mmf30detail.filter((data) => data.mmf30_id === id);
       //end filter date
       var myStore = new DevExpress.data.CustomStore({
         load: function () {
@@ -118,6 +123,7 @@
         });
       }
       //$scope.myData = myData;
+      $scope.masterRows=[]
       $scope.dataGridOptions = {
         dataSource: myData,
         showColumnLines: true,
@@ -359,8 +365,129 @@
           $scope.gridInstance = e.component;
           $scope.ds = e.component.getDataSource();
         },
-      };
+        onExporting: function(e) { 
+          e.component.beginUpdate();
+          e.component.columnOption('ID', 'visible', true);
+          var workbook = new ExcelJS.Workbook(); 
+          var worksheet = workbook.addWorksheet('MMF30');
 
+          DevExpress.excelExporter.exportDataGrid({
+            component: e.component,
+            worksheet: worksheet,
+            autoFilterEnabled: true,
+            topLeftCell: { row: 2, column: 2 },
+            customizeCell: ({ gridCell, excelCell }) => {
+              if(gridCell.rowType === 'data') {
+                if(!gridCell) {
+                  return;
+                }
+                if((gridCell.column.dataField === 'requeststatus') ){
+                  if(gridCell.value===0) {
+                    excelCell.value = "Saved as Draft"
+                    excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor:{argb :"e4e7ea"} };
+                  } else if(gridCell.value===1) {
+                    excelCell.value = "Waiting Approval"
+                    excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor:{argb :"49b6d6"}  };
+                  } else if(gridCell.value===3) {
+                    excelCell.value = "Require Rework"
+                    excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor:{argb :"f59c1a"}   };
+                  } else if(gridCell.value===4) {
+                    excelCell.value = "Approved"
+                    excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor:{argb :"00acac"}  };
+                  }else{
+                    excelCell.value = ""
+                  }
+                }
+              }
+              if ( gridCell.column.dataField === "prno" && gridCell.rowType === "data" ) {
+                $scope.masterRows.push({
+                  rowIndex: excelCell.fullAddress.row + 1,
+                  data: gridCell.data
+                });
+              }
+            }
+          }).then((cellRange)=> {
+            const borderStyle = { style: "thin", color: { argb: "FF7E7E7E" } };
+            let offset = 0;
+            
+            const insertRow = (index, offset, outlineLevel) => {
+              const currentIndex = index + offset;
+              const row = worksheet.insertRow(currentIndex, [], "n");
+    
+              for (var j = worksheet.rowCount + 1; j > currentIndex; j--) {
+                worksheet.getRow(j).outlineLevel = worksheet.getRow(j - 1).outlineLevel;
+              }
+              row.outlineLevel = outlineLevel;
+              return row;
+            };
+            for (var i = 0; i < $scope.masterRows.length; i++) {
+              let rowIndex = $scope.masterRows[i].rowIndex
+              let row = insertRow(rowIndex + i, offset++, 1);
+              let columnIndex = cellRange.from.column + 2;
+              
+              Object.assign(row.getCell(columnIndex), {
+                value: '> MMF No : '+$scope.masterRows[i].data.prno+ " Detail Data",
+                fill: {
+                  type: "pattern",
+                  pattern: "solid",
+                  fgColor: { argb: "BEDFE6" }
+                }
+              });
+              worksheet.mergeCells(row.number, columnIndex, row.number, columnIndex+10);
+    
+              const columns = ["materialcode","materialdescr","partnumber","brandmanufacturer","qty","unit","currency","unitprice","extendedprice","remarks" ];
+    
+              row = insertRow(rowIndex+ i, offset++, 1);
+              columns.forEach((columnName, currentColumnIndex) => {
+                Object.assign(row.getCell(columnIndex + currentColumnIndex), {
+                  value: columnName,
+                  font: { bold: true },
+                  fill: {
+                    type: "pattern",
+                    pattern: "solid",
+                    fgColor: { argb: "BEDFE6" }
+                  },
+                  border: {
+                    bottom: borderStyle,
+                    left: borderStyle,
+                    right: borderStyle,
+                    top: borderStyle
+                  }
+                });
+              });
+                getMMFDetail($scope.masterRows[i].data.id).forEach((detail, index) => {
+                  row = insertRow(rowIndex+i, offset++, 1);
+                  columns.forEach((columnName, currentColumnIndex) => {
+                    Object.assign(row.getCell(columnIndex + currentColumnIndex), {
+                      value: detail[columnName],
+                      fill: {
+                        type: "pattern",
+                        pattern: "solid",
+                        fgColor: { argb: "BEDFE6" }
+                      },
+                      border: {
+                        bottom: borderStyle,
+                        left: borderStyle,
+                        right: borderStyle,
+                        top: borderStyle
+                      }
+                    });
+                  });
+                });
+                offset--;
+              
+            }
+          }).then(function() {
+            workbook.xlsx.writeBuffer().then(function(buffer) {
+              saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'MMF30Report.xlsx');
+            });
+            e.component.columnOption('ID', 'visible', false);
+            e.component.endUpdate();
+          });
+
+          e.cancel = true;
+        }
+      };
       function masterDetailTemplate(_, masterDetailOptions) {
         return $("<div>").dxTabPanel({
           items: [
@@ -535,7 +662,7 @@
       CrudService.GetAll('approvaltype').then(function (resp) {
         $scope.apptypeDatasource = resp;
       });
-
+      
       function approverlist(masterDetailData) {
         return function () {
           return $("<div>").dxDataGrid({

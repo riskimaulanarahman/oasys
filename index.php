@@ -982,6 +982,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 	<script language="JavaScript" src="js/lib/angular-messages.min.js" type="text/javascript"></script>
 	<script language="JavaScript" src="js/lib/quill.min.js" type="text/javascript"></script>
 	<script language="JavaScript" src="js/lib/dx.all.js" type="text/javascript"></script>
+    <script language="JavaScript" src="js/lib/exceljs.min.js" type="text/javascript"></script>
 	<script language="JavaScript" src="js/lib/FileSaver.min.js" type="text/javascript"></script>
     <!-- <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/globalize/0.1.1/globalize.min.js"></script> -->
     <!-- <script src="https://unpkg.com/devextreme-aspnet-data/js/dx.aspnet.data.js"></script> -->
