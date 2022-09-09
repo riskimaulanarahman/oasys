@@ -72,7 +72,7 @@
         $scope.mmf30detail = resp;
       });
       const getMMFDetail = (id) => {
-        if (resp.length>0){
+        if ($scope.mmf30detail.length>0){
           return $scope.mmf30detail.filter((data) => data.mmf30_id === id);
         } else {
           return []
