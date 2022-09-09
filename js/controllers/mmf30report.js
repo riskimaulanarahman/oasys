@@ -132,7 +132,7 @@
         });
       }
       //$scope.myData = myData;
-      $scope.masterRows=[]
+      // $scope.masterRows=[]
       $scope.dataGridOptions = {
         dataSource: myData,
         showColumnLines: true,
@@ -376,6 +376,7 @@
           $scope.ds = e.component.getDataSource();
         },
         onExporting: function(e) { 
+          $scope.masterRows=[];
           e.component.beginUpdate();
           e.component.columnOption('ID', 'visible', true);
           var workbook = new ExcelJS.Workbook(); 
