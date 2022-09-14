@@ -1315,6 +1315,11 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 				visible: true,
 			},
 			columns: [
+				{caption: '#',formItem: { visible: false},width: 40,
+					cellTemplate: function(container, options) {
+						container.text(options.rowIndex +1);
+					}
+				},
 				{dataField:'departdate',width:150,dataType: "date" ,
 				format: 'dd/MM/yyyy',editorType: "dxDateBox",
                 editorOptions: {

@@ -512,6 +512,11 @@
             },
             showBorders: true,
             columns: [
+              {caption: '#',formItem: { visible: false},width: 40,
+                cellTemplate: function(container, options) {
+                  container.text(options.rowIndex +1);
+                }
+              },
               {
                 dataField: "expensetype",
                 name: "expensetype",
@@ -600,6 +605,11 @@
             },
             showBorders: true,
             columns: [
+              {caption: '#',formItem: { visible: false},width: 40,
+                cellTemplate: function(container, options) {
+                  container.text(options.rowIndex +1);
+                }
+              },
               {
                 dataField: "departdate",
                 dataType: "date",
