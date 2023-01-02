@@ -233,16 +233,6 @@
 								}]
 							},
 							{
-								dataField: 'requeststatus', label: { text: "Request Status" }, template: function (data, itemElement) {
-									var val = data.editorOptions.value;
-									$scope.reqStatus = data.editorOptions.value;
-									val = (val >= 0) ? val : 5;
-									var rClass = ["mb-2 mr-2 badge badge-pill badge-secondary", "mb-2 mr-2 badge badge-pill badge-primary", "mb-2 mr-2 badge badge-pill badge-warning", "mb-2 mr-2 badge badge-pill badge-success", "mb-2 mr-2 badge badge-pill badge-danger", "mb-2 mr-2 badge badge-pill badge-alt"];
-									var rDesc = ["Saved as Draft", "Waiting Approval", "Require Rework", "Approved", "Rejected", "Not Saved"];
-									$('<span>').appendTo(itemElement).addClass(rClass[val]).text(rDesc[val]);
-								}
-							},
-							{
 								dataField: 'islandtransport', label: { text: "", visible: false }, dataType: "boolean", editorType: "dxCheckBox",
 								editorOptions: {
 									readOnly: (($scope.mode == 'edit') || ($scope.mode == 'add')) ? false : true,
@@ -464,8 +454,16 @@
 										}]
 									},]
 							},
-
-
+							{
+								dataField: 'requeststatus', label: { text: "Request Status" }, template: function (data, itemElement) {
+									var val = data.editorOptions.value;
+									$scope.reqStatus = data.editorOptions.value;
+									val = (val >= 0) ? val : 5;
+									var rClass = ["mb-2 mr-2 badge badge-pill badge-secondary", "mb-2 mr-2 badge badge-pill badge-primary", "mb-2 mr-2 badge badge-pill badge-warning", "mb-2 mr-2 badge badge-pill badge-success", "mb-2 mr-2 badge badge-pill badge-danger", "mb-2 mr-2 badge badge-pill badge-alt"];
+									var rDesc = ["Saved as Draft", "Waiting Approval", "Require Rework", "Approved", "Rejected", "Not Saved"];
+									$('<span>').appendTo(itemElement).addClass(rClass[val]).text(rDesc[val]);
+								}
+							},
 							{
 								itemType: "group",
 								caption: "",
