@@ -297,6 +297,7 @@ Class TrModule extends Application{
 						$data['employee_id']=$Employee->id;
 						$data['createdby']=$Employee->id;
 						$data['RequestStatus']=0;
+
 						try{
 							$Tr = Tr::create($data);
 							$data=$Tr->to_array();
@@ -329,13 +330,7 @@ Class TrModule extends Application{
 								$Trapproval->approver_id = $Approver->id;
 								$Trapproval->save();
 							}
-							$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='TR' and tbl_approver.isactive='1' and approvaltype_id=19")));
-							if(count($Approver2)>0){
-								$Trapproval = new Trapproval();
-								$Trapproval->tr_id = $Tr->id;
-								$Trapproval->approver_id = $Approver2->id;
-								$Trapproval->save();
-							}
+							
 							$Trhistory = new Trhistory();
 							$Trhistory->date = date("Y-m-d h:i:s");
 							$Trhistory->fullname = $Employee->fullname;
@@ -407,6 +402,8 @@ Class TrModule extends Application{
 							$olddata = $Tr->to_array();
 							$superior = $data['superior'];
 							$depthead = $data['depthead'];
+							$travelcategory = $data['travelcategory'];
+
 							unset($data['fullname']);
 							unset($data['department']);
 							unset($data['approvalstatus']);
@@ -421,6 +418,7 @@ Class TrModule extends Application{
 								}
 								$Tr->save();
 								
+								// punya Departement Head
 								if (isset($data['depthead'])){
 									$joins   = "LEFT JOIN tbl_approver ON (tbl_trapproval.approver_id = tbl_approver.id) ";					
 									$dx = Trapproval::find('all',array('joins'=>$joins,'conditions' => array("tr_id=? and tbl_approver.approvaltype_id=16 and not(tbl_approver.employee_id=?)",$id,$depthead)));	
@@ -459,6 +457,7 @@ Class TrModule extends Application{
 									
 								}
 
+								// Punya Superior
 								if (isset($data['superior'])){
 									$joins   = "LEFT JOIN tbl_approver ON (tbl_trapproval.approver_id = tbl_approver.id) ";					
 									$dx = Trapproval::find('all',array('joins'=>$joins,'conditions' => array("tr_id=? and tbl_approver.approvaltype_id=43 and not(tbl_approver.employee_id=?)",$id,$superior)));	
@@ -496,11 +495,29 @@ Class TrModule extends Application{
 									}
 									
 								}
+								if($travelcategory == 'External BU') {
+									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='TR' and tbl_approver.isactive='1' and approvaltype_id=50")));
+									// if(count($Approver2)>0){
+										$Trapproval = new Trapproval();
+										$Trapproval->tr_id = $Tr->id;
+										$Trapproval->approver_id = $Approver2->id;
+										$Trapproval->save();
+										// }
+									} else {
+										$joins   = "LEFT JOIN tbl_approver ON (tbl_trapproval.approver_id = tbl_approver.id) ";	
+										$Approver2 = Trapproval::find('first',array('joins'=>$joins,'conditions'=>array("tr_id=? and module='TR' and tbl_approver.isactive='1' and tbl_approver.approvaltype_id=50", $id)));
+										$Approver2->delete();
+										// print_r($Approver2);
+										
+										// foreach ($Approver2 as $result) {
+										// 	print_r($result);
+										// }
+									}
 								
-								if($data['requeststatus']==1){
-									$Trapproval = Trapproval::find('all', array('conditions' => array("tr_id=?",$id)));					
-									foreach($Trapproval as $data){
-										$data->approvalstatus=0;
+									if($data['requeststatus']==1){
+										$Trapproval = Trapproval::find('all', array('conditions' => array("tr_id=?",$id)));					
+										foreach($Trapproval as $data){
+											$data->approvalstatus=0;
 										$data->save();
 									}
 									$joinx   = "LEFT JOIN tbl_approver ON (tbl_trapproval.approver_id = tbl_approver.id) ";					
@@ -636,34 +653,51 @@ Class TrModule extends Application{
 			}
 		}
 	}
+
+//Aprroval
 	function trApproval(){
 		if (count($this->post)==0){
 			http_response_code(405);
     		echo json_encode(array("message" => "Method not Allowed"));
 		}else{
+			// checking auth
 			$auth = $this->jwt->checkAuth();
 			if($auth){
+				// find by id
 				switch ($this->post['criteria']){
 					case 'byid':
 						$id = $this->post['id'];
+
+						// if id not null
 						if ($id!=""){
 							$join   = "LEFT JOIN tbl_approver ON (tbl_trapproval.approver_id = tbl_approver.id) ";
-							$Trapproval = Trapproval::find('all', array('joins'=>$join,'conditions' => array("tr_id=?",$id),'include' => array('approver'=>array('approvaltype')),"order"=>"tbl_approver.sequence"));
+							$Trapproval = Trapproval::find('all', 
+								array('joins'=>$join,'conditions' 
+									=> array("tr_id=?",$id),'include' 
+									=> array('approver'=>array('approvaltype')),
+									"order"=>"tbl_approver.sequence"));
 							foreach ($Trapproval as &$result) {
 								$approvaltype = $result->approver->approvaltype_id;
 								$result		= $result->to_array();
 								$result['approvaltype']=$approvaltype;
 							}
 							echo json_encode($Trapproval, JSON_NUMERIC_CHECK);
-						}else{
+						}
+						//  
+						else{
 							$Trapproval = new Trapproval();
 							echo json_encode($Trapproval);
 						}
 						break;
+
+					// find with for approval status
 					case 'find':
-						$query=$this->post['query'];		
+						$query=$this->post['query'];	
 						if(isset($query['status'])){
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+							$approval_type = Approver::find('first', array(
+								'conditions' => array("employee_id=? and module='TR'", $Employee->id )
+							));
 							$join   = "LEFT JOIN tbl_approver ON (tbl_trapproval.approver_id = tbl_approver.id) ";
 							$dx = Trapproval::find('first', array('joins'=>$join,'conditions' => array("tr_id=? and tbl_approver.employee_id = ?",$query['tr_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
 							$Tr = Tr::find($query['tr_id']);
@@ -678,6 +712,10 @@ Class TrModule extends Application{
 									$result['fullname']=$fullname;
 								}
 								$data=array("jml"=>count($Trapproval));
+								if($approval_type->approvaltype_id == 18 && $Tr->travelcategory == 'Internal BU') {
+									$data=array("jml"=>1);
+								}
+
 							}						
 						} else if(isset($query['pending'])){						
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
@@ -743,6 +781,8 @@ Class TrModule extends Application{
 						}
 						echo json_encode($data, JSON_NUMERIC_CHECK);
 						break;
+					
+					// creating 
 					case 'create':
 						$data = $this->post['data'];
 						unset($data['__KEY__']);
@@ -816,6 +856,9 @@ Class TrModule extends Application{
 									$Trhistory->actiontype = 3;
 									break;
 								case '2':
+									if($Tr->travelcategory == 'Internal BU' &&  $Trapproval->approver->approvaltype->approvaltype == 'HR HO') {
+										$Trapproval->approver->isfinal = 1;
+									}
 									if ($Trapproval->approver->isfinal == 1){
 										$Tr->requeststatus = 3;
 										$emto=$email;$emname=$Tr->employee->fullname;
@@ -853,7 +896,7 @@ Class TrModule extends Application{
 							}
 							$Tr->save();
 							$Trhistory->save();
-							echo "email to :".$emto." ->".$emname;
+							// echo "email to :".$emto." ->".$emname;
 							$this->mail->addAddress($emto, $emname);
 							$TrJ = Tr::find($doid,array('include'=>array('employee'=>array('company','department','designation','grade','location'))));
 							$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$emname.',</span></p>
@@ -958,8 +1001,8 @@ Class TrModule extends Application{
 			}
 		}
 	}
+
 	function generatePDF($doid){
-		
 		$Tr = Tr::find($doid);
 		$Trschedule=Trschedule::find('all',array('conditions'=>array("tr_id=?",$doid),'include'=>array('tr'=>array('employee'=>array('company','department','designation','grade','location')))));
 		$Trticket=Trticket::find('all',array('conditions'=>array("tr_id=?",$doid),'include'=>array('tr'=>array('employee'=>array('company','department','designation','grade','location')))));					
@@ -1282,9 +1325,13 @@ Class TrModule extends Application{
 														$hrmoname = $data->approver->employee->fullname;
 														$hrmodate = date("d/m/Y",strtotime($data->approvaldate));
 													}
-													if($data->approver->approvaltype->id==19) {
-														$mdname = $data->approver->employee->fullname;
-														$mddate = date("d/m/Y",strtotime($data->approvaldate));
+													// if($data->approver->approvaltype->id==19) {
+													// 	$mdname = $data->approver->employee->fullname;
+													// 	$mddate = date("d/m/Y",strtotime($data->approvaldate));
+													// }
+													if($data->approver->approvaltype->id==50) {
+														$buname = $data->approver->employee->fullname;
+														$budate = date("d/m/Y",strtotime($data->approvaldate));
 													}
 												}
 												$pdfContent .='</table><br>
@@ -1298,7 +1345,7 @@ Class TrModule extends Application{
 													<td style="width:110px;max-width:160px;border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=bottom ><br>'.(($deptheadname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
 													<td style="width:110px;max-width:160px;border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=bottom ><br>'.(($hrbuname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
 													<td style="width:110px;max-width:160px;border-bottom: 1px solid #000000; border-left: 1px solid #000000; " align="center" valign=bottom ><br>'.(($hrmoname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
-													<td style="width:110px;max-width:160px;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="center" valign=bottom ><br>'.(($mdname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
+													<td style="width:110px;max-width:160px;border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="center" valign=bottom ><br>'.(($buname=="")?"":'<img src="images/approved.png" style="height:25pt" alt="Approved from System">').'</td>
 													</tr>
 												<tr>
 													</tr>
@@ -1310,7 +1357,7 @@ Class TrModule extends Application{
 													<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=bottom>'.$deptheadname.'<br><small>'.(($deptheadname=="")?"":$datedepthead).'</small></td>
 													<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=bottom>'.$hrbuname.'<br><small>'.(($hrbuname=="")?"":$hrbudate).'</small></td>
 													<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=bottom>'.$hrmoname.'<br><small>'.(($hrmoname=="")?"":$hrmodate).'</small></td>
-													<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="center" valign=bottom>'.$mdname.'<br><small>'.(($mdname=="")?"":$mddate).'</small></td>
+													<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="center" valign=bottom>'.$buname.'<br><small>'.(($buname=="")?"":$budate).'</small></td>
 													</tr>
 												<tr>
 													<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" height="15" align="center" valign=bottom >Applicant (Pemohon)</td>
@@ -1318,7 +1365,7 @@ Class TrModule extends Application{
 													<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=bottom>Department Head</td>
 													<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=bottom>HR BU</td>
 													<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="center" valign=bottom>HR HO</td>
-													<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="center" valign=bottom>Deputy MD</td>
+													<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="center" valign=bottom>BU HEAD</td>
 													</tr>
 												<tr>
 													<td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=6 height="15" align="left" valign=bottom ><small>Copy 1 (Asli) - HRD/KTU    Copy 2 (dua) - AVERIS (Melalui scan)</small></td>
