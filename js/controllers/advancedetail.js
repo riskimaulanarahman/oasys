@@ -444,7 +444,7 @@
 									visible: (($scope.mode == "approve")) ? true : false,
 									// visible: ( $scope.mode == 'approve' ) ? true : false,
 									editorOptions: {
-										readOnly: (($scope.data.apprstatuscode == 5)) ? false : true,
+										readOnly: (($scope.data.apprstatuscode == 5) || ($rootScope.isAdmin) ) ? false : true,
 										dataSource: $scope.budgetcategory,
 										items: $scope.budgetCategory,
 										valueExpr: 'id',
