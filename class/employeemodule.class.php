@@ -27,7 +27,7 @@ Class EmployeeModule extends Application{
 			if($auth){
 				switch ($this->post['criteria']){
 					case 'all':
-						$Employee = Employee::all(array('conditions' => array("loginname <> ''"),'include' => array('department','company', 'designation'),"order"=>"fullname"));
+						$Employee = Employee::all(array('conditions' => array("loginname <> ''AND isActive = 1"),'include' => array('department','company', 'designation'),"order"=>"fullname"));
 						foreach ($Employee as &$result) {
 							$dept=$result->department->departmentname;
 							$comp=$result->company->companycode;
@@ -43,7 +43,7 @@ Class EmployeeModule extends Application{
 						$query=$this->post['query'];
 						if(isset($query['filter'])){
 							$deptname = $query['dept'];
-							$Department = Department::first(array('conditions'=>array("departmentname=?",$deptname)));
+							$Department = Department::first(array('conditions'=>array("departmentname=? AND isActive = 1",$deptname)));
 							$dept = $Department->departmentgroup;
 							switch ($query['filter']){
 								case 'bydept':
