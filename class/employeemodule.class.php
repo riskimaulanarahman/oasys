@@ -27,7 +27,7 @@ Class EmployeeModule extends Application{
 			if($auth){
 				switch ($this->post['criteria']){
 					case 'all':
-						$Employee = Employee::all(array('conditions' => array("loginname <> ''AND isActive = 1"),'include' => array('department','company', 'designation'),"order"=>"fullname"));
+						$Employee = Employee::all(array('conditions' => array("loginname <> '' AND isActive = 1"),'include' => array('department','company', 'designation'),"order"=>"fullname"));
 						foreach ($Employee as &$result) {
 							$dept=$result->department->departmentname;
 							$comp=$result->company->companycode;
@@ -43,12 +43,12 @@ Class EmployeeModule extends Application{
 						$query=$this->post['query'];
 						if(isset($query['filter'])){
 							$deptname = $query['dept'];
-							$Department = Department::first(array('conditions'=>array("departmentname=? AND isActive = 1",$deptname)));
+							$Department = Department::first(array('conditions'=>array("departmentname=?",$deptname)));
 							$dept = $Department->departmentgroup;
 							switch ($query['filter']){
 								case 'bydept':
 									$join = "LEFT join tbl_department on tbl_employee.department_id=tbl_department.id";
-									$Employee = Employee::all(array('joins'=>$join,'conditions' => array("tbl_department.departmentgroup =? and level_id>1 and (loginname is null or loginname='' or loginname=?)",$dept,$this->currentUser->username),'include' => array('department','company', 'designation'),"order"=>"fullname"));
+									$Employee = Employee::all(array('joins'=>$join,'conditions' => array("tbl_department.departmentgroup =? and level_id>1 and isActive = 1 and (loginname is null or loginname='' or loginname=?)",$dept,$this->currentUser->username),'include' => array('department','company', 'designation'),"order"=>"fullname"));
 									foreach ($Employee as &$result) {
 										$dept=$result->department->departmentname;
 										$comp=$result->company->companycode;
