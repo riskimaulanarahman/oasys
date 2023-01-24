@@ -496,7 +496,7 @@ Class TrModule extends Application{
 									
 								}
 								if($travelcategory == 'External BU') {
-									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='TR' and tbl_approver.isactive='1' and approvaltype_id=50")));
+									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='TR' and tbl_approver.isactive='1' and approvaltype_id=50 and FIND_IN_SET(?, CompanyList) > 0",$Employee->companycode)));
 									// if(count($Approver2)>0){
 										$Trapproval = new Trapproval();
 										$Trapproval->tr_id = $Tr->id;

@@ -1321,6 +1321,8 @@
 					delete data.totaladvanceidr;
 					delete data.totaladvanceusd;
 					delete data.approveddoc;
+					delete data.travelcategory;
+
 					CrudService.Update('trapp', data.id, data).then(function (response) {
 						if (response.status == "error") {
 							DevExpress.ui.notify(response.message, "error");
