@@ -1299,8 +1299,14 @@ Class Mmf30module extends Application{
 						break;
 					case 'create':			
 						$data = $this->post['data'];
-						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
-						$data['employee_id']=$Employee->id;
+						if($this->currentUser->username=="admin"){
+							$Mmf30 = Mmf30::find($data['mmf30_id']);
+							$data['employee_id']= $Mmf30->employee_id;
+						}else{
+							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+							$data['employee_id']=$Employee->id;
+						}
+						
 						unset($data['__KEY__']);
 						
 						$Mmf30attachment = Mmf30attachment::create($data);
