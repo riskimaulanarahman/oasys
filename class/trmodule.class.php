@@ -416,7 +416,7 @@ Class TrModule extends Application{
 									$value=(($val===0) || ($val==='0') || ($val==='false'))?false:((($val===1) || ($val==='1') || ($val==='true'))?true:$val);
 									$Tr->$key=$value;
 								}
-								$Tr->save();
+								// $Tr->save();
 								
 								// punya Departement Head
 								if (isset($data['depthead'])){
@@ -495,29 +495,14 @@ Class TrModule extends Application{
 									}
 									
 								}
-								if($travelcategory == 'External BU') {
-									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='TR' and tbl_approver.isactive='1' and approvaltype_id=50 and FIND_IN_SET(?, CompanyList) > 0",$Employee->companycode)));
-									// if(count($Approver2)>0){
-										$Trapproval = new Trapproval();
-										$Trapproval->tr_id = $Tr->id;
-										$Trapproval->approver_id = $Approver2->id;
-										$Trapproval->save();
-										// }
-									} else {
-										$joins   = "LEFT JOIN tbl_approver ON (tbl_trapproval.approver_id = tbl_approver.id) ";	
-										$Approver2 = Trapproval::find('first',array('joins'=>$joins,'conditions'=>array("tr_id=? and module='TR' and tbl_approver.isactive='1' and tbl_approver.approvaltype_id=50", $id)));
-										$Approver2->delete();
-										// print_r($Approver2);
-										
-										// foreach ($Approver2 as $result) {
-										// 	print_r($result);
-										// }
-									}
+
 								
-									if($data['requeststatus']==1){
-										$Trapproval = Trapproval::find('all', array('conditions' => array("tr_id=?",$id)));					
-										foreach($Trapproval as $data){
-											$data->approvalstatus=0;
+								
+								if($data['requeststatus']==1){
+									$Trapproval = Trapproval::find('all', array('conditions' => array("tr_id=?",$id)));
+									echo 'fgjweoghweogjneowgnwei';
+									foreach($Trapproval as $data){
+										$data->approvalstatus=0;
 										$data->save();
 									}
 									$joinx   = "LEFT JOIN tbl_approver ON (tbl_trapproval.approver_id = tbl_approver.id) ";					
@@ -628,6 +613,19 @@ Class TrModule extends Application{
 									$Trhistory->actiontype = 1;
 									$Trhistory->save();
 								}
+
+								if($travelcategory == 'External BU') {
+									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='TR' and tbl_approver.isactive='1' and approvaltype_id=50 and FIND_IN_SET(?, CompanyList) > 0",$Employee->companycode)));
+									$Trapproval = new Trapproval();
+									$Trapproval->tr_id = $Tr->id;
+									$Trapproval->approver_id = $Approver2->id;
+									$Trapproval->save();
+								} else {
+									$joins   = "LEFT JOIN tbl_approver ON (tbl_trapproval.approver_id = tbl_approver.id) ";	
+									$Approverdel = Trapproval::find('first',array('joins'=>$joins,'conditions'=>array("tr_id=? and module='TR' and tbl_approver.isactive='1' and tbl_approver.approvaltype_id=50", $id)));
+									$Approverdel->delete();
+								}
+
 								$logger = new Datalogger("TR","update",json_encode($olddata),json_encode($data));
 								$logger->SaveData();
 							}
