@@ -416,7 +416,7 @@ Class TrModule extends Application{
 									$value=(($val===0) || ($val==='0') || ($val==='false'))?false:((($val===1) || ($val==='1') || ($val==='true'))?true:$val);
 									$Tr->$key=$value;
 								}
-								// $Tr->save();
+								$Tr->save();
 								
 								// punya Departement Head
 								if (isset($data['depthead'])){
