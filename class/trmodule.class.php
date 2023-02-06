@@ -810,7 +810,7 @@ Class TrModule extends Application{
 						
 						$join   = "LEFT JOIN tbl_approver ON (tbl_trapproval.approver_id = tbl_approver.id) ";
 						if (isset($data['mode'])){
-							$Trapproval = Trapproval::find('first', array('joins'=>$join,'conditions' => array("tr_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
+							$Trapproval = Trapproval::find('first', array('joins'=>$join,'conditions' => array("tr_id=? and tbl_approver.employee_id=? and ApprovalStatus=0",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
 							unset($data['mode']);
 						}else{
 							$Trapproval = Trapproval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
