@@ -697,7 +697,7 @@ Class TrModule extends Application{
 								'conditions' => array("employee_id=? and module='TR'", $Employee->id )
 							));
 							$join   = "LEFT JOIN tbl_approver ON (tbl_trapproval.approver_id = tbl_approver.id) ";
-							$dx = Trapproval::find('first', array('joins'=>$join,'conditions' => array("tr_id=? and tbl_approver.employee_id = ?",$query['tr_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
+							$dx = Trapproval::find('first', array('joins'=>$join,'conditions' => array("tr_id=? and tbl_approver.employee_id = ? and approvalstatus='0'",$query['tr_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
 							$Tr = Tr::find($query['tr_id']);
 							if($dx->approver->isfinal==1){
 								$data=array("jml"=>1);
