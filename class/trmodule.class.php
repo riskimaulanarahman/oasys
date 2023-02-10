@@ -496,11 +496,22 @@ Class TrModule extends Application{
 									
 								}
 
-								
-								
+								if(isset($travelcategory)) {
+									if($travelcategory == 'External BU') {
+										$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='TR' and tbl_approver.isactive='1' and approvaltype_id=50 and FIND_IN_SET(?, CompanyList) > 0",$Employee->companycode)));
+										$Trapproval = new Trapproval();
+										$Trapproval->tr_id = $Tr->id;
+										$Trapproval->approver_id = $Approver2->id;
+										$Trapproval->save();
+									} else if($travelcategory == 'Internal BU') {
+										$joins   = "LEFT JOIN tbl_approver ON (tbl_trapproval.approver_id = tbl_approver.id) ";	
+										$Approverdel = Trapproval::find('first',array('joins'=>$joins,'conditions'=>array("tr_id=? and module='TR' and tbl_approver.isactive='1' and tbl_approver.approvaltype_id=50", $id)));
+										$Approverdel->delete();
+									}
+								}
+
 								if($data['requeststatus']==1){
 									$Trapproval = Trapproval::find('all', array('conditions' => array("tr_id=?",$id)));
-									echo 'fgjweoghweogjneowgnwei';
 									foreach($Trapproval as $data){
 										$data->approvalstatus=0;
 										$data->save();
@@ -614,17 +625,7 @@ Class TrModule extends Application{
 									$Trhistory->save();
 								}
 
-								if($travelcategory == 'External BU') {
-									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='TR' and tbl_approver.isactive='1' and approvaltype_id=50 and FIND_IN_SET(?, CompanyList) > 0",$Employee->companycode)));
-									$Trapproval = new Trapproval();
-									$Trapproval->tr_id = $Tr->id;
-									$Trapproval->approver_id = $Approver2->id;
-									$Trapproval->save();
-								} else {
-									$joins   = "LEFT JOIN tbl_approver ON (tbl_trapproval.approver_id = tbl_approver.id) ";	
-									$Approverdel = Trapproval::find('first',array('joins'=>$joins,'conditions'=>array("tr_id=? and module='TR' and tbl_approver.isactive='1' and tbl_approver.approvaltype_id=50", $id)));
-									$Approverdel->delete();
-								}
+								
 
 								$logger = new Datalogger("TR","update",json_encode($olddata),json_encode($data));
 								$logger->SaveData();
