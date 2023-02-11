@@ -191,6 +191,11 @@
             fixedPosition: "left",
           },
           {
+            dataField: "travelcategory",
+            fixed: true,
+            fixedPosition: "left",
+          },
+          {
             dataField: "laststatus",
             caption: "Last Status",
             fixed: true,
