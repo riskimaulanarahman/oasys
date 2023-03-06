@@ -1538,7 +1538,7 @@ Class RfcModule extends Application{
 												}
 											}
 										}
-										$data= array("activity"=>"HR Related");
+										$data= array("activity"=>"HR Related"); // add
 									}else{
 										$joins   = "LEFT JOIN tbl_approver ON (tbl_rfcapproval.approver_id = tbl_approver.id) ";					
 										$dx = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id=15",$id)));	
