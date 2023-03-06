@@ -96,7 +96,8 @@ Class ListmodModule extends Application{
 			if($auth){
 				switch ($this->post['criteria']){
 					case 'all':
-						$Listmod = Listmod::all();
+						// $Listmod = Listmod::all();
+						$Listmod = Listmod::find('all',array('conditions' => array("isActive=1")));
 						foreach ($Listmod as &$result) {
 							$result = $result->to_array();
 						}					
