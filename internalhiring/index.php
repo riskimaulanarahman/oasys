@@ -485,7 +485,8 @@ function internalhiring() {
                                         },
                                         editorType: 'dxSelectBox',
                                         editorOptions: {
-                                            dataSource: ['A','B+','B','C','D'],
+                                            // dataSource: ['A','B+','B','C','D'],
+                                            dataSource: ['1','2','3','4','5'],
                                         },
                                         validationRules: [{type: "required",message: "this data is required"}],
                                     },
