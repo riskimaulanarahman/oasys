@@ -59,6 +59,9 @@
         }
       }
       $scope.showForm= true;
+      CrudService.FindData('trschedule',{filter:'all',startDate:$filter("date")($scope.filterData.startDate, 'yyyy-MM-dd'),endDate:$filter("date")($scope.filterData.endDate, 'yyyy-MM-dd')}).then(function (resp) {
+        $scope.trdetail = resp;
+      });
       function initController() {
         $scope.dataGrid.refresh();
         CrudService.FindData('trschedule',{filter:'all',startDate:$filter("date")($scope.filterData.startDate, 'yyyy-MM-dd'),endDate:$filter("date")($scope.filterData.endDate, 'yyyy-MM-dd')}).then(function (resp) {
