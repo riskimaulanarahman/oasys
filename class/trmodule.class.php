@@ -769,9 +769,13 @@ Class TrModule extends Application{
 							$Tr = Tr::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_tr.CreatedDate between ? and ?',$query['startDate'],$query['endDate'] ),'include' => array('employee'=>array('company','department'))));
 							foreach ($Tr as &$result) {
 								$fullname	= $result->employee->fullname;	
+								$sapid	= $result->employee->sapid;	
+								$company	= $result->employee->company->companyname;	
 								$createdby	= $result->createdbys;	
 								$result		= $result->to_array();
 								$result['fullname']=$fullname;
+								$result['sapid']=$sapid;
+								$result['company']=$company;
 								$result['createdby']=$createdby;
 							}
 							$data=$Tr;
@@ -1423,6 +1427,14 @@ Class TrModule extends Application{
 						if(isset($query['status'])){
 							$Trschedule = Trschedule::find('all', array('conditions' => array("tr_id=?",$query['tr_id'])));
 							$data=array("jml"=>count($Trschedule));
+						}else if(isset($query['filter'])){
+							$join = "LEFT JOIN tbl_tr on tbl_trschedule.tr_id=tbl_tr.id";
+							$sel = 'tbl_trschedule.*, tbl_tr.CreatedDate ';
+							$Trschedule = Trschedule::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_tr.CreatedDate between ? and ?',$query['startDate'],$query['endDate'] )));
+							foreach ($Trschedule as &$result) {	
+								$result	= $result->to_array();
+							}
+							$data=$Trschedule;
 						}else{
 							$data=array();
 						}
