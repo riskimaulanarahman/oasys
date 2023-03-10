@@ -196,13 +196,18 @@
           {
             dataField: "sapid",
             caption: "SAPID",
+            width:80,
             fixed: true,
-            width: 80,
             fixedPosition: "left",
           },
           {
             dataField: "company",
             caption: "BU",
+            fixed: true,
+            fixedPosition: "left",
+          },
+          {
+            dataField: "travelcategory",
             fixed: true,
             fixedPosition: "left",
           },

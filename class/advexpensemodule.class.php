@@ -994,6 +994,14 @@ Class Advexpensemodule extends Application{
 									);
 
 									
+								} else if($data->ispapua == 2) {
+									$sppd = Advexpsppd::find('first',
+										array(
+											'conditions'=>array("level=? and ispapua=2",$Employee->level_id)
+										)
+									);
+
+									
 								}
 
 								$breakfast = ($data->breakfast == 1) ? 0 : $sppd->breakfast;
@@ -1453,7 +1461,15 @@ Class Advexpensemodule extends Application{
 								);
 
 								
-							}
+							} else if($data->ispapua == 2) {
+								$sppd = Advexpsppd::find('first',
+									array(
+										'conditions'=>array("level=? and ispapua=2",$Advexpense->employee->level_id)
+									)
+								);
+
+								
+							} 
 
 							$breakfast = ($data->breakfast == 1) ? 0 : $sppd->breakfast;
 							$lunch = ($data->lunch == 1) ? 0 : $sppd->lunch;
@@ -1729,6 +1745,12 @@ Class Advexpensemodule extends Application{
 										'conditions'=>array("level=? and ispapua=1",$Employee->level_id)
 									)
 								);
+							} else if($vals->ispapua == 2) {
+								$sppd = Advexpsppd::find('first',
+									array(
+										'conditions'=>array("level=? and ispapua=2",$Employee->level_id)
+									)
+								);
 							}
 
 							// $jml_breakfast = 0;
@@ -1951,6 +1973,14 @@ Class Advexpensemodule extends Application{
 						);
 
 						
+					} else if($Advexpensedetailbt[$b-22]->ispapua == 2) {
+						$sppd = Advexpsppd::find('first',
+							array(
+								'conditions'=>array("level=? and ispapua=2",$Employee->level_id)
+							)
+						);
+
+						
 					}
 
 					$breakfastro = ($Advexpensedetailbt[$b-22]->breakfast == 1) ? 0 : $sppd->breakfast;
@@ -2011,6 +2041,14 @@ Class Advexpensemodule extends Application{
 						$sppd = Advexpsppd::find('first',
 							array(
 								'conditions'=>array("level=? and ispapua=1",$Employee->level_id)
+							)
+						);
+
+						
+					} else if($Advexpensedetailbt[$b-52]->ispapua == 2) {
+						$sppd = Advexpsppd::find('first',
+							array(
+								'conditions'=>array("level=? and ispapua=2",$Employee->level_id)
 							)
 						);
 

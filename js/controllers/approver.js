@@ -208,7 +208,7 @@ app.register.controller('approverCtrl', ['$rootScope','$scope', '$http', '$inter
         },
 		editing: {
             useIcons:true,
-            mode: "row",
+            mode: "batch",
             //allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
             //allowAdding: ($rootScope.isAdmin)?true:false, // Enables insertion
             form:{colCount: 2,

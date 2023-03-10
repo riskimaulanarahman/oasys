@@ -481,18 +481,19 @@ function internalhiring() {
                                     {
                                         dataField: 'score1',
                                         label: {
-                                            text: '2018'
+                                            text: '2020'
                                         },
                                         editorType: 'dxSelectBox',
                                         editorOptions: {
-                                            dataSource: ['A','B+','B','C','D'],
+                                            // dataSource: ['A','B+','B','C','D'],
+                                            dataSource: ['1','2','3','4','5'],
                                         },
                                         validationRules: [{type: "required",message: "this data is required"}],
                                     },
                                     {
                                         dataField: 'score2',
                                         label: {
-                                            text: '2019'
+                                            text: '2021'
                                         },
                                         editorType: 'dxSelectBox',
                                         editorOptions: {
@@ -503,7 +504,7 @@ function internalhiring() {
                                     {
                                         dataField: 'score3',
                                         label: {
-                                            text: '2020'
+                                            text: '2022'
                                         },
                                         editorType: 'dxSelectBox',
                                         editorOptions: {

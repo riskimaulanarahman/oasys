@@ -402,7 +402,7 @@ Class TrModule extends Application{
 							$olddata = $Tr->to_array();
 							$superior = $data['superior'];
 							$depthead = $data['depthead'];
-							$travelcategory = $data['travelcategory'];
+							$travelcategory = isset($data['travelcategory']) ? $data['travelcategory'] : $Tr->travelcategory;
 
 							unset($data['fullname']);
 							unset($data['department']);
@@ -496,7 +496,17 @@ Class TrModule extends Application{
 									
 								}
 
-								if(isset($travelcategory)) {
+								// if($travelcategory !== null) {
+									
+								// }
+
+								if($data['requeststatus']==1){
+									$Trapproval = Trapproval::find('all', array('conditions' => array("tr_id=?",$id)));
+									foreach($Trapproval as $data){
+										$data->approvalstatus=0;
+										$data->save();
+									}
+
 									if($travelcategory == 'External BU') {
 										$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='TR' and tbl_approver.isactive='1' and approvaltype_id=50 and FIND_IN_SET(?, CompanyList) > 0",$Employee->companycode)));
 										$Trapproval = new Trapproval();
@@ -508,14 +518,7 @@ Class TrModule extends Application{
 										$Approverdel = Trapproval::find('first',array('joins'=>$joins,'conditions'=>array("tr_id=? and module='TR' and tbl_approver.isactive='1' and tbl_approver.approvaltype_id=50", $id)));
 										$Approverdel->delete();
 									}
-								}
-
-								if($data['requeststatus']==1){
-									$Trapproval = Trapproval::find('all', array('conditions' => array("tr_id=?",$id)));
-									foreach($Trapproval as $data){
-										$data->approvalstatus=0;
-										$data->save();
-									}
+									
 									$joinx   = "LEFT JOIN tbl_approver ON (tbl_trapproval.approver_id = tbl_approver.id) ";					
 									$Trapproval = Trapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and tr_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
 									$username = $Trapproval->approver->employee->loginname;

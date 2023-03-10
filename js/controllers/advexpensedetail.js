@@ -135,6 +135,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
             }
 
 			$scope.AppAction = ($scope.data.approvalstep==2)?[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Verify"}]:[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
+			$scope.Region =[{id:0,region:"All Indo,excl.Kaltim,Kaltara,Sulawesi,Papua"},{id:2,region:"Kaltim,Kaltara,Sulawesi"},{id:1,region:"Papua"}];
 			$scope.AdvanceForm =[{id:0,paymentform:"- Select -"},{id:1,paymentform:"Payment Req HR"},{id:2,paymentform:"Payment Req OPR"}];
 			$scope.Paymentopt =[{id:1,payment:"Cash"},{id:2,payment:"Bank"}];
 			$scope.reqStatus = 0;
@@ -1380,10 +1381,26 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 						disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || (($scope.data.apprstatuscode==2 && $scope.mode=='approve'))?false:true):false
 					}
 				},
+				// {
+				// 	dataField:'ispapua',
+				// 	caption:'isPapua ?',
+				// 	dataType: "boolean",
+				// 	editorOptions: {
+				// 		disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || (($scope.data.apprstatuscode==2 && $scope.mode=='approve'))?false:true):false
+				// 	}
+				// },
 				{
 					dataField:'ispapua',
-					caption:'isPapua ?',
-					dataType: "boolean",
+					caption:'Region',
+					// editorType: "dxSelectBox",
+					lookup: { 
+						dataSource:$scope.Region,  
+						valueExpr: 'id',
+						displayExpr: 'region',
+						searchEnabled: true,
+						value: ""
+					},
+					validationRules: [{type: "required", message: "Please select Region" }],
 					editorOptions: {
 						disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || (($scope.data.apprstatuscode==2 && $scope.mode=='approve'))?false:true):false
 					}
