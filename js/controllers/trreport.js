@@ -59,8 +59,14 @@
         }
       }
       $scope.showForm= true;
+      CrudService.FindData('trschedule',{filter:'all',startDate:$filter("date")($scope.filterData.startDate, 'yyyy-MM-dd'),endDate:$filter("date")($scope.filterData.endDate, 'yyyy-MM-dd')}).then(function (resp) {
+        $scope.trdetail = resp;
+      });
       function initController() {
         $scope.dataGrid.refresh();
+        CrudService.FindData('trschedule',{filter:'all',startDate:$filter("date")($scope.filterData.startDate, 'yyyy-MM-dd'),endDate:$filter("date")($scope.filterData.endDate, 'yyyy-MM-dd')}).then(function (resp) {
+            $scope.trdetail = resp;
+        });
       }
       var myStore = new DevExpress.data.CustomStore({
         load: function () {
@@ -187,6 +193,19 @@
           {
             dataField: "fullname",
             caption: "Request for",
+            fixed: true,
+            fixedPosition: "left",
+          },
+          {
+            dataField: "sapid",
+            caption: "SAPID",
+            width:80,
+            fixed: true,
+            fixedPosition: "left",
+          },
+          {
+            dataField: "company",
+            caption: "BU",
             fixed: true,
             fixedPosition: "left",
           },
@@ -359,8 +378,140 @@
           $scope.gridInstance = e.component;
           $scope.ds = e.component.getDataSource();
         },
-      };
+        onExporting: function(e) { 
+          $scope.masterRows=[];
+          e.component.beginUpdate();
+          e.component.columnOption('ID', 'visible', true);
+          var workbook = new ExcelJS.Workbook(); 
+          var worksheet = workbook.addWorksheet('TravelRequest');
 
+          DevExpress.excelExporter.exportDataGrid({
+            component: e.component,
+            worksheet: worksheet,
+            autoFilterEnabled: true,
+            topLeftCell: { row: 2, column: 2 },
+            customizeCell: ({ gridCell, excelCell }) => {
+              if(gridCell.rowType === 'data') {
+                if(!gridCell) {
+                  return;
+                }
+                if((gridCell.column.dataField === 'requeststatus') ){
+                  if(gridCell.value===0) {
+                    excelCell.value = "Saved as Draft"
+                    excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor:{argb :"e4e7ea"} };
+                  } else if(gridCell.value===1) {
+                    excelCell.value = "Waiting Approval"
+                    excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor:{argb :"49b6d6"}  };
+                  } else if(gridCell.value===2) {
+                    excelCell.value = "Require Rework"
+                    excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor:{argb :"f59c1a"}   };
+                  } else if(gridCell.value===3) {
+                    excelCell.value = "Approved"
+                    excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor:{argb :"00ac56"}  };
+                  }else if(gridCell.value===4) {
+                    excelCell.value = "Rejected"
+                    excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor:{argb :"ffacac"}  };
+                  }else{
+                    excelCell.value = ""
+                  }
+                }
+              }
+              if ( gridCell.column.dataField === "createdby" && gridCell.rowType === "data" ) {
+                $scope.masterRows.push({
+                  rowIndex: excelCell.fullAddress.row + 1,
+                  data: gridCell.data
+                });
+              }
+            }
+          }).then((cellRange)=> {
+            const borderStyle = { style: "thin", color: { argb: "FF7E7E7E" } };
+            let offset = 0;
+            
+            const insertRow = (index, offset, outlineLevel) => {
+              const currentIndex = index + offset;
+              const row = worksheet.insertRow(currentIndex, [], "n");
+    
+              for (var j = worksheet.rowCount + 1; j > currentIndex; j--) {
+                worksheet.getRow(j).outlineLevel = worksheet.getRow(j - 1).outlineLevel;
+              }
+              row.outlineLevel = outlineLevel;
+              return row;
+            };
+            for (var i = 0; i < $scope.masterRows.length; i++) {
+              let rowIndex = $scope.masterRows[i].rowIndex
+              let row = insertRow(rowIndex + i, offset++, 1);
+              let columnIndex = cellRange.from.column + 2;
+              
+              Object.assign(row.getCell(columnIndex), {
+                value: "> Detail Data Travel Request",
+                fill: {
+                  type: "pattern",
+                  pattern: "solid",
+                  fgColor: { argb: "BEDFE6" }
+                }
+              });
+              worksheet.mergeCells(row.number, columnIndex, row.number, columnIndex+10);
+    
+              const columns = ["departdate","departtime","departfrom","arrivingdate","arrivingtime","arrivingto","region","reason" ];
+    
+              row = insertRow(rowIndex+ i, offset++, 1);
+              columns.forEach((columnName, currentColumnIndex) => {
+                Object.assign(row.getCell(columnIndex + currentColumnIndex), {
+                  value: columnName,
+                  font: { bold: true },
+                  fill: {
+                    type: "pattern",
+                    pattern: "solid",
+                    fgColor: { argb: "BEDFE6" }
+                  },
+                  border: {
+                    bottom: borderStyle,
+                    left: borderStyle,
+                    right: borderStyle,
+                    top: borderStyle
+                  }
+                });
+              });
+              getTRDetail($scope.masterRows[i].data.id).forEach((detail, index) => {
+                  row = insertRow(rowIndex+i, offset++, 1);
+                  columns.forEach((columnName, currentColumnIndex) => {
+                    Object.assign(row.getCell(columnIndex + currentColumnIndex), {
+                      value: detail[columnName],
+                      fill: {
+                        type: "pattern",
+                        pattern: "solid",
+                        fgColor: { argb: "BEDFE6" }
+                      },
+                      border: {
+                        bottom: borderStyle,
+                        left: borderStyle,
+                        right: borderStyle,
+                        top: borderStyle
+                      }
+                    });
+                  });
+                });
+                offset--;
+              
+            }
+          }).then(function() {
+            workbook.xlsx.writeBuffer().then(function(buffer) {
+              saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'TravelRequest.xlsx');
+            });
+            e.component.columnOption('ID', 'visible', false);
+            e.component.endUpdate();
+          });
+
+          e.cancel = true;
+        }
+      };
+      const getTRDetail = (id) => {
+        if ($scope.trdetail.length>0){
+          return $scope.trdetail.filter((data) => data.tr_id === id);
+        } else {
+          return []
+        }
+      }
       function masterDetailTemplate(_, masterDetailOptions) {
         return $("<div>").dxTabPanel({
           items: [
