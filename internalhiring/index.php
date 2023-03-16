@@ -326,58 +326,58 @@ function internalhiring() {
                                     
                                 ],
                             },
-                            {
-                                itemType: 'group',
-                                caption: 'Letter of Approval from the Department Head',
-                                 items: [
-                                        {
-                                            itemType: "button",
-                                            horizontalAlignment: "left",
-                                            buttonOptions: {
-                                                text: "Download Letter Approval Template",
-                                                type: "default",
-                                                onClick: function(){
-                                                    var path = "../internalhiring/surat_persetujuan_internalhiring.docx";
-                                                    location.href = path;
-                                                },
-                                                // useSubmitBehavior: false
-                                            }
-                                        },
-										{
-											template: function(data, itemElement) {
-												itemElement.append($("<div>").attr("id", "lampiran").dxFileUploader({
-													multiple: false,
-													name:'lampiran',
-													accept: '*',
-													value: [],
-													uploadMode: 'instantly',
-													uploadUrl: '../api/uploadlampiran',
-													onUploaded: function (e) {						
-														var path = e.request.response;
-														formInstance.option("formData").lampiran = path
-													}
-												  }));
-											},
-											dataField: "lampiran",
-											name: "lampiran",
-											label: {
-												text: "attach here"
-											},
-											validationRules: [{
-												type: "required"
-											}]
-										},
-                                //     {
-                                //         dataField: "lampiran",
-                                //         width: 70,
-                                //         allowFiltering: false,
-                                //         allowSorting: false,
-                                //         cellTemplate: cellTemplate,
-                                //         editCellTemplate: editCellTemplate
-                                //     }
+                            // {
+                            //     itemType: 'group',
+                            //     caption: 'Letter of Approval from the Department Head',
+                            //      items: [
+                            //             {
+                            //                 itemType: "button",
+                            //                 horizontalAlignment: "left",
+                            //                 buttonOptions: {
+                            //                     text: "Download Letter Approval Template",
+                            //                     type: "default",
+                            //                     onClick: function(){
+                            //                         var path = "../internalhiring/surat_persetujuan_internalhiring.docx";
+                            //                         location.href = path;
+                            //                     },
+                            //                     // useSubmitBehavior: false
+                            //                 }
+                            //             },
+							// 			{
+							// 				template: function(data, itemElement) {
+							// 					itemElement.append($("<div>").attr("id", "lampiran").dxFileUploader({
+							// 						multiple: false,
+							// 						name:'lampiran',
+							// 						accept: '*',
+							// 						value: [],
+							// 						uploadMode: 'instantly',
+							// 						uploadUrl: '../api/uploadlampiran',
+							// 						onUploaded: function (e) {						
+							// 							var path = e.request.response;
+							// 							formInstance.option("formData").lampiran = path
+							// 						}
+							// 					  }));
+							// 				},
+							// 				dataField: "lampiran",
+							// 				name: "lampiran",
+							// 				label: {
+							// 					text: "attach here"
+							// 				},
+							// 				validationRules: [{
+							// 					type: "required"
+							// 				}]
+							// 			},
+                            //     //     {
+                            //     //         dataField: "lampiran",
+                            //     //         width: 70,
+                            //     //         allowFiltering: false,
+                            //     //         allowSorting: false,
+                            //     //         cellTemplate: cellTemplate,
+                            //     //         editCellTemplate: editCellTemplate
+                            //     //     }
                                     
-                                ],
-                            }, 
+                            //     ],
+                            // }, 
                             {
                                 itemType: 'group',
                                 caption: 'Personal Data',
