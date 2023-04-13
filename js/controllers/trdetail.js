@@ -794,7 +794,13 @@
 			columnMinWidth: 50,
 			columnAutoWidth: true,
 			columns: [
-				{ dataField: 'departdate', validationRules: [{ type: "required" }], width: 100, caption: "Depart Date", dataType: "date", format: 'dd/MM/yyyy', editorType: "dxDateBox", editorOptions: { displayFormat: "dd/MM/yyyy", min: new Date(d.getFullYear(), d.getMonth(), d.getDate() - 1), disabled: (($scope.mode == 'approve') || ($scope.mode == 'view') || ($scope.mode == 'report')) ? true : false } },
+				{ dataField: 'departdate', validationRules: [{ type: "required" }], width: 100, caption: "Depart Date", dataType: "date", format: 'dd/MM/yyyy', editorType: "dxDateBox", 
+					editorOptions: { 
+						displayFormat: "dd/MM/yyyy", 
+						min: ($scope.mode == 'reschedule') ? new Date(d.getFullYear(), d.getMonth(), d.getDate() - 1000) : new Date(d.getFullYear(), d.getMonth(), d.getDate() - 1), 
+						disabled: (($scope.mode == 'approve') || ($scope.mode == 'view') || ($scope.mode == 'report')) ? true : false 
+					} 
+				},
 				{ dataField: 'departtime', validationRules: [{ type: "required" }], width: 50, caption: "Depart Time", dataType: "date", format: 'HH:mm', editorOptions: { displayFormat: "HH:mm", type: 'time', disabled: (($scope.mode == 'approve') || ($scope.mode == 'view')) ? true : false } },
 				{ dataField: 'departfrom', validationRules: [{ type: "required" }], width: 100, caption: "From", dataType: "string", editorOptions: { disabled: (($scope.mode == 'approve') || ($scope.mode == 'view')) ? true : false } },
 				{ dataField: 'arrivingdate', validationRules: [{ type: "required" }], width: 100, caption: "Arriving Date", dataType: "date", format: 'dd/MM/yyyy', editorType: "dxDateBox", editorOptions: { displayFormat: "dd/MM/yyyy", min: new Date(d.getFullYear(), d.getMonth(), d.getDate() - 1), disabled: (($scope.mode == 'approve') || ($scope.mode == 'view') || ($scope.mode == 'report')) ? true : false } },
