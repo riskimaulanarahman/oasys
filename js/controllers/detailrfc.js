@@ -11,6 +11,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 	var d = new Date();
 	CrudService.GetById('rfc',$scope.Requestid).then(function(response){
 		$scope.data = response;
+		$scope.remaksuser = $scope.data.remarks;
 		if(($scope.mode=='approve')){
 			$scope.data.remarks="";
 		}
@@ -487,29 +488,42 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 							{dataField:'balance',name:'balance',label:{text:"Balance after this RFC"},visible:($scope.data.isprojectcapex==1)?true:false,dataType:'number',editorType: "dxNumberBox",editorOptions: { readOnly:true,format: "Rp #,##0.##",}},
 						]
 					},
-							{dataField:'remarks',colSpan:2,editorType:"dxHtmlEditor",visibleIndex:22,editorOptions: {height: 90,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}},
-					{label: {
-							text: "Approval Action"
-						},
-						dataField:"approvalstatus",
-						editorType: "dxSelectBox",
+					{
+						template: "<span>Remarks by User : <b>" +$scope.remaksuser+ "</b></span>",
 						visible: ($scope.mode=='approve') ?true:false,
-						editorOptions: { 
-							dataSource:$scope.AppAction,  
-							valueExpr: 'id',
-							displayExpr: 'appaction',
-							searchEnabled: true,
-							value: ""
-						},
-						validationRules: [{
-							type: "required",
-							message: "Action is required"
-						}]
 					},
+					
+					
 					]
 				},
 				{
-					itemType: "group"
+					itemType: "group",
+					items: [
+						{
+							dataField:'remarks',colSpan:2,editorType:"dxHtmlEditor",visibleIndex:22,editorOptions: {height: 90,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}
+						},
+						{
+							label: {
+								text: "Approval Action"
+							},
+							dataField:"approvalstatus",
+							editorType: "dxSelectBox",
+							visible: ($scope.mode=='approve') ?true:false,
+							editorOptions: { 
+								dataSource:$scope.AppAction,  
+								valueExpr: 'id',
+								displayExpr: 'appaction',
+								searchEnabled: true,
+								value: ""
+							},
+							validationRules: [{
+								type: "required",
+								message: "Action is required"
+							}]
+					}]
+				},
+				{
+					itemType: "group",
 				},
 				{
 					itemType: "group",
