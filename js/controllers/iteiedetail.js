@@ -139,7 +139,7 @@
             $scope.AccessRequested =[{id:0,accessrequested:"- Select -"},{id:1,accessrequested:"Exchange (non-Internet) Email"},{id:2,accessrequested:"Internet Email"},{id:3,accessrequested:"Change Domain"}];
             $scope.AccessType =[{id:0,accesstype:"- Select -"},{id:1,accesstype:"Terminal Server (TS) User Account"},{id:2,accesstype:"Non-TS Account"}];
             $scope.AccountType =[{id:0,accounttype:"- Select -"},{id:1,accounttype:"Permanent"},{id:2,accounttype:"Temporary"}];
-            $scope.RequestType =[{id:0,requesttype:"- Select -"},{id:1,requesttype:"Grant Access"},{id:2,requesttype:"Revoke Access"}];
+            $scope.RequestType =[{id:0,requesttype:"- Select -"},{id:1,requesttype:"Create Account"},{id:2,requesttype:"Delete Account"}];
             $scope.EmailQuota =[{id:0,emailquota:"- Select -"},{id:1,emailquota:"250MB"},{id:2,emailquota:"500MB"},{id:3,emailquota:"1000MB"},{id:4,emailquota:"1500MB"},{id:5,emailquota:"2000MB"}];
             // $scope.EmailDomain = [];
             // console.log($scope.EmailDomain);
@@ -373,16 +373,16 @@
 						colCount:3,
 						items: [
                             {
-                                dataField:'isvip',
-                                label:{text:"VIP ?"},
-                                // visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
-                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                                dataType:"boolean",
-                                editorType: "dxCheckBox",
-                                // validationRules: [{type: "required",message: "Declaration is required"}],
+                                dataField:'requesttype',
+                                editorType: "dxSelectBox",
+                                label:{text:"Request Type"},
+                                disabled: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
+                                validationRules: [{type: "required",message: "Action is required"}],
                                 editorOptions: { 
-                                    text:"Yes",
-                                }
+                                    dataSource:$scope.RequestType,  
+                                    valueExpr: 'id',
+                                    displayExpr: 'requesttype',
+                                },
                             },
                             {
                                 dataField:'accesstype',
@@ -394,13 +394,6 @@
                                     dataSource:$scope.AccessType,  
                                     valueExpr: 'id',
                                     displayExpr: 'accesstype',
-                                    // onValueChanged: function(e){
-                                    //     var vis =(e.value==4)?true:false;
-                                    //     $scope.formInstance.itemOption('group2.requiredother', 'visible', vis);
-                                    //     $scope.formInstance.itemOption('group2.requiredother', 'visibleIndex', 0);
-                                    //     $scope.formInstance.updateData('requiredother',  "");
-                                        
-                                    // }
                                 },
                             },
                             {
@@ -429,6 +422,18 @@
                                         
                                     }
                                 },
+                            },
+                            {
+                                dataField:'isvip',
+                                label:{text:"VIP ?"},
+                                // visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
+                                disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
+                                dataType:"boolean",
+                                editorType: "dxCheckBox",
+                                // validationRules: [{type: "required",message: "Declaration is required"}],
+                                editorOptions: { 
+                                    text:"Yes",
+                                }
                             },
                             
                         ]
@@ -990,6 +995,7 @@
                 delete data.department;
                 delete data.departmentuser;
 				delete data.isvip;
+				delete data.requesttype;
 				delete data.accesstype;
 				delete data.accounttype;
 				delete data.validfrom;
@@ -1043,6 +1049,7 @@
                         delete data.department;
                         delete data.departmentuser;
                         delete data.isvip;
+                        delete data.requesttype;
                         delete data.accesstype;
                         delete data.accounttype;
                         delete data.validfrom;

@@ -490,6 +490,14 @@ Class Iteiemodule extends Application{
 										$accountT = '';
 									}
 
+									if($Iteie->requesttype == 1) {
+										$requestT = 'Create Account';
+									}else if($Iteie->requesttype == 2) {
+										$requestT = 'Delete Account';
+									}else {
+										$requestT = '';
+									}
+
 									$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$adb->fullname.',</span></p>
 										<p class=MsoNormal><span style="color:#1F497D">new Active Directory Request is awaiting for your approval:</span></p>
 										<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
@@ -528,6 +536,7 @@ Class Iteiemodule extends Application{
 										</table>
 										<table border=1 cellspacing=0 cellpadding=3 width=683>
 										<tr>
+											<th><p class=MsoNormal>Request Type</p></th>
 											<th><p class=MsoNormal>Access Type</p></th>
 											<th><p class=MsoNormal>Account Type</p></th>
 											<th><p class=MsoNormal>Valid From</p></th>
@@ -535,6 +544,7 @@ Class Iteiemodule extends Application{
 											<th><p class=MsoNormal>List Group</p></th>
 										</tr>
 										<tr style="height:22.5pt">
+											<td><p class=MsoNormal> '.$requestT.'</p></td>
 											<td><p class=MsoNormal> '.$accessT.'</p></td>
 											<td><p class=MsoNormal> '.$accountT.'</p></td>
 											<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Iteie->validfrom)).'</p></td>
@@ -851,6 +861,14 @@ Class Iteiemodule extends Application{
 								$accountT = '';
 							}
 
+							if($Iteie->requesttype == 1) {
+								$requestT = 'Create Account';
+							}else if($Iteie->requesttype == 2) {
+								$requestT = 'Delete Account';
+							}else {
+								$requestT = '';
+							}
+
 							$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$emname.',</span></p>
 								<p class=MsoNormal><span style="color:#1F497D">'.$red.'</span></p>
 								<p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p>
@@ -889,6 +907,7 @@ Class Iteiemodule extends Application{
 								</table>
 								<table border=1 cellspacing=0 cellpadding=3 width=683>
 								<tr>
+									<th><p class=MsoNormal>Request Type</p></th>
 									<th><p class=MsoNormal>Access Type</p></th>
 									<th><p class=MsoNormal>Account Type</p></th>
 									<th><p class=MsoNormal>Valid From</p></th>
@@ -896,6 +915,7 @@ Class Iteiemodule extends Application{
 									<th><p class=MsoNormal>List Group</p></th>
 								</tr>
 								<tr style="height:22.5pt">
+									<td><p class=MsoNormal> '.$requestT.'</p></td>
 									<td><p class=MsoNormal> '.$accessT.'</p></td>
 									<td><p class=MsoNormal> '.$accountT.'</p></td>
 									<td><p class=MsoNormal> '.date("d/m/Y",strtotime($Iteie->validfrom)).'</p></td>
@@ -1027,6 +1047,12 @@ Class Iteiemodule extends Application{
 					$Worksheet->Range("F24")->Value = 'x';
 				}else {
 					$Worksheet->Range("P24")->Value = 'x';
+				}
+
+				if($Iteie->requesttype == 1) {
+					$Worksheet->Range("F22")->Value = 'x';
+				}else {
+					$Worksheet->Range("L22")->Value = 'x';
 				}
 	
 
