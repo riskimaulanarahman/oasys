@@ -645,6 +645,8 @@
         // 	recurrenceRuleExpr: 'RecurrenceRule',
         // 	recurrenceExceptionExpr: 'RecurrenceException',
         // }
+        const getdate = new Date();
+        const nowmin7 = new Date(getdate).setDate(getdate.getDate() - 7);
     
         $scope.grid1Options = {
             dataSource: myData,
@@ -654,7 +656,7 @@
             columnMinWidth: 50,
             columnAutoWidth: true,
             columns: [
-                {dataField:'dateworked',width:100,caption: "Work Date",dataType:"date", format: 'dd/MM/yyyy',editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",min:Date.now(),disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
+                {dataField:'dateworked',width:100,caption: "Work Date",dataType:"date", format: 'dd/MM/yyyy',editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy",min:nowmin7,disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
                 {dataField:'reason',width:250,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
                 //{dataField:'achievement',dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
                 {dataField:'remarks',width:250,encodeHtml: false,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view')||($scope.mode=='report'))?true:false}},
@@ -958,31 +960,36 @@
                             criteria = {status:'approver',dayoff_id:$scope.Requestid};
                             CrudService.FindData('dodetail',criteria).then(function (response){
                                 if(response.jml>0){
-                                    var data = $scope.formInstance.option("formData");
-                                    data.requeststatus = 1;
-                                    delete data.approvalstatus;
-                                    delete data.mtd;
-                                    delete data.ytd;
-                                    CrudService.Update('dayoff',data.id,data).then(function (response) {
-                                        if(response.status=="error"){
-                                             DevExpress.ui.dialog.alert(response.message,"Error");
-                                        }else{
-                                            DevExpress.ui.notify({
-                                                message: "Data has been Updated",
-                                                type: "success",
-                                                displayTime: 2000,
-                                                height: 80,
-                                                position: {
-                                                   my: 'top center', 
-                                                   at: 'center center', 
-                                                   of: window, 
-                                                   offset: '0 0' 
-                                               }
-                                            });
-                                            $location.path( "/dayoff" );
-                                        }
-                                        
-                                    });
+                                    if(response.dateworked > 0){
+                                        DevExpress.ui.dialog.alert("Sorry, you cannot submit the request as the dateworked is more than 7 days ago from today","Error");
+                                    } else {
+                                        var data = $scope.formInstance.option("formData");
+                                        data.requeststatus = 1;
+                                        delete data.approvalstatus;
+                                        delete data.mtd;
+                                        delete data.ytd;
+                                        CrudService.Update('dayoff',data.id,data).then(function (response) {
+                                            if(response.status=="error"){
+                                                DevExpress.ui.dialog.alert(response.message,"Error");
+                                            }else{
+                                                DevExpress.ui.notify({
+                                                    message: "Data has been Updated",
+                                                    type: "success",
+                                                    displayTime: 2000,
+                                                    height: 80,
+                                                    position: {
+                                                    my: 'top center', 
+                                                    at: 'center center', 
+                                                    of: window, 
+                                                    offset: '0 0' 
+                                                }
+                                                });
+                                                $location.path( "/dayoff" );
+                                            }
+                                            
+                                        });
+                                    }
+
                                 }else{
                                     DevExpress.ui.dialog.alert("Please add detail of the request","Error");
                                 }

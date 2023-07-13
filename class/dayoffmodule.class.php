@@ -781,7 +781,16 @@ Class DayoffModule extends Application{
 						$query=$this->post['query'];
 						if(isset($query['status'])){
 							$Dayoffdetail = Dayoffdetail::find('all', array('conditions' => array("dayoff_id=?",$query['dayoff_id'])));
-							$data=array("jml"=>count($Dayoffdetail));
+							
+							$data = array("jml" => count($Dayoffdetail), "dateworked" => 0);
+							
+							foreach ($Dayoffdetail as $detail) {
+								if ($detail->dateworked < date('Y-m-d', strtotime('-7 days'))) {
+									$data["dateworked"] = count($detail->dateworked);
+								}
+							}
+							// $data=array("jml"=>count($Dayoffdetail));
+
 						}else if (isset($query['detail'])){
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$joinx   = "LEFT JOIN tbl_dayoffreq as r ON (dayoff_id = r.id) left join tbl_employee e on r.employee_id=e.id ";	
