@@ -27,6 +27,7 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
     * Licensed under MIT (https://github.com/DashboardPack/architectui-html-theme-free/blob/master/LICENSE)
     =========================================================
     * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+    * Jenkins Test
     -->
 	<link rel='stylesheet' href='css/style.css' type='text/css'>
 	<link href="css/main.css?v=1.0005" rel="stylesheet">
