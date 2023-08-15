@@ -442,7 +442,6 @@
 									dataField: "isbudgeted",
 									editorType: "dxRadioGroup",
 									visible: (($scope.mode == "approve")) ? true : false,
-									// visible: ( $scope.mode == 'approve' ) ? true : false,
 									editorOptions: {
 										readOnly: (($scope.data.apprstatuscode == 5) || ($rootScope.isAdmin) ) ? false : true,
 										dataSource: $scope.budgetcategory,
@@ -451,8 +450,6 @@
 										displayExpr: 'category',
 										layout: "horizontal",
 										onValueChanged: function (e) {
-											// $scope.formInstance.updateData('isbudgeted', e.value);
-
 											if ($scope.mode == 'edit' || $scope.mode == 'add' || ($scope.data.apprstatuscode == 5)) {
 												criteria = { status: 'appcon', advance_id: $scope.Requestid, employee_id: $scope.data.employee_id, isbudgeted: e.value };
 												CrudService.FindData('advance', criteria).then(function (response) {
