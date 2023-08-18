@@ -378,7 +378,7 @@ class Advancemodule extends Application
 											$logger->SaveData();
 										}
 
-										$fcho = Advanceapproval::find('all', array('joins' => $joins, 'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=61")));
+										$fcho = Advanceapproval::find('all', array('joins' => $joins, 'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=61", $id)));
 										foreach ($fcho as $result) {
 											$result->delete();
 											$logger = new Datalogger("Advanceapproval", "delete", json_encode($result->to_array()), "delete Approval FC HO");
