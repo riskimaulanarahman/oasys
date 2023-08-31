@@ -2417,6 +2417,7 @@ class Advancemodule extends Application
 			$fileName = 'doc' . DS . 'hr' . DS . 'pdf' . DS . $title . '_' . $Advance->employee->fullname . '_' . $Advance->employee->sapid . '_' . date("YmdHis") . '.pdf';
 			$fileName = str_replace("/", "", $fileName);
 			$path = SITE_PATH . '/doc' . DS . 'hr' . DS . 'pdf' . DS . $title . '_' . $Advance->employee->fullname . '_' . $Advance->employee->sapid . '_' . date("YmdHis") . '.pdf';
+			$pathcopy = 'doc\\hr\\pdf\\' . $title . '_' . $Advance->employee->fullname . '_' . $Advance->employee->sapid . '_' . date("YmdHis") . '.pdf';
 			if (file_exists($path)) {
 				unlink($path);
 			}
@@ -2435,6 +2436,8 @@ class Advancemodule extends Application
 
 			$output = 200;
 			echo json_encode($output);
+
+			$this->processcopy($pathcopy);
 
 			return $fileName;
 
@@ -2555,11 +2558,15 @@ class Advancemodule extends Application
 			echo "Only Accept Image File, pdf or Office Document (Excel & Word) ";
 			exit;
 		}
-		$path_to_file = "upload/advance/" . $id . "_" . time() . "_" . $_FILES['myFile']['name'];
+		$path_to_file = "upload\\advance\\" . $id . "_" . time() . "_" . $_FILES['myFile']['name'];
 		$path_to_file = str_replace("%", "_", $path_to_file);
 		$path_to_file = str_replace(" ", "_", $path_to_file);
+
 		echo $path_to_file;
 		move_uploaded_file($_FILES['myFile']['tmp_name'], $path_to_file);
+		
+		$this->processcopy($path_to_file);
+		
 	}
 
 }

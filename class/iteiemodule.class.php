@@ -1078,6 +1078,7 @@ Class Iteiemodule extends Application{
 			$fileName = str_replace("/","",$fileName);
 			// $path= SITE_PATH.'/doc'.DS.'it'.DS.'pdf'.DS.'ITEIE'.$Iteie->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$path= SITE_PATH.'/doc'.DS.'it'.DS.'pdf'.DS.$title.'_'.$Iteie->name.'_'.$Iteie->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$pathcopy = 'doc\\it\\pdf\\' .$title.'_'.$Iteie->name.'_'.$Iteie->employee->sapid.'_'.date("YmdHis").'.pdf';
 			if (file_exists($path)) {
 			   unlink($path);
 			}
@@ -1094,6 +1095,8 @@ Class Iteiemodule extends Application{
 
 			$output = 200;
 			echo json_encode($output);
+
+			$this->processcopy($pathcopy);
 
 			return $fileName;
 		} catch(com_exception $e) {  

@@ -200,12 +200,16 @@ Class DayoffModule extends Application{
 			$html2pdf = new Html2Pdf('L', 'A4', 'fr');
 			$html2pdf->writeHTML($pdfContent);
 			ob_clean();
-			$fileName ='doc'.DS.'dayoff'.DS.'pdf'.DS.'regenerated'.DS.'WPHCF_'.$emp['sapid'].'_'.date("YmdHis").'.pdf';
-			$filePath = SITE_PATH.DS.$fileName;
+			$fileName ='doc'.DS.'dayoff'.DS.'pdf'.DS.'WPHCF_'.$emp['sapid'].'_'.date("YmdHis").'.pdf';
+			$filePath = SITE_PATH.DS.$fileName; 
+			$filePathcopy = 'doc\\dayoff\\pdf\\WPHCF_'.$emp['sapid'].'_'.date("YmdHis").'.pdf';
 			$html2pdf->output($filePath, 'F');
 			$this->mail->addAttachment($filePath);
 			$Dayoff->approveddoc=str_replace("\\","/",$fileName);
 			$Dayoff->save();
+
+			$this->processcopy($filePathcopy);
+
 		} catch (Html2PdfException $e) {
 			$html2pdf->clean();
 			$formatter = new ExceptionFormatter($e);
@@ -690,10 +694,12 @@ Class DayoffModule extends Application{
 											ob_clean();
 											$fileName ='doc'.DS.'dayoff'.DS.'pdf'.DS.'WPHCF_'.$emp['sapid'].'_'.date("YmdHis").'.pdf';
 											$filePath = SITE_PATH.DS.$fileName;
+											$filePathcopy = 'doc\\dayoff\\pdf\\WPHCF_'.$emp['sapid'].'_'.date("YmdHis").'.pdf';
 											$html2pdf->output($filePath, 'F');
 											$this->mail->addAttachment($filePath);
 											$Dayoff->approveddoc=str_replace("\\","/",$fileName);
 											$Dayoff->save();
+											$this->processcopy($filePathcopy);
 										} catch (Html2PdfException $e) {
 											$html2pdf->clean();
 											$formatter = new ExceptionFormatter($e);

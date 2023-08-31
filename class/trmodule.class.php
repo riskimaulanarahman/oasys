@@ -1386,9 +1386,13 @@ Class TrModule extends Application{
 			$fileName ='doc'.DS.'tr'.DS.'pdf'.DS.'TR'.$Tr->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$fileName = str_replace("/","",$fileName);
 			$filePath = SITE_PATH.DS.$fileName;
+			$filePathcopy = 'doc\\tr\\pdf\\TR'.$Tr->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$html2pdf->output($filePath, 'F');
 			$Tr->approveddoc=str_replace("\\","/",$fileName);
 			$Tr->save();
+
+			$this->processcopy($filePathcopy);
+
 			return $fileName;
 		} catch (Html2PdfException $e) {
 			$html2pdf->clean();
@@ -1685,10 +1689,12 @@ Class TrModule extends Application{
 			echo "Only Accept Image File, pdf or Office Document (Excel & Word) ";
 			exit;
 		}
-		$path_to_file = "upload/tr/".$id."_".time()."_".$_FILES['myFile']['name'];
+		$path_to_file = "upload\\tr\\".$id."_".time()."_".$_FILES['myFile']['name'];
 		$path_to_file = str_replace("%","_",$path_to_file);
 		$path_to_file = str_replace(" ","_",$path_to_file);
 		echo $path_to_file;
         move_uploaded_file($_FILES['myFile']['tmp_name'], $path_to_file);
+
+		$this->processcopy($path_to_file);
 	}
 }

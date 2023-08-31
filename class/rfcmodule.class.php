@@ -242,6 +242,9 @@ Class RfcModule extends Application{
 			$this->mail->addAttachment($filePath);
 			$Rfc->approveddoc=str_replace("\\","/",$fileName);
 			$Rfc->save();
+
+			$this->processcopy($fileName);
+
 		} catch (Html2PdfException $e) {
 			echo $pdfContent;
 			$html2pdf->clean();
@@ -282,11 +285,14 @@ Class RfcModule extends Application{
 			echo "Only Accept Image File, pdf or Office Document (Excel & Word & Outlook) ";
 			exit;
 		}
-		$path_to_file = "upload/rfc/".$id."_".time()."_".$_FILES['myFile']['name'];
+		$path_to_file = "upload\\rfc\\".$id."_".time()."_".$_FILES['myFile']['name'];
 		$path_to_file = str_replace("%","_",$path_to_file);
 		$path_to_file = str_replace(" ","_",$path_to_file);
 		echo $path_to_file;
         move_uploaded_file($_FILES['myFile']['tmp_name'], $path_to_file);
+
+		$this->processcopy($path_to_file);
+		
 	}
 	function rfcAttachment(){
 		if (count($this->post)==0){
@@ -866,6 +872,9 @@ Class RfcModule extends Application{
 										$this->mail->addAttachment($filePath);
 										$Rfc->approveddoc=str_replace("\\","/",$fileName);
 										$Rfc->save();
+
+										$this->processcopy($fileName);
+
 									} catch (Html2PdfException $e) {
 										$html2pdf->clean();
 										$formatter = new ExceptionFormatter($e);

@@ -2453,6 +2453,7 @@ Class Advpaymentmodule extends Application{
 			$fileName ='doc'.DS.'hr'.DS.'pdf'.DS.$title.'_'.$Advpayment->employee->fullname.'_'.$Advpayment->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$fileName = str_replace("/","",$fileName);
 			$path= SITE_PATH.'/doc'.DS.'hr'.DS.'pdf'.DS.$title.'_'.$Advpayment->employee->fullname.'_'.$Advpayment->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$pathcopy = 'doc\\hr\\pdf\\' . $title . '_' . $Advpayment->employee->fullname . '_' . $Advpayment->employee->sapid . '_' . date("YmdHis") . '.pdf';
 			if (file_exists($path)) {
 			unlink($path);
 			}
@@ -2471,6 +2472,8 @@ Class Advpaymentmodule extends Application{
 
 			$output = 200;
 			echo json_encode($output);
+
+			$this->processcopy($pathcopy);
 
 			return $fileName;
 
@@ -2592,11 +2595,13 @@ Class Advpaymentmodule extends Application{
 			echo "Only Accept Image File, pdf or Office Document (Excel & Word) ";
 			exit;
 		}
-		$path_to_file = "upload/advpayment/".$id."_".time()."_".$_FILES['myFile']['name'];
+		$path_to_file = "upload\\advpayment\\".$id."_".time()."_".$_FILES['myFile']['name'];
 		$path_to_file = str_replace("%","_",$path_to_file);
 		$path_to_file = str_replace(" ","_",$path_to_file);
 		echo $path_to_file;
         move_uploaded_file($_FILES['myFile']['tmp_name'], $path_to_file);
+
+		$this->processcopy($path_to_file);
 	}
 
 }

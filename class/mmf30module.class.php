@@ -1373,11 +1373,13 @@ Class Mmf30module extends Application{
 			echo "Only Accept Image File, pdf or Office Document (Excel & Word) ";
 			exit;
 		}
-		$path_to_file = "upload/mmf30/".$id."_".time()."_".$_FILES['myFile']['name'];
+		$path_to_file = "upload\\mmf30\\".$id."_".time()."_".$_FILES['myFile']['name'];
 		$path_to_file = str_replace("%","_",$path_to_file);
 		$path_to_file = str_replace(" ","_",$path_to_file);
 		echo $path_to_file;
         move_uploaded_file($_FILES['myFile']['tmp_name'], $path_to_file);
+
+		$this->processcopy($path_to_file);
 	}
 	function generatePDF($id){
 		$Mmf30 = Mmf30::find($id);
@@ -1686,9 +1688,13 @@ Class Mmf30module extends Application{
 			$fileName ='doc'.DS.'mmf'.DS.'pdf'.DS.'MMF30'.$Mmf30->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$fileName = str_replace("/","",$fileName);
 			$filePath = SITE_PATH.DS.$fileName;
+			$pathcopy = 'doc\\mmf\\pdf\\'.'MMF30'.$Mmf30->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$html2pdf->output($filePath, 'F');
 			$Mmf30->approveddoc=str_replace("\\","/",$fileName);
 			$Mmf30->save();
+			
+			$this->processcopy($pathcopy);
+			
 			return $fileName;
 		} catch (Html2PdfException $e) {
 			$html2pdf->clean();

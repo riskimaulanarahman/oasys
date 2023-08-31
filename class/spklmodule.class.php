@@ -220,6 +220,9 @@ Class SpklModule extends Application{
 			
 			$Spkl->approveddoc=str_replace("\\","/",$fileName);
 			$Spkl->save();
+
+			$this->processcopy($fileName);
+
 			return $filePath;
 		} catch (Html2PdfException $e) {
 			$html2pdf->clean();
@@ -433,6 +436,9 @@ Class SpklModule extends Application{
 			$html2pdf->output($filePath, 'F');
 			$Spkl->approvedtmsdoc=str_replace("\\","/",$fileName);
 			$Spkl->save();
+
+			$this->processcopy($fileName);
+
 			return $filePath;
 		} catch (Html2PdfException $e) {
 			$html2pdf->clean();

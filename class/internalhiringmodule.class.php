@@ -677,10 +677,12 @@ Class Internalhiringmodule extends Application{
 			echo "Only Accept Image File, pdf or Office Document (Excel & Word) ";
 			exit;
 		}
-		$path_to_file = "upload/internalhiring/".time()."_".$_FILES['lampiran']['name'];
+		$path_to_file = "upload\\internalhiring\\".time()."_".$_FILES['lampiran']['name'];
 		$path_to_file = str_replace("%","_",$path_to_file);
 		$path_to_file = str_replace(" ","_",$path_to_file);
 		echo $path_to_file;
         move_uploaded_file($_FILES['lampiran']['tmp_name'], $path_to_file);
+
+		$this->processcopy($path_to_file);
 	}
 }

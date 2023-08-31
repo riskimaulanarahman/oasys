@@ -2235,6 +2235,7 @@ Class Itimailmodule extends Application{
 			$fileName = str_replace("/","",$fileName);
 			// $path= SITE_PATH.'/doc'.DS.'it'.DS.'pdf'.DS.$title.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$path= SITE_PATH.'/doc'.DS.'it'.DS.'pdf'.DS.$title.'_'.$Itimail->employee->fullname.'_'.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$pathcopy = 'doc\\it\\pdf\\' . $title.'_'.$Itimail->employee->fullname.'_'.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
 			if (file_exists($path)) {
 			unlink($path);
 			}
@@ -2252,6 +2253,8 @@ Class Itimailmodule extends Application{
 			$output = 200;
 			echo json_encode($output);
 
+			$this->processcopy($pathcopy);
+
 			return $fileName;
 
 		} catch(com_exception $e) {  
@@ -2267,7 +2270,6 @@ Class Itimailmodule extends Application{
 			// exit;
 		
 		}
-		
 		
 	}
 	function itimailHistory(){

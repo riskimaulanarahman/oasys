@@ -59,5 +59,49 @@ Class Application {
 	public function showSuccess(){
 		return "<div class='alert alert-success'><a class='close' data-dismiss='alert'>&times;</a><b>Information</b><br>".$this->pesan."</div>";
 	}
+	
+
+	public function mycopy($s1) {
+
+		$user = '.\\admin_temp';
+		$password = 'KFPl4nn1ng$3rv3r';
+
+		exec('net use "\\\\172.18.83.38\\www" /user:"'.$user.'" "'.$password.'" /persistent:no');
+		$remote_directory = "\\\\172.18.83.38\\www\\oasys\\".$s1;
+			
+		$path = pathinfo($remote_directory);
+		if (!file_exists($path['dirname'])) {
+			mkdir($path['dirname'], 0777, true);
+		}
+		try {
+			if(copy($s1,$remote_directory)){
+				return "success";
+			}else{
+				$errors= error_get_last();
+				$err =  "COPY ERROR: ".$errors['type'];
+				$err .= "<br />\n".$errors['message'];
+				return $err;
+			}
+		}catch (Exception $e){
+			return $e->getMessage(); 
+		}
+
+		exec('net use "\\\\172.18.83.38\\www" /delete /yes');
+
+	}
+
+	public function processcopy($path) {
+		try {
+			$copy = $this->mycopy($path); 
+			if ($copy!=="success"){
+				echo "500";
+			} else {
+				unlink($path);
+			}
+		}catch (Exception $e){
+			die(" cannot copy file ".$e->getMessage()); 
+		}
+	}
+
 }
 ?>
