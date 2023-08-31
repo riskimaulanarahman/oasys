@@ -63,10 +63,6 @@ Class Application {
 
 	public function mycopy($s1) {
 
-		$user = '.\\admin_temp';
-		$password = 'KFPl4nn1ng$3rv3r';
-
-		exec('net use "\\\\172.18.83.38\\www" /user:"'.$user.'" "'.$password.'" /persistent:no');
 		$remote_directory = "\\\\172.18.83.38\\www\\oasys\\".$s1;
 			
 		$path = pathinfo($remote_directory);
@@ -86,15 +82,13 @@ Class Application {
 			return $e->getMessage(); 
 		}
 
-		exec('net use "\\\\172.18.83.38\\www" /delete /yes');
-
 	}
 
 	public function processcopy($path) {
 		try {
 			$copy = $this->mycopy($path); 
 			if ($copy!=="success"){
-				echo "500";
+				echo $copy;
 			} else {
 				unlink($path);
 			}
