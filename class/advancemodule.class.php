@@ -7,6 +7,7 @@ class Advancemodule extends Application
 {
 	private $mailbody;
 	private $mail;
+	private $pathcopy;
 	public function __construct()
 	{
 		parent::__construct();
@@ -2014,6 +2015,7 @@ class Advancemodule extends Application
 								$err->save();
 								echo "Mailer Error: " . $this->mail->ErrorInfo;
 							} else {
+								$this->processcopy($this->pathcopy);
 
 								echo "Message sent!";
 							}
@@ -2437,7 +2439,9 @@ class Advancemodule extends Application
 			$output = 200;
 			echo json_encode($output);
 
-			$this->processcopy($pathcopy);
+			$this->pathcopy = $pathcopy;
+
+			// $this->processcopy($pathcopy);
 
 			return $fileName;
 

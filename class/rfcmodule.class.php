@@ -7,6 +7,7 @@ Class RfcModule extends Application{
 	
 	private $mailbody;
 	private $mail;
+	private $filename;
 	public function __construct(){
 		parent::__construct();
 		
@@ -872,8 +873,7 @@ Class RfcModule extends Application{
 										$this->mail->addAttachment($filePath);
 										$Rfc->approveddoc=str_replace("\\","/",$fileName);
 										$Rfc->save();
-
-										$this->processcopy($fileName);
+										$this->filename = $fileName;
 
 									} catch (Html2PdfException $e) {
 										$html2pdf->clean();
@@ -898,6 +898,7 @@ Class RfcModule extends Application{
 									$err->save();
 									echo "Mailer Error: " . $this->mail->ErrorInfo;
 								} else {
+									$this->processcopy($this->filename);
 									
 									echo "Message sent!";
 								}
