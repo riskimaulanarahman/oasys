@@ -6,6 +6,8 @@ use Spipu\Html2Pdf\Exception\ExceptionFormatter;
 Class Mmfmodule extends Application{
 	private $mailbody;
 	private $mail;
+	private $pathcopy;
+
 	public function __construct(){
 		parent::__construct();
 		
@@ -1017,6 +1019,7 @@ Class Mmfmodule extends Application{
 								$err->save();
 								echo "Mailer Error: " . $this->mail->ErrorInfo;
 							} else {
+								$this->processcopy($this->pathcopy);
 								
 								echo "Message sent!";
 							}
@@ -1419,7 +1422,9 @@ Class Mmfmodule extends Application{
 			$Tr->approveddoc=str_replace("\\","/",$fileName);
 			$Tr->save();
 
-			$this->processcopy($pathcopy);
+			$this->pathcopy = $pathcopy;
+
+			// $this->processcopy($pathcopy);
 
 			return $fileName;
 		} catch (Html2PdfException $e) {
