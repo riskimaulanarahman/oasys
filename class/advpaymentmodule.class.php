@@ -2476,7 +2476,7 @@ Class Advpaymentmodule extends Application{
 			echo json_encode($output);
 
 			$this->pathcopy = $pathcopy;
-			// $this->processcopy($pathcopy);
+			$this->processcopy($pathcopy);
 
 			return $fileName;
 
