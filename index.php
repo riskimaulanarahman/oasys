@@ -700,7 +700,12 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 									<li class="nav-item"><a href="" ng-click="RFCApproval()" class="nav-link" ><i class='fas fa-marker'></i> My Approval</a></li>
 								</ul>
 							</li>
-
+                            <li ng-class="{'mm-active': (isActive('/contract') )}">
+								<a href="#"><i class='metismenu-icon pe-7s-alarm icon-gradient bg-premium-dark'></i>Contract<i class="metismenu-state-icon fas pe-7s-angle-down caret-left"></i></a>
+								<ul  ng-class="{'mm-show': (isActive('/contract'))}">
+									<li class="nav-item"><a href="" ng-click="ContractRegister()" class="nav-link" ><i class='fa fa-calendar-alt'></i> Contract Register</a></li>
+								</ul>
+							</li>
                             <li ng-class="{'mm-active': (isActive('/mmf') || isActive('/mmf30') || isActive('/mmfdetail') || isActive('/mmfapproval') || isActive('/mmf30approval'))}">
 								<a href="#"><i class='metismenu-icon pe-7s-tools icon-gradient bg-premium-dark'></i>MMF<i class="metismenu-state-icon fas pe-7s-angle-down caret-left"></i></a>
                                 <ul ng-class="{'mm-show': (isActive('/mmf') || isActive('/mmf30') || isActive('/mmfapproval') || isActive('/mmf30approval'))}">

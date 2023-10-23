@@ -6,6 +6,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.viewDivision=false;
 	$scope.viewDesignation=false;
 	$scope.viewEmployee=false;
+	$scope.viewContract=false;
 	if($rootScope.isLogin){
 		CrudService.getCurrentUser()
 			.then(function (user) {			
@@ -76,12 +77,16 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 					$rootScope.viewAdvPayment = access.allowview;
 					$rootScope.viewAdvExpense = access.allowview;
 				});
+				
+				CrudService.checkAccess('Contract',$rootScope.curUser.username).then(function (access) {
+					$rootScope.viewContract = access.allowview;
+				});
 				// CrudService.checkAccess('AdvPayment',$rootScope.curUser.username).then(function (access) {
 				// });
 				// CrudService.checkAccess('AdvExpense',$rootScope.curUser.username).then(function (access) {
 				// });
 				if(!$rootScope.startRefresh) {
-					$rootScope.startRefresh = setInterval($scope.refreshUsers, 1000);
+					//$rootScope.startRefresh = setInterval($scope.refreshUsers, 1000);
 				}
 			});
 		
@@ -262,6 +267,8 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.advexpenseApproval= function(){ loadModule(true,"advexpenseapproval",true);$rootScope.$broadcast("initAdvExpense", "");} 
 	$scope.SPKLApproval= function(){ loadModule(true,"spklapproval",true);$rootScope.$broadcast("initSPKL", "");} 
 	$scope.SPKLTMSApproval = function(){ loadModule(true,"spkltmsapproval",true);$rootScope.$broadcast("initSPKLTMS", "");} 
+	$scope.ContractRegister= function(){loadModule($rootScope.viewContract,"contract");} 
+	
 	function loadModule(access,template,filter){
 		if(access || $rootScope.isAdmin){
 			$scope.Filter=filter;
@@ -630,6 +637,27 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 			$scope.Requestid = data.id;
 			$scope.Employeeid = data.employee_id;
 			$location.path( "/detailrfc" );
+		}
+	}
+	$scope.loadContract= function(data,mode,filter){
+		$scope.Filter=filter;
+		if (mode=='add'){
+			CrudService.Create('contractreg',data).then(function (response) {
+				if(response.status=="error"){
+					DevExpress.ui.dialog.alert(response.message,"Error");
+				}else if(response.status=="autherror"){
+					DevExpress.ui.notify(response.message,"error");
+					$scope.logout();
+				}else{
+					$scope.mode = mode;
+					$scope.Requestid = response.id;
+					$location.path( "/detailcontract" );
+				}
+			});
+		}else{
+			$scope.mode = mode;
+			$scope.Requestid = data.id;
+			$location.path( "/detailcontract" );
 		}
 	}
 	// $scope.$on('detailData', function(event, id) {
