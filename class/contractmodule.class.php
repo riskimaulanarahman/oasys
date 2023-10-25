@@ -56,9 +56,15 @@ Class ContractModule extends Application{
                 case 'apicontractupdate':
                     $this->ContractUpdate();
                     break;
+                case 'apiclosecontract':
+                    $this->CloseContract();
+                    break;
 				case 'uploadcontractfile':
 					$this->uploadContractFile();
 					break;
+                case 'apicontractfile':
+                    $this->contractFile();
+                    break;
 				default:
 					break;
 			}
@@ -100,6 +106,92 @@ Class ContractModule extends Application{
         echo $path_to_file;
 		
 	}
+    function contractFile(){
+		if (count($this->post)==0){
+			http_response_code(405);
+    		echo json_encode(array("message" => "Method not Allowed"));
+		}else{
+			$auth = $this->jwt->checkAuth();
+			if($auth){
+				switch ($this->post['criteria']){
+					case 'byid':
+						$id = $this->post['id'];
+						if ($id!=""){
+							$Contractfile = Contractfile::find('all', array('conditions' => array("contract_id=?",$id)));
+							foreach ($Contractfile as &$result) {
+								$result		= $result->to_array();
+							}
+							echo json_encode($Contractfile, JSON_NUMERIC_CHECK);
+						}else{
+							$Contractfile = new Contractfile();
+							echo json_encode($Contractfile);
+						}
+						break;
+					case 'find':
+						$query=$this->post['query'];
+						if(isset($query['status'])){
+							$Contractfile = Contractfile::find('all', array('conditions' => array("contract_id=?",$query['contract_id'])));
+							$data=array("jml"=>count($Contractfile));
+						}else{
+							$data=array();
+						}
+						echo json_encode($data, JSON_NUMERIC_CHECK);
+						break;
+					case 'create':			
+						$data = $this->post['data'];
+						if($this->currentUser->username=="admin"){
+							$Rfc = Rfc::find($data['contract_id']);
+							$data['employee_id']= $Rfc->employee_id;
+						}else{
+							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+							$data['employee_id']=$Employee->id;
+						}
+						
+						unset($data['__KEY__']);
+						
+						$Contractfile = Contractfile::create($data);
+						$logger = new Datalogger("Contractfile","create",null,json_encode($data));
+						$logger->SaveData();
+						echo json_encode($data);
+						break;
+					case 'delete':				
+						$id = $this->post['id'];
+						$Contractfile = Contractfile::find($id);
+						$data=$Contractfile->to_array();
+						$Contractfile->delete();
+						$logger = new Datalogger("Contractfile","delete",json_encode($data),null);
+						$logger->SaveData();
+						echo json_encode($Contractfile);
+						break;
+					case 'update':				
+						$id = $this->post['id'];
+						$data = $this->post['data'];
+						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+						$data['employee_id']=$Employee->id;
+						$Contractfile = Contractfile::find($id);
+						$olddata = $Contractfile->to_array();
+						foreach($data as $key=>$val){					
+							$val=($val=='No')?false:(($val=='Yes')?true:$val);
+							$Contractfile->$key=$val;
+						}
+						$Contractfile->save();
+						$logger = new Datalogger("Contractfile","update",json_encode($olddata),json_encode($data));
+						$logger->SaveData();
+						echo json_encode($Contractfile);
+						
+						break;
+					default:
+						$Contractfile = Contractfile::all();
+						foreach ($Contractfile as &$result) {
+							$result = $result->to_array();
+						}
+						echo json_encode($Contractfile, JSON_NUMERIC_CHECK);
+						break;
+				}
+			}
+		}
+		
+	}
     function Contract(){
         if (count($this->post)==0){
 			http_response_code(405);
@@ -110,14 +202,16 @@ Class ContractModule extends Application{
                 switch ($this->post['criteria']){
                     case 'byid':
 						$id = $this->post['id'];
-						$Contract = Contract::find($id, array('include' => array('rfc')));
+                        $join = "LEFT JOIN vwcontract v on tbl_contract.id=v.id";
+                        $sel = 'tbl_contract.*, v.activitydescr,v.RFCNo,v.ratetype,v.SKNo,v.CompanyCode,v.RFCUser,v.RFCUserEmail ';
+						$Contract = Contract::find($id, array('joins'=>$join,'select'=>$sel,'include' => array('rfc')));
 						if ($Contract){
                             $date1 = new DateTime(date('Y-m-d'));
                             $date2 = new DateTime($Contract->periodend);
                             $interval = $date1->diff($date2);
                             $diff =$interval->days;
                             $inv = $interval->invert;
-                            $status =  ($Contract->newcontractno!=0 && $Contract->newcontractno!='')?3:(($inv==1)?2:(($diff<90)?1:0));
+                            $status =  ($Contract->isactive==0 ||($Contract->newcontractno!=0 && $Contract->newcontractno!=''))?3:(($inv==1)?2:(($diff<90)?1:0));
                             $Contract->contractstatus = $status;
                             $Contract->save();
 							$data=$Contract->to_array();
@@ -129,7 +223,7 @@ Class ContractModule extends Application{
 						break;
                     case 'all':
                         $join = "LEFT JOIN vwcontract v on tbl_contract.id=v.id";
-                        $sel = 'tbl_contract.*, v.activitydescr,v.RFCNo,v.ratetype,v.SKNo,v.CompanyCode ';
+                        $sel = 'tbl_contract.*, v.activitydescr,v.RFCNo,v.ratetype,v.SKNo,v.CompanyCode,v.RFCUser,v.RFCUserEmail ';
                         $Contract = Contract::find('all',array('joins'=>$join,'select'=>$sel));
                         foreach ($Contract as &$result) {
                             $date1 = new DateTime(date('Y-m-d'));
@@ -137,7 +231,7 @@ Class ContractModule extends Application{
                             $interval = $date1->diff($date2);
                             $diff =$interval->days;
                             $inv = $interval->invert;
-                            $status = ($result->newcontractno!=0 && $result->newcontractno!='')?3:(($inv==1)?2:(($diff<90)?1:0));
+                            $status =  ($result->isactive==0 || ($result->newcontractno!=0 && $result->newcontractno!=''))?3:(($inv==1)?2:(($diff<90)?1:0));
                             $result->contractstatus = $status;
                             $result->save();
                             $result = $result->to_array();
@@ -170,13 +264,16 @@ Class ContractModule extends Application{
                                     }
                                     break;
                                 case 'allrfc':
+                                    
                                     $data= Rfc::find('all',array('conditions'=>array("requeststatus='3'")));
                                     foreach ($data as &$result) {
                                         $result		= $result->to_array();
                                     }
                                     break;
                                 case 'chrfc':
-                                    $data= Rfc::find($query['rfc_id']);
+                                    $joins   = "left join tbl_employee as e on tbl_rfc.employee_id = e.id left join tbl_rfcactivity a on tbl_rfc.activity_id=a.id ";
+                                    $sel = 'tbl_rfc.*, e.fullname as rfcuser,a.activitydescr ';
+                                    $data= Rfc::find('first',array('joins'=>$joins,'select'=>$sel,'conditions'=>array('tbl_rfc.id=?', $query['rfc_id'])));
                                     $data = $data->to_array();
                                     break;
                                 default:
@@ -238,7 +335,15 @@ Class ContractModule extends Application{
                     $Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username),"include"=>array("location","company","department")));
                     $data['modifiedby']=$Employee->id;
                     $data['modifieddate']=date('Y-m-d');
+                    unset($data['activitydescr']);
+                    unset($data['rfcno']);
+                    unset($data['ratetype']);
+                    unset($data['skno']);
+                    unset($data['companycode']);
+                    unset($data['rfcuser']);
+                    unset($data['rfcuseremail']);
                     $Contract = Contract::find($id);
+                    $olddata = $Contract->to_array();
                     if(isset($data['oldcontractno'])){
                         $oldData = $Contract->oldcontractno;
                         if (($data['oldcontractno']=='')){
@@ -265,7 +370,6 @@ Class ContractModule extends Application{
                         $Contract->$key=$val;
                     }
                     $Contract->save();
-                    $olddata = $Contract->to_array();
                     $logger = new Datalogger("Contract","update",json_encode($olddata),json_encode($data));
                     $logger->SaveData();
                     echo json_encode($data);
@@ -273,6 +377,41 @@ Class ContractModule extends Application{
                 }catch (Exception $e){
                     $err = new Errorlog();
                     $err->errortype = "UpdateContract";
+                    $err->errordate = date("Y-m-d h:i:s");
+                    $err->errormessage = $e->getMessage();
+                    $err->user = $this->currentUser->username;
+                    $err->ip = $this->ip;
+                    $err->save();
+                    $data = array("status"=>"error","message"=>$e->getMessage());
+                }
+            }else{
+                echo json_encode(array("message" => "You don't have authority to view this module"));
+            }
+        }
+    }
+    function CloseContract(){
+        if (count($this->post)==0){
+			http_response_code(405);
+    		echo json_encode(array("message" => "Method not Allowed"));
+		}else{
+            $auth = $this->jwt->checkAuth();
+            if($auth){
+                try{
+                    $id = $this->post['id'];
+                    $Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username),"include"=>array("location","company","department")));
+                    $data['modifiedby']=$Employee->id;
+                    $data['modifieddate']=date('Y-m-d');
+                    $Contract = Contract::find($id);
+                    $Contract->isactive = false;
+                    $Contract->save();
+                    $olddata = $Contract->to_array();
+                    $logger = new Datalogger("Contract","update",json_encode($olddata),json_encode($data));
+                    $logger->SaveData();
+                    echo json_encode($data);
+
+                }catch (Exception $e){
+                    $err = new Errorlog();
+                    $err->errortype = "CloseContract";
                     $err->errordate = date("Y-m-d h:i:s");
                     $err->errormessage = $e->getMessage();
                     $err->user = $this->currentUser->username;
