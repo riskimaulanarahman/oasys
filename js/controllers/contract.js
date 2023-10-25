@@ -97,13 +97,13 @@ app.register.controller('contractCtrl', ['$rootScope','$scope', '$http', '$inter
                             .appendTo(container);
                         }
                     }
-                }
-                ,{caption: '#',fixed: true, fixedPosition: "left",formItem: { visible: false},width: 40,
+                },
+                /*{caption: '#',fixed: true, fixedPosition: "left",formItem: { visible: false},width: 40,
 					cellTemplate: function(container, options) {
 						container.text(options.rowIndex +1);
 					}
-                },
-				{dataField:'createddate',caption:"Created Date",fixed: true, fixedPosition: "left",dataType:"date", format:"dd/MM/yyyy h:m",formItem: { visible: false},width: 110,},
+                },*/                              
+                {dataField:'rfcuser',caption:"User / RFC Creator", },
 				{dataField:'contractstatus',caption:"Contact Status",encodeHtml: false ,fixed: true, fixedPosition: "left",formItem: { visible: false},width: 100,
 					customizeText: function (e) {
 						var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-success'>Active</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Nearly Expired</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Expired</span>","<span class='mb-2 mr-2 badge badge-pill badge-default'>Not Active</span>",""];
@@ -116,8 +116,18 @@ app.register.controller('contractCtrl', ['$rootScope','$scope', '$http', '$inter
                         displayExpr: "rfcno" 
                     }
                 },
-                {dataField:'contractno',caption:"Contract No",width:190,},
-                {dataField:'oldcontractno',caption:"Old Contract No",width:190,
+                {dataField:'contractno',caption:"Contract No",fixed: true, fixedPosition: "left",width:190,},
+                {dataField:'periodstart',caption:"Start Date",  dataType:"date", format:"dd/MM/yyyy",hidingPriority: 10,},
+                {dataField:'periodend',caption:"End Date",  dataType:"date", format:"dd/MM/yyyy",hidingPriority: 9,}, 
+                {dataField:'contractor_id',caption:"Contractor", hidingPriority: 8,
+					lookup: {
+						dataSource: $scope.contractorDatasource,
+						valueExpr: "id",
+						displayExpr: "contractorname" 
+					}
+                },               
+                {dataField:'companycode',caption:"Company", hidingPriority: 7}, 
+                {dataField:'oldcontractno',caption:"Old Contract No",width:190,hidingPriority: 6,
 					lookup: {
 						dataSource: $scope.contractDatasource,
 						valueExpr: "id",
@@ -134,7 +144,7 @@ app.register.controller('contractCtrl', ['$rootScope','$scope', '$http', '$inter
                         }
                     }
                 },
-                {dataField:'newcontractno',caption:"New Contract No",width:190,
+                {dataField:'newcontractno',caption:"New Contract No",width:190,hidingPriority: 5,
 					lookup: {
 						dataSource: $scope.contractDatasource,
 						valueExpr: "id",
@@ -151,18 +161,9 @@ app.register.controller('contractCtrl', ['$rootScope','$scope', '$http', '$inter
                         }
                     }
                 },
-                {dataField:'contractor_id',caption:"Contractor",
-					lookup: {
-						dataSource: $scope.contractorDatasource,
-						valueExpr: "id",
-						displayExpr: "contractorname" 
-					}
-                },
-                {dataField:'activitydescr',caption:"Activity", hidingPriority: 6,},
-                {dataField:'description', encodeHtml: false,hidingPriority: 5, },
-                {dataField:'periodstart',caption:"Start Date",  dataType:"date", format:"dd/MM/yyyy",hidingPriority: 4,},
-                {dataField:'periodend',caption:"End Date",  dataType:"date", format:"dd/MM/yyyy",hidingPriority: 3,},                
-                {dataField:'companycode',caption:"Company", hidingPriority: 2,},
+                {dataField:'activitydescr',caption:"Activity", hidingPriority: 4,},
+                {dataField:'description', encodeHtml: false,hidingPriority: 3, },
+				{dataField:'createddate',caption:"Created Date",dataType:"date", format:"dd/MM/yyyy h:m",formItem: { visible: false},width: 110,hidingPriority: 2, },
                 {dataField:'ratetype',caption:"Rate",hidingPriority: 1, },
                 {dataField:'skno',caption:"SK No", hidingPriority: 0, },
 				/*{
@@ -208,10 +209,10 @@ app.register.controller('contractCtrl', ['$rootScope','$scope', '$http', '$inter
             allowExportSelectedData: false
         },
 		bindingOptions :{
-            "columns[4].lookup.dataSource":"rfcDatasource",
-            "columns[6].lookup.dataSource":"contractDatasource",
-            "columns[7].lookup.dataSource":"contractDatasource",
-            "columns[8].lookup.dataSource":"contractorDatasource",
+            "columns[3].lookup.dataSource":"rfcDatasource",
+            "columns[9].lookup.dataSource":"contractDatasource",
+            "columns[10].lookup.dataSource":"contractDatasource",
+            "columns[7].lookup.dataSource":"contractorDatasource",
             "editing.allowDeleting": "allowDel" ,
         },
         columnChooser: {

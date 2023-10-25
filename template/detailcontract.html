@@ -8,6 +8,14 @@
                 <div id="form" dx-form="detailFormOptions"></div>
             </div>
         </form>
+        <div data-options="dxTemplate: { name: 'content' }" ng-show="showDetail">
+          <div id="detailContract" dx-tab-panel="tabSettings">			
+            <div data-options="dxTemplate: { name: 'tab1' }" style="padding:10px;">
+              <div dx-data-grid="gridOptions" style="min-height:400px;max-height:430px"></div>
+            </div>
+          </div>
+          <div style="z-index:1000" dx-load-panel="{ bindingOptions: { visible: 'loadPanelVisible' }, message: 'Loading...',showPane:true,shadingColor: 'rgba(0,0,0,0.4)', position: { of: '#detailEMP' }, shading: true}"></div>
+        </div>
     </div>
   </div>
 </div>
