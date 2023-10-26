@@ -24,6 +24,9 @@
                         $rootScope.isAdmin= user.isadmin;
                         $rootScope.curUser = user;
 						// $('#sapid').text('1000');
+						CrudService.checkAccess('Contract',$rootScope.curUser.username).then(function (access) {
+							$rootScope.viewContract = access.allowview;
+						});
 						CrudService.checkAccess('Company',$rootScope.curUser.username).then(function (access) {
 							$rootScope.viewCompany = access.allowview;
 						});
