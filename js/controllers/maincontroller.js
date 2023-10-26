@@ -12,6 +12,9 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 			.then(function (user) {			
 				$rootScope.isAdmin = user.isadmin;
 				$rootScope.curUser = user;
+				CrudService.checkAccess('Contract',$rootScope.curUser.username).then(function (access) {
+					$rootScope.viewContract = access.allowview;
+				});
 				CrudService.checkAccess('Company',$rootScope.curUser.username).then(function (access) {
 					$rootScope.viewCompany = access.allowview;
 				});
@@ -77,16 +80,12 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 					$rootScope.viewAdvPayment = access.allowview;
 					$rootScope.viewAdvExpense = access.allowview;
 				});
-				
-				CrudService.checkAccess('Contract',$rootScope.curUser.username).then(function (access) {
-					$rootScope.viewContract = access.allowview;
-				});
 				// CrudService.checkAccess('AdvPayment',$rootScope.curUser.username).then(function (access) {
 				// });
 				// CrudService.checkAccess('AdvExpense',$rootScope.curUser.username).then(function (access) {
 				// });
 				if(!$rootScope.startRefresh) {
-					//$rootScope.startRefresh = setInterval($scope.refreshUsers, 1000);
+					$rootScope.startRefresh = setInterval($scope.refreshUsers, 1000);
 				}
 			});
 		
