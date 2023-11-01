@@ -727,7 +727,7 @@ Class DayoffModule extends Application{
 										$err->save();
 										echo "Mailer Error: " . $this->mail->ErrorInfo;
 									} else {	
-										$this->processcopy($this->pathcopy);
+										$this->processcopy($this->pathcopy); //copy to server
 
 										echo "Message sent!";
 									}
