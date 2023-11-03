@@ -1026,7 +1026,7 @@ Class Iteiemodule extends Application{
 			$Worksheet->Range("F15")->Value = $Iteie->officelocation;
 			$Worksheet->Range("Y15")->Value = $Iteie->floor;
 			$Worksheet->Range("F17")->Value = $Iteie->phoneext;
-			$Worksheet->Range("F19")->Value = $Iteie->department;
+			$Worksheet->Range("F19")->Value = $Iteie->departmentuser;
 			//condition
 
 				if($Iteie->accesstype == 1) {
