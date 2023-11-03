@@ -211,7 +211,7 @@ Class ContractModule extends Application{
                             $interval = $date1->diff($date2);
                             $diff =$interval->days;
                             $inv = $interval->invert;
-                            $status =  ($Contract->isactive==0 ||($Contract->newcontractno!=0 && $Contract->newcontractno!=''))?3:(($inv==1)?2:(($diff<90)?1:0));
+                            $status =  ($Contract->isactive==0 ||($Contract->newcontractno!=0 && $Contract->newcontractno!=''))?3:(($inv==1)?2:(($diff<=45)?1:0));
                             $Contract->contractstatus = $status;
                             $Contract->save();
 							$data=$Contract->to_array();
@@ -231,7 +231,7 @@ Class ContractModule extends Application{
                             $interval = $date1->diff($date2);
                             $diff =$interval->days;
                             $inv = $interval->invert;
-                            $status =  ($result->isactive==0 || ($result->newcontractno!=0 && $result->newcontractno!=''))?3:(($inv==1)?2:(($diff<90)?1:0));
+                            $status =  ($result->isactive==0 || ($result->newcontractno!=0 && $result->newcontractno!=''))?3:(($inv==1)?2:(($diff<=45)?1:0));
                             $result->contractstatus = $status;
                             $result->save();
                             $result = $result->to_array();
