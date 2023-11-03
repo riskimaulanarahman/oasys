@@ -718,7 +718,7 @@ Class RfcModule extends Application{
 													';
 								$no=1;
 								foreach ($Rfcdetail as $data){
-									$this->mailbody .='<tr style="height:22.5pt"><td><p class=MsoNormal>'.$no.'. '.$data['description'].'</p></td></tr>';http://172.18.83.18/oasys
+									$this->mailbody .='<tr style="height:22.5pt"><td><p class=MsoNormal>'.$no.'. '.$data['description'].'</p></td></tr>';http://172.18.83.35/oasys
 									$no++;
 								}
 								$this->mailbody .='<tr><td></td></tr>';
@@ -728,7 +728,7 @@ Class RfcModule extends Application{
 										$this->mailbody .= '<tr style="height:22.5pt"><td><p class=MsoNormal>'.$no.'. '.$data->term.'</p></td></tr>';
 										$no++;
 								}
-								$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.83.18/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.83.18/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+								$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.83.35/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.83.35/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 								
 								$this->mail->msgHTML($this->mailbody);
 								if ($complete){
@@ -1900,7 +1900,7 @@ Class RfcModule extends Application{
 																<tr><td><p class=MsoNormal>Capex Spent</p></td><td>:</td><td><p class=MsoNormal><b> Rp.'.number_format($RfcJ->capexspent).'</b></p></td></tr>
 																<tr><td><p class=MsoNormal>Capex Balance</p></td><td>:</td><td><p class=MsoNormal><b> Rp.'.number_format($RfcJ->capexbalance).'</b></p></td></tr>
 																<tr><td><p class=MsoNormal>RFC Ammount</p></td><td>:</td><td><p class=MsoNormal><b> Rp.'.number_format($RfcJ->rfcammount).'</b></p></td></tr>
-																<tr><td><p class=MsoNormal>Balance after this RFC</p></td><td>:</td><td><p class=MsoNormal><b> Rp.'.number_format($RfcJ->balance).'</b></p></td></tr>';http://172.18.83.18/oasys
+																<tr><td><p class=MsoNormal>Balance after this RFC</p></td><td>:</td><td><p class=MsoNormal><b> Rp.'.number_format($RfcJ->balance).'</b></p></td></tr>';http://172.18.83.35/oasys
 														}
 								$this->mailbody .='</table>
 													<p class=MsoNormal><b>Contract Detail :</b></p>
@@ -1918,7 +1918,7 @@ Class RfcModule extends Application{
 										$this->mailbody .= '<tr style="height:22.5pt"><td><p class=MsoNormal>'.$no.'. '.$data->term.'</p></td></tr>';
 										$no++;
 								}
-								$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.83.18/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.83.18/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+								$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.83.35/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.83.35/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 								$this->mail->addAddress($adb->email, $adb->fullname);
 								$this->mail->Subject = "Online Approval System -> New RFC Submission";
 								$this->mail->msgHTML($this->mailbody);

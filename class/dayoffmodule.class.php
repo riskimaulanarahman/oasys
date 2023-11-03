@@ -7,6 +7,8 @@ Class DayoffModule extends Application{
 	
 	private $mailbody;
 	private $mail;
+	private $pathcopy;
+
 	public function __construct(){
 		parent::__construct();
 		
@@ -581,7 +583,7 @@ Class DayoffModule extends Application{
 									foreach ($Dayoffdetail as $data){
 										$this->mailbody .='<tr style="height:22.5pt"><td width=196 nowrap style="width:146.65pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt;height:22.5pt"><p class=MsoNormal valign=top align=center style="text-align:center">'.date('d/m/Y', strtotime($data['dateworked'])).'</p></td><td width=190 nowrap colspan=2 style="width:140pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:22.5pt"><p valign=top class=MsoNormal>'.$data['reason'].'</p></td><td width=298 nowrap valign=top style="width:223.15pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:22.5pt"><p valign=top class=MsoNormal>'.$data['remarks'].'</p></td></tr>';
 									}
-									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.83.18/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.83.18/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.83.35/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.83.35/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 									
 									$this->mail->msgHTML($this->mailbody);
 									if ($complete){
@@ -693,13 +695,15 @@ Class DayoffModule extends Application{
 											$html2pdf->writeHTML($pdfContent);
 											ob_clean();
 											$fileName ='doc'.DS.'dayoff'.DS.'pdf'.DS.'WPHCF_'.$emp['sapid'].'_'.date("YmdHis").'.pdf';
+											
 											$filePath = SITE_PATH.DS.$fileName;
-											$filePathcopy = 'doc\\dayoff\\pdf\\WPHCF_'.$emp['sapid'].'_'.date("YmdHis").'.pdf';
 											$html2pdf->output($filePath, 'F');
 											$this->mail->addAttachment($filePath);
 											$Dayoff->approveddoc=str_replace("\\","/",$fileName);
 											$Dayoff->save();
-											$this->processcopy($filePathcopy);
+
+											$this->pathcopy = $fileName;
+											
 										} catch (Html2PdfException $e) {
 											$html2pdf->clean();
 											$formatter = new ExceptionFormatter($e);
@@ -723,6 +727,8 @@ Class DayoffModule extends Application{
 										$err->save();
 										echo "Mailer Error: " . $this->mail->ErrorInfo;
 									} else {	
+										$this->processcopy($this->pathcopy); //copy to server
+
 										echo "Message sent!";
 									}
 								}
@@ -1441,7 +1447,7 @@ Class DayoffModule extends Application{
 									foreach ($Dayoffdetail as $data){
 										$this->mailbody .='<tr style="height:22.5pt"><td width=196 nowrap style="width:146.65pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt;height:22.5pt"><p class=MsoNormal valign=top  align=center style="text-align:center">'.date('d/m/Y', strtotime($data['dateworked'])).'</p></td><td width=190 nowrap colspan=2 style="width:140pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:22.5pt"><p  valign=top  class=MsoNormal>'.$data['reason'].'</p></td><td width=298 nowrap valign=top style="width:223.15pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:22.5pt"><p valign=top class=MsoNormal>'.$data['remarks'].'</p></td></tr>';
 									}
-									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.83.18/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.83.18/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
+									$this->mailbody .='</table><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">Please login to application <a href="http://172.18.83.35/oasys/">here</a> </span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="color:#1F497D">&nbsp;</span></p><p class=MsoNormal><span style="font-size:10.0pt;font-family:"Century Gothic","sans-serif";color:#1F497D">OASys ( Online Approval System ) : http://172.18.83.35/oasys <br><br></span><b><span style="font-size:12.0pt;font-family:"Century Gothic","sans-serif";color:#365F91"><br></span></b></p><p class=MsoNormal><hr><font color="red"><b>This is a computer generated email. Please do not reply to this email</b></font><span lang=IN style="font-size:12.0pt;font-family:"Times New Roman","serif""> </span><span style="font-size:12.0pt;font-family:"Times New Roman","serif""></span></p></div></body></html>';
 									$this->mail->addAddress($adb->email, $adb->fullname);
 									$this->mail->Subject = "Online Approval System -> New Dayoff Submission";
 									$this->mail->msgHTML($this->mailbody);
