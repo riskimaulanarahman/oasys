@@ -117,7 +117,7 @@ Class ContractModule extends Application{
 					case 'byid':
 						$id = $this->post['id'];
 						if ($id!=""){
-							$Contractfile = Contractfile::find('all', array('conditions' => array("contract_id=?",$id)));
+							$Contractfile = Contractfile::find('all', array('conditions' => array("contract_id=? and is_active='1'",$id)));
 							foreach ($Contractfile as &$result) {
 								$result		= $result->to_array();
 							}
@@ -130,7 +130,7 @@ Class ContractModule extends Application{
 					case 'find':
 						$query=$this->post['query'];
 						if(isset($query['status'])){
-							$Contractfile = Contractfile::find('all', array('conditions' => array("contract_id=?",$query['contract_id'])));
+							$Contractfile = Contractfile::find('all', array('conditions' => array("contract_id=? and is_active='1'",$query['contract_id'])));
 							$data=array("jml"=>count($Contractfile));
 						}else{
 							$data=array();
@@ -158,7 +158,8 @@ Class ContractModule extends Application{
 						$id = $this->post['id'];
 						$Contractfile = Contractfile::find($id);
 						$data=$Contractfile->to_array();
-						$Contractfile->delete();
+						$Contractfile->is_active=0;
+                        $Contractfile->save();
 						$logger = new Datalogger("Contractfile","delete",json_encode($data),null);
 						$logger->SaveData();
 						echo json_encode($Contractfile);
@@ -224,7 +225,7 @@ Class ContractModule extends Application{
                     case 'all':
                         $join = "LEFT JOIN vwcontract v on tbl_contract.id=v.id";
                         $sel = 'tbl_contract.*, v.activitydescr,v.RFCNo,v.ratetype,v.SKNo,v.CompanyCode,v.RFCUser,v.RFCUserEmail ';
-                        $Contract = Contract::find('all',array('joins'=>$join,'select'=>$sel));
+                        $Contract = Contract::find('all',array('joins'=>$join,'select'=>$sel,"conditions"=>array("tbl_contract.isdeleted='0'")));
                         foreach ($Contract as &$result) {
                             $date1 = new DateTime(date('Y-m-d'));
                             $date2 = new DateTime($result->periodend);
@@ -245,7 +246,7 @@ Class ContractModule extends Application{
                             switch ($query['status']){
                                 case 'new':	
                                     $joins   = "left join tbl_contract as old on tbl_contract.id = old.oldcontractno  ";
-                                    $data= Contract::find('all',array('joins'=>$joins,'conditions' => array("(old.OldContractno IS null or tbl_contract.id=(select old2.oldcontractno from tbl_contract old2 where old2.id=?)) and not(tbl_contract.id=?) ",$query['contract_id'],$query['contract_id'])));
+                                    $data= Contract::find('all',array('joins'=>$joins,'conditions' => array("(old.OldContractno IS null or tbl_contract.id=(select old2.oldcontractno from tbl_contract old2 where old2.id=?)) and not(tbl_contract.id=?) and tbl_contract.isdeleted='0'",$query['contract_id'],$query['contract_id'])));
                                     foreach ($data as &$result) {
                                         $result		= $result->to_array();
                                     }
@@ -440,7 +441,13 @@ Class ContractModule extends Application{
                     $oldContract->save();
                 }
                 $data=$Contract->to_array();
-                $Contract->delete();
+                $Contractfile = Contractfile::find('all', array('conditions' => array("contract_id=?",$id)));
+                foreach ($Contractfile as $result) {
+                    $result->is_active=0;
+                    $result->save();
+                }
+                $Contract->isdeleted = 1;
+                $Contract->save();
                 $logger = new Datalogger("Contract","delete",json_encode($data),null);
                 $logger->SaveData();
                 echo json_encode($Contract);
