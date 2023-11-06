@@ -10,6 +10,11 @@ app.register.controller('detailcontractCtrl', ['$rootScope','$scope', '$http', '
 	console.log($scope.mode);
 	var d = new Date();
 	CrudService.GetById('contract',$scope.Requestid).then(function(response){
+		CrudService.checkAccess('Contract',$rootScope.curUser.username).then(function (access) {
+			$scope.allowEdit = access.allowedit;
+			$scope.allowAdd = access.allowadd;
+			$scope.allowDel = access.allowdelete;
+		});
 		$scope.data = response;
 		$scope.contractorDatasource = {
 			store: new DevExpress.data.CustomStore({
@@ -376,7 +381,7 @@ app.register.controller('detailcontractCtrl', ['$rootScope','$scope', '$http', '
 	$scope.tabs = [
 		{ id:1, TabName : "Contract Documents", title: 'Contract Documents', template: "tab1"   },
 	];
-	$scope.showDetail = true;
+	$scope.showDetail = ($scope.allowEdit|| $rootScope.isAdmin)?true:false;
 	$scope.loadPanelVisible = false;
 	
 	$scope.adaFile =false;
