@@ -340,6 +340,7 @@ Class ContractModule extends Application{
                     unset($data['rfcno']);
                     unset($data['ratetype']);
                     unset($data['skno']);
+                    unset($data['isdeleted']);
                     unset($data['companycode']);
                     unset($data['rfcuser']);
                     unset($data['rfcuseremail']);
