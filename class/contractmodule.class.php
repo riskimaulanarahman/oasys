@@ -258,7 +258,7 @@ Class ContractModule extends Application{
                                     break;
                                 case 'rfcactive':	
                                     $joins   = "LEFT JOIN tbl_contract ON (tbl_contract.rfc_id = tbl_rfc.id) ";
-                                    $data= Rfc::find('all',array('joins'=>$joins,'conditions' => array("tbl_rfc.requeststatus='3' and ((tbl_contract.contractno is null  and (tbl_rfc.periodstart>=now() or tbl_rfc.periodend>now()) or tbl_contract.id=?))",$query['contract_id'])));
+                                    $data= Rfc::find('all',array('joins'=>$joins,'conditions' => array("tbl_rfc.requeststatus='3' and ((tbl_contract.contractno is null  and ( tbl_rfc.periodend>= DATE_SUB(DATE_FORMAT(NOW(), '%Y-%m-01'), INTERVAL 3 MONTH)) or tbl_contract.id=?))",$query['contract_id'])));
                                     foreach ($data as &$result) {
                                         $result		= $result->to_array();
                                     }
