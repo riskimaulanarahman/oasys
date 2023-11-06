@@ -14,6 +14,7 @@ app.register.controller('detailcontractCtrl', ['$rootScope','$scope', '$http', '
 			$scope.allowEdit = access.allowedit;
 			$scope.allowAdd = access.allowadd;
 			$scope.allowDel = access.allowdelete;
+			$scope.showDetail = ($scope.allowEdit || $rootScope.isAdmin)?true:false;
 		});
 		$scope.data = response;
 		$scope.contractorDatasource = {
@@ -381,7 +382,7 @@ app.register.controller('detailcontractCtrl', ['$rootScope','$scope', '$http', '
 	$scope.tabs = [
 		{ id:1, TabName : "Contract Documents", title: 'Contract Documents', template: "tab1"   },
 	];
-	$scope.showDetail = ($scope.allowEdit|| $rootScope.isAdmin)?true:false;
+	
 	$scope.loadPanelVisible = false;
 	
 	$scope.adaFile =false;
