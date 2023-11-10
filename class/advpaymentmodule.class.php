@@ -1611,14 +1611,14 @@ Class Advpaymentmodule extends Application{
 							$joinx = "LEFT JOIN tbl_advpaymentapproval ON (tbl_advpayment.id = tbl_advpaymentapproval.advpayment_id) 
 								LEFT JOIN tbl_approver ON (tbl_advpaymentapproval.approver_id = tbl_approver.id)";
 
-							$Rfc = Rfc::find('all', array(
+							$Advpayment = Advpayment::find('all', array(
 								'select'=>"tbl_advpayment.*,tbl_approver.employee_id as empappr,tbl_advpaymentapproval.approvalstatus as apprstatus, (select case when appr.employee_id='".$emp_id."' then 1 else 0 end as pending from  tbl_advpaymentapproval a left join tbl_approver appr ON (a.approver_id = appr.id) where a.approvalstatus=0 and a.advpayment_id=tbl_advpayment.id order by appr.sequence limit 0,1 ) as pendingonme",
 								'conditions' => array("tbl_advpayment.RequestStatus > 0"),
 								'joins' => $joinx,
 								'order' => "tbl_approver.sequence"
 							));
 
-							foreach ($Rfc as $result) {
+							foreach ($Advpayment as $result) {
 								if ($result->pendingonme == 1) {
 									if (!in_array($result->id, $request))
 									{
