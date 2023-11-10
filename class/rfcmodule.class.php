@@ -451,7 +451,8 @@ Class RfcModule extends Application{
 								}
 								$data=array("jml"=>count($Rfcapproval));
 							}						
-						} else if(isset($query['pending'])){						
+						} else if(isset($query['pending'])){			
+							/*			
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$emp_id = $Employee->id;
 							$Rfc = Rfc::find('all', array('conditions' => array("RequestStatus >0"),'include' => array('employee')));
@@ -474,6 +475,48 @@ Class RfcModule extends Application{
 								$result['fullname']=$fullname;
 							}
 							$data=$Rfc;
+							*/
+							$Employee = Employee::find('first', array('conditions' => array("loginName=?", $this->currentUser->username )));
+							$emp_id = $Employee->id;
+
+							$joinx = "LEFT JOIN tbl_rfcapproval ON (tbl_rfc.id = tbl_rfcapproval.rfc_id) 
+								LEFT JOIN tbl_approver ON (tbl_rfcapproval.approver_id = tbl_approver.id)";
+
+							$Rfc = Rfc::find('all', array(
+								'select'=>"tbl_rfc.*,tbl_approver.employee_id as empappr,tbl_rfcapproval.approvalstatus as apprstatus, (select case when appr.employee_id='".$emp_id."' then 1 else 0 end as pending from  tbl_rfcapproval a left join tbl_approver appr ON (a.approver_id = appr.id) where a.approvalstatus=0 and a.rfc_id=tbl_rfc.id order by appr.sequence limit 0,1 ) as pendingonme",
+								'conditions' => array("tbl_rfc.RequestStatus > 0"),
+								'joins' => $joinx,
+								'order' => "tbl_approver.sequence"
+							));
+
+							foreach ($Rfc as $result) {
+								if ($result->pendingonme == 1) {
+									if (!in_array($result->id, $request))
+									{
+										$request[] = $result->id; 
+									}
+								}
+
+								if (($result->requeststatus == 3 || $result->requeststatus == 4) && ($result->apprstatus!=0 && $result->apprstatus!="" ) && $result->empappr == $emp_id) {
+									if (!in_array($result->id, $request))
+									{
+										$request[] = $result->id; 
+									}
+								}
+							}
+							$Rfc = Rfc::find('all', array(
+								'conditions' => array("id in (?)", $request),
+								'order' => "tbl_rfc.requeststatus",
+								'include' => array('employee')
+							));
+							$data = array();
+							foreach ($Rfc as $result) {
+								$fullname = $result->employee->fullname;
+								$result = $result->to_array();
+								$result['fullname'] = $fullname;
+								$data[] = $result;
+								
+							}
 						} else if(isset($query['mypending'])){						
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$emp_id = $Employee->id;
