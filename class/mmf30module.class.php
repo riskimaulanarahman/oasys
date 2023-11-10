@@ -841,7 +841,7 @@ Class Mmf30module extends Application{
 						} else if(isset($query['pending'])){						
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$emp_id = $Employee->id;
-							$Mmf = Mmf30::find('all', array('conditions' => array("RequestStatus >0"),'include' => array('employee')));
+							/*$Mmf = Mmf30::find('all', array('conditions' => array("RequestStatus >0"),'include' => array('employee')));
 							foreach ($Mmf as $result) {
 								$joinx   = "LEFT JOIN tbl_approver ON (tbl_mmf30approval.approver_id = tbl_approver.id) ";					
 								$Mmfapproval = Mmf30approval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and mmf30_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
@@ -861,7 +861,42 @@ Class Mmf30module extends Application{
 								$result['fullname']=$fullname;
 								$result['department']=$department;
 							}
+							$data=$Mmf;*/
+							$joinx = "LEFT JOIN tbl_mmf30approval ON (tbl_mmf30.id = tbl_mmf30approval.mmf30_id) 
+								LEFT JOIN tbl_approver ON (tbl_mmf30approval.approver_id = tbl_approver.id)";
+
+							$Mmf30 = Mmf30::find('all', array(
+								'select'=>"tbl_mmf30.*,tbl_approver.employee_id as empappr,tbl_mmf30approval.approvalstatus as apprstatus, (select case when appr.employee_id='".$emp_id."' then 1 else 0 end as pending from  tbl_mmf30approval a left join tbl_approver appr ON (a.approver_id = appr.id) where a.approvalstatus=0 and a.mmf30_id=tbl_mmf30.id order by appr.sequence limit 0,1 ) as pendingonme",
+								'conditions' => array("tbl_mmf30.RequestStatus > 0"),
+								'joins' => $joinx,
+								'order' => "tbl_approver.sequence"
+							));
+
+							foreach ($Mmf30 as $result) {
+								if ($result->pendingonme == 1) {
+									if (!in_array($result->id, $request))
+									{
+										$request[] = $result->id; 
+									}
+								}
+
+								if (($result->requeststatus == 3 || $result->requeststatus == 4) && ($result->apprstatus!=0 && $result->apprstatus!="" ) && $result->empappr == $emp_id) {
+									if (!in_array($result->id, $request))
+									{
+										$request[] = $result->id; 
+									}
+								}
+							}
+							$Mmf = Mmf30::find('all', array('conditions' => array("id in (?)",$request),'order'=>"tbl_mmf30.requeststatus",'include' => array('employee')));
+							foreach ($Mmf as &$result) {
+								$fullname	= $result->employee->fullname;
+								$department	= $result->employee->department->departmentname;
+								$result		= $result->to_array();
+								$result['fullname']=$fullname;
+								$result['department']=$department;
+							}
 							$data=$Mmf;
+
 						} else if(isset($query['mypending'])){						
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$emp_id = $Employee->id;
