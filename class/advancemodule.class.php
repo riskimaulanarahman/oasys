@@ -2381,8 +2381,8 @@ class Advancemodule extends Application
 					$Worksheet->Range("H46")->Value = $buheaddate;
 					$pic2 = $Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 					$pic2->Height = 20;
-					$pic2->Top = $excel->Cells(42, 5)->Top;
-					$pic2->Left = $excel->Cells(42, 5)->Left;
+					$pic2->Top = $excel->Cells(42, 8)->Top;
+					$pic2->Left = $excel->Cells(42, 8)->Left;
 				}
 
 				if (!empty($kffcname)) {
@@ -2390,8 +2390,8 @@ class Advancemodule extends Application
 					$Worksheet->Range("E46")->Value = $kffcdate;
 					$pic2 = $Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
 					$pic2->Height = 20;
-					$pic2->Top = $excel->Cells(42, 8)->Top;
-					$pic2->Left = $excel->Cells(42, 8)->Left;
+					$pic2->Top = $excel->Cells(42, 5)->Top;
+					$pic2->Left = $excel->Cells(42, 5)->Left;
 				}
 			}
 
