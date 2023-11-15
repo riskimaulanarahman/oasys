@@ -212,7 +212,7 @@ app.register.controller('contractCtrl', ['$rootScope','$scope', '$http', '$inter
             "columns[3].lookup.dataSource":"rfcDatasource",
             "columns[9].lookup.dataSource":"contractDatasource",
             "columns[10].lookup.dataSource":"contractDatasource",
-            "columns[7].lookup.dataSource":"contractorDatasource",
+            "columns[8].lookup.dataSource":"contractorDatasource",
             "editing.allowDeleting": "allowDel" ,
         },
         columnChooser: {
