@@ -118,15 +118,15 @@ app.register.controller('contractCtrl', ['$rootScope','$scope', '$http', '$inter
                 },
                 {dataField:'contractno',caption:"Contract No",fixed: true, fixedPosition: "left",width:190,},
                 {dataField:'periodstart',caption:"Start Date",  dataType:"date", format:"dd/MM/yyyy",hidingPriority: 10,},
-                {dataField:'periodend',caption:"End Date",  dataType:"date", format:"dd/MM/yyyy",hidingPriority: 9,}, 
+                {dataField:'periodend',caption:"End Date",  dataType:"date", format:"dd/MM/yyyy",hidingPriority: 9,},                
+                {dataField:'companycode',caption:"BU", hidingPriority: 7}, 
                 {dataField:'contractor_id',caption:"Contractor", hidingPriority: 8,
 					lookup: {
 						dataSource: $scope.contractorDatasource,
 						valueExpr: "id",
 						displayExpr: "contractorname" 
 					}
-                },               
-                {dataField:'companycode',caption:"Company", hidingPriority: 7}, 
+                },
                 {dataField:'oldcontractno',caption:"Old Contract No",width:190,hidingPriority: 6,
 					lookup: {
 						dataSource: $scope.contractDatasource,
@@ -212,7 +212,7 @@ app.register.controller('contractCtrl', ['$rootScope','$scope', '$http', '$inter
             "columns[3].lookup.dataSource":"rfcDatasource",
             "columns[9].lookup.dataSource":"contractDatasource",
             "columns[10].lookup.dataSource":"contractDatasource",
-            "columns[7].lookup.dataSource":"contractorDatasource",
+            "columns[8].lookup.dataSource":"contractorDatasource",
             "editing.allowDeleting": "allowDel" ,
         },
         columnChooser: {

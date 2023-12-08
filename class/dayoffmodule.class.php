@@ -868,7 +868,7 @@ Class DayoffModule extends Application{
 										//covid -19 SOP only 2 days max per month
 										//$max = 2;
 										$joins   = "LEFT JOIN tbl_dayoffreq as r ON (dayoff_id = r.id) ";	
-										$do = Dayoffdetail::find('all', array('joins'=>$joins,'conditions' => array("month(dateworked)=? and year(dateworked)=? and r.employee_id=?",date("m", strtotime($data['dateworked'])),date("Y", strtotime($data['dateworked'])),$Employee->id),'include'=>array("dayoff")));
+										$do = Dayoffdetail::find('all', array('joins'=>$joins,'conditions' => array("month(dateworked)=? and year(dateworked)=? and r.employee_id=? and (isapproved='1' or isapproved is null)",date("m", strtotime($data['dateworked'])),date("Y", strtotime($data['dateworked'])),$Employee->id),'include'=>array("dayoff")));
 										if (count($do)>=$max){
 											echo json_encode(array("status"=>"error","message"=>"You have reached maximum number of Weekend Coverage Request ( ".$max." days) for the month ".date("F", strtotime($data['dateworked']))));
 										}else{
