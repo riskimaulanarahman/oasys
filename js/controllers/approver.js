@@ -104,6 +104,7 @@ app.register.controller('approverCtrl', ['$rootScope','$scope', '$http', '$inter
         headerFilter: {
             visible: true
         },
+        filterRow: { visible: true },
         columns: [
 					/*{
                     caption: "Detail",
