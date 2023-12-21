@@ -251,36 +251,37 @@ Class Itsharefoldermodule extends Application{
 							$data=$Itsharef->to_array();
 							$joinx   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
 
-								$Approver3 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=32")));
-								if(count($Approver3)>0){
+								$itlead = Approver::find('first',array(
+									'joins'=>$joinx,
+									'conditions'=>array(
+										"module='IT' and 
+										tbl_approver.isactive='1' 
+										and approvaltype_id=32"
+									)
+								));
+								if($itlead){
 									$Itsharefapproval = new Itsharefapproval();
 									$Itsharefapproval->itsharef_id = $Itsharef->id;
-									$Itsharefapproval->approver_id = $Approver3->id;
+									$Itsharefapproval->approver_id = $itlead->id;
 									$Itsharefapproval->save();
 								}
 
-								if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND"))
-								{
-									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=34 and tbl_employee.location_id='1'")));
-									if(count($Approver2)>0){
-										$Itsharefapproval = new Itsharefapproval();
-										$Itsharefapproval->itsharef_id = $Itsharef->id;
-										$Itsharefapproval->approver_id = $Approver2->id;
-										$Itsharefapproval->save();
-									}
-									
-	
-								}else{
-
-									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='IT' and tbl_approver.isactive='1' and approvaltype_id=34 and tbl_employee.company_id=? and not(tbl_employee.location_id='1')",$Employee->company_id)));
-									if(count($Approver2)>0){
-										$Itsharefapproval = new Itsharefapproval();
-										$Itsharefapproval->itsharef_id = $Itsharef->id;
-										$Itsharefapproval->approver_id = $Approver2->id;
-										$Itsharefapproval->save();
-									}
+								$itsite = Approver::find('first',array(
+									'joins'=>$joinx,
+									'conditions'=>array(
+										"module='IT' and 
+										tbl_approver.isactive='1' and 
+										approvaltype_id=34 and 
+										FIND_IN_SET(?, CompanyList) > 0",$Employee->companycode
+									)
+								));
+								if($itsite){
+									$Itsharefapproval = new Itsharefapproval();
+									$Itsharefapproval->itsharef_id = $Itsharef->id;
+									$Itsharefapproval->approver_id = $itsite->id;
+									$Itsharefapproval->save();
 								}
-
+								
 							$Iteihistory = new Itsharefhistory();
 							$Iteihistory->date = date("Y-m-d h:i:s");
 							$Iteihistory->fullname = $Employee->fullname;
