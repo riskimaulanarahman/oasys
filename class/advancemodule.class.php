@@ -2416,9 +2416,10 @@ class Advancemodule extends Application
 			//end condition
 			$xlTypePDF = 0;
 			$xlQualityStandard = 0;
-			$fileName = 'doc' . DS . 'hr' . DS . 'pdf' . DS . $title . '_' . $Advance->employee->fullname . '_' . $Advance->employee->sapid . '_' . date("YmdHis") . '.pdf';
+			$fileName =  $title . '_' . $Advance->employee->fullname . '_' . $Advance->employee->sapid . '_' . date("YmdHis") . '.pdf';
 			$fileName =  preg_replace("/[^a-z0-9\_\-\.]/i", '', $fileName);
-			$path = SITE_PATH.DS.$fileName;
+			$filePath = 'doc' . DS . 'hr' . DS . 'pdf' . DS .$fileName;
+			$path = SITE_PATH.DS.$filePath;
 			$pathcopy = 'doc\\hr\\pdf\\' . $title . '_' . $Advance->employee->fullname . '_' . $Advance->employee->sapid . '_' . date("YmdHis") . '.pdf';
 			if (file_exists($path)) {
 				unlink($path);
@@ -2437,13 +2438,13 @@ class Advancemodule extends Application
 			$output = 200;
 			echo json_encode($output);
 			
-			$this->pathcopy = $fileName;
+			$this->pathcopy = $filePath;
 			
-			$this->processcopy($fileName);
-			$Advance->approveddoc = str_replace("\\", "/", $fileName);
+			$this->processcopy($filePath);
+			$Advance->approveddoc = str_replace("\\", "/", $filePath);
 			$Advance->save();
 
-			return $fileName;
+			return $filePath;
 
 		} catch (Exception $e) {
 			$err = new Errorlog();
