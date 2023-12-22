@@ -2480,6 +2480,7 @@ Class Advpaymentmodule extends Application{
 			$xlQualityStandard = 0;
 			$fileName ='doc'.DS.'hr'.DS.'pdf'.DS.$title.'_'.$Advpayment->employee->fullname.'_'.$Advpayment->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$fileName = str_replace("/","",$fileName);
+			$fileName = str_replace(" ","_",$fileName);
 			$path= SITE_PATH.'/doc'.DS.'hr'.DS.'pdf'.DS.$title.'_'.$Advpayment->employee->fullname.'_'.$Advpayment->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$pathcopy = 'doc\\hr\\pdf\\' . $title . '_' . $Advpayment->employee->fullname . '_' . $Advpayment->employee->sapid . '_' . date("YmdHis") . '.pdf';
 			if (file_exists($path)) {

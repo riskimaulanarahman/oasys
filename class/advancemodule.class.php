@@ -2418,6 +2418,7 @@ class Advancemodule extends Application
 			$xlQualityStandard = 0;
 			$fileName = 'doc' . DS . 'hr' . DS . 'pdf' . DS . $title . '_' . $Advance->employee->fullname . '_' . $Advance->employee->sapid . '_' . date("YmdHis") . '.pdf';
 			$fileName = str_replace("/", "", $fileName);
+			$fileName = str_replace(" ","_",$fileName);
 			$path = SITE_PATH . '/doc' . DS . 'hr' . DS . 'pdf' . DS . $title . '_' . $Advance->employee->fullname . '_' . $Advance->employee->sapid . '_' . date("YmdHis") . '.pdf';
 			$pathcopy = 'doc\\hr\\pdf\\' . $title . '_' . $Advance->employee->fullname . '_' . $Advance->employee->sapid . '_' . date("YmdHis") . '.pdf';
 			if (file_exists($path)) {
@@ -2439,9 +2440,9 @@ class Advancemodule extends Application
 			$output = 200;
 			echo json_encode($output);
 
-			$this->pathcopy = $pathcopy;
+			$this->pathcopy = $fileName;
 
-			$this->processcopy($pathcopy);
+			$this->processcopy($fileName);
 
 			return $fileName;
 
