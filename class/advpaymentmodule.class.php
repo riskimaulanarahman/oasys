@@ -2479,12 +2479,11 @@ Class Advpaymentmodule extends Application{
 			$xlTypePDF = 0;
 			$xlQualityStandard = 0;
 			$fileName ='doc'.DS.'hr'.DS.'pdf'.DS.$title.'_'.$Advpayment->employee->fullname.'_'.$Advpayment->employee->sapid.'_'.date("YmdHis").'.pdf';
-			$fileName = str_replace("/","",$fileName);
-			$fileName = str_replace(" ","_",$fileName);
-			$path= SITE_PATH.'/doc'.DS.'hr'.DS.'pdf'.DS.$title.'_'.$Advpayment->employee->fullname.'_'.$Advpayment->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$fileName =  preg_replace("/[^a-z0-9\_\-\.]/i", '', $fileName);
+			$path= SITE_PATH.DS.$fileName;
 			$pathcopy = 'doc\\hr\\pdf\\' . $title . '_' . $Advpayment->employee->fullname . '_' . $Advpayment->employee->sapid . '_' . date("YmdHis") . '.pdf';
 			if (file_exists($path)) {
-			unlink($path);
+				unlink($path);
 			}
 			$Worksheet->ExportAsFixedFormat($xlTypePDF, $path, $xlQualityStandard);
 			

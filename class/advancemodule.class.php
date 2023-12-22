@@ -2417,17 +2417,14 @@ class Advancemodule extends Application
 			$xlTypePDF = 0;
 			$xlQualityStandard = 0;
 			$fileName = 'doc' . DS . 'hr' . DS . 'pdf' . DS . $title . '_' . $Advance->employee->fullname . '_' . $Advance->employee->sapid . '_' . date("YmdHis") . '.pdf';
-			$fileName = str_replace("/", "", $fileName);
-			$fileName = str_replace(" ","_",$fileName);
-			$path = SITE_PATH . '/doc' . DS . 'hr' . DS . 'pdf' . DS . $title . '_' . $Advance->employee->fullname . '_' . $Advance->employee->sapid . '_' . date("YmdHis") . '.pdf';
+			$fileName =  preg_replace("/[^a-z0-9\_\-\.]/i", '', $fileName);
+			$path = SITE_PATH.DS.$fileName;
 			$pathcopy = 'doc\\hr\\pdf\\' . $title . '_' . $Advance->employee->fullname . '_' . $Advance->employee->sapid . '_' . date("YmdHis") . '.pdf';
 			if (file_exists($path)) {
 				unlink($path);
 			}
 			$Worksheet->ExportAsFixedFormat($xlTypePDF, $path, $xlQualityStandard);
-			$Advance->approveddoc = str_replace("\\", "/", $fileName);
-			$Advance->save();
-
+			
 			// $excel->Application->CutCopyMode(false);
 			$excel->CutCopyMode = false;
 			$Workbook->Close(false);
@@ -2436,13 +2433,15 @@ class Advancemodule extends Application
 			$excel->Workbooks->Close();
 			$excel->Quit();
 			unset($excel);
-
+			
 			$output = 200;
 			echo json_encode($output);
-
+			
 			$this->pathcopy = $fileName;
-
+			
 			$this->processcopy($fileName);
+			$Advance->approveddoc = str_replace("\\", "/", $fileName);
+			$Advance->save();
 
 			return $fileName;
 

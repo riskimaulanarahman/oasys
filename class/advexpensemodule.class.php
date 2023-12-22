@@ -2101,18 +2101,16 @@ Class Advexpensemodule extends Application{
 			$xlTypePDF = 0;
 			$xlQualityStandard = 0;
 			$fileName ='doc'.DS.'hr'.DS.'pdf'.DS.$title.'_'.$Advexpense->employee->fullname.'_'.$Advexpense->employee->sapid.'_'.date("YmdHis").'.pdf';
-			$fileName = str_replace("/","",$fileName);
-			$fileName = str_replace(" ","_",$fileName);
+			$fileName =  preg_replace("/[^a-z0-9\_\-\.]/i", '', $fileName);
 			//$path= SITE_PATH.'/doc'.DS.'hr'.DS.'pdf'.DS.$title.'_'.$Advexpense->employee->fullname.'_'.$Advexpense->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$path = SITE_PATH.DS.$fileName;
 			$pathcopy = 'doc\\hr\\pdf\\' . $title . '_' . $Advexpense->employee->fullname . '_' . $Advexpense->employee->sapid . '_' . date("YmdHis") . '.pdf';
 			if (file_exists($path)) {
-			unlink($path);
-			}
+				unlink($path);
+			}	
+			
 			$Worksheet->ExportAsFixedFormat($xlTypePDF, $path, $xlQualityStandard);
-			$Advexpense->approveddoc=str_replace("\\","/",$fileName);
-			$Advexpense->save();
-
+			
 			// $excel->Application->CutCopyMode(false);
 			$excel->CutCopyMode = false;
 			$Workbook->Close(false);
@@ -2121,13 +2119,14 @@ Class Advexpensemodule extends Application{
 			$excel->Workbooks->Close();
 			$excel->Quit();
 			unset($excel);
-
+			
 			$output = 200;
 			echo json_encode($output);
-
+			
 			$this->pathcopy = $fileName;
 			$this->processcopy($fileName);
-
+			$Advexpense->approveddoc=str_replace("\\","/",$fileName);
+			$Advexpense->save();
 			return $fileName;
 
 		} catch(com_exception $e) {  
