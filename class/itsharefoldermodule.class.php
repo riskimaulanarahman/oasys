@@ -1326,15 +1326,16 @@ Class Itsharefoldermodule extends Application{
 
 			$xlTypePDF = 0;
 			$xlQualityStandard = 0;
-			$fileName ='doc'.DS.'it'.DS.'pdf'.DS.$title.'_'.$Itsharef->employee->fullname.'_'.$Itsharef->employee->sapid.'_'.date("YmdHis").'.pdf';
-			$fileName = str_replace("/","",$fileName);
-			$path= SITE_PATH.'/doc'.DS.'it'.DS.'pdf'.DS.$title.'_'.$Itsharef->employee->fullname.'_'.$Itsharef->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$fileName =$title.'_'.$Itsharef->employee->fullname.'_'.$Itsharef->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$fileName =  preg_replace("/[^a-z0-9\_\-\.]/i", '', $fileName);
+			$filePath = 'doc'.DS.'it'.DS.'pdf'.DS.$fileName;
+			$path= SITE_PATH.DS.$filePath;
 			$pathcopy = 'doc\\it\\pdf\\' .$title.'_'.$Itsharef->employee->fullname.'_'.$Itsharef->employee->sapid.'_'.date("YmdHis").'.pdf';
 			if (file_exists($path)) {
 			unlink($path);
 			}
 			$Worksheet->ExportAsFixedFormat($xlTypePDF, $path, $xlQualityStandard);
-			$Itsharef->approveddoc=str_replace("\\","/",$fileName);
+			$Itsharef->approveddoc=str_replace("\\","/",$filePath);
 			$Itsharef->save();
 
 			// $excel->Application->CutCopyMode(false);
@@ -1349,10 +1350,10 @@ Class Itsharefoldermodule extends Application{
 			$output = 200;
 			echo json_encode($output);
 
-			$this->pathcopy = $pathcopy;
-			// $this->processcopy($pathcopy);
+			$this->pathcopy = $filePath;
+			// $this->processcopy($filePath);
 
-			return $fileName;
+			return $filePath;
 
 		} catch(com_exception $e) {  
 			$err = new Errorlog();

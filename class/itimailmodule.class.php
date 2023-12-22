@@ -2233,16 +2233,17 @@ Class Itimailmodule extends Application{
 			$xlTypePDF = 0;
 			$xlQualityStandard = 0;
 			// $fileName ='doc'.DS.'it'.DS.'pdf'.DS.$title.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
-			$fileName ='doc'.DS.'it'.DS.'pdf'.DS.$title.'_'.$Itimail->employee->fullname.'_'.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
-			$fileName = str_replace("/","",$fileName);
+			$fileName =$title.'_'.$Itimail->employee->fullname.'_'.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$fileName =  preg_replace("/[^a-z0-9\_\-\.]/i", '', $fileName);
+			$filePath = 'doc'.DS.'it'.DS.'pdf'.DS.$fileName;
 			// $path= SITE_PATH.'/doc'.DS.'it'.DS.'pdf'.DS.$title.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
-			$path= SITE_PATH.'/doc'.DS.'it'.DS.'pdf'.DS.$title.'_'.$Itimail->employee->fullname.'_'.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$path= SITE_PATH.DS.$filePath;
 			$pathcopy = 'doc\\it\\pdf\\' . $title.'_'.$Itimail->employee->fullname.'_'.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
 			if (file_exists($path)) {
 			unlink($path);
 			}
 			$Worksheet->ExportAsFixedFormat($xlTypePDF, $path, $xlQualityStandard);
-			$Itimail->approveddoc=str_replace("\\","/",$fileName);
+			$Itimail->approveddoc=str_replace("\\","/",$filePath);
 			$Itimail->save();
 
 			$Workbook->Close(false);
@@ -2255,8 +2256,8 @@ Class Itimailmodule extends Application{
 			$output = 200;
 			echo json_encode($output);
 
-			$this->pathcopy = $pathcopy;
-			// $this->processcopy($pathcopy);
+			$this->pathcopy = $filePath;
+			// $this->processcopy($filePath);
 
 			return $fileName;
 
