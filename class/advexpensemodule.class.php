@@ -2102,6 +2102,7 @@ Class Advexpensemodule extends Application{
 			$xlQualityStandard = 0;
 			$fileName ='doc'.DS.'hr'.DS.'pdf'.DS.$title.'_'.$Advexpense->employee->fullname.'_'.$Advexpense->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$fileName = str_replace("/","",$fileName);
+			$fileName = str_replace(" ","_",$fileName);
 			//$path= SITE_PATH.'/doc'.DS.'hr'.DS.'pdf'.DS.$title.'_'.$Advexpense->employee->fullname.'_'.$Advexpense->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$path = SITE_PATH.DS.$fileName;
 			$pathcopy = 'doc\\hr\\pdf\\' . $title . '_' . $Advexpense->employee->fullname . '_' . $Advexpense->employee->sapid . '_' . date("YmdHis") . '.pdf';
