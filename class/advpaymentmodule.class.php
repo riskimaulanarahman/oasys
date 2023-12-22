@@ -2486,9 +2486,7 @@ Class Advpaymentmodule extends Application{
 			unlink($path);
 			}
 			$Worksheet->ExportAsFixedFormat($xlTypePDF, $path, $xlQualityStandard);
-			$Advpayment->approveddoc=str_replace("\\","/",$fileName);
-			$Advpayment->save();
-
+			
 			// $excel->Application->CutCopyMode(false);
 			$excel->CutCopyMode = false;
 			$Workbook->Close(false);
@@ -2497,13 +2495,15 @@ Class Advpaymentmodule extends Application{
 			$excel->Workbooks->Close();
 			$excel->Quit();
 			unset($excel);
-
+			
 			$output = 200;
 			echo json_encode($output);
-
-			$this->pathcopy = $pathcopy;
-			$this->processcopy($pathcopy);
-
+			
+			$this->pathcopy = $fileName;
+			$this->processcopy($fileName);
+			$Advpayment->approveddoc=str_replace("\\","/",$fileName);
+			$Advpayment->save();
+			
 			return $fileName;
 
 		} catch(com_exception $e) {  
