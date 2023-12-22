@@ -2102,7 +2102,8 @@ Class Advexpensemodule extends Application{
 			$xlQualityStandard = 0;
 			$fileName ='doc'.DS.'hr'.DS.'pdf'.DS.$title.'_'.$Advexpense->employee->fullname.'_'.$Advexpense->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$fileName = str_replace("/","",$fileName);
-			$path= SITE_PATH.'/doc'.DS.'hr'.DS.'pdf'.DS.$title.'_'.$Advexpense->employee->fullname.'_'.$Advexpense->employee->sapid.'_'.date("YmdHis").'.pdf';
+			//$path= SITE_PATH.'/doc'.DS.'hr'.DS.'pdf'.DS.$title.'_'.$Advexpense->employee->fullname.'_'.$Advexpense->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$path = SITE_PATH.DS.$fileName;
 			$pathcopy = 'doc\\hr\\pdf\\' . $title . '_' . $Advexpense->employee->fullname . '_' . $Advexpense->employee->sapid . '_' . date("YmdHis") . '.pdf';
 			if (file_exists($path)) {
 			unlink($path);
@@ -2123,8 +2124,8 @@ Class Advexpensemodule extends Application{
 			$output = 200;
 			echo json_encode($output);
 
-			$this->pathcopy = $pathcopy;
-			$this->processcopy($pathcopy);
+			$this->pathcopy = $fileName;
+			$this->processcopy($fileName);
 
 			return $fileName;
 
