@@ -1422,7 +1422,7 @@ Class Mmfmodule extends Application{
 			$Tr->approveddoc=str_replace("\\","/",$fileName);
 			$Tr->save();
 
-			$this->pathcopy = $pathcopy;
+			$this->pathcopy = $fileName;
 
 			// $this->processcopy($pathcopy);
 

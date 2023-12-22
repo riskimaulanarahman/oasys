@@ -1731,7 +1731,7 @@ Class Mmf30module extends Application{
 			$Mmf30->approveddoc=str_replace("\\","/",$fileName);
 			$Mmf30->save();
 
-			$this->pathcopy = $pathcopy;
+			$this->pathcopy = $fileName;
 			
 			// $this->processcopy($pathcopy);
 			
