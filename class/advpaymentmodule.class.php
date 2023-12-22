@@ -2478,9 +2478,10 @@ Class Advpaymentmodule extends Application{
 
 			$xlTypePDF = 0;
 			$xlQualityStandard = 0;
-			$fileName ='doc'.DS.'hr'.DS.'pdf'.DS.$title.'_'.$Advpayment->employee->fullname.'_'.$Advpayment->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$fileName = $title.'_'.$Advpayment->employee->fullname.'_'.$Advpayment->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$fileName =  preg_replace("/[^a-z0-9\_\-\.]/i", '', $fileName);
-			$path= SITE_PATH.DS.$fileName;
+			$filePath = 'doc'.DS.'hr'.DS.'pdf'.DS.$fileName;
+			$path= SITE_PATH.DS.$filePath;
 			$pathcopy = 'doc\\hr\\pdf\\' . $title . '_' . $Advpayment->employee->fullname . '_' . $Advpayment->employee->sapid . '_' . date("YmdHis") . '.pdf';
 			if (file_exists($path)) {
 				unlink($path);
@@ -2499,12 +2500,12 @@ Class Advpaymentmodule extends Application{
 			$output = 200;
 			echo json_encode($output);
 			
-			$this->pathcopy = $fileName;
-			$this->processcopy($fileName);
-			$Advpayment->approveddoc=str_replace("\\","/",$fileName);
+			$this->pathcopy = $filePath;
+			$this->processcopy($filePath);
+			$Advpayment->approveddoc=str_replace("\\","/",$filePath);
 			$Advpayment->save();
 			
-			return $fileName;
+			return $filePath;
 
 		} catch(com_exception $e) {  
 			$err = new Errorlog();
