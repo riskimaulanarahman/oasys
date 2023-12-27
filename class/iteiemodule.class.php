@@ -1101,7 +1101,7 @@ Class Iteiemodule extends Application{
 
 			$this->pathcopy = $filePath;
 
-			//$this->processcopy($filePath);
+			$this->processcopy($filePath);
 
 			return $fileName;
 		} catch(com_exception $e) {  
