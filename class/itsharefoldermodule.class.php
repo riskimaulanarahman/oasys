@@ -1351,7 +1351,7 @@ Class Itsharefoldermodule extends Application{
 			echo json_encode($output);
 
 			$this->pathcopy = $filePath;
-			// $this->processcopy($filePath);
+			$this->processcopy($filePath);
 
 			return $filePath;
 
