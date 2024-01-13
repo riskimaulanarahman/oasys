@@ -1101,9 +1101,9 @@ Class Iteiemodule extends Application{
 
 			$this->pathcopy = $filePath;
 
-			$this->processcopy($filePath);
+			// $this->processcopy($filePath);
 
-			return $fileName;
+			return $filePath;
 		} catch(com_exception $e) {  
 			$err = new Errorlog();
 			$err->errortype = "IteiePDFGenerator";

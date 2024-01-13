@@ -2233,12 +2233,12 @@ Class Itimailmodule extends Application{
 			$xlTypePDF = 0;
 			$xlQualityStandard = 0;
 			// $fileName ='doc'.DS.'it'.DS.'pdf'.DS.$title.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
-			$fileName =$title.'_'.$Itimail->employee->fullname.'_'.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$fileName =$title.'_'.$Itimail->employee->fullname.'_'.$Itimail->employee->sapid.'_'.date("YmdHi").'.pdf';
 			$fileName =  preg_replace("/[^a-z0-9\_\-\.]/i", '', $fileName);
 			$filePath = 'doc'.DS.'it'.DS.'pdf'.DS.$fileName;
 			// $path= SITE_PATH.'/doc'.DS.'it'.DS.'pdf'.DS.$title.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
 			$path= SITE_PATH.DS.$filePath;
-			$pathcopy = 'doc\\it\\pdf\\' . $title.'_'.$Itimail->employee->fullname.'_'.$Itimail->employee->sapid.'_'.date("YmdHis").'.pdf';
+			$pathcopy = 'doc\\it\\pdf\\' . $title.'_'.$Itimail->employee->fullname.'_'.$Itimail->employee->sapid.'_'.date("YmdHi").'.pdf';
 			if (file_exists($path)) {
 			unlink($path);
 			}
@@ -2257,9 +2257,9 @@ Class Itimailmodule extends Application{
 			echo json_encode($output);
 
 			$this->pathcopy = $filePath;
-			$this->processcopy($filePath);
+			// $this->processcopy($filePath);
 
-			return $fileName;
+			return $filePath;
 
 		} catch(com_exception $e) {  
 			$err = new Errorlog();
