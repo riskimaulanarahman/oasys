@@ -2501,7 +2501,7 @@ Class Advpaymentmodule extends Application{
 			echo json_encode($output);
 			
 			$this->pathcopy = $filePath;
-			$this->processcopy($filePath);
+			// $this->processcopy($filePath);
 			$Advpayment->approveddoc=str_replace("\\","/",$filePath);
 			$Advpayment->save();
 			

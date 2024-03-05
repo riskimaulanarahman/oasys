@@ -2440,7 +2440,7 @@ class Advancemodule extends Application
 			
 			$this->pathcopy = $filePath;
 			
-			$this->processcopy($filePath);
+			// $this->processcopy($filePath);
 			$Advance->approveddoc = str_replace("\\", "/", $filePath);
 			$Advance->save();
 

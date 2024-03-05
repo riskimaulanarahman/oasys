@@ -2125,7 +2125,7 @@ Class Advexpensemodule extends Application{
 			echo json_encode($output);
 			
 			$this->pathcopy = $filePath;
-			$this->processcopy($filePath);
+			// $this->processcopy($filePath);
 			$Advexpense->approveddoc=str_replace("\\","/",$filePath);
 			$Advexpense->save();
 			return $filePath;
