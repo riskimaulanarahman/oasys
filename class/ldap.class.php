@@ -54,6 +54,7 @@ class LDAP{
 		if ($this->conn) {
 			ldap_set_option($this->conn, LDAP_OPT_REFERRALS, 0);
 			ldap_set_option($this->conn, LDAP_OPT_PROTOCOL_VERSION, 3);
+			ldap_set_option($this->conn, LDAP_OPT_NETWORK_TIMEOUT, 60);
 			//return ldap_bind($this->conn, $this->domain."\\".$this->username, $this->password);	
 			$bind = ldap_bind($this->conn, $this->domain."\\".$this->username, $this->password);
 			$this->error = ldap_error($this->conn);
