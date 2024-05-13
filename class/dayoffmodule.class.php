@@ -84,6 +84,7 @@ Class DayoffModule extends Application{
 				$dateSup = date("d/m/Y",strtotime($data->approvaldate));
 			}
 			if(($data->approver->approvaltype->id==1) || ($data->approver->employee_id==$Dayoff->depthead)){
+				$levelid=$Dayoff->employee->level_id;
 				$dhname = $data->approver->employee->fullname;
 				$datedh = date("d/m/Y",strtotime($data->approvaldate));
 				if (($levelid==4) || ($levelid==6)){
@@ -129,7 +130,7 @@ Class DayoffModule extends Application{
 		$pdfContent .= "<small><ol><li>This form is used based on superior's instruction only.</li>";
 		$pdfContent .= "<li>Employee should complete this form and submit to BG HR</li>";
 		$pdfContent .= "<li>Asteriks (*) indicates a mandatory field</li>";
-		$pdfContent .= "<li>Approving Superior/BU Head/Deputy MD is required to initial on every coverage date</li></ol></small>";
+		$pdfContent .= "<li>Approving Superior/BU Head/GM KF is required to initial on every coverage date</li></ol></small>";
 		$pdfContent .= '<table border=0 cellspacing=3 cellpadding=3>';
 		$pdfContent .= '<tr><td>*Personnel Number (SAP ID)</td><td>:</td><td style="border:solid windowtext 1.0pt;padding:2.5pt 5.4pt 2.5pt 5.4pt;">'.$emp['sapid'].'</td><td style="width=10px;"></td><td>*Superior Name</td><td>:</td><td style="border:solid windowtext 1.0pt;padding:2.5pt 5.4pt 2.5pt 5.4pt;">'.$supname.'</td></tr>
 						<tr><td>*Name</td><td>:</td><td style="border:solid windowtext 1.0pt;padding:2.5pt 5.4pt 2.5pt 5.4pt;">'.$emp['fullname'].'</td><td style="width=10px;"></td><td>*Superior Email</td><td>:</td><td style="border:solid windowtext 1.0pt;padding:2.5pt 5.4pt 2.5pt 5.4pt;">'.$supemail.'</td></tr>
@@ -155,7 +156,7 @@ Class DayoffModule extends Application{
 					<tr><td rowspan=2 style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;"></td>
 					<td colspan=2 style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;text-align:center;background:#C2C2F2;">D2 & above & IS</td></tr>
 					<tr><td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;text-align:center;background:#C2C2F2;">BU Head</td>
-					<td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;text-align:center;background:#C2C2F2;">Deputy MD</td></tr>';
+					<td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;text-align:center;background:#C2C2F2;">GM KF</td></tr>';
 		foreach ($Dayoffdetail as $data){
 			if($data['isapproved']){
 				$reason = wordwrap($data['reason'], 60, "<br>");
@@ -170,7 +171,7 @@ Class DayoffModule extends Application{
 		}
 		$pdfContent .= "</table><small>Note :<br>";
 		$pdfContent .= "- The coverage days listed will be forfeited if it is not claimed within the validity period as per SOP.<br>";
-		$pdfContent .= "- Level Approval :<div >- C1-D1 National Staff must be approved by Dept. Head & BU Head.<br>- D2 and above National Staff and all level International Staff must be approved by BU Head & Deputy MD.</div></small>";
+		$pdfContent .= "- Level Approval :<div >- C1-D1 National Staff must be approved by Dept. Head & BU Head.<br>- D2 and above National Staff and all level International Staff must be approved by BU Head & GM KF.</div></small>";
 		
 		$pdfContent .= '<br><table border=0 cellspacing=0 cellpadding=0 style="width:511.95pt;margin-left:1.85pt;border-collapse:collapse">
 						<tr style="height:12.75pt"><th style="padding:0in 5.4pt 0in 5.4pt;height:12.75pt" colspan=2>Applied by:</th><th></th><th colspan=2>Assigned by:</th><th></th><th colspan=2>Acknowledged by:</th></tr>
@@ -623,7 +624,7 @@ Class DayoffModule extends Application{
 										$pdfContent .= "<small><ol><li>This form is used based on superior's instruction only.</li>";
 										$pdfContent .= "<li>Employee should complete this form and submit to BG HR</li>";
 										$pdfContent .= "<li>Asteriks (*) indicates a mandatory field</li>";
-										$pdfContent .= "<li>Approving Superior/BU Head/Deputy MD is required to initial on every coverage date</li></ol></small>";
+										$pdfContent .= "<li>Approving Superior/BU Head/GM KF is required to initial on every coverage date</li></ol></small>";
 										$pdfContent .= "<table border=0 cellspacing=3 cellpadding=3>";
 										$pdfContent .= '<tr><td>*Personnel Number (SAP ID)</td><td>:</td><td style="border:solid windowtext 1.0pt;padding:2.5pt 5.4pt 2.5pt 5.4pt;">'.$emp['sapid'].'</td><td style="width=10px;"></td><td>*Superior Name</td><td>:</td><td style="border:solid windowtext 1.0pt;padding:2.5pt 5.4pt 2.5pt 5.4pt;">'.$supname.'</td></tr>
 														<tr><td>*Name</td><td>:</td><td style="border:solid windowtext 1.0pt;padding:2.5pt 5.4pt 2.5pt 5.4pt;">'.$emp['fullname'].'</td><td style="width=10px;"></td><td>*Superior Email</td><td>:</td><td style="border:solid windowtext 1.0pt;padding:2.5pt 5.4pt 2.5pt 5.4pt;">'.$supemail.'</td></tr>
@@ -649,7 +650,7 @@ Class DayoffModule extends Application{
 													<tr><td rowspan=2 style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;"></td>
 													<td colspan=2 style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;text-align:center;background:#C2C2F2;">D2 & above & IS</td></tr>
 													<tr><td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;text-align:center;background:#C2C2F2;">BU Head</td>
-													<td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;text-align:center;background:#C2C2F2;">Deputy MD</td></tr>';
+													<td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;border-left:none;border-top:none;text-align:center;background:#C2C2F2;">GM KF</td></tr>';
 										foreach ($Dayoffdetail as $data){
 											if ($data['isapproved']){
 												$pdfContent .= '<tr><td style="padding:0in 5.4pt 0in 5.4pt;border:solid windowtext 1.0pt;none;border-top:none;">'.date('d/m/Y', strtotime($data['dateworked'])).'</td>
@@ -663,7 +664,7 @@ Class DayoffModule extends Application{
 										}
 										$pdfContent .= "</table><small>Note :<br>";
 										$pdfContent .= "- The coverage days listed will be forfeited if it is not claimed within the validity period as per SOP.<br>";
-										$pdfContent .= "- Level Approval :<div >- C1-D1 National Staff must be approved by Dept. Head & BU Head.<br>- D2 and above National Staff and all level International Staff must be approved by BU Head & Deputy MD.</div></small>";
+										$pdfContent .= "- Level Approval :<div >- C1-D1 National Staff must be approved by Dept. Head & BU Head.<br>- D2 and above National Staff and all level International Staff must be approved by BU Head & GM KF.</div></small>";
 										
 										$pdfContent .= '<br><table border=0 cellspacing=0 cellpadding=0 style="width:511.95pt;margin-left:1.85pt;border-collapse:collapse">
 														<tr style="height:12.75pt"><th style="padding:0in 5.4pt 0in 5.4pt;height:12.75pt" colspan=2>Applied by:</th><th></th><th colspan=2>Assigned by:</th><th></th><th colspan=2>Acknowledged by:</th></tr>
