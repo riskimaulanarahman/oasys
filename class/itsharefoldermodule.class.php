@@ -692,7 +692,7 @@ Class Itsharefoldermodule extends Application{
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 						$join   = "LEFT JOIN tbl_approver ON (tbl_itsharefapproval.approver_id = tbl_approver.id) ";
 						if (isset($data['mode'])){
-							$Itsharefapproval = Itsharefapproval::find('first', array('joins'=>$join,'conditions' => array("itsharef_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
+							$Itsharefapproval = Itsharefapproval::find('first', array('joins'=>$join,'conditions' => array("itsharef_id=? and tbl_approver.employee_id=? and ApprovalStatus = 0",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
 							unset($data['mode']);
 						}else{
 							$Itsharefapproval = Itsharefapproval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));

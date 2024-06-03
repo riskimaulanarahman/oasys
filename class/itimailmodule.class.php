@@ -1259,7 +1259,7 @@ Class Itimailmodule extends Application{
 						$join   = "LEFT JOIN tbl_approver ON (tbl_itimailapproval.approver_id = tbl_approver.id) ";
 						if (isset($data['mode'])){
 							
-							$Itimailapproval = Itimailapproval::find('first', array('joins'=>$join,'conditions' => array("itimail_id=? and tbl_approver.employee_id=?",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
+							$Itimailapproval = Itimailapproval::find('first', array('joins'=>$join,'conditions' => array("itimail_id=? and tbl_approver.employee_id=? and ApprovalStatus = 0",$doid,$Employee->id),'include' => array('approver'=>array('employee','approvaltype'))));
 							unset($data['mode']);
 						}else{
 							$Itimailapproval = Itimailapproval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
