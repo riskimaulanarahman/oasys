@@ -195,66 +195,6 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 						colSpan:2,
 						colCount : 2,
 						items: [
-							// Employee Options
-							{
-								label: {
-									text: "Create for Employee"
-								},
-								dataField: "employee_id",
-								editorType: "dxDropDownBox",
-								visible: true,
-								editorOptions: {
-									readOnly: (($scope.mode == 'edit') || ($scope.mode == 'add')) ? false : true,
-									dataSource: $scope.allDeptEmpDataSource,
-									valueExpr: 'id',
-									displayExpr: 'fullname',
-									searchEnabled: true,
-									contentTemplate: function (e) {
-										var $dataGrid = $("<div>").dxDataGrid({
-											dataSource: e.component.option("dataSource"),
-											columns: [{ dataField: "fullname", width: 100 }, { dataField: "company", width: 50 }, { dataField: "department", width: 200 }],
-											height: 265,
-											selection: { mode: "single" },
-											selectedRowKeys: [e.component.option("value")],
-											focusedRowEnabled: true,
-											focusedRowKey: e.component.option("value"),
-											searchPanel: {
-												visible: true,
-												width: 265,
-												placeholder: "Search..."
-											},
-											onSelectionChanged: function (selectedItems) {
-												var keys = selectedItems.selectedRowKeys,
-													hasSelection = keys.length;
-												if (hasSelection) {
-
-													e.component.option("value", keys[0]);
-													e.component.close();
-
-												}
-											}
-										});
-										return $dataGrid;
-									},
-									onValueChanged: function (e) {
-										console.log(e);
-										criteria = { status: 'chemp', employee_id: e.value, advance_id: $scope.Requestid, mode: $scope.mode };
-										if ($scope.mode == 'edit' || $scope.mode == 'add') {
-
-											CrudService.FindData('advance', criteria).then(function (response) {
-												$scope.formInstance.updateData('advanceno', response.advanceno);
-												$scope.grid2Component.refresh();
-											})
-											$scope.formInstance.updateData('advanceform', null);
-										}
-
-									}
-								},
-								validationRules: [{
-									type: "required",
-									message: "Please select employee"
-								}]
-							},
 							{
                                 dataField:'paymentform',
 								name:'paymentform',
