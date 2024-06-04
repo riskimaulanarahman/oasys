@@ -857,7 +857,7 @@
 			columnMinWidth: 50,
 			columnAutoWidth: true,
 			columns: [
-				{ dataField: 'ticketfor', validationRules: [{ type: "required" }], caption: "Ticket For", lookup: { dataSource: [{ key: "Employee", val: "Employee" }, { key: "Family", val: "Family" }, { key: "Guest", val: "Guest" }], valueExpr: "key", displayExpr: "val" }, dataType: "string", editorOptions: { disabled: (($scope.mode == 'approve') || ($scope.mode == 'view')) ? true : false } },
+				{ dataField: 'ticketfor', validationRules: [{ type: "required" }], caption: "Ticket For", lookup: { dataSource: [{ key: "Employee", val: "Employee" }, { key: "Family", val: "Family" }, { key: "Contractor", val: "Contractor" }, { key: "Guest", val: "Guest" }], valueExpr: "key", displayExpr: "val" }, dataType: "string", editorOptions: { disabled: (($scope.mode == 'approve') || ($scope.mode == 'view')) ? true : false } },
 				{ dataField: 'ticketname', validationRules: [{ type: "required" }], caption: "Name", dataType: "string", editorOptions: { disabled: (($scope.mode == 'approve') || ($scope.mode == 'view')) ? true : false } },
 				{ dataField: 'dateofbirth', validationRules: [{ type: "required" }], width: 100, caption: "Date of Birth", dataType: "date", format: 'dd/MM/yyyy', editorType: "dxDateBox", editorOptions: { displayFormat: "dd/MM/yyyy", max: Date.now(), disabled: (($scope.mode == 'approve') || ($scope.mode == 'view') || ($scope.mode == 'report')) ? true : false } },
 				{ dataField: 'phonenumber', caption: "Phone Number", dataType: "string", editorOptions: { disabled: (($scope.mode == 'approve') || ($scope.mode == 'view')) ? true : false } },
@@ -895,9 +895,23 @@
 					}
 				});
 			},
+			onRowPrepared: function (info) {
+				if (info.rowType === 'data') {
+					var data = info.data;
+					var age = Math.floor((new Date() - new Date(data.dateofbirth)) / (365.25 * 24 * 60 * 60 * 1000));
+					if (data.ticketfor === 'Contractor' && age < 18) {
+						info.rowElement.css({ 'font-weight': 'bold',"color": "blue" , "background-color": "#ffe6e6" });
+						//data.hrremarks = "Age is under 18 years old please complete the required document for contractor"
+						if (!$scope.alert) {
+							$scope.alert = true;
+							DevExpress.ui.dialog.alert("The red color indicates that there is a contractor under 18 years old. Please complete the required documentation for the contractor.")
+						}
+					}
+				}
+			}
 		};
 		$scope.AppType = [{ id: 0, apptype: "Verification" }, { id: 1, apptype: "HOD Approval" }, { id: 2, apptype: "Final Approval" }];
-
+		$scope.alert = false
 		$scope.empDataSource = {
 			store: new DevExpress.data.CustomStore({
 				key: "id",
