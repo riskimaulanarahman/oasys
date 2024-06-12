@@ -1471,6 +1471,8 @@ Class Itimailmodule extends Application{
 										$emailD = 'ptadindo.com';
 									}else if($Itimail->emaildomain == 6) {
 										$emailD = 'D1.LCL';
+									}else if($Itimail->emaildomain == 7) {
+										$emailD = 'nusantaralestari.com';
 									}else {
 										$emailD = '';
 									}
