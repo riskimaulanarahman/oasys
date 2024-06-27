@@ -136,7 +136,7 @@ app.register.controller('advanceCtrl', ['$rootScope','$scope', '$http', '$interv
 						container.text(options.rowIndex +1);
 					}
                 },
-				{dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200},
+				{dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200, sortOrder: "desc"},
                 {dataField:'fullname',caption:"Request For Employee",width: 200},
                 {dataField:'advanceform',caption:"Form Type",encodeHtml: false ,width: 200,
 					customizeText: function (e) {
