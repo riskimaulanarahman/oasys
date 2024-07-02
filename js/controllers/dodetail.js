@@ -949,6 +949,7 @@
         }
         $scope.onFormSubmit = function(e) {
             e.preventDefault();
+            var reqstatussubmit = $scope.formInstance.option("formData").requeststatus;
             criteria = {status:'waiting',username:$scope.formInstance.option("formData").employee_id,id:$scope.Requestid};
             CrudService.FindData('dayoffbyemp',criteria).then(function (response){
                 if(response.jml>0){
@@ -960,7 +961,7 @@
                             criteria = {status:'approver',dayoff_id:$scope.Requestid};
                             CrudService.FindData('dodetail',criteria).then(function (response){
                                 if(response.jml>0){
-                                    if(response.dateworked > 0){
+                                    if(response.dateworked > 0 && reqstatussubmit == 0){
                                         DevExpress.ui.dialog.alert("Sorry, you cannot submit the request as the dateworked is more than 7 days ago from today","Error");
                                     } else {
                                         var data = $scope.formInstance.option("formData");
