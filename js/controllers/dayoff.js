@@ -70,6 +70,11 @@ app.register.controller('dayoffCtrl', ['$rootScope','$scope', '$http', '$interva
         headerFilter: {
             visible: true
         },
+        stateStoring: {
+            enabled: true,
+            type: 'localStorage',
+            storageKey: 'storage',
+        },
         columns: [{
                     caption: "Action",
                     fixed: true,
