@@ -108,7 +108,7 @@ app.register.controller('dayoffCtrl', ['$rootScope','$scope', '$http', '$interva
 					}
                 },
 				
-				{dataField:'requestdate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200},
+				{dataField:'requestdate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200, sortOrder: "desc"},
 				{dataField:'fullname',caption:"Request for Employee",width: 200},
 				{dataField:'requeststatus',encodeHtml: false ,width: 300,
 					customizeText: function (e) {

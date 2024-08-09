@@ -107,7 +107,7 @@
                             container.text(options.rowIndex +1);
                         }
                     },
-                    {dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200},
+                    {dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200, sortOrder: "desc"},
                     {dataField:'formtype',caption:"Form Type",width: 200,
                     customizeText: function (e) {
                         // console.log(e);

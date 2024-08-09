@@ -118,7 +118,7 @@ app.register.controller('rfcCtrl', ['$rootScope','$scope', '$http', '$interval',
 						container.text(options.rowIndex +1);
 					}
                 },
-				{dataField:'createddate',caption:"Creation Date",fixed: true, fixedPosition: "left",dataType:"date", format:"dd/MM/yyyy h:m:ss"},
+				{dataField:'createddate',caption:"Creation Date",fixed: true, fixedPosition: "left",dataType:"date", format:"dd/MM/yyyy h:m:ss", sortOrder: "desc"},
 				{dataField:'requeststatus',encodeHtml: false ,fixed: true, fixedPosition: "left",
 					customizeText: function (e) {
 						var rDesc = ["<span class='mb-2 mr-2 badge badge-pill badge-secondary'>Saved as Draft</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>Waiting Approval</span>","<span class='mb-2 mr-2 badge badge-pill badge-warning'>Require Rework</span>","<span class='mb-2 mr-2 badge badge-pill badge-success'>Approved</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Rejected</span>",""];

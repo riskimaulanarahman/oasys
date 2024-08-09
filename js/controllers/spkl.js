@@ -107,7 +107,7 @@ app.register.controller('spklCtrl', ['$rootScope','$scope', '$http', '$interval'
 						container.text(options.rowIndex +1);
 					}
                 },
-				{dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200},
+				{dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200, sortOrder: "desc"},
 				{dataField:'datework',caption:"Date Work",dataType:"date", format:"dd/MM/yyyy",width: 200},
 				{dataField:'requeststatus',encodeHtml: false ,width: 300,
 					customizeText: function (e) {
