@@ -223,6 +223,19 @@ Class ContractModule extends Application{
 						}
 						break;
                     case 'all':
+                        $sql = "
+                            UPDATE tbl_contract
+                            SET contractstatus = (
+                                CASE
+                                    WHEN isactive = 0 OR (newcontractno != 0 AND newcontractno != '') THEN 3
+                                    WHEN DATEDIFF(periodend, CURDATE()) < 0 THEN 2
+                                    WHEN DATEDIFF(periodend, CURDATE()) <= 45 THEN 1
+                                    ELSE 0
+                                END
+                            )
+                            WHERE tbl_contract.isdeleted = '0'
+                        ";
+                        Contract::connection()->query($sql);
                         $join = "LEFT JOIN vwcontract v on tbl_contract.id=v.id";
                         $sel = 'tbl_contract.*, v.activitydescr,v.RFCNo,v.ratetype,v.SKNo,v.CompanyCode,v.RFCUser,v.RFCUserEmail ';
                         $Contract = Contract::find('all',array('joins'=>$join,'select'=>$sel,"conditions"=>array("tbl_contract.isdeleted='0'")));
@@ -230,11 +243,11 @@ Class ContractModule extends Application{
                             $date1 = new DateTime(date('Y-m-d'));
                             $date2 = new DateTime($result->periodend);
                             $interval = $date1->diff($date2);
-                            $diff =$interval->days;
+                            /*$diff =$interval->days;
                             $inv = $interval->invert;
                             $status =  ($result->isactive==0 || ($result->newcontractno!=0 && $result->newcontractno!=''))?3:(($inv==1)?2:(($diff<=45)?1:0));
                             $result->contractstatus = $status;
-                            $result->save();
+                            $result->save();*/
                             $result = $result->to_array();
                             $result['diff']=$interval;
                         }					
