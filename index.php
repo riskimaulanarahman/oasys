@@ -754,21 +754,21 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 								</ul>
                             </li>
                             
-                            <li ng-class="{'mm-active': (isActive('/iteie') || isActive('/itimail') || isActive('/itsharefolder') || isActive('/iteieapproval') || isActive('/itimailapproval') || isActive('/itsharefolderapproval'))}">
+                            <li ng-class="{'mm-active': isActive('/itimail') || isActive('/itsharefolder') || isActive('/itimailapproval') || isActive('/itsharefolderapproval'))}">
                             <!-- <li ng-class=""> -->
 								<a href="#"><i class='metismenu-icon pe-7s-science icon-gradient bg-premium-dark'></i>IT Approval<i class="metismenu-state-icon fas pe-7s-angle-down caret-left"></i></a>
-								<ul ng-class="{'mm-show': (isActive('/iteie') || isActive('/itimail') || isActive('/itsharefolder') || isActive('/iteieapproval') || isActive('/itimailapproval') || isActive('/itsharefolderapproval') )}">
+								<ul ng-class="{'mm-show': isActive('/itimail') || isActive('/itsharefolder') || isActive('/itimailapproval') || isActive('/itsharefolderapproval') )}">
                                     <li class="">
                                         <a href="#" aria-expanded="false">
                                             <i class="metismenu-icon"></i><i class='fa fa-calendar-alt'></i> My Request
                                             <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
                                         </a>
                                         <ul class="mm-collapse" style="height: 7.04px;">
-                                            <li>
+                                            <!-- <li>
                                                 <a href="" ng-click="myITEIE()">
                                                     <i class="metismenu-icon"></i>Active Directory
                                                 </a>
-                                            </li>
+                                            </li> -->
                                             <li>
                                                 <a href="" ng-click="myITIMAIL()">
                                                     <i class="metismenu-icon"></i>IT Form
@@ -787,11 +787,11 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                             <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
                                         </a>
                                         <ul class="mm-collapse" style="height: 7.04px;">
-                                        <li>
+                                            <!-- <li>
                                                 <a href="" ng-click="iteieApproval()">
                                                     <i class="metismenu-icon"></i>Active Directory
                                                 </a>
-                                            </li>
+                                            </li> -->
                                             <li>
                                                 <a href="" ng-click="itimailApproval()">
                                                     <i class="metismenu-icon"></i>IT Form
@@ -1000,14 +1000,14 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
     <!-- <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/globalize/0.1.1/globalize.min.js"></script> -->
     <!-- <script src="https://unpkg.com/devextreme-aspnet-data/js/dx.aspnet.data.js"></script> -->
     
-	<script language="JavaScript" src="js/app.js?v=6.06" type="text/javascript"></script>
-	<script language="JavaScript" src="js/directive.js?v=6.06" type="text/javascript"></script>
-	<script language="JavaScript" src="js/services.js?v=6.06" type="text/javascript"></script>
-	<script language="JavaScript" src="js/filter.js?v=6.06" type="text/javascript"></script>
-	<script language="JavaScript" src="js/factory.js?v=6.06" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/maincontroller.js?v=6.06" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/login.js?v=6.06" type="text/javascript"></script>
-	<script language="JavaScript" src="js/script.js?v=6.06" type="text/javascript"></script>
+	<script language="JavaScript" src="js/app.js?v=6.07" type="text/javascript"></script>
+	<script language="JavaScript" src="js/directive.js?v=6.07" type="text/javascript"></script>
+	<script language="JavaScript" src="js/services.js?v=6.07" type="text/javascript"></script>
+	<script language="JavaScript" src="js/filter.js?v=6.07" type="text/javascript"></script>
+	<script language="JavaScript" src="js/factory.js?v=6.07" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/maincontroller.js?v=6.07" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/login.js?v=6.07" type="text/javascript"></script>
+	<script language="JavaScript" src="js/script.js?v=6.07" type="text/javascript"></script>
     <!-- <script type="text/javascript" src="https://demo.dashboardpack.com/architectui-html-pro/assets/scripts/main.d810cf0ae7f39f28f336.js"></script> -->
     
 	<script type="text/javascript" src="assets/scripts/main.js"></script>
