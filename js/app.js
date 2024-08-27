@@ -55,7 +55,7 @@ if (!String.prototype.padStart) {
 var RouteProvider = function () {
 	var scriptPath = "js/controllers/";
 	var templatePath = "template/";
-	var v= '6.07'
+	var v= '6.08'
 	this.resolve = function (name) {
 		var route = {};
 		route.templateUrl = templatePath + name + ".html?v="+v;
@@ -129,7 +129,7 @@ app.config(function ($routeProvider, $controllerProvider) {
 	.when('/mmf30detail', route.resolve("mmf30detail"))
 	.when('/mmf30approval', route.resolve("mmf30approval"))
 	// .when('/iteie', route.resolve("iteie"))
-	// .when('/iteiedetail', route.resolve("iteiedetail"))
+	.when('/iteiedetail', route.resolve("iteiedetail"))
 	// .when('/iteieapproval', route.resolve("iteieapproval"))
 	.when('/iteiereport', route.resolve("iteiereport"))
 	.when('/itimailreport', route.resolve("itimailreport"))

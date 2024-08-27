@@ -92,7 +92,7 @@ Class Login extends Application{
 						$err->user = $username;
 						$err->ip = $this->ip;
 						$err->save();
-						echo json_encode(array("message" => "Login Error : Invalid Credentials"));
+						echo json_encode(array("message" => "Login Error : Invalid Credentials !"));
 					}					
 			}else if ($ldap->connect()) {
 				if($ldap->bind()){
