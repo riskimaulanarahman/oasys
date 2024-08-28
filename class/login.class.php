@@ -92,7 +92,7 @@ Class Login extends Application{
 						$err->user = $username;
 						$err->ip = $this->ip;
 						$err->save();
-						echo json_encode(array("message" => "Login Error : Invalid Credentials !"));
+						echo json_encode(array("message" => "Login Error : Invalid Credentials"));
 					}					
 			}else if ($ldap->connect()) {
 				if($ldap->bind()){
@@ -102,7 +102,7 @@ Class Login extends Application{
 					$jml=($emp)?count($emp->to_array()):0;
 					if($jml==0){
 						http_response_code(401);
-						echo json_encode(array("message" => "Login Error : Your login is not linked to the Employee data, please contact System Administrator"));
+						echo json_encode(array("message" => "Login Error : Your login is not linked to the Employee data, please contact IT, If you require any further information"));
 						// $comp = Company::find('first', array('conditions' => array("companycode=?",$adb->company)));
 						// $empl= new Employee();
 						// $empl->loginname = $ldap->username;
@@ -215,7 +215,7 @@ Class Login extends Application{
 					$err->ip = $this->ip;
 					$err->save();
 					http_response_code(401);
-					echo json_encode(array("message" => "Login Error : ".$ldap->error));
+					echo json_encode(array("message" => "Login Error : ".$ldap->error.", please contact IT, If you require any further information"));
 				}
 			}else{
 				$err = new Errorlog();
