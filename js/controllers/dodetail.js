@@ -13,6 +13,7 @@
                 $scope.logout();
             }else{
                 $scope.data = response;
+                console.log($scope.data.requeststatus);
                 $scope.remaksuser = $scope.data.remarks;
                 if(($scope.mode=='approve')){
                     $scope.data.remarks="";
@@ -184,11 +185,13 @@
                                         });
                                         return $dataGrid;
                                     },onValueChanged: function(e){
-                                        console.log(e);
-                                        criteria = {status:'chemp',employee_id:e.value,dayoff_id:$scope.Requestid};
-                                        CrudService.FindData('dayoff',criteria).then(function (response){
-                                            $scope.grid2Component.refresh();
-                                        })
+                                        if($scope.data.requeststatus == 0) {
+                                            console.log(e);
+                                            criteria = {status:'chemp',employee_id:e.value,dayoff_id:$scope.Requestid};
+                                            CrudService.FindData('dayoff',criteria).then(function (response){
+                                                $scope.grid2Component.refresh();
+                                            })
+                                        }
                                     }
                                 },
                                 validationRules: [{
