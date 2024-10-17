@@ -547,6 +547,13 @@ class Advancemodule extends Application
 											$logger->SaveData();
 										}
 
+										$mgrssl = Advanceapproval::find('all', array('joins' => $joins, 'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=62", $id)));
+										foreach ($mgrssl as $result) {
+											$result->delete();
+											$logger = new Datalogger("Advanceapproval", "delete", json_encode($result->to_array()), "delete Approval Manager SSL");
+											$logger->SaveData();
+										}
+
 										$kfssl = Advanceapproval::find('all', array('joins' => $joins, 'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=45", $id)));
 										foreach ($kfssl as $result) {
 											$result->delete();
@@ -567,17 +574,6 @@ class Advancemodule extends Application
 											$logger = new Datalogger("Advanceapproval", "delete", json_encode($result->to_array()), "delete Approval BU Head");
 											$logger->SaveData();
 										}
-
-
-										// $ApproverFC = Approver::find('first', array('joins' => $joinx, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=41")));
-										// if (count($ApproverFC) > 0) {
-										// 	$Advanceapproval = new Advanceapproval();
-										// 	$Advanceapproval->advance_id = $Advance->id;
-										// 	$Advanceapproval->approver_id = $ApproverFC->id;
-										// 	$Advanceapproval->save();
-										// 	$logger = new Datalogger("Advanceapproval", "add", "Add initial Finance Commite Approval ", json_encode($Advanceapproval->to_array()));
-										// 	$logger->SaveData();
-										// }
 
 										$ApproverHRV = Approver::find('first', array('joins' => $joinx, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and FIND_IN_SET(?, CompanyList) > 0 ", $Employee->companycode)));
 
@@ -631,6 +627,13 @@ class Advancemodule extends Application
 										foreach ($hrv as $result) {
 											$result->delete();
 											$logger = new Datalogger("Advanceapproval", "delete", json_encode($result->to_array()), "delete Approval HR Verifikator");
+											$logger->SaveData();
+										}
+
+										$mgrssl = Advanceapproval::find('all', array('joins' => $joins, 'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=62", $id)));
+										foreach ($mgrssl as $result) {
+											$result->delete();
+											$logger = new Datalogger("Advanceapproval", "delete", json_encode($result->to_array()), "delete Approval Manager SSL");
 											$logger->SaveData();
 										}
 
@@ -711,6 +714,13 @@ class Advancemodule extends Application
 											$logger->SaveData();
 										}
 
+										$mgrssl = Advanceapproval::find('all', array('joins' => $joins, 'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=62", $id)));
+										foreach ($mgrssl as $result) {
+											$result->delete();
+											$logger = new Datalogger("Advanceapproval", "delete", json_encode($result->to_array()), "delete Approval Manager SSL");
+											$logger->SaveData();
+										}
+
 										$kfssl = Advanceapproval::find('all', array('joins' => $joins, 'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=45", $id)));
 										foreach ($kfssl as $result) {
 											$result->delete();
@@ -742,29 +752,6 @@ class Advancemodule extends Application
 											$logger = new Datalogger("Advanceapproval", "add", "Add initial HR Verifikator Approval ", json_encode($Advanceapproval->to_array()));
 											$logger->SaveData();
 										}
-
-										// $ApproverBU = Approver::find('first', array('joins' => $joinx, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and FIND_IN_SET(?, CompanyList) > 0 ", $Employee->companycode)));
-										// if (count($ApproverBU) > 0) {
-										// 	$Advanceapproval = new Advanceapproval();
-										// 	$Advanceapproval->advance_id = $Advance->id;
-										// 	$Advanceapproval->approver_id = $ApproverBU->id;
-										// 	$Advanceapproval->save();
-										// 	$logger = new Datalogger("Advanceapproval", "add", "Add initial BU Head Approval ", json_encode($Advanceapproval->to_array()));
-										// 	$logger->SaveData();
-										// }
-
-										// if ($Employee->companycode !== 'LDU') {
-
-										// 	$ApproverFC = Approver::find('first', array('joins' => $joinx, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=41")));
-										// 	if (count($ApproverFC) > 0) {
-										// 		$Advanceapproval = new Advanceapproval();
-										// 		$Advanceapproval->advance_id = $Advance->id;
-										// 		$Advanceapproval->approver_id = $ApproverFC->id;
-										// 		$Advanceapproval->save();
-										// 		$logger = new Datalogger("Advanceapproval", "add", "Add initial Finance Commite Approval ", json_encode($Advanceapproval->to_array()));
-										// 		$logger->SaveData();
-										// 	}
-										// }
 
 									} else if ($Advance->opscategory == 2) {
 
@@ -846,6 +833,13 @@ class Advancemodule extends Application
 											$logger->SaveData();
 										}
 
+										$mgrssl = Advanceapproval::find('all', array('joins' => $joins, 'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=62", $id)));
+										foreach ($mgrssl as $result) {
+											$result->delete();
+											$logger = new Datalogger("Advanceapproval", "delete", json_encode($result->to_array()), "delete Approval Manager SSL");
+											$logger->SaveData();
+										}
+
 										$kfssl = Advanceapproval::find('all', array('joins' => $joins, 'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=45", $id)));
 										foreach ($kfssl as $result) {
 											$result->delete();
@@ -877,40 +871,10 @@ class Advancemodule extends Application
 											$logger->SaveData();
 										}
 
-										// $ApproverBU = Approver::find('first', array('joins' => $joinx, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and FIND_IN_SET(?, CompanyList) > 0 ", $Employee->companycode)));
-										// if (count($ApproverBU) > 0) {
-										// 	$Advanceapproval = new Advanceapproval();
-										// 	$Advanceapproval->advance_id = $Advance->id;
-										// 	$Advanceapproval->approver_id = $ApproverBU->id;
-										// 	$Advanceapproval->save();
-										// 	$logger = new Datalogger("Advanceapproval", "add", "Add initial BU Head Approval ", json_encode($Advanceapproval->to_array()));
-										// 	$logger->SaveData();
-										// }
-
 										if ($Employee->companycode !== 'LDU') {
-											// $ApproverFC = Approver::find('first', array('joins' => $joinx, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=41")));
-											// if (count($ApproverFC) > 0) {
-											// 	$Advanceapproval = new Advanceapproval();
-											// 	$Advanceapproval->advance_id = $Advance->id;
-											// 	$Advanceapproval->approver_id = $ApproverFC->id;
-											// 	$Advanceapproval->save();
-											// 	$logger = new Datalogger("Advanceapproval", "add", "Add initial Finance Commite Approval ", json_encode($Advanceapproval->to_array()));
-											// 	$logger->SaveData();
-											// }
 
 											if (($tdetailamount >= 5000000)) {
 
-												// if (count($Advanceapprovalproc) == 0) {
-												// 	$ApproverPROC = Approver::find('first', array('joins' => $joinx, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='42' ")));
-												// 	if (count($ApproverPROC) > 0) {
-												// 		$Advanceapproval = new Advanceapproval();
-												// 		$Advanceapproval->advance_id = $Advance->id;
-												// 		$Advanceapproval->approver_id = $ApproverPROC->id;
-												// 		$Advanceapproval->save();
-												// 		$logger = new Datalogger("Advanceapproval", "add", "Add initial PROC", json_encode($Advanceapproval->to_array()));
-												// 		$logger->SaveData();
-												// 	}
-												// }
 											}
 
 										}
@@ -920,6 +884,13 @@ class Advancemodule extends Application
 										foreach ($hrverifikator as $result) {
 											$result->delete();
 											$logger = new Datalogger("Advanceapproval", "delete", json_encode($result->to_array()), "delete Approval HR Verifikator");
+											$logger->SaveData();
+										}
+
+										$mgrssl = Advanceapproval::find('all', array('joins' => $joins, 'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=62", $id)));
+										foreach ($mgrssl as $result) {
+											$result->delete();
+											$logger = new Datalogger("Advanceapproval", "delete", json_encode($result->to_array()), "delete Approval Manager SSL");
 											$logger->SaveData();
 										}
 
@@ -944,15 +915,15 @@ class Advancemodule extends Application
 											$logger->SaveData();
 										}
 
-										// $ApproverBU = Approver::find('first', array('joins' => $joinx, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and FIND_IN_SET(?, CompanyList) > 0 ", $Employee->companycode)));
-										// if (count($ApproverBU) > 0) {
-										// 	$Advanceapproval = new Advanceapproval();
-										// 	$Advanceapproval->advance_id = $Advance->id;
-										// 	$Advanceapproval->approver_id = $ApproverBU->id;
-										// 	$Advanceapproval->save();
-										// 	$logger = new Datalogger("Advanceapproval", "add", "Add initial BU Head Approval ", json_encode($Advanceapproval->to_array()));
-										// 	$logger->SaveData();
-										// }
+										$ApproverMGRSSL = Approver::find('first', array('joins' => $joinx, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='62' ")));
+										if (count($ApproverMGRSSL) > 0) {
+											$Advanceapproval = new Advanceapproval();
+											$Advanceapproval->advance_id = $Advance->id;
+											$Advanceapproval->approver_id = $ApproverMGRSSL->id;
+											$Advanceapproval->save();
+											$logger = new Datalogger("Advanceapproval", "add", "Add initial Manager SSL Approval ", json_encode($Advanceapproval->to_array()));
+											$logger->SaveData();
+										}
 
 										$ApproverKFSSL = Approver::find('first', array('joins' => $joinx, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='45' ")));
 										if (count($ApproverKFSSL) > 0) {
@@ -965,15 +936,6 @@ class Advancemodule extends Application
 										}
 
 										if ($Employee->companycode !== 'LDU') {
-											// $ApproverFC = Approver::find('first', array('joins' => $joinx, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=41")));
-											// if (count($ApproverFC) > 0) {
-											// 	$Advanceapproval = new Advanceapproval();
-											// 	$Advanceapproval->advance_id = $Advance->id;
-											// 	$Advanceapproval->approver_id = $ApproverFC->id;
-											// 	$Advanceapproval->save();
-											// 	$logger = new Datalogger("Advanceapproval", "add", "Add initial Finance Commite Approval ", json_encode($Advanceapproval->to_array()));
-											// 	$logger->SaveData();
-											// }
 										}
 
 									}
@@ -2356,16 +2318,6 @@ class Advancemodule extends Application
 					$pic2->Top = $excel->Cells(29, 12)->Top;
 					$pic2->Left = $excel->Cells(29, 12)->Left;
 				}
-
-				// if (!empty($kfsslname)) {
-				// 	$Worksheet->Range("L26")->Value = 'KF SSL';
-				// 	$Worksheet->Range("L32")->Value = $kfsslname;
-				// 	$Worksheet->Range("L33")->Value = $kfssldate;
-				// 	$pic2 = $Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
-				// 	$pic2->Height = 20;
-				// 	$pic2->Top = $excel->Cells(29, 12)->Top;
-				// 	$pic2->Left = $excel->Cells(29, 12)->Left;
-				// }
 
 				if (!empty($bufcname)) {
 					$Worksheet->Range("A45")->Value = $bufcname;
