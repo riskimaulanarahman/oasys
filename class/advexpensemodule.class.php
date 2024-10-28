@@ -1999,7 +1999,9 @@ Class Advexpensemodule extends Application{
 				}
 
 				// $Worksheet->Range("E22")->Value = $val_tamount+$totalbtro;
-				$Worksheet->Range("E22")->Value = $val_tamount;
+				// return $val_tamount;
+				// print_r($val_tamount);
+				$Worksheet->Range("E22")->Value = round($val_tamount,2);
 				$Worksheet->Range("E24")->Value = $lessadvance;
 				$Worksheet->Range("E26")->Value = ($val_tamount)-$lessadvance;
 				// $Worksheet->Range("E26")->Value = ($val_tamount+$totalbtro)-$lessadvance;
