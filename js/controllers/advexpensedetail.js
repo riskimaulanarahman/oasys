@@ -939,9 +939,18 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 					displayFormat:"dd/MM/yyyy",
                     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin)?false:true):false,
                 }},
-				{dataField:'amount',caption: "Amount", validationRules: [{type: "required"}], width:150,dataType: "number" ,format: "fixedPoint",
+				{
+					dataField:'amount',
+					caption: "Amount", 
+					validationRules: [{type: "required"}], 
+					width:150,
+					// format: "fixedPoint",
+					format: {
+						type: "fixedPoint",
+						precision: 2
+					},
                 editorOptions: {
-					format: "fixedPoint",
+					// format: "fixedPoint",
                     disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?(($rootScope.isAdmin) || (($scope.data.apprstatuscode==2 && $scope.mode=='approve'))?false:true):false
                 }},
 				// {dataField: "currency",caption: "currency", lookup: { 
@@ -993,7 +1002,11 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 				totalItems: [{
 					column: "amount",
 					summaryType: "sum",
-					valueFormat: "fixedPoint",
+					// valueFormat: "fixedPoint",
+					valueFormat: {
+						type: "fixedPoint",
+						precision: 2
+					},
 					displayFormat: "Total: {0}",	
 				}]
 			},
