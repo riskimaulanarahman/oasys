@@ -166,9 +166,9 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.myMMF30= function(){
 		$location.path( "/mmf30" );
 	}
-	$scope.myITEIE= function(){
-		$location.path( "/iteie" );
-	}
+	// $scope.myITEIE= function(){
+	// 	$location.path( "/iteie" );
+	// }
 	$scope.myITIMAIL= function(){
 		$location.path( "/itimail" );
 	}
@@ -258,7 +258,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.TRApproval= function(){ loadModule(true,"trapproval",true);$rootScope.$broadcast("initTR", "");} 
 	$scope.mmfApproval= function(){ loadModule(true,"mmfapproval",true);$rootScope.$broadcast("initMMF", "");} 
 	$scope.mmf30Approval= function(){ loadModule(true,"mmf30approval",true);$rootScope.$broadcast("initMMF30", "");} 
-	$scope.iteieApproval= function(){ loadModule(true,"iteieapproval",true);$rootScope.$broadcast("initITEIE", "");} 
+	// $scope.iteieApproval= function(){ loadModule(true,"iteieapproval",true);$rootScope.$broadcast("initITEIE", "");} 
 	$scope.itimailApproval= function(){ loadModule(true,"itimailapproval",true);$rootScope.$broadcast("initITIMAIL", "");} 
 	$scope.itsharefApproval= function(){ loadModule(true,"itsharefolderapproval",true);$rootScope.$broadcast("initITSHAREF", "");} 
 	$scope.advanceApproval= function(){ loadModule(true,"advanceapproval",true);$rootScope.$broadcast("initAdvance", "");} 

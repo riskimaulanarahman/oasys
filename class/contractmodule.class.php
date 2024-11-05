@@ -461,6 +461,7 @@ Class ContractModule extends Application{
                     $result->save();
                 }
                 $Contract->isdeleted = 1;
+                $Contract->isactive = 0;
                 $Contract->save();
                 $logger = new Datalogger("Contract","delete",json_encode($data),null);
                 $logger->SaveData();
