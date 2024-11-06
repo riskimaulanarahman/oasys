@@ -1684,6 +1684,14 @@ Class Advexpensemodule extends Application{
 
 							}
 							$data=array("jml"=>count($Advexpensedetailbt));
+						}else if(isset($query['filter'])){
+							$join = "LEFT JOIN vwadvexpensereport on tbl_advexpensedetail_bt.advexpense_id=vwadvexpensereport.id";
+							$sel = 'tbl_advexpensedetail_bt.*, vwadvexpensereport.CreatedDate ';
+							$Advexpensedetailbt = Advexpensedetailbt::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('vwadvexpensereport.CreatedDate between ? and ?',$query['startDate'],$query['endDate'] )));
+							foreach ($Advexpensedetailbt as &$result) {	
+								$result	= $result->to_array();
+							}
+							$data=$Advexpensedetailbt;
 						}else{
 							$data=array();
 						}
