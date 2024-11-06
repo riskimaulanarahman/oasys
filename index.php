@@ -719,12 +719,14 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                         </a>
                                         <ul class="mm-collapse" style="height: 7.04px;">
                                             <li>
-                                                <a href="" ng-click="myMMF()">
+                                                <a href="" ng-click="notAvailable()">
+                                                <!-- <a href="" ng-click="myMMF()"> -->
                                                     <i class="metismenu-icon"></i>MMF 28 (Service)
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="" ng-click="myMMF30()">
+                                                <a href="" ng-click="notAvailable()">
+                                                <!-- <a href="" ng-click="myMMF30()"> -->
                                                     <i class="metismenu-icon"></i>MMF 30 (Material)
                                                 </a>
                                             </li>
@@ -738,12 +740,14 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
                                         </a>
                                         <ul class="mm-collapse" style="height: 7.04px;">
                                             <li>
-                                                <a href="" ng-click="mmfApproval()">
+                                                <a href="" ng-click="notAvailable()">
+                                                <!-- <a href="" ng-click="mmfApproval()"> -->
                                                     <i class="metismenu-icon"></i>MMF 28 (Service)
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="" ng-click="mmf30Approval()">
+                                                <a href="" ng-click="notAvailable()">
+                                                <!-- <a href="" ng-click="mmf30Approval()"> -->
                                                     <i class="metismenu-icon"></i>MMF 30 (Material)
                                                 </a>
                                             </li>
@@ -1000,14 +1004,14 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
     <!-- <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/globalize/0.1.1/globalize.min.js"></script> -->
     <!-- <script src="https://unpkg.com/devextreme-aspnet-data/js/dx.aspnet.data.js"></script> -->
     
-	<script language="JavaScript" src="js/app.js?v=6.08" type="text/javascript"></script>
-	<script language="JavaScript" src="js/directive.js?v=6.08" type="text/javascript"></script>
-	<script language="JavaScript" src="js/services.js?v=6.08" type="text/javascript"></script>
-	<script language="JavaScript" src="js/filter.js?v=6.08" type="text/javascript"></script>
-	<script language="JavaScript" src="js/factory.js?v=6.08" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/maincontroller.js?v=6.08" type="text/javascript"></script>
-	<script language="JavaScript" src="js/controllers/login.js?v=6.08" type="text/javascript"></script>
-	<script language="JavaScript" src="js/script.js?v=6.08" type="text/javascript"></script>
+	<script language="JavaScript" src="js/app.js?v=6.10" type="text/javascript"></script>
+	<script language="JavaScript" src="js/directive.js?v=6.10" type="text/javascript"></script>
+	<script language="JavaScript" src="js/services.js?v=6.10" type="text/javascript"></script>
+	<script language="JavaScript" src="js/filter.js?v=6.10" type="text/javascript"></script>
+	<script language="JavaScript" src="js/factory.js?v=6.10" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/maincontroller.js?v=6.10" type="text/javascript"></script>
+	<script language="JavaScript" src="js/controllers/login.js?v=6.10" type="text/javascript"></script>
+	<script language="JavaScript" src="js/script.js?v=6.10" type="text/javascript"></script>
     <!-- <script type="text/javascript" src="https://demo.dashboardpack.com/architectui-html-pro/assets/scripts/main.d810cf0ae7f39f28f336.js"></script> -->
     
 	<script type="text/javascript" src="assets/scripts/main.js"></script>
