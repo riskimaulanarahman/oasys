@@ -561,7 +561,7 @@
                     if (['breakfast', 'lunch', 'dinner', 'pocket'].includes(columnName)) {
                       cellValue = cellValue === 0 ? 'No' : 'Yes';
                     } else if (columnName === 'ispapua') {
-                      cellValue = cellValue === 0 ? 'No' : 'Yes';
+                      cellValue = cellValue === 0 ? 'All Indo,excl.Kaltim,Kaltara,Sulawesi,Papua' : (cellValue === 0 ? 'Kaltim,Kaltara,Sulawesi':'Papua');
                     }
                     Object.assign(row.getCell(columnIndex + currentColumnIndex), {
                       value: cellValue,
