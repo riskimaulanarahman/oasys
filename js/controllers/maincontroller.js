@@ -772,4 +772,12 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.isActive = function (viewLocation) { 
 		return viewLocation === $location.path(); 
 	};
+
+	$scope.notAvailable= function(){
+		alert('Not Available, Migration Process to devPortal system');
+	}
+
+	$scope.toDevportal= function(){
+		alert('Already Move to devPortal system : http://172.18.83.35/devportal');
+	}
 }]);

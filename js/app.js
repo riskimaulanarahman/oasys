@@ -55,7 +55,7 @@ if (!String.prototype.padStart) {
 var RouteProvider = function () {
 	var scriptPath = "js/controllers/";
 	var templatePath = "template/";
-	var v= '6.09'
+	var v= '6.12'
 	this.resolve = function (name) {
 		var route = {};
 		route.templateUrl = templatePath + name + ".html?v="+v;
@@ -120,14 +120,14 @@ app.config(function ($routeProvider, $controllerProvider) {
 	.when('/detailspkltms', route.resolve("detailspkltms"))
 	.when('/spkltmsapproval', route.resolve("spkltmsapproval"))
 	.when('/spkltmsreport', route.resolve("spkltmsreport"))
-	.when('/mmf', route.resolve("mmf"))
+	// .when('/mmf', route.resolve("mmf"))
 	.when('/mmfreport', route.resolve("mmfreport"))
-	.when('/mmfdetail', route.resolve("mmfdetail"))
-	.when('/mmfapproval', route.resolve("mmfapproval"))
-	.when('/mmf30', route.resolve("mmf30"))
+	// .when('/mmfdetail', route.resolve("mmfdetail"))
+	// .when('/mmfapproval', route.resolve("mmfapproval"))
+	// .when('/mmf30', route.resolve("mmf30"))
 	.when('/mmf30report', route.resolve("mmf30report"))
-	.when('/mmf30detail', route.resolve("mmf30detail"))
-	.when('/mmf30approval', route.resolve("mmf30approval"))
+	// .when('/mmf30detail', route.resolve("mmf30detail"))
+	// .when('/mmf30approval', route.resolve("mmf30approval"))
 	// .when('/iteie', route.resolve("iteie"))
 	.when('/iteiedetail', route.resolve("iteiedetail"))
 	// .when('/iteieapproval', route.resolve("iteieapproval"))
