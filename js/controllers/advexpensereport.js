@@ -534,12 +534,12 @@
               });
               worksheet.mergeCells(row.number, columnIndex, row.number, columnIndex+10);
     
-              const columns = ["departdate","departtime","returndate","returntime","breakfast","lunch","dinner","pocket",{dataField:"ispapua",caption:"Region"},"remarks" ];
+              const columns = ["departdate","departtime","returndate","returntime","breakfast","lunch","dinner","pocket","ispapua","remarks" ];
     
               row = insertRow(rowIndex+ i, offset++, 1);
               columns.forEach((columnName, currentColumnIndex) => {
                 Object.assign(row.getCell(columnIndex + currentColumnIndex), {
-                  value: columnName,
+                  value: (columnName==="ispapua")?"Region":columnName,
                   font: { bold: true },
                   fill: {
                     type: "pattern",
