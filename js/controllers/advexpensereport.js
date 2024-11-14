@@ -534,7 +534,7 @@
               });
               worksheet.mergeCells(row.number, columnIndex, row.number, columnIndex+10);
     
-              const columns = ["departdate","departtime","returndate","returntime","breakfast","lunch","dinner","pocket","ispapua","remarks" ];
+              const columns = ["departdate","departtime","returndate","returntime","breakfast","lunch","dinner","pocket",{dataField:"ispapua",caption:"Region"},"remarks" ];
     
               row = insertRow(rowIndex+ i, offset++, 1);
               columns.forEach((columnName, currentColumnIndex) => {
