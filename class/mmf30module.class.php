@@ -318,7 +318,7 @@ Class Mmf30module extends Application{
 									if (!$this->mail->send()) {
 										$err = new Errorlog();
 										$err->errortype = "Mail";
-										$err->errordate = date("Y-m-d h:i:s");
+										$err->errordate = date("Y-m-d H:i:s");
 										$err->errormessage = $this->mail->ErrorInfo;
 										$err->user = $this->currentUser->username;
 										$err->ip = $this->ip;
@@ -412,7 +412,7 @@ Class Mmf30module extends Application{
 							// 	$Trapproval->save();
 							// }
 							$Mmf30history = new Mmf30history();
-							$Mmf30history->date = date("Y-m-d h:i:s");
+							$Mmf30history->date = date("Y-m-d H:i:s");
 							$Mmf30history->fullname = $Employee->fullname;
 							$Mmf30history->approvaltype = "Originator";
 							$Mmf30history->mmf30_id = $Mmf30->id;
@@ -422,7 +422,7 @@ Class Mmf30module extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "CreateMMF30";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -470,7 +470,7 @@ Class Mmf30module extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "DeleteMMF30";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -664,7 +664,7 @@ Class Mmf30module extends Application{
 									if (!$this->mail->send()) {
 										$err = new Errorlog();
 										$err->errortype = "Mail";
-										$err->errordate = date("Y-m-d h:i:s");
+										$err->errordate = date("Y-m-d H:i:s");
 										$err->errormessage = $this->mail->ErrorInfo;
 										$err->user = $this->currentUser->username;
 										$err->ip = $this->ip;
@@ -713,7 +713,7 @@ Class Mmf30module extends Application{
 									}
 
 									$Mmf30history = new Mmf30history();
-									$Mmf30history->date = date("Y-m-d h:i:s");
+									$Mmf30history->date = date("Y-m-d H:i:s");
 									$Mmf30history->fullname = $Employee->fullname;
 									$Mmf30history->mmf30_id = $id;
 									$Mmf30history->approvaltype = "Originator";
@@ -721,7 +721,7 @@ Class Mmf30module extends Application{
 									$Mmf30history->save();
 								}else{
 									$Mmf30history = new Mmf30history();
-									$Mmf30history->date = date("Y-m-d h:i:s");
+									$Mmf30history->date = date("Y-m-d H:i:s");
 									$Mmf30history->fullname = $Employee->fullname;
 									$Mmf30history->mmf30_id = $id;
 									$Mmf30history->approvaltype = "Originator";
@@ -775,7 +775,7 @@ Class Mmf30module extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "UpdateMMF30";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -1019,7 +1019,7 @@ Class Mmf30module extends Application{
 							$supAdb = Addressbook::find('first',array('conditions'=>array("username=?",$Superior->loginname)));
 							$complete = false;
 							$Mmf30history = new Mmf30history();
-							$Mmf30history->date = date("Y-m-d h:i:s");
+							$Mmf30history->date = date("Y-m-d H:i:s");
 							$Mmf30history->fullname = $Employee->fullname;
 							$Mmf30history->approvaltype = $Mmf30approval->approver->approvaltype->approvaltype;
 							$Mmf30history->remarks = $data['remarks'];
@@ -1194,7 +1194,7 @@ Class Mmf30module extends Application{
 							if (!$this->mail->send()) {
 								$err = new Errorlog();
 								$err->errortype = "MMF30 Mail";
-								$err->errordate = date("Y-m-d h:i:s");
+								$err->errordate = date("Y-m-d H:i:s");
 								$err->errormessage = $this->mail->ErrorInfo;
 								$err->user = $this->currentUser->username;
 								$err->ip = $this->ip;
@@ -1741,7 +1741,7 @@ Class Mmf30module extends Application{
 			$formatter = new ExceptionFormatter($e);
 			$err = new Errorlog();
 			$err->errortype = "MMF30PDFGenerator";
-			$err->errordate = date("Y-m-d h:i:s");
+			$err->errordate = date("Y-m-d H:i:s");
 			$err->errormessage = $formatter->getHtmlMessage();
 			$err->user = $this->currentUser->username;
 			// $err->user = 'userR';

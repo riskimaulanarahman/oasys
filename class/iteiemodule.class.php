@@ -195,7 +195,7 @@ Class Iteiemodule extends Application{
 									if (!$this->mail->send()) {
 										$err = new Errorlog();
 										$err->errortype = "Mail";
-										$err->errordate = date("Y-m-d h:i:s");
+										$err->errordate = date("Y-m-d H:i:s");
 										$err->errormessage = $this->mail->ErrorInfo;
 										$err->user = $this->currentUser->username;
 										$err->ip = $this->ip;
@@ -340,7 +340,7 @@ Class Iteiemodule extends Application{
 								// }
 
 							$Iteihistory = new Iteiehistory();
-							$Iteihistory->date = date("Y-m-d h:i:s");
+							$Iteihistory->date = date("Y-m-d H:i:s");
 							$Iteihistory->fullname = $Employee->fullname;
 							$Iteihistory->approvaltype = "Originator";
 							$Iteihistory->iteie_id = $Iteie->id;
@@ -350,7 +350,7 @@ Class Iteiemodule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "CreateITEIE";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -394,7 +394,7 @@ Class Iteiemodule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "DeleteITEIE";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -561,7 +561,7 @@ Class Iteiemodule extends Application{
 									if (!$this->mail->send()) {
 										$err = new Errorlog();
 										$err->errortype = "Mail";
-										$err->errordate = date("Y-m-d h:i:s");
+										$err->errordate = date("Y-m-d H:i:s");
 										$err->errormessage = $this->mail->ErrorInfo;
 										$err->user = $this->currentUser->username;
 										$err->ip = $this->ip;
@@ -571,7 +571,7 @@ Class Iteiemodule extends Application{
 										echo "Message sent!";
 									}
 									$Iteiehistory = new Iteiehistory();
-									$Iteiehistory->date = date("Y-m-d h:i:s");
+									$Iteiehistory->date = date("Y-m-d H:i:s");
 									$Iteiehistory->fullname = $Employee->fullname;
 									$Iteiehistory->iteie_id = $id;
 									$Iteiehistory->approvaltype = "Originator";
@@ -579,7 +579,7 @@ Class Iteiemodule extends Application{
 									$Iteiehistory->save();
 								}else{
 									$Iteiehistory = new Iteiehistory();
-									$Iteiehistory->date = date("Y-m-d h:i:s");
+									$Iteiehistory->date = date("Y-m-d H:i:s");
 									$Iteiehistory->fullname = $Employee->fullname;
 									$Iteiehistory->iteie_id = $id;
 									$Iteiehistory->approvaltype = "Originator";
@@ -592,7 +592,7 @@ Class Iteiemodule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "UpdateITEIE";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -770,7 +770,7 @@ Class Iteiemodule extends Application{
 							$supAdb = Addressbook::find('first',array('conditions'=>array("username=?",$Superior->loginname)));
 							$complete = false;
 							$Iteiehistory = new Iteiehistory();
-							$Iteiehistory->date = date("Y-m-d h:i:s");
+							$Iteiehistory->date = date("Y-m-d H:i:s");
 							$Iteiehistory->fullname = $Employee->fullname;
 							$Iteiehistory->approvaltype = $Iteieapproval->approver->approvaltype->approvaltype;
 							$Iteiehistory->remarks = $data['remarks'];
@@ -920,7 +920,7 @@ Class Iteiemodule extends Application{
 							if (!$this->mail->send()) {
 								$err = new Errorlog();
 								$err->errortype = "ITEIE Mail";
-								$err->errordate = date("Y-m-d h:i:s");
+								$err->errordate = date("Y-m-d H:i:s");
 								$err->errormessage = $this->mail->ErrorInfo;
 								$err->user = $this->currentUser->username;
 								$err->ip = $this->ip;
@@ -1089,7 +1089,7 @@ Class Iteiemodule extends Application{
 		} catch(com_exception $e) {  
 			$err = new Errorlog();
 			$err->errortype = "IteiePDFGenerator";
-			$err->errordate = date("Y-m-d h:i:s");
+			$err->errordate = date("Y-m-d H:i:s");
 			$err->errormessage = $e->getMessage();
 			$err->user = $this->currentUser->username;
 			$err->ip = $this->ip;

@@ -261,7 +261,7 @@ Class TrModule extends Application{
 									if (!$this->mail->send()) {
 										$err = new Errorlog();
 										$err->errortype = "Mail";
-										$err->errordate = date("Y-m-d h:i:s");
+										$err->errordate = date("Y-m-d H:i:s");
 										$err->errormessage = $this->mail->ErrorInfo;
 										$err->user = $this->currentUser->username;
 										$err->ip = $this->ip;
@@ -332,7 +332,7 @@ Class TrModule extends Application{
 							}
 							
 							$Trhistory = new Trhistory();
-							$Trhistory->date = date("Y-m-d h:i:s");
+							$Trhistory->date = date("Y-m-d H:i:s");
 							$Trhistory->fullname = $Employee->fullname;
 							$Trhistory->approvaltype = "Originator";
 							$Trhistory->tr_id = $Tr->id;
@@ -342,7 +342,7 @@ Class TrModule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "CreateTR";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -386,7 +386,7 @@ Class TrModule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "DeleteTR";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -602,7 +602,7 @@ Class TrModule extends Application{
 									if (!$this->mail->send()) {
 										$err = new Errorlog();
 										$err->errortype = "Mail";
-										$err->errordate = date("Y-m-d h:i:s");
+										$err->errordate = date("Y-m-d H:i:s");
 										$err->errormessage = $this->mail->ErrorInfo;
 										$err->user = $this->currentUser->username;
 										$err->ip = $this->ip;
@@ -612,7 +612,7 @@ Class TrModule extends Application{
 										echo "Message sent!";
 									}
 									$Trhistory = new Trhistory();
-									$Trhistory->date = date("Y-m-d h:i:s");
+									$Trhistory->date = date("Y-m-d H:i:s");
 									$Trhistory->fullname = $Employee->fullname;
 									$Trhistory->tr_id = $id;
 									$Trhistory->approvaltype = "Originator";
@@ -620,7 +620,7 @@ Class TrModule extends Application{
 									$Trhistory->save();
 								}else{
 									$Trhistory = new Trhistory();
-									$Trhistory->date = date("Y-m-d h:i:s");
+									$Trhistory->date = date("Y-m-d H:i:s");
 									$Trhistory->fullname = $Employee->fullname;
 									$Trhistory->tr_id = $id;
 									$Trhistory->approvaltype = "Originator";
@@ -636,7 +636,7 @@ Class TrModule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "UpdateTR";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -846,7 +846,7 @@ Class TrModule extends Application{
 							$supAdb = Addressbook::find('first',array('conditions'=>array("username=?",$Superior->loginname)));
 							$complete = false;
 							$Trhistory = new Trhistory();
-							$Trhistory->date = date("Y-m-d h:i:s");
+							$Trhistory->date = date("Y-m-d H:i:s");
 							$Trhistory->fullname = $Employee->fullname;
 							$Trhistory->approvaltype = $Trapproval->approver->approvaltype->approvaltype;
 							$Trhistory->remarks = $data['remarks'];
@@ -983,7 +983,7 @@ Class TrModule extends Application{
 							if (!$this->mail->send()) {
 								$err = new Errorlog();
 								$err->errortype = "TR Mail";
-								$err->errordate = date("Y-m-d h:i:s");
+								$err->errordate = date("Y-m-d H:i:s");
 								$err->errormessage = $this->mail->ErrorInfo;
 								$err->user = $this->currentUser->username;
 								$err->ip = $this->ip;
@@ -1399,7 +1399,7 @@ Class TrModule extends Application{
 			$formatter = new ExceptionFormatter($e);
 			$err = new Errorlog();
 			$err->errortype = "TRPDFGenerator";
-			$err->errordate = date("Y-m-d h:i:s");
+			$err->errordate = date("Y-m-d H:i:s");
 			$err->errormessage = $formatter->getHtmlMessage();
 			$err->user = $this->currentUser->username;
 			$err->ip = $this->ip;

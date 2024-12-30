@@ -252,7 +252,7 @@ Class RfcModule extends Application{
 			$formatter = new ExceptionFormatter($e);
 			$err = new Errorlog();
 			$err->errortype = "RFCPDFGenerator";
-			$err->errordate = date("Y-m-d h:i:s");
+			$err->errordate = date("Y-m-d H:i:s");
 			$err->errormessage = $formatter->getHtmlMessage();
 			$err->user = "admin";
 			$err->ip = $this->ip;
@@ -650,7 +650,7 @@ Class RfcModule extends Application{
 								}
 								$complete = false;
 								$Rfchistory = new Rfchistory();
-								$Rfchistory->date = date("Y-m-d h:i:s");
+								$Rfchistory->date = date("Y-m-d H:i:s");
 								$Rfchistory->fullname = $Employee->fullname;
 								$Rfchistory->approvaltype = $Rfcapproval->approver->approvaltype->approvaltype;
 								$Rfchistory->remarks = $data['remarks'];
@@ -923,7 +923,7 @@ Class RfcModule extends Application{
 										$formatter = new ExceptionFormatter($e);
 										$err = new Errorlog();
 										$err->errortype = "RFCPDFGenerator";
-										$err->errordate = date("Y-m-d h:i:s");
+										$err->errordate = date("Y-m-d H:i:s");
 										$err->errormessage = $formatter->getHtmlMessage();
 										$err->user = $this->currentUser->username;
 										$err->ip = $this->ip;
@@ -934,7 +934,7 @@ Class RfcModule extends Application{
 								if (!$this->mail->send()) {
 									$err = new Errorlog();
 									$err->errortype = "RFC Mail";
-									$err->errordate = date("Y-m-d h:i:s");
+									$err->errordate = date("Y-m-d H:i:s");
 									$err->errormessage = $this->mail->ErrorInfo;
 									$err->user = $this->currentUser->username;
 									$err->ip = $this->ip;
@@ -1758,7 +1758,7 @@ Class RfcModule extends Application{
 							// }
 								
 							$Rfchistory = new Rfchistory();
-							$Rfchistory->date = date("Y-m-d h:i:s");
+							$Rfchistory->date = date("Y-m-d H:i:s");
 							$Rfchistory->fullname = $Employee->fullname;
 							$Rfchistory->approvaltype = "Originator";
 							$Rfchistory->rfc_id = $Rfc->id;
@@ -1768,7 +1768,7 @@ Class RfcModule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "CreateRfc";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -1812,7 +1812,7 @@ Class RfcModule extends Application{
 							}catch (Exception $e){
 								$err = new Errorlog();
 								$err->errortype = "DeleteRfc";
-								$err->errordate = date("Y-m-d h:i:s");
+								$err->errordate = date("Y-m-d H:i:s");
 								$err->errormessage = $e->getMessage();
 								$err->user = $this->currentUser->username;
 								$err->ip = $this->ip;
@@ -1968,7 +1968,7 @@ Class RfcModule extends Application{
 								if (!$this->mail->send()) {
 									$err = new Errorlog();
 									$err->errortype = "RFC Mail";
-									$err->errordate = date("Y-m-d h:i:s");
+									$err->errordate = date("Y-m-d H:i:s");
 									$err->errormessage = $this->mail->ErrorInfo;
 									$err->user = $this->currentUser->username;
 									$err->ip = $this->ip;
@@ -1978,7 +1978,7 @@ Class RfcModule extends Application{
 									echo "Message sent!";
 								}
 								$Rfchistory = new Rfchistory();
-								$Rfchistory->date = date("Y-m-d h:i:s");
+								$Rfchistory->date = date("Y-m-d H:i:s");
 								$Rfchistory->fullname = $Employee->fullname;
 								$Rfchistory->rfc_id = $id;
 								$Rfchistory->approvaltype = "Originator";
@@ -1986,7 +1986,7 @@ Class RfcModule extends Application{
 								$Rfchistory->save();
 							}else{
 								$Rfchistory = new Rfchistory();
-								$Rfchistory->date = date("Y-m-d h:i:s");
+								$Rfchistory->date = date("Y-m-d H:i:s");
 								$Rfchistory->fullname = $Employee->fullname;
 								$Rfchistory->rfc_id = $id;
 								$Rfchistory->approvaltype = "Originator";

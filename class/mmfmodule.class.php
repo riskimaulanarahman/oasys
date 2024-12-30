@@ -315,7 +315,7 @@ Class Mmfmodule extends Application{
 									if (!$this->mail->send()) {
 										$err = new Errorlog();
 										$err->errortype = "Mail";
-										$err->errordate = date("Y-m-d h:i:s");
+										$err->errordate = date("Y-m-d H:i:s");
 										$err->errormessage = $this->mail->ErrorInfo;
 										$err->user = $this->currentUser->username;
 										$err->ip = $this->ip;
@@ -398,7 +398,7 @@ Class Mmfmodule extends Application{
 							// 	$Trapproval->save();
 							// }
 							$Trhistory = new Mmfhistory();
-							$Trhistory->date = date("Y-m-d h:i:s");
+							$Trhistory->date = date("Y-m-d H:i:s");
 							$Trhistory->fullname = $Employee->fullname;
 							$Trhistory->approvaltype = "Originator";
 							$Trhistory->mmf28_id = $Tr->id;
@@ -408,7 +408,7 @@ Class Mmfmodule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "CreateMMF";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -456,7 +456,7 @@ Class Mmfmodule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "DeleteMMF";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -607,7 +607,7 @@ Class Mmfmodule extends Application{
 									if (!$this->mail->send()) {
 										$err = new Errorlog();
 										$err->errortype = "Mail";
-										$err->errordate = date("Y-m-d h:i:s");
+										$err->errordate = date("Y-m-d H:i:s");
 										$err->errormessage = $this->mail->ErrorInfo;
 										$err->user = $this->currentUser->username;
 										$err->ip = $this->ip;
@@ -656,7 +656,7 @@ Class Mmfmodule extends Application{
 									}
 
 									$Trhistory = new Mmfhistory();
-									$Trhistory->date = date("Y-m-d h:i:s");
+									$Trhistory->date = date("Y-m-d H:i:s");
 									$Trhistory->fullname = $Employee->fullname;
 									$Trhistory->mmf28_id = $id;
 									$Trhistory->approvaltype = "Originator";
@@ -665,7 +665,7 @@ Class Mmfmodule extends Application{
 								}else{
 									if($data['action'] !== 'updatereport') {
 										$Trhistory = new Mmfhistory();
-										$Trhistory->date = date("Y-m-d h:i:s");
+										$Trhistory->date = date("Y-m-d H:i:s");
 										$Trhistory->fullname = $Employee->fullname;
 										$Trhistory->mmf28_id = $id;
 										$Trhistory->approvaltype = "Originator";
@@ -684,7 +684,7 @@ Class Mmfmodule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "UpdateMMF";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -891,7 +891,7 @@ Class Mmfmodule extends Application{
 							$supAdb = Addressbook::find('first',array('conditions'=>array("username=?",$Superior->loginname)));
 							$complete = false;
 							$Trhistory = new Mmfhistory();
-							$Trhistory->date = date("Y-m-d h:i:s");
+							$Trhistory->date = date("Y-m-d H:i:s");
 							$Trhistory->fullname = $Employee->fullname;
 							$Trhistory->approvaltype = $Trapproval->approver->approvaltype->approvaltype;
 							$Trhistory->remarks = $data['remarks'];
@@ -1012,7 +1012,7 @@ Class Mmfmodule extends Application{
 							if (!$this->mail->send()) {
 								$err = new Errorlog();
 								$err->errortype = "MMF Mail";
-								$err->errordate = date("Y-m-d h:i:s");
+								$err->errordate = date("Y-m-d H:i:s");
 								$err->errormessage = $this->mail->ErrorInfo;
 								$err->user = $this->currentUser->username;
 								$err->ip = $this->ip;
@@ -1432,7 +1432,7 @@ Class Mmfmodule extends Application{
 			$formatter = new ExceptionFormatter($e);
 			$err = new Errorlog();
 			$err->errortype = "MMFPDFGenerator";
-			$err->errordate = date("Y-m-d h:i:s");
+			$err->errordate = date("Y-m-d H:i:s");
 			$err->errormessage = $formatter->getHtmlMessage();
 			$err->user = $this->currentUser->username;
 			// $err->user = 'userR';

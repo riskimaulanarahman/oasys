@@ -1048,7 +1048,7 @@ class Advancemodule extends Application
 
 							}
 							$Advancehistory = new Advancehistory();
-							$Advancehistory->date = date("Y-m-d h:i:s");
+							$Advancehistory->date = date("Y-m-d H:i:s");
 							$Advancehistory->fullname = $Employee->fullname;
 							$Advancehistory->approvaltype = "Originator";
 							$Advancehistory->advance_id = $Advance->id;
@@ -1058,7 +1058,7 @@ class Advancemodule extends Application
 						} catch (Exception $e) {
 							$err = new Errorlog();
 							$err->errortype = "CreateAdvance";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -1099,7 +1099,7 @@ class Advancemodule extends Application
 							} catch (Exception $e) {
 								$err = new Errorlog();
 								$err->errortype = "DeleteAdvance";
-								$err->errordate = date("Y-m-d h:i:s");
+								$err->errordate = date("Y-m-d H:i:s");
 								$err->errormessage = $e->getMessage();
 								$err->user = $this->currentUser->username;
 								$err->ip = $this->ip;
@@ -1260,7 +1260,7 @@ class Advancemodule extends Application
 							if (!$this->mail->send()) {
 								$err = new Errorlog();
 								$err->errortype = "Advance Mail";
-								$err->errordate = date("Y-m-d h:i:s");
+								$err->errordate = date("Y-m-d H:i:s");
 								$err->errormessage = $this->mail->ErrorInfo;
 								$err->user = $this->currentUser->username;
 								$err->ip = $this->ip;
@@ -1298,7 +1298,7 @@ class Advancemodule extends Application
 							// }
 
 							$Advancehistory = new Advancehistory();
-							$Advancehistory->date = date("Y-m-d h:i:s");
+							$Advancehistory->date = date("Y-m-d H:i:s");
 							$Advancehistory->fullname = $Employee->fullname;
 							$Advancehistory->advance_id = $id;
 							$Advancehistory->approvaltype = "Originator";
@@ -1306,7 +1306,7 @@ class Advancemodule extends Application
 							$Advancehistory->save();
 						} else {
 							$Advancehistory = new Advancehistory();
-							$Advancehistory->date = date("Y-m-d h:i:s");
+							$Advancehistory->date = date("Y-m-d H:i:s");
 							$Advancehistory->fullname = $Employee->fullname;
 							$Advancehistory->advance_id = $id;
 							$Advancehistory->approvaltype = "Originator";
@@ -1609,7 +1609,7 @@ class Advancemodule extends Application
 
 							$complete = false;
 							$Advancehistory = new Advancehistory();
-							$Advancehistory->date = date("Y-m-d h:i:s");
+							$Advancehistory->date = date("Y-m-d H:i:s");
 							$Advancehistory->fullname = $Employee->fullname;
 							$Advancehistory->approvaltype = $Advanceapproval->approver->approvaltype->approvaltype;
 							$Advancehistory->remarks = $data['remarks'];
@@ -1970,7 +1970,7 @@ class Advancemodule extends Application
 							if (!$this->mail->send()) {
 								$err = new Errorlog();
 								$err->errortype = "Advance Mail";
-								$err->errordate = date("Y-m-d h:i:s");
+								$err->errordate = date("Y-m-d H:i:s");
 								$err->errormessage = $this->mail->ErrorInfo;
 								$err->user = $this->currentUser->username;
 								$err->ip = $this->ip;
@@ -2401,7 +2401,7 @@ class Advancemodule extends Application
 		} catch (Exception $e) {
 			$err = new Errorlog();
 			$err->errortype = "AdvanceFPDFGenerator";
-			$err->errordate = date("Y-m-d h:i:s");
+			$err->errordate = date("Y-m-d H:i:s");
 			$err->errormessage = $e->getMessage();
 			$err->user = $this->currentUser->username;
 			$err->ip = $this->ip;
