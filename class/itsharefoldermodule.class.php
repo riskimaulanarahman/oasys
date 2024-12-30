@@ -211,7 +211,7 @@ Class Itsharefoldermodule extends Application{
 									if (!$this->mail->send()) {
 										$err = new Errorlog();
 										$err->errortype = "Mail";
-										$err->errordate = date("Y-m-d h:i:s");
+										$err->errordate = date("Y-m-d H:i:s");
 										$err->errormessage = $this->mail->ErrorInfo;
 										$err->user = $this->currentUser->username;
 										$err->ip = $this->ip;
@@ -283,7 +283,7 @@ Class Itsharefoldermodule extends Application{
 								}
 								
 							$Iteihistory = new Itsharefhistory();
-							$Iteihistory->date = date("Y-m-d h:i:s");
+							$Iteihistory->date = date("Y-m-d H:i:s");
 							$Iteihistory->fullname = $Employee->fullname;
 							$Iteihistory->approvaltype = "Originator";
 							$Iteihistory->itsharef_id = $Itsharef->id;
@@ -293,7 +293,7 @@ Class Itsharefoldermodule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "CreateITSHAREF";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -345,7 +345,7 @@ Class Itsharefoldermodule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "DeleteITSHAREF";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -506,7 +506,7 @@ Class Itsharefoldermodule extends Application{
 									if (!$this->mail->send()) {
 										$err = new Errorlog();
 										$err->errortype = "Mail";
-										$err->errordate = date("Y-m-d h:i:s");
+										$err->errordate = date("Y-m-d H:i:s");
 										$err->errormessage = $this->mail->ErrorInfo;
 										$err->user = $this->currentUser->username;
 										$err->ip = $this->ip;
@@ -516,7 +516,7 @@ Class Itsharefoldermodule extends Application{
 										echo "Message sent!";
 									}
 									$Itsharefhistory = new Itsharefhistory();
-									$Itsharefhistory->date = date("Y-m-d h:i:s");
+									$Itsharefhistory->date = date("Y-m-d H:i:s");
 									$Itsharefhistory->fullname = $Employee->fullname;
 									$Itsharefhistory->itsharef_id = $id;
 									$Itsharefhistory->approvaltype = "Originator";
@@ -524,7 +524,7 @@ Class Itsharefoldermodule extends Application{
 									$Itsharefhistory->save();
 								}else{
 									$Itsharefhistory = new Itsharefhistory();
-									$Itsharefhistory->date = date("Y-m-d h:i:s");
+									$Itsharefhistory->date = date("Y-m-d H:i:s");
 									$Itsharefhistory->fullname = $Employee->fullname;
 									$Itsharefhistory->itsharef_id = $id;
 									$Itsharefhistory->approvaltype = "Originator";
@@ -537,7 +537,7 @@ Class Itsharefoldermodule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "UpdateITSHAREF";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -766,7 +766,7 @@ Class Itsharefoldermodule extends Application{
 							$supAdb = Addressbook::find('first',array('conditions'=>array("username=?",$Superior->loginname)));
 							$complete = false;
 							$Itsharefhistory = new Itsharefhistory();
-							$Itsharefhistory->date = date("Y-m-d h:i:s");
+							$Itsharefhistory->date = date("Y-m-d H:i:s");
 							$Itsharefhistory->fullname = $Employee->fullname;
 							$Itsharefhistory->approvaltype = $Itsharefapproval->approver->approvaltype->approvaltype;
 							$Itsharefhistory->remarks = $data['remarks'];
@@ -929,7 +929,7 @@ Class Itsharefoldermodule extends Application{
 							if (!$this->mail->send()) {
 								$err = new Errorlog();
 								$err->errortype = "ITSHAREF Mail";
-								$err->errordate = date("Y-m-d h:i:s");
+								$err->errordate = date("Y-m-d H:i:s");
 								$err->errormessage = $this->mail->ErrorInfo;
 								$err->user = $this->currentUser->username;
 								$err->ip = $this->ip;
@@ -1358,7 +1358,7 @@ Class Itsharefoldermodule extends Application{
 		} catch(com_exception $e) {  
 			$err = new Errorlog();
 			$err->errortype = "ITSHAREFPDFGenerator";
-			$err->errordate = date("Y-m-d h:i:s");
+			$err->errordate = date("Y-m-d H:i:s");
 			$err->errormessage = $e->getMessage();
 			$err->user = $this->currentUser->username;
 			$err->ip = $this->ip;

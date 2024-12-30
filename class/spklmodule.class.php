@@ -229,7 +229,7 @@ Class SpklModule extends Application{
 			$formatter = new ExceptionFormatter($e);
 			$err = new Errorlog();
 			$err->errortype = "SPKLPDFGenerator";
-			$err->errordate = date("Y-m-d h:i:s");
+			$err->errordate = date("Y-m-d H:i:s");
 			$err->errormessage = $formatter->getHtmlMessage();
 			$err->user = $this->currentUser->username;
 			$err->ip = $this->ip;
@@ -445,7 +445,7 @@ Class SpklModule extends Application{
 			$formatter = new ExceptionFormatter($e);
 			$err = new Errorlog();
 			$err->errortype = "SPKLTMSPDFGenerator";
-			$err->errordate = date("Y-m-d h:i:s");
+			$err->errordate = date("Y-m-d H:i:s");
 			$err->errormessage = $formatter->getHtmlMessage();
 			$err->user = $this->currentUser->username;
 			$err->ip = $this->ip;
@@ -704,7 +704,7 @@ Class SpklModule extends Application{
 								
 								$complete = false;
 								$Spklhistory = new Spklhistory();
-								$Spklhistory->date = date("Y-m-d h:i:s");
+								$Spklhistory->date = date("Y-m-d H:i:s");
 								$Spklhistory->fullname = $Employee->fullname;
 								$Spklhistory->approvaltype = $Spklapproval->approver->approvaltype->approvaltype;
 								$Spklhistory->remarks = $data['remarks'];
@@ -808,7 +808,7 @@ Class SpklModule extends Application{
 								if (!$this->mail->send()) {
 									$err = new Errorlog();
 									$err->errortype = "SPKL Mail";
-									$err->errordate = date("Y-m-d h:i:s");
+									$err->errordate = date("Y-m-d H:i:s");
 									$err->errormessage = $this->mail->ErrorInfo;
 									$err->user = $this->currentUser->username;
 									$err->ip = $this->ip;
@@ -1004,7 +1004,7 @@ Class SpklModule extends Application{
 								
 								$complete = false;
 								$Spkltmshistory = new Spkltmshistory();
-								$Spkltmshistory->date = date("Y-m-d h:i:s");
+								$Spkltmshistory->date = date("Y-m-d H:i:s");
 								$Spkltmshistory->fullname = $Employee->fullname;
 								$Spkltmshistory->approvaltype = $Spkltmsapproval->approver->approvaltype->approvaltype;
 								$Spkltmshistory->remarks = $data['remarks'];
@@ -1124,7 +1124,7 @@ Class SpklModule extends Application{
 								if (!$this->mail->send()) {
 									$err = new Errorlog();
 									$err->errortype = "SPKL Mail";
-									$err->errordate = date("Y-m-d h:i:s");
+									$err->errordate = date("Y-m-d H:i:s");
 									$err->errormessage = $this->mail->ErrorInfo;
 									$err->user = $this->currentUser->username;
 									$err->ip = $this->ip;
@@ -1758,7 +1758,7 @@ Class SpklModule extends Application{
 								$Spkl = Spkl::create($data);
 								$data=$Spkl->to_array();
 								$Spklhistory = new Spklhistory();
-								$Spklhistory->date = date("Y-m-d h:i:s");
+								$Spklhistory->date = date("Y-m-d H:i:s");
 								$Spklhistory->fullname = $Employee->fullname;
 								$Spklhistory->approvaltype = "Originator";
 								$Spklhistory->spkl_id = $Spkl->id;
@@ -1800,7 +1800,7 @@ Class SpklModule extends Application{
 							}catch (Exception $e){
 								$err = new Errorlog();
 								$err->errortype = "CreateSpkl";
-								$err->errordate = date("Y-m-d h:i:s");
+								$err->errordate = date("Y-m-d H:i:s");
 								$err->errormessage = $e->getMessage();
 								$err->user = $this->currentUser->username;
 								$err->ip = $this->ip;
@@ -1839,7 +1839,7 @@ Class SpklModule extends Application{
 							}catch (Exception $e){
 								$err = new Errorlog();
 								$err->errortype = "DeleteSpkl";
-								$err->errordate = date("Y-m-d h:i:s");
+								$err->errordate = date("Y-m-d H:i:s");
 								$err->errormessage = $e->getMessage();
 								$err->user = $this->currentUser->username;
 								$err->ip = $this->ip;
@@ -1960,7 +1960,7 @@ Class SpklModule extends Application{
 							if (!$this->mail->send()) {
 								$err = new Errorlog();
 								$err->errortype = "SPKL Mail";
-								$err->errordate = date("Y-m-d h:i:s");
+								$err->errordate = date("Y-m-d H:i:s");
 								$err->errormessage = $this->mail->ErrorInfo;
 								$err->user = $this->currentUser->username;
 								$err->ip = $this->ip;
@@ -1970,7 +1970,7 @@ Class SpklModule extends Application{
 								echo "Message sent!";
 							}
 							$Spklhistory = new Spklhistory();
-							$Spklhistory->date = date("Y-m-d h:i:s");
+							$Spklhistory->date = date("Y-m-d H:i:s");
 							$Spklhistory->fullname = $Employee->fullname;
 							$Spklhistory->spkl_id = $id;
 							$Spklhistory->approvaltype = "Originator";
@@ -1978,7 +1978,7 @@ Class SpklModule extends Application{
 							$Spklhistory->save();
 						}else{
 							$Spklhistory = new Spklhistory();
-							$Spklhistory->date = date("Y-m-d h:i:s");
+							$Spklhistory->date = date("Y-m-d H:i:s");
 							$Spklhistory->fullname = $Employee->fullname;
 							$Spklhistory->spkl_id = $id;
 							$Spklhistory->approvaltype = "Originator";
@@ -2232,7 +2232,7 @@ Class SpklModule extends Application{
 							if (!$this->mail->send()) {
 								$err = new Errorlog();
 								$err->errortype = "SPKL Timesheet Mail";
-								$err->errordate = date("Y-m-d h:i:s");
+								$err->errordate = date("Y-m-d H:i:s");
 								$err->errormessage = $this->mail->ErrorInfo;
 								$err->user = $this->currentUser->username;
 								$err->ip = $this->ip;
@@ -2242,7 +2242,7 @@ Class SpklModule extends Application{
 								echo "Message sent!";
 							}
 							$Spkltmshistory = new Spkltmshistory();
-							$Spkltmshistory->date = date("Y-m-d h:i:s");
+							$Spkltmshistory->date = date("Y-m-d H:i:s");
 							$Spkltmshistory->fullname = $Employee->fullname;
 							$Spkltmshistory->spkl_id = $id;
 							$Spkltmshistory->approvaltype = "Originator";
@@ -2250,7 +2250,7 @@ Class SpklModule extends Application{
 							$Spkltmshistory->save();
 						}else{
 							$Spkltmshistory = new Spkltmshistory();
-							$Spkltmshistory->date = date("Y-m-d h:i:s");
+							$Spkltmshistory->date = date("Y-m-d H:i:s");
 							$Spkltmshistory->fullname = $Employee->fullname;
 							$Spkltmshistory->spkl_id = $id;
 							$Spkltmshistory->approvaltype = "Originator";

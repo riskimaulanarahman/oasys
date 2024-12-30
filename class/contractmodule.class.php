@@ -321,7 +321,7 @@ Class ContractModule extends Application{
                 }catch (Exception $e){
                     $err = new Errorlog();
                     $err->errortype = "CreateContract";
-                    $err->errordate = date("Y-m-d h:i:s");
+                    $err->errordate = date("Y-m-d H:i:s");
                     $err->errormessage = $e->getMessage();
                     $err->user = $this->currentUser->username;
                     $err->ip = $this->ip;
@@ -392,7 +392,7 @@ Class ContractModule extends Application{
                 }catch (Exception $e){
                     $err = new Errorlog();
                     $err->errortype = "UpdateContract";
-                    $err->errordate = date("Y-m-d h:i:s");
+                    $err->errordate = date("Y-m-d H:i:s");
                     $err->errormessage = $e->getMessage();
                     $err->user = $this->currentUser->username;
                     $err->ip = $this->ip;
@@ -427,7 +427,7 @@ Class ContractModule extends Application{
                 }catch (Exception $e){
                     $err = new Errorlog();
                     $err->errortype = "CloseContract";
-                    $err->errordate = date("Y-m-d h:i:s");
+                    $err->errordate = date("Y-m-d H:i:s");
                     $err->errormessage = $e->getMessage();
                     $err->user = $this->currentUser->username;
                     $err->ip = $this->ip;

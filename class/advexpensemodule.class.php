@@ -745,7 +745,7 @@ Class Advexpensemodule extends Application{
 								// }
 
 								$Advexpensehistory = new Advexpensehistory();
-								$Advexpensehistory->date = date("Y-m-d h:i:s");
+								$Advexpensehistory->date = date("Y-m-d H:i:s");
 								$Advexpensehistory->fullname = $Employee->fullname;
 								$Advexpensehistory->approvaltype = "Originator";
 								$Advexpensehistory->advexpense_id = $Advexpense->id;
@@ -755,7 +755,7 @@ Class Advexpensemodule extends Application{
 							}catch (Exception $e){
 								$err = new Errorlog();
 								$err->errortype = "CreateAdvexpense";
-								$err->errordate = date("Y-m-d h:i:s");
+								$err->errordate = date("Y-m-d H:i:s");
 								$err->errormessage = $e->getMessage();
 								$err->user = $this->currentUser->username;
 								$err->ip = $this->ip;
@@ -800,7 +800,7 @@ Class Advexpensemodule extends Application{
 							}catch (Exception $e){
 								$err = new Errorlog();
 								$err->errortype = "DeleteAdvexpense";
-								$err->errordate = date("Y-m-d h:i:s");
+								$err->errordate = date("Y-m-d H:i:s");
 								$err->errormessage = $e->getMessage();
 								$err->user = $this->currentUser->username;
 								$err->ip = $this->ip;
@@ -1049,7 +1049,7 @@ Class Advexpensemodule extends Application{
 							if (!$this->mail->send()) {
 								$err = new Errorlog();
 								$err->errortype = "Advexpense Mail";
-								$err->errordate = date("Y-m-d h:i:s");
+								$err->errordate = date("Y-m-d H:i:s");
 								$err->errormessage = $this->mail->ErrorInfo;
 								$err->user = $this->currentUser->username;
 								$err->ip = $this->ip;
@@ -1060,7 +1060,7 @@ Class Advexpensemodule extends Application{
 							}
 
 							$Advexpensehistory = new Advexpensehistory();
-							$Advexpensehistory->date = date("Y-m-d h:i:s");
+							$Advexpensehistory->date = date("Y-m-d H:i:s");
 							$Advexpensehistory->fullname = $Employee->fullname;
 							$Advexpensehistory->advexpense_id = $id;
 							$Advexpensehistory->approvaltype = "Originator";
@@ -1068,7 +1068,7 @@ Class Advexpensemodule extends Application{
 							$Advexpensehistory->save();
 						}else{
 							$Advexpensehistory = new Advexpensehistory();
-							$Advexpensehistory->date = date("Y-m-d h:i:s");
+							$Advexpensehistory->date = date("Y-m-d H:i:s");
 							$Advexpensehistory->fullname = $Employee->fullname;
 							$Advexpensehistory->advexpense_id = $id;
 							$Advexpensehistory->approvaltype = "Originator";
@@ -1289,7 +1289,7 @@ Class Advexpensemodule extends Application{
 								
 								$complete = false;
 								$Advexpensehistory = new Advexpensehistory();
-								$Advexpensehistory->date = date("Y-m-d h:i:s");
+								$Advexpensehistory->date = date("Y-m-d H:i:s");
 								$Advexpensehistory->fullname = $Employee->fullname;
 								$Advexpensehistory->approvaltype = $Advexpenseapproval->approver->approvaltype->approvaltype;
 								$Advexpensehistory->remarks = $data['remarks'];
@@ -1524,7 +1524,7 @@ Class Advexpensemodule extends Application{
 								if (!$this->mail->send()) {
 									$err = new Errorlog();
 									$err->errortype = "Advexpense Mail";
-									$err->errordate = date("Y-m-d h:i:s");
+									$err->errordate = date("Y-m-d H:i:s");
 									$err->errormessage = $this->mail->ErrorInfo;
 									$err->user = $this->currentUser->username;
 									$err->ip = $this->ip;
@@ -2143,7 +2143,7 @@ Class Advexpensemodule extends Application{
 		} catch(com_exception $e) {  
 			$err = new Errorlog();
 			$err->errortype = "AdvexpensePDFGenerator";
-			$err->errordate = date("Y-m-d h:i:s");
+			$err->errordate = date("Y-m-d H:i:s");
 			$err->errormessage = $e->getMessage();
 			$err->user = $this->currentUser->username;
 			$err->ip = $this->ip;

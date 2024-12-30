@@ -218,7 +218,7 @@ Class DayoffModule extends Application{
 			$formatter = new ExceptionFormatter($e);
 			$err = new Errorlog();
 			$err->errortype = "PDFGenerator";
-			$err->errordate = date("Y-m-d h:i:s");
+			$err->errordate = date("Y-m-d H:i:s");
 			$err->errormessage = $formatter->getHtmlMessage();
 			$err->user = $this->currentUser->username;
 			$err->ip = $this->ip;
@@ -373,7 +373,7 @@ Class DayoffModule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "CreateDayoffApproval";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -393,7 +393,7 @@ Class DayoffModule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "DeleteDayoffApproval";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -477,7 +477,7 @@ Class DayoffModule extends Application{
 									}
 									$complete = false;
 									$Dayoffhistory = new Dayoffhistory();
-									$Dayoffhistory->date = date("Y-m-d h:i:s");
+									$Dayoffhistory->date = date("Y-m-d H:i:s");
 									$Dayoffhistory->fullname = $Employee->fullname;
 									$Dayoffhistory->approvaltype = $Dayoffapproval->approver->approvaltype->approvaltype;
 									$Dayoffhistory->remarks = $data['remarks'];
@@ -710,7 +710,7 @@ Class DayoffModule extends Application{
 											$formatter = new ExceptionFormatter($e);
 											$err = new Errorlog();
 											$err->errortype = "PDFGenerator";
-											$err->errordate = date("Y-m-d h:i:s");
+											$err->errordate = date("Y-m-d H:i:s");
 											$err->errormessage = $formatter->getHtmlMessage();
 											$err->user = $this->currentUser->username;
 											$err->ip = $this->ip;
@@ -721,7 +721,7 @@ Class DayoffModule extends Application{
 									if (!$this->mail->send()) {
 										$err = new Errorlog();
 										$err->errortype = "Mail";
-										$err->errordate = date("Y-m-d h:i:s");
+										$err->errordate = date("Y-m-d H:i:s");
 										$err->errormessage = $this->mail->ErrorInfo;
 										$err->user = $this->currentUser->username;
 										$err->ip = $this->ip;
@@ -738,7 +738,7 @@ Class DayoffModule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "UpdateDayoffApproval";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -883,7 +883,7 @@ Class DayoffModule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "CreateDayoffDetail";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -903,7 +903,7 @@ Class DayoffModule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "DeleteDayoffDetail";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -954,7 +954,7 @@ Class DayoffModule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "UpdateDayoffDetail";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -1246,7 +1246,7 @@ Class DayoffModule extends Application{
 							// }
 							
 							$Dayoffhistory = new Dayoffhistory();
-							$Dayoffhistory->date = date("Y-m-d h:i:s");
+							$Dayoffhistory->date = date("Y-m-d H:i:s");
 							$Dayoffhistory->fullname = $Employee->fullname;
 							$Dayoffhistory->approvaltype = "Originator";
 							$Dayoffhistory->dayoff_id = $Dayoff->id;
@@ -1256,7 +1256,7 @@ Class DayoffModule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "CreateDayoff";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -1296,7 +1296,7 @@ Class DayoffModule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "DeleteDayoff";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -1455,7 +1455,7 @@ Class DayoffModule extends Application{
 									if (!$this->mail->send()) {
 										$err = new Errorlog();
 										$err->errortype = "Mail";
-										$err->errordate = date("Y-m-d h:i:s");
+										$err->errordate = date("Y-m-d H:i:s");
 										$err->errormessage = $this->mail->ErrorInfo;
 										$err->user = $this->currentUser->username;
 										$err->ip = $this->ip;
@@ -1465,7 +1465,7 @@ Class DayoffModule extends Application{
 										echo "Message sent!";
 									}
 									$Dayoffhistory = new Dayoffhistory();
-									$Dayoffhistory->date = date("Y-m-d h:i:s");
+									$Dayoffhistory->date = date("Y-m-d H:i:s");
 									$Dayoffhistory->fullname = $Employee->fullname;
 									$Dayoffhistory->dayoff_id = $id;
 									$Dayoffhistory->approvaltype = "Originator";
@@ -1473,7 +1473,7 @@ Class DayoffModule extends Application{
 									$Dayoffhistory->save();
 								}else{
 									$Dayoffhistory = new Dayoffhistory();
-									$Dayoffhistory->date = date("Y-m-d h:i:s");
+									$Dayoffhistory->date = date("Y-m-d H:i:s");
 									$Dayoffhistory->fullname = $Employee->fullname;
 									$Dayoffhistory->dayoff_id = $id;
 									$Dayoffhistory->approvaltype = "Originator";
@@ -1487,7 +1487,7 @@ Class DayoffModule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "DeleteDayoff";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;

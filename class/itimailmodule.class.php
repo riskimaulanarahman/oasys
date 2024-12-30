@@ -449,7 +449,7 @@ Class Itimailmodule extends Application{
 									if (!$this->mail->send()) {
 										$err = new Errorlog();
 										$err->errortype = "Mail";
-										$err->errordate = date("Y-m-d h:i:s");
+										$err->errordate = date("Y-m-d H:i:s");
 										$err->errormessage = $this->mail->ErrorInfo;
 										$err->user = $this->currentUser->username;
 										$err->ip = $this->ip;
@@ -596,7 +596,7 @@ Class Itimailmodule extends Application{
 								// }
 
 							$Iteihistory = new Itimailhistory();
-							$Iteihistory->date = date("Y-m-d h:i:s");
+							$Iteihistory->date = date("Y-m-d H:i:s");
 							$Iteihistory->fullname = $Employee->fullname;
 							$Iteihistory->approvaltype = "Originator";
 							$Iteihistory->itimail_id = $Itimail->id;
@@ -606,7 +606,7 @@ Class Itimailmodule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "CreateITIMAIL";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -650,7 +650,7 @@ Class Itimailmodule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "DeleteITEIE";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -1079,7 +1079,7 @@ Class Itimailmodule extends Application{
 									if (!$this->mail->send()) {
 										$err = new Errorlog();
 										$err->errortype = "Mail";
-										$err->errordate = date("Y-m-d h:i:s");
+										$err->errordate = date("Y-m-d H:i:s");
 										$err->errormessage = $this->mail->ErrorInfo;
 										$err->user = $this->currentUser->username;
 										$err->ip = $this->ip;
@@ -1089,7 +1089,7 @@ Class Itimailmodule extends Application{
 										echo "Message sent!";
 									}
 									$Itimailhistory = new Itimailhistory();
-									$Itimailhistory->date = date("Y-m-d h:i:s");
+									$Itimailhistory->date = date("Y-m-d H:i:s");
 									$Itimailhistory->fullname = $Employee->fullname;
 									$Itimailhistory->itimail_id = $id;
 									$Itimailhistory->approvaltype = "Originator";
@@ -1097,7 +1097,7 @@ Class Itimailmodule extends Application{
 									$Itimailhistory->save();
 								}else{
 									$Itimailhistory = new Itimailhistory();
-									$Itimailhistory->date = date("Y-m-d h:i:s");
+									$Itimailhistory->date = date("Y-m-d H:i:s");
 									$Itimailhistory->fullname = $Employee->fullname;
 									$Itimailhistory->itimail_id = $id;
 									$Itimailhistory->approvaltype = "Originator";
@@ -1110,7 +1110,7 @@ Class Itimailmodule extends Application{
 						}catch (Exception $e){
 							$err = new Errorlog();
 							$err->errortype = "UpdateITEIE";
-							$err->errordate = date("Y-m-d h:i:s");
+							$err->errordate = date("Y-m-d H:i:s");
 							$err->errormessage = $e->getMessage();
 							$err->user = $this->currentUser->username;
 							$err->ip = $this->ip;
@@ -1333,7 +1333,7 @@ Class Itimailmodule extends Application{
 							$supAdb = Addressbook::find('first',array('conditions'=>array("username=?",$Superior->loginname)));
 							$complete = false;
 							$Itimailhistory = new Itimailhistory();
-							$Itimailhistory->date = date("Y-m-d h:i:s");
+							$Itimailhistory->date = date("Y-m-d H:i:s");
 							$Itimailhistory->fullname = $Employee->fullname;
 							$Itimailhistory->approvaltype = $Itimailapproval->approver->approvaltype->approvaltype;
 							$Itimailhistory->remarks = $data['remarks'];
@@ -1767,7 +1767,7 @@ Class Itimailmodule extends Application{
 							if (!$this->mail->send()) {
 								$err = new Errorlog();
 								$err->errortype = "ITMAIL Mail";
-								$err->errordate = date("Y-m-d h:i:s");
+								$err->errordate = date("Y-m-d H:i:s");
 								$err->errormessage = $this->mail->ErrorInfo;
 								$err->user = $this->currentUser->username;
 								$err->ip = $this->ip;
@@ -2266,7 +2266,7 @@ Class Itimailmodule extends Application{
 		} catch(com_exception $e) {  
 			$err = new Errorlog();
 			$err->errortype = "IteiePDFGenerator";
-			$err->errordate = date("Y-m-d h:i:s");
+			$err->errordate = date("Y-m-d H:i:s");
 			$err->errormessage = $e->getMessage();
 			$err->user = $this->currentUser->username;
 			$err->ip = $this->ip;
