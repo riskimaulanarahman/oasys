@@ -457,6 +457,7 @@
               
               Object.assign(row.getCell(columnIndex), {
                 value: "> Detail Data Travel Request",
+                font: { bold: true },
                 fill: {
                   type: "pattern",
                   pattern: "solid",
@@ -507,6 +508,7 @@
               row = insertRow(rowIndex + i, offset++, 1);
               Object.assign(row.getCell(columnIndex), {
                 value: "> Detail Ticket",
+                font: { bold: true },
                 fill: {
                   type: "pattern",
                   pattern: "solid",
