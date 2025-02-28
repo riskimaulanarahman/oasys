@@ -62,6 +62,9 @@
       CrudService.FindData('trschedule',{filter:'all',startDate:$filter("date")($scope.filterData.startDate, 'yyyy-MM-dd'),endDate:$filter("date")($scope.filterData.endDate, 'yyyy-MM-dd')}).then(function (resp) {
         $scope.trdetail = resp;
       });
+      CrudService.FindData('trticket',{filter:'all',startDate:$filter("date")($scope.filterData.startDate, 'yyyy-MM-dd'),endDate:$filter("date")($scope.filterData.endDate, 'yyyy-MM-dd')}).then(function (resp) {
+        $scope.tiketdetail = resp;
+      });
       function initController() {
         $scope.dataGrid.refresh();
         CrudService.FindData('trschedule',{filter:'all',startDate:$filter("date")($scope.filterData.startDate, 'yyyy-MM-dd'),endDate:$filter("date")($scope.filterData.endDate, 'yyyy-MM-dd')}).then(function (resp) {
@@ -395,6 +398,14 @@
                 if(!gridCell) {
                   return;
                 }
+                if (gridCell.column.dataField === 'approveddoc') {
+                  const url = 'http://172.18.83.38/oasys/' + gridCell.value;
+                  excelCell.value = { text: 'Click to Download', hyperlink: url };
+                  excelCell.font = {
+                    color: { argb: 'FF0000FF' },
+                    underline: true
+                  };
+                }
                 if((gridCell.column.dataField === 'requeststatus') ){
                   if(gridCell.value===0) {
                     excelCell.value = "Saved as Draft"
@@ -491,7 +502,57 @@
                     });
                   });
                 });
-                offset--;
+              row = insertRow(rowIndex + i, offset++, 1);
+              Object.assign(row.getCell(columnIndex), {
+                value: "> Detail Ticket",
+                fill: {
+                  type: "pattern",
+                  pattern: "solid",
+                  fgColor: { argb: "BEDFE6" }
+                }
+              });
+              worksheet.mergeCells(row.number, columnIndex, row.number, columnIndex+10);
+              const columnx = ["ticketfor","ticketname","dateofbirth","phonenumber","gender","hrremarks" ];
+    
+              row = insertRow(rowIndex+ i, offset++, 1);
+              columnx.forEach((columnName, currentColumnIndex) => {
+                Object.assign(row.getCell(columnIndex + currentColumnIndex), {
+                  value: columnName,
+                  font: { bold: true },
+                  fill: {
+                    type: "pattern",
+                    pattern: "solid",
+                    fgColor: { argb: "BEDFE6" }
+                  },
+                  border: {
+                    bottom: borderStyle,
+                    left: borderStyle,
+                    right: borderStyle,
+                    top: borderStyle
+                  }
+                });
+              });
+              getTiketDetail($scope.masterRows[i].data.id).forEach((detail, index) => {
+                row = insertRow(rowIndex+i, offset++, 1);
+                columnx.forEach((columnName, currentColumnIndex) => {
+                  Object.assign(row.getCell(columnIndex + currentColumnIndex), {
+                    value: detail[columnName],
+                    fill: {
+                      type: "pattern",
+                      pattern: "solid",
+                      fgColor: { argb: "BEDFE6" }
+                    },
+                    border: {
+                      bottom: borderStyle,
+                      left: borderStyle,
+                      right: borderStyle,
+                      top: borderStyle
+                    }
+                  });
+                });
+              });
+                
+              offset--;
               
             }
           }).then(function() {
@@ -508,6 +569,13 @@
       const getTRDetail = (id) => {
         if ($scope.trdetail.length>0){
           return $scope.trdetail.filter((data) => data.tr_id === id);
+        } else {
+          return []
+        }
+      }
+      const getTiketDetail = (id) => {
+        if ($scope.tiketdetail.length>0){
+          return $scope.tiketdetail.filter((data) => data.tr_id === id);
         } else {
           return []
         }

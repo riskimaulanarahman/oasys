@@ -1515,6 +1515,14 @@ Class TrModule extends Application{
 						if(isset($query['status'])){
 							$Trticket = Trticket::find('all', array('conditions' => array("tr_id=?",$query['tr_id'])));
 							$data=array("jml"=>count($Trticket));
+						}else if(isset($query['filter'])){
+							$join = "LEFT JOIN tbl_tr on tbl_trticket.tr_id=tbl_tr.id";
+							$sel = 'tbl_trticket.*, tbl_tr.CreatedDate ';
+							$Trticket = Trticket::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_tr.CreatedDate between ? and ?',$query['startDate'],$query['endDate'] )));
+							foreach ($Trticket as &$result) {	
+								$result	= $result->to_array();
+							}
+							$data=$Trticket;
 						}else{
 							$data=array();
 						}
