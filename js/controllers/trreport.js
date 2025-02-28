@@ -399,12 +399,14 @@
                   return;
                 }
                 if (gridCell.column.dataField === 'approveddoc') {
-                  const url = 'http://172.18.83.38/oasys/' + gridCell.value;
-                  excelCell.value = { text: 'Click to Download', hyperlink: url };
-                  excelCell.font = {
-                    color: { argb: 'FF0000FF' },
-                    underline: true
-                  };
+                  if (gridCell.value!==null){
+                    const url = 'http://172.18.83.38/oasys/' + gridCell.value;
+                    excelCell.value = { text: 'Click to Download', hyperlink: url };
+                    excelCell.font = {
+                      color: { argb: 'FF0000FF' },
+                      underline: true
+                    };
+                  }
                 }
                 if((gridCell.column.dataField === 'requeststatus') ){
                   if(gridCell.value===0) {
