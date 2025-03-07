@@ -258,10 +258,11 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 									};
 						
 									// Reload the advanceno dataSource
-									var advancenoEditor = $scope.formInstance.getEditor('advanceno');
-									advancenoEditor.option('dataSource', $scope.getlessadv);
-									advancenoEditor.getDataSource().load();
+									// var advancenoEditor = $scope.formInstance.getEditor('advanceno');
+									// advancenoEditor.option('dataSource', $scope.getlessadv);
+									// advancenoEditor.getDataSource().load();
 
+									$scope.formInstance.updateData('advanceno',  "");
 								}
 							},
 							validationRules: [{

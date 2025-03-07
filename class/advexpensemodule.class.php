@@ -208,7 +208,7 @@ Class Advexpensemodule extends Application{
 									if ($employee_id) {
 										$Advexpense->employee_id = $employee_id;
 									}
-									$Advexpense->advanceno = $codenew->advanceno;
+									// $Advexpense->advanceno = $codenew->advanceno;
 									if ($mode == 'edit') {
 										$Advexpense->save();
 									}

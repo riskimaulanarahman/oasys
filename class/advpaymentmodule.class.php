@@ -199,7 +199,7 @@ Class Advpaymentmodule extends Application{
 										if ($employee_id) {
 											$Advpayment->employee_id = $employee_id;
 										}
-										$Advpayment->advanceno = $codenew->advanceno;
+										// $Advpayment->advanceno = $codenew->advanceno;
 										if ($mode == 'edit') {
 											$Advpayment->save();
 										}
