@@ -46,7 +46,11 @@
                         key: "id",
                         loadMode: "raw",
                         load: function() {
-                            criteria = {filter:'bydept',dept:$scope.data.department};
+                            criteria = {
+                                filter:'bydeptsamebu',
+                                dept:$scope.data.department,
+                                bu:$scope.data.bu,
+                            };
                             return CrudService.FindData('emp',criteria).then(function (response) {
                                 if(response.status=="error"){
                                     DevExpress.ui.notify(response.message,"error");
