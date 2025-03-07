@@ -34,12 +34,17 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 				}),
 				sort: "id"
 			}
+			console.log($scope.data.bg)
 			$scope.allDeptEmpDataSource = {
 				store: new DevExpress.data.CustomStore({
 					key: "id",
 					loadMode: "raw",
 					load: function() {
-						criteria = {filter:'bydept3',dept:$scope.data.department};
+						criteria = {
+							filter:'bydeptsamebu',
+							dept:$scope.data.department,
+							bu:$scope.data.bg
+						};
 						return CrudService.FindData('emp',criteria);
 					}
 				}),
@@ -178,20 +183,91 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 							displayFormat:"dd/MM/yyyy",
 							// disabled: true
 						}},
-						
-						
 						{
-							dataField:'name',
 							label: {
-								text:"Name",
+								text: "Create for Employee"
 							},
-							name:'name',
-							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
+							dataField: "employee_id",
+							editorType: "dxDropDownBox",
+							visible: true,
 							editorOptions: {
-								inputAttr:{ dataintro : 'name' },
-								readOnly: true
-								// disabled: true
-							}
+								readOnly: (($scope.mode == 'edit') || ($scope.mode == 'add')) ? false : true,
+								dataSource: $scope.allDeptEmpDataSource,
+								valueExpr: 'id',
+								displayExpr: 'fullname',
+								searchEnabled: true,
+								contentTemplate: function (e) {
+									var $dataGrid = $("<div>").dxDataGrid({
+										dataSource: e.component.option("dataSource"),
+										columns: [{ dataField: "fullname", width: 100 }, { dataField: "company", width: 50 }, { dataField: "department", width: 200 }],
+										height: 265,
+										selection: { mode: "single" },
+										selectedRowKeys: [e.component.option("value")],
+										focusedRowEnabled: true,
+										focusedRowKey: e.component.option("value"),
+										searchPanel: {
+											visible: true,
+											width: 265,
+											placeholder: "Search..."
+										},
+										onSelectionChanged: function (selectedItems) {
+											var keys = selectedItems.selectedRowKeys,
+												hasSelection = keys.length;
+											if (hasSelection) {
+
+												e.component.option("value", keys[0]);
+												e.component.close();
+
+											}
+										}
+									});
+									return $dataGrid;
+								},
+								onValueChanged: function (e) {
+									// Set paymenttype to false (uncheck) when paymentform changes
+									var paymenttypeEditor = $scope.formInstance.getEditor('paymenttype');
+									paymenttypeEditor.option('value', false); // Uncheck paymenttype
+
+									console.log($scope.data.employee_id);
+									criteria = { status: 'chemp', employee_id: e.value, advexpense_id: $scope.Requestid, mode: $scope.mode };
+									if ($scope.mode == 'edit' || $scope.mode == 'add') {
+
+										CrudService.FindData('advexpense', criteria).then(function (response) {
+											// console.log(response)
+										})
+										// $scope.formInstance.updateData('advanceform', null);
+									}
+
+									 // Update dataSource for advanceno
+									 $scope.getlessadv = {
+										store: new DevExpress.data.CustomStore({
+											key: "id",
+											loadMode: "raw",
+											load: function() {
+												return CrudService.GetById('listadvance', e.value).then(function (response) {
+													if(response.status=="error"){
+														DevExpress.ui.notify(response.message,"error");
+													}else{
+														console.log(response);
+														return response;
+													}
+												});
+											},
+										}),
+										sort: "id"
+									};
+						
+									// Reload the advanceno dataSource
+									var advancenoEditor = $scope.formInstance.getEditor('advanceno');
+									advancenoEditor.option('dataSource', $scope.getlessadv);
+									advancenoEditor.getDataSource().load();
+
+								}
+							},
+							validationRules: [{
+								type: "required",
+								message: "Please select employee"
+							}]
 						},
 						{
 							dataField:'email',
@@ -222,7 +298,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 						{
 							dataField:'bg',
 							label: {
-								text:"BG",
+								text:"BU",
 							},
 							name:'bg',
 							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
@@ -267,24 +343,37 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 										console.log(response);
 								})
 
-								if(e.value == 0) {
-									$scope.formInstance.updateData('advanceno',  "");
-								}
+								if(e.value==1) {
 
-								// 	var paymentform = $scope.formInstance.getEditor('paymentform');
-								// 	console.log(paymentform);
-								// 	var lessadv = $scope.formInstance.getEditor('advanceno');
-								// 	lessadv.getDataSource().filter('advanceform','=',$scope.data.paymentform);
-								// 	lessadv.getDataSource().load();
-								// } else {
+									$scope.getlessadv = {
+										store: new DevExpress.data.CustomStore({
+											key: "id",
+											loadMode: "raw",
+											load: function () {
+												return CrudService.GetById('listadvance', $scope.data.employee_id).then(function (response) {
+													if (response.status == "error") {
+														DevExpress.ui.notify(response.message, "error");
+													} else {
+														console.log(response);
+														return response;
+													}
+												});
+											},
+										}),
+										sort: "id"
+									};
+
+									// Reload the advanceno dataSource
+									var advancenoEditor = $scope.formInstance.getEditor('advanceno');
+									advancenoEditor.option('dataSource', $scope.getlessadv);
+									advancenoEditor.getDataSource().load();
+								} else {
 									
-										
-										
-										// $scope.getadvance = response;
-										// 	var lessadv = $scope.formInstance.getEditor('lessadvance');
-										// 	lessadv.getDataSource().filter('advanceform','=',e.value);
-										// 	lessadv.getDataSource().load();
-			
+									$scope.formInstance.updateData('advanceno',  "");
+
+								}
+								// if(e.value == 0) {
+								// 	$scope.formInstance.updateData('advanceno',  "");
 								// }
 
 							}
@@ -1529,6 +1618,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 			delete data.paymenttype;
 
 			delete data.createddate;
+			delete data.createdby;
 			delete data.employee_id;
 			delete data.requeststatus;
 			delete data.expenseno;
@@ -1576,6 +1666,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 					delete data.paymenttype;
 
 					delete data.createddate;
+					delete data.createdby;
 					delete data.employee_id;
 					delete data.requeststatus;
 					delete data.expenseno;

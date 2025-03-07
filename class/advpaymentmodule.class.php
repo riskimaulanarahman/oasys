@@ -131,11 +131,13 @@ Class Advpaymentmodule extends Application{
 					default:
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 						if ($Employee){
-							$Advpayment = Advpayment::find('all', array('conditions' => array("employee_id=?",$Employee->id),'include' => array('employee')));
+							$Advpayment = Advpayment::find('all', array('conditions' => array("createdby=?",$Employee->id),'include' => array('employee')));
 							foreach ($Advpayment as &$result) {
 								$fullname=$result->employee->fullname;
+								$creator=$result->creator->fullname;
 								$result = $result->to_array();
 								$result['fullname']=$fullname;
+								$result['creator']=$creator;
 							}
 							echo json_encode($Advpayment, JSON_NUMERIC_CHECK);
 						}else{
@@ -160,18 +162,7 @@ Class Advpaymentmodule extends Application{
 						$join = "LEFT JOIN vwadvpaymentreport ON tbl_advpayment.id = vwadvpaymentreport.id";
 						$select = "tbl_advpayment.*,vwadvpaymentreport.apprstatuscode";
 						$Advpayment = Advpayment::find($id, array('joins'=>$join,'select'=>$select,'include' => array('employee'=>array('company','department','designation'))));
-
-						// $Advpayment = Advpayment::find($id, array('include' => array('employee'=>array('company','department','designation'))));
-
-						// $Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=5",$Advpayment->employee->id)));
-				
-						// $AdvanceDetail = AdvanceDetail::find('all',array('conditions'=> array("advance_id=?",$Advance->id)));
-						// foreach ($AdvanceDetail as &$data) {
-						// 	$val_tamount += $data->amount;
-						// }
 						
-						// echo number_format($val_tamount);
-						// echo json_encode($AdvanceDetail, JSON_NUMERIC_CHECK);
 						if ($Advpayment){
 							$fullname = $Advpayment->employee->fullname;
 							$department = $Advpayment->employee->department->departmentname;
@@ -191,6 +182,32 @@ Class Advpaymentmodule extends Application{
 							switch ($query['status']){
 								case "last":
 									break;
+									case 'chemp': //new
+
+										// $advance_form = $query['formtype'];
+										$employee_id = $query['employee_id'];
+										// $createdfor = $query['employee_id'];
+										$id = $query['advpayment_id'];
+										$mode = $query['mode'];
+	
+										$Employee = Employee::find('first', array('conditions' => array("id=?", $employee_id), "include" => array("location", "department", "company")));
+	
+										$codenew = Advance::find('first', array('select' => "CONCAT('Advance/','" . $Employee->companycode . "','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(advanceno,-4,4)) is null then 1 else max(substring(advanceno,-4,4))+1 end,4,'0')) as advanceno", "conditions" => array("substring(advanceno,9," . strlen($Employee->companycode) . ")=? and substring(advanceno," . (strlen($Employee->companycode) + 10) . ",4)=YEAR(CURDATE())", $Employee->companycode)));
+	
+										$Advpayment = Advpayment::find($id);
+									
+										if ($employee_id) {
+											$Advpayment->employee_id = $employee_id;
+										}
+										$Advpayment->advanceno = $codenew->advanceno;
+										if ($mode == 'edit') {
+											$Advpayment->save();
+										}
+	
+	
+										$data = array("advanceno" => $codenew->advanceno);
+	
+										break;
 									case 'appcon':
 										$valamount = $query['valamount'];
 										$advpayment_form = $query['formtype'];
@@ -253,7 +270,7 @@ Class Advpaymentmodule extends Application{
 
 										if($Advpayment->requeststatus == 0) {
 											
-												if($advanceno !== null) {
+											if($advanceno !== null) {
 
 													$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND advanceno=?",$Advpayment->employee_id,$advanceno)));
 													
@@ -1253,6 +1270,7 @@ Class Advpaymentmodule extends Application{
 							unset($data['__KEY__']);
 							unset($data['username']);
 							$data['employee_id']=$Employee->id;
+							$data['createdby']=$Employee->id;
 							$data['RequestStatus']=0;
 							try{
 								$code = Advpayment::find('first',array('select' => "CONCAT('Payment/','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(paymentno,-4,4)) is null then 1 else max(substring(paymentno,-4,4))+1 end,4,'0')) as paymentno","conditions"=>array("substring(paymentno,9,".strlen($Employee->companycode).")=? and substring(paymentno,".(strlen($Employee->companycode)+10).",4)=YEAR(CURDATE())",$Employee->companycode)));
@@ -1815,7 +1833,7 @@ Class Advpaymentmodule extends Application{
 								$username = $nAdvpaymentapproval->approver->employee->loginname;
 								$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
 
-								$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Advpayment->employee->loginname)));
+								$usr = Addressbook::find('first',array('conditions'=>array("username=?",$Advpayment->creator->loginname)));
 								$email=$usr->email;
 								
 								$complete = false;

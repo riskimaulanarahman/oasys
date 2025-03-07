@@ -171,9 +171,11 @@ class Advancemodule extends Application
 						if ($Advance) {
 							$fullname = $Advance->employee->fullname;
 							$department = $Advance->employee->department->departmentname;
+							$companycode = $Advance->employee->companycode;
 							$data = $Advance->to_array();
 							$data['fullname'] = $fullname;
 							$data['department'] = $department;
+							$data['companycode'] = $companycode;
 							echo json_encode($data, JSON_NUMERIC_CHECK);
 						} else {
 							$Advance = new Advance();
@@ -1122,6 +1124,7 @@ class Advancemodule extends Application
 						$depthead = $data['depthead'];
 						unset($data['approvalstatus']);
 						unset($data['fullname']);
+						unset($data['companycode']);
 						unset($data['department']);
 						unset($data['apprstatuscode']);
 						//unset($data['employee']);
@@ -1546,6 +1549,7 @@ class Advancemodule extends Application
 						unset($data['id']);
 						unset($data['depthead']);
 						unset($data['fullname']);
+						unset($data['companycode']);
 						unset($data['department']);
 						unset($data['approveddoc']);
 						unset($data['isBudgeted']);

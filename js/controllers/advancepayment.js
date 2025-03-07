@@ -137,6 +137,7 @@
                         }
                     },
                     {dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200 , sortOrder: "desc"},
+                    {dataField:'creator',caption:"Created By",width: 200},
                     {dataField:'fullname',caption:"Request For Employee",width: 200},
                     {dataField:'paymentno',caption:"Payment No",width: 200},
                     {dataField:'paymentform',caption:"Form Type",encodeHtml: false ,width: 200,

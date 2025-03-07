@@ -40,7 +40,11 @@
 						key: "id",
 						loadMode: "raw",
 						load: function () {
-							criteria = { filter: 'bydept4', dept: $scope.data.department };
+							criteria = {
+								filter:'bydeptsamebu',
+								dept:$scope.data.department,
+								bu:$scope.data.companycode
+							};
 							return CrudService.FindData('emp', criteria);
 						}
 					}),
