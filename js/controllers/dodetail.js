@@ -935,6 +935,7 @@
             var data = $scope.formInstance.option("formData");
             delete data.fullname;
             delete data.department;
+            delete data.bu;
             CrudService.Update('dayoff',data.id,data).then(function (response) {
                 if(response.status=="error"){
                      DevExpress.ui.dialog.alert(response.message,"error");
@@ -978,6 +979,7 @@
                                         delete data.approvalstatus;
                                         delete data.mtd;
                                         delete data.ytd;
+                                        delete data.bu;
                                         CrudService.Update('dayoff',data.id,data).then(function (response) {
                                             if(response.status=="error"){
                                                 DevExpress.ui.dialog.alert(response.message,"Error");
