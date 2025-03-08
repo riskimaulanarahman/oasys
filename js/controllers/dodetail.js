@@ -865,6 +865,7 @@
                 delete data.depthead;
                 delete data.fullname;
                 delete data.department;
+                delete data.bu;
                 CrudService.Update('doapp',data.id,data).then(function (response) {
                     if(response.status=="error"){
                         DevExpress.ui.dialog.alert(response.message,"Error");
@@ -901,6 +902,7 @@
                         delete data.depthead;
                         delete data.fullname;
                         delete data.department;
+                        delete data.bu;
                         CrudService.Update('doapp',data.id,data).then(function (response) {
                             if(response.status=="error"){
                                 DevExpress.ui.dialog.alert(response.message,"Error");
