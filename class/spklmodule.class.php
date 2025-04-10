@@ -1867,6 +1867,8 @@ Class SpklModule extends Application{
 						unset($data['approvalstatus']);
 						unset($data['fullname']);
 						unset($data['department']);
+						unset($data['company']);
+						unset($data['location']);
 						//unset($data['employee']);
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 						foreach($data as $key=>$val){

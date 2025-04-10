@@ -619,6 +619,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 			delete data.fullname;
 			delete data.tmsreqstatus;
 			delete data.department;
+			delete data.company;
 			CrudService.Update('spklapp',data.id,data).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.dialog.alert(response.message,"Error");
@@ -656,6 +657,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 					delete data.fullname;
 					delete data.tmsreqstatus;
 					delete data.department;
+					delete data.company;
 					CrudService.Update('spklapp',data.id,data).then(function (response) {
 						if(response.status=="error"){
 							DevExpress.ui.dialog.alert(response.message,"Error");
