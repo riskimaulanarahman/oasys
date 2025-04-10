@@ -50,7 +50,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 					key: "id",
 					loadMode: "raw",
 					load: function() {
-						criteria = {filter:'bybusamelocation',bu:$scope.data.company,location:$scope.data.location};
+						criteria = {filter:'bybusamelocation',bu:$scope.data.company,location:$scope.data.location,dept:$scope.data.department};
 						return CrudService.FindData('emp',criteria);
 					}
 				}),
