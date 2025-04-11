@@ -642,6 +642,8 @@ Class SpklModule extends Application{
 							unset($data['depthead']);
 							unset($data['fullname']);
 							unset($data['department']);
+							unset($data['company']);
+							unset($data['location']);
 							unset($data['datework']);
 							unset($data['approveddoc']);
 							unset($data['isexceedplan']);
