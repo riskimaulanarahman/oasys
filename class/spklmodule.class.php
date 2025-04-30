@@ -211,6 +211,7 @@ Class SpklModule extends Application{
 		
 		try {
 			$html2pdf = new Html2Pdf('P', 'A4', 'fr');
+			$html2pdf->setTestTdInOnePage(false);
 			$html2pdf->writeHTML($pdfContent);
 			ob_clean();
 			$fileName ='doc'.DS.'spkl'.DS.'pdf'.DS.''.$Spkl->employee->sapid.'_'.date("YmdHis").'.pdf';
