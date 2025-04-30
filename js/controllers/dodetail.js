@@ -46,7 +46,11 @@
                         key: "id",
                         loadMode: "raw",
                         load: function() {
-                            criteria = {filter:'bydept',dept:$scope.data.department};
+                            criteria = {
+                                filter:'bydeptsamebu',
+                                dept:$scope.data.department,
+                                bu:$scope.data.bu,
+                            };
                             return CrudService.FindData('emp',criteria).then(function (response) {
                                 if(response.status=="error"){
                                     DevExpress.ui.notify(response.message,"error");
@@ -861,6 +865,7 @@
                 delete data.depthead;
                 delete data.fullname;
                 delete data.department;
+                delete data.bu;
                 CrudService.Update('doapp',data.id,data).then(function (response) {
                     if(response.status=="error"){
                         DevExpress.ui.dialog.alert(response.message,"Error");
@@ -897,6 +902,7 @@
                         delete data.depthead;
                         delete data.fullname;
                         delete data.department;
+                        delete data.bu;
                         CrudService.Update('doapp',data.id,data).then(function (response) {
                             if(response.status=="error"){
                                 DevExpress.ui.dialog.alert(response.message,"Error");
@@ -929,6 +935,7 @@
             var data = $scope.formInstance.option("formData");
             delete data.fullname;
             delete data.department;
+            delete data.bu;
             CrudService.Update('dayoff',data.id,data).then(function (response) {
                 if(response.status=="error"){
                      DevExpress.ui.dialog.alert(response.message,"error");
@@ -972,6 +979,7 @@
                                         delete data.approvalstatus;
                                         delete data.mtd;
                                         delete data.ytd;
+                                        delete data.bu;
                                         CrudService.Update('dayoff',data.id,data).then(function (response) {
                                             if(response.status=="error"){
                                                 DevExpress.ui.dialog.alert(response.message,"Error");

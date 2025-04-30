@@ -642,6 +642,8 @@ Class SpklModule extends Application{
 							unset($data['depthead']);
 							unset($data['fullname']);
 							unset($data['department']);
+							unset($data['company']);
+							unset($data['location']);
 							unset($data['datework']);
 							unset($data['approveddoc']);
 							unset($data['isexceedplan']);
@@ -1711,13 +1713,17 @@ Class SpklModule extends Application{
 				switch ($this->post['criteria']){
 					case 'byid':
 						$id = $this->post['id'];
-						$Spkl = Spkl::find($id, array('include' => array('employee'=>array('company','department','designation'))));
+						$Spkl = Spkl::find($id, array('include' => array('employee'=>array('company','department','designation','location'))));
 						if ($Spkl){
 							$fullname = $Spkl->employee->fullname;
 							$department = $Spkl->employee->department->departmentname;
+							$companycode = $Spkl->employee->companycode;
+							$location = $Spkl->employee->location->location;
 							$data=$Spkl->to_array();
 							$data['fullname']=$fullname;
 							$data['department']=$department;
+							$data['company']=$companycode;
+							$data['location']=$location;
 							echo json_encode($data, JSON_NUMERIC_CHECK);
 						}else{
 							$Spkl = new Spkl();
@@ -1863,6 +1869,8 @@ Class SpklModule extends Application{
 						unset($data['approvalstatus']);
 						unset($data['fullname']);
 						unset($data['department']);
+						unset($data['company']);
+						unset($data['location']);
 						//unset($data['employee']);
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 						foreach($data as $key=>$val){

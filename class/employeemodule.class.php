@@ -43,6 +43,8 @@ Class EmployeeModule extends Application{
 						$query=$this->post['query'];
 						if(isset($query['filter'])){
 							$deptname = $query['dept'];
+							$buname = $query['bu'];
+							$locationname = $query['location'];
 							$Department = Department::first(array('conditions'=>array("departmentname=?",$deptname)));
 							$dept = $Department->departmentgroup;
 							switch ($query['filter']){
@@ -99,6 +101,36 @@ Class EmployeeModule extends Application{
 										$result['department']=$dept;
 										$result['designation']=$des;
 										$result['company']=$comp;
+									}					
+									$data =  json_encode($Employee, JSON_NUMERIC_CHECK);
+									break;
+								case 'bydeptsamebu':
+									$join = "LEFT join tbl_department on tbl_employee.department_id=tbl_department.id";
+									$Employee = Employee::all(array('joins'=>$join,'conditions' => array("tbl_department.departmentgroup =? and companycode=? and (loginname is null or loginname='' or loginname=?)",$dept,$buname,$this->currentUser->username),'include' => array('department','company', 'designation'),"order"=>"fullname"));
+									foreach ($Employee as &$result) {
+										$dept=$result->department->departmentname;
+										$comp=$result->company->companycode;
+										$des=$result->designation->designationname;				
+										$result = $result->to_array();
+										$result['department']=$dept;
+										$result['designation']=$des;
+										$result['company']=$comp;
+									}					
+									$data =  json_encode($Employee, JSON_NUMERIC_CHECK);
+									break;
+								case 'bybusamelocation':
+									$join = "LEFT join tbl_location on tbl_employee.location_id=tbl_location.id LEFT join tbl_department on tbl_employee.department_id=tbl_department.id";
+									$Employee = Employee::all(array('joins'=>$join,'conditions' => array("level_id<2 and ((companycode =? and tbl_location.location =?) or (companycode =? and tbl_department.departmentgroup =?)) ",$buname,$locationname,$buname,$dept),'include' => array('department','company', 'designation'),"order"=>"fullname"));
+									foreach ($Employee as &$result) {
+										$dept=$result->department->departmentname;
+										$comp=$result->company->companycode;
+										$loc=$result->location->location;
+										$des=$result->designation->designationname;				
+										$result = $result->to_array();
+										$result['department']=$dept;
+										$result['designation']=$des;
+										$result['company']=$comp;
+										$result['location']=$loc;
 									}					
 									$data =  json_encode($Employee, JSON_NUMERIC_CHECK);
 									break;

@@ -50,7 +50,11 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 					key: "id",
 					loadMode: "raw",
 					load: function() {
-						criteria = {filter:'bydept3',dept:$scope.data.department};
+						criteria = {
+							filter:'bydeptsamebu',
+							dept:$scope.data.department,
+							bu:$scope.data.companycode
+						};
 						return CrudService.FindData('emp',criteria);
 					}
 				}),
@@ -143,29 +147,25 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 					console.log($scope.formInstance)
 					criteria = {status:'checkform',formtype:$scope.data.paymentform,advpayment_id:$scope.Requestid,employee_id:$scope.data.employee_id};
 					console.log($scope.data.paymentform);
+					// if($scope.data.paymentform == 0) {
+					// 	$scope.formInstance.itemOption('group.paymenttype', 'visible', false);
+					// }
 					CrudService.FindData('advpayment',criteria).then(function (response){
 						var vis =(response.message==200)?true:false;
 						if(response.message == 200) {
-							// $scope.formInstance.itemOption('group.paymenttype', 'visibleIndex', 0);
-							// var lessadv = $scope.formInstance.getEditor('advanceno');
-							// lessadv.getDataSource().filter('advanceform','=',e.value);
-							// lessadv.getDataSource().load();
-
+							
 							
 						} else if(response.message == 404) {
 							DevExpress.ui.notify("tidak ada advance","error");
-							// $scope.formInstance.itemOption('group.paymenttype', 'visibleIndex', 0);
-							$scope.formInstance.itemOption('subgroup.advanceno', 'visible', false);
+							$scope.formInstance.itemOption('subgroup.advanceno', 'visible', vis);
 						} else {
-							$scope.formInstance.itemOption('group.paymenttype', 'visible', false);
-							$scope.formInstance.updateData('paymenttype',  "");
-							$scope.formInstance.itemOption('subgroup.advanceno', 'visible', false);
-							$scope.formInstance.updateData('advanceno',  "");
-
+								$scope.formInstance.itemOption('group.paymenttype', 'visible', true);
+								$scope.formInstance.updateData('paymenttype',  "");
+								$scope.formInstance.itemOption('subgroup.advanceno', 'visible', vis);
+								$scope.formInstance.updateData('advanceno',  "");
 						}
-						$scope.formInstance.itemOption('group.paymenttype', 'visible', vis);
-						// $scope.formInstance.updateData('paymenttype',  "");
-
+						$scope.formInstance.itemOption('group.paymenttype', 'visible', true);
+						
 						if($scope.data.paymentform == 2) {
 							$scope.formInstance.itemOption('subgroup.opscategory', 'visible', true);
 						}
@@ -196,58 +196,183 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 						colCount : 2,
 						items: [
 							{
-                                dataField:'paymentform',
-								name:'paymentform',
-                                editorType: "dxSelectBox",
-                                label:{text:"Payment Form"},
-                                // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                                validationRules: [{type: "required",message: "Action is required"}],
-                                editorOptions: { 
-									inputAttr:{ dataintro : 'paymentform' },
-									readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-                                    dataSource:$scope.AdvanceForm,  
-                                    valueExpr: 'id',
-                                    displayExpr: 'paymentform',
-									// value: "",
-									onValueChanged: function(e) {
-										criteria = {status:'appform',formtype:e.value,advpayment_id:$scope.Requestid,employee_id:$scope.data.employee_id};
-										CrudService.FindData('advpayment',criteria).then(function (response){
-											console.log(response);
-											var vis =(response.message==200)?true:false;
-											if(response.message == 200) {
-												
+								label: {
+									text: "Create for Employee"
+								},
+								dataField: "employee_id",
+								editorType: "dxDropDownBox",
+								visible: true,
+								editorOptions: {
+									readOnly: (($scope.mode == 'edit') || ($scope.mode == 'add')) ? false : true,
+									dataSource: $scope.allDeptEmpDataSource,
+									valueExpr: 'id',
+									displayExpr: 'fullname',
+									searchEnabled: true,
+									contentTemplate: function (e) {
+										var $dataGrid = $("<div>").dxDataGrid({
+											dataSource: e.component.option("dataSource"),
+											columns: [{ dataField: "fullname", width: 100 }, { dataField: "company", width: 50 }, { dataField: "department", width: 200 }],
+											height: 265,
+											selection: { mode: "single" },
+											selectedRowKeys: [e.component.option("value")],
+											focusedRowEnabled: true,
+											focusedRowKey: e.component.option("value"),
+											searchPanel: {
+												visible: true,
+												width: 265,
+												placeholder: "Search..."
+											},
+											onSelectionChanged: function (selectedItems) {
+												var keys = selectedItems.selectedRowKeys,
+													hasSelection = keys.length;
+												if (hasSelection) {
 
-												
-											} else if(response.message == 404) {
-												DevExpress.ui.notify("tidak ada advance","error");
-												// $scope.formInstance.itemOption('group.paymenttype', 'visibleIndex', 0);
-												$scope.formInstance.itemOption('subgroup.advanceno', 'visible', false);
-											} else {
-												$scope.formInstance.itemOption('group.paymenttype', 'visible', false);
-												$scope.formInstance.updateData('paymenttype',  "");
-												$scope.formInstance.itemOption('subgroup.advanceno', 'visible', false);
-												$scope.formInstance.updateData('advanceno',  "");
+													e.component.option("value", keys[0]);
+													e.component.close();
 
+												}
 											}
-											$scope.formInstance.itemOption('group.paymenttype', 'visible', vis);
-											$scope.formInstance.updateData('paymenttype',  "");
-											
-											var vis1 =(e.value==2)?true:false;
+										});
+										return $dataGrid;
+									},
+									onValueChanged: function (e) {
+										// console.log(e);
+										// Set paymenttype to false (uncheck) when paymentform changes
+										var paymenttypeEditor = $scope.formInstance.getEditor('paymenttype');
+										paymenttypeEditor.option('value', false); // Uncheck paymenttype
 
-											$scope.formInstance.itemOption('subgroup.opscategory', 'visible', vis1);
-											$scope.formInstance.updateData('opscategory', null);
+										 // Set paymentform value to 0
+										 var paymentformEditor = $scope.formInstance.getEditor('paymentform');
+										 paymentformEditor.option('value', 0); // Update paymentform value to 0
 
-				
-											if($scope.grid2Component) {
-												$scope.grid2Component.refresh();
-											}
-										})
-										$('#advformtype').val(e.value);
+										console.log($scope.data.employee_id);
+										criteria = { status: 'chemp', employee_id: e.value, advpayment_id: $scope.Requestid, mode: $scope.mode };
+										if ($scope.mode == 'edit' || $scope.mode == 'add') {
+
+											CrudService.FindData('advpayment', criteria).then(function (response) {
+												// console.log(response)
+												// $scope.formInstance.updateData('advanceno', response.advanceno);
+												// $scope.grid2Component.refresh();
+											})
+											$scope.formInstance.updateData('advanceform', null);
+										}
+
+										 // Update dataSource for advanceno
+										 $scope.getlessadv = {
+											store: new DevExpress.data.CustomStore({
+												key: "id",
+												loadMode: "raw",
+												load: function() {
+													return CrudService.GetById('listadvance', e.value).then(function (response) {
+														if(response.status=="error"){
+															DevExpress.ui.notify(response.message,"error");
+														}else{
+															console.log(response);
+															return response;
+														}
+													});
+												},
+											}),
+											sort: "id"
+										};
+							
+										// Reload the advanceno dataSource
+										// var advancenoEditor = $scope.formInstance.getEditor('advanceno');
+										// advancenoEditor.option('dataSource', $scope.getlessadv);
+										// advancenoEditor.getDataSource().load();
+
+										$scope.formInstance.updateData('advanceno',  "");
 
 									}
-                                },
+								},
+								validationRules: [{
+									type: "required",
+									message: "Please select employee"
+								}]
+							},
+							{
+								dataField: 'paymentform',
+								name: 'paymentform',
+								editorType: "dxSelectBox",
+								label: { text: "Payment Form" },
+								validationRules: [{ type: "required", message: "Action is required" }],
+								editorOptions: {
+									inputAttr: { dataintro: 'paymentform' },
+									readOnly: (($scope.mode == 'edit') || ($scope.mode == 'add')) ? false : true,
+									dataSource: $scope.AdvanceForm,
+									valueExpr: 'id',
+									displayExpr: 'paymentform',
+									onValueChanged: function (e) {
+										console.log($scope.mode)
+										if(($scope.mode == 'edit') || ($scope.mode == 'add')) {
+
+											// Set paymenttype to false (uncheck) when paymentform changes
+											var paymenttypeEditor = $scope.formInstance.getEditor('paymenttype');
+											paymenttypeEditor.option('value', false); // Uncheck paymenttype
 								
-                            },
+											// Update visibility of advanceno field
+											$scope.formInstance.itemOption('subgroup.advanceno', 'visible', false);
+								
+											// Clear advanceno value
+											$scope.formInstance.updateData('advanceno', "");
+								
+											// Call API or other logic
+											criteria = { status: 'appform', formtype: e.value, advpayment_id: $scope.Requestid, employee_id: $scope.data.employee_id };
+											CrudService.FindData('advpayment', criteria).then(function (response) {
+												console.log(e.value);
+												var vis = (response.message == 200) ? true : false;
+								
+												if (response.message == 200) {
+													// Update dataSource for advanceno
+													// $scope.getlessadv = {
+													// 	store: new DevExpress.data.CustomStore({
+													// 		key: "id",
+													// 		loadMode: "raw",
+													// 		load: function () {
+													// 			return CrudService.GetById('listadvance', $scope.data.employee_id).then(function (response) {
+													// 				if (response.status == "error") {
+													// 					DevExpress.ui.notify(response.message, "error");
+													// 				} else {
+													// 					console.log(response);
+													// 					return response;
+													// 				}
+													// 			});
+													// 		},
+													// 	}),
+													// 	sort: "id"
+													// };
+								
+													// // Reload the advanceno dataSource
+													// var advancenoEditor = $scope.formInstance.getEditor('advanceno');
+													// advancenoEditor.option('dataSource', $scope.getlessadv);
+													// advancenoEditor.getDataSource().filter('advanceform', '=', e.value);
+													// advancenoEditor.getDataSource().load();
+												} else if (response.message == 404) {
+													DevExpress.ui.notify("tidak ada advance", "error");
+													$scope.formInstance.itemOption('subgroup.advanceno', 'visible', false);
+												} else {
+													$scope.formInstance.itemOption('subgroup.advanceno', 'visible', false);
+													$scope.formInstance.itemOption('group.paymenttype', 'visible', true);
+												}
+								
+												// Update visibility of opscategory
+												var vis1 = (e.value == 2) ? true : false;
+												$scope.formInstance.itemOption('subgroup.opscategory', 'visible', vis1);
+												$scope.formInstance.updateData('opscategory', null);
+								
+												// Refresh grid if available
+												if ($scope.grid2Component) {
+													$scope.grid2Component.refresh();
+												}
+											});
+								
+											// Update hidden field (if needed)
+											$('#advformtype').val(e.value);
+										}
+
+									}
+								},
+							},						
 							{
 								dataField: 'companycode',
 								label: {
@@ -286,7 +411,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
                                 name:'paymenttype',
                                 label:{text:"With Advance ?"},
                                 // visible: (($scope.data.apprstatuscode==3) || ($scope.mode=='report')) ? true:false,
-								visible: false,
+								visible: true,
                                 // disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
                                 dataType:"boolean",
                                 editorType: "dxCheckBox",
@@ -296,35 +421,54 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 									readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
                                     text:"Yes",
 									onValueChanged: function (e) {
-									var vis1 =(e.value==1)?true:false;
+										var vis1 =(e.value==1)?true:false;
 
-									$scope.formInstance.itemOption('subgroup.advanceno', 'visible', vis1);
-									// $scope.formInstance.itemOption('group.paymenttype', 'visibleIndex', 0);
-									$scope.formInstance.updateData('companycode',  null);
+										$scope.formInstance.itemOption('subgroup.advanceno', 'visible', vis1);
+										// $scope.formInstance.itemOption('group.paymenttype', 'visibleIndex', 0);
+										$scope.formInstance.updateData('companycode',  null);
 
 
-									criteria = {status:'savelessadv',paymenttype:e.value,advpayment_id:$scope.Requestid,employee_id:$scope.data.employee_id};
-									CrudService.FindData('advpayment',criteria).then(function (response){
-										console.log(response);
-			
-									})
-									if(e.value==1) {
+										criteria = {status:'savelessadv',paymenttype:e.value,advpayment_id:$scope.Requestid,employee_id:$scope.data.employee_id};
+										CrudService.FindData('advpayment',criteria).then(function (response){
+											// console.log(response);
+				
+										})
 
-										var paymentform = $scope.formInstance.getEditor('paymentform');
-										console.log(paymentform);
-										var lessadv = $scope.formInstance.getEditor('advanceno');
-										lessadv.getDataSource().filter('advanceform','=',$scope.data.paymentform);
-										lessadv.getDataSource().load();
-									} else {
-										
-										$scope.formInstance.updateData('advanceno',  "");
+										if(e.value==1) {
 
+											$scope.getlessadv = {
+												store: new DevExpress.data.CustomStore({
+													key: "id",
+													loadMode: "raw",
+													load: function () {
+														return CrudService.GetById('listadvance', $scope.data.employee_id).then(function (response) {
+															if (response.status == "error") {
+																DevExpress.ui.notify(response.message, "error");
+															} else {
+																console.log(response);
+																return response;
+															}
+														});
+													},
+												}),
+												sort: "id"
+											};
+
+											// Reload the advanceno dataSource
+											var advancenoEditor = $scope.formInstance.getEditor('advanceno');
+											advancenoEditor.option('dataSource', $scope.getlessadv);
+											advancenoEditor.getDataSource().filter('advanceform', '=', $scope.data.paymentform);
+											advancenoEditor.getDataSource().load();
+										} else {
+											
+											$scope.formInstance.updateData('advanceno',  "");
+
+										}
+
+										// $scope.formInstance.itemOption('subgroup.advanceno', 'visibleIndex', 0);
+
+										// return newValue;
 									}
-
-									// $scope.formInstance.itemOption('subgroup.advanceno', 'visibleIndex', 0);
-
-									// return newValue;
-								}
                                 },
 								
                             },
@@ -1290,6 +1434,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 			data.approvaldate = d;
 			data.mode="approve";
 			delete data.createddate;
+			delete data.createdby;
 			delete data.employee_id;
 			delete data.requeststatus;
 			delete data.depthead;
@@ -1341,6 +1486,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 					data.approvaldate = d;
 					data.mode="approve";
 					delete data.createddate;
+					delete data.createdby;
 					delete data.employee_id;
 					delete data.requeststatus;
 					delete data.depthead;

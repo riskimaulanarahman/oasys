@@ -134,11 +134,13 @@ Class Advexpensemodule extends Application{
 					default:
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 						if ($Employee){
-							$Advexpense = Advexpense::find('all', array('conditions' => array("employee_id=?",$Employee->id),'include' => array('employee')));
+							$Advexpense = Advexpense::find('all', array('conditions' => array("createdby=?",$Employee->id),'include' => array('employee')));
 							foreach ($Advexpense as &$result) {
 								$fullname=$result->employee->fullname;
+								$creator=$result->creator->fullname;
 								$result = $result->to_array();
 								$result['fullname']=$fullname;
+								$result['creator']=$creator;
 							}
 							echo json_encode($Advexpense, JSON_NUMERIC_CHECK);
 						}else{
@@ -165,15 +167,6 @@ Class Advexpensemodule extends Application{
 						// $Advexpense = Advexpense::find($id, array('include' => array('employee'=>array('company','department','designation','location'))));
 						$Advexpense = Advexpense::find($id, array('joins'=>$join,'select'=>$select,'include' => array('employee'=>array('company','department','designation'))));
 
-						// $Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=5",$Advexpense->employee->id)));
-				
-						// $AdvanceDetail = AdvanceDetail::find('all',array('conditions'=> array("advance_id=?",$Advance->id)));
-						// foreach ($AdvanceDetail as &$data) {
-						// 	$val_tamount += $data->amount;
-						// }
-						
-						// echo number_format($val_tamount);
-						// echo json_encode($AdvanceDetail, JSON_NUMERIC_CHECK);
 						if ($Advexpense){
 							$fullname = $Advexpense->employee->fullname;
 							$costcenter = $Advexpense->employee->costcenter;
@@ -188,6 +181,7 @@ Class Advexpensemodule extends Application{
 							$data['costcenter']=$costcenter;
 							$data['bg']=$bg;
 							$data['location']=$location;
+							$data['department']=$department;
 
 							echo json_encode($data, JSON_NUMERIC_CHECK);
 						}else{
@@ -199,6 +193,30 @@ Class Advexpensemodule extends Application{
 						$query=$this->post['query'];					
 						if(isset($query['status'])){
 							switch ($query['status']){
+								case 'chemp': //new
+
+									$employee_id = $query['employee_id'];
+									$id = $query['advexpense_id'];
+									$mode = $query['mode'];
+
+									$Employee = Employee::find('first', array('conditions' => array("id=?", $employee_id), "include" => array("location", "department", "company")));
+									
+									$codenew = Advance::find('first', array('select' => "CONCAT('Advance/','" . $Employee->companycode . "','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(advanceno,-4,4)) is null then 1 else max(substring(advanceno,-4,4))+1 end,4,'0')) as advanceno", "conditions" => array("substring(advanceno,9," . strlen($Employee->companycode) . ")=? and substring(advanceno," . (strlen($Employee->companycode) + 10) . ",4)=YEAR(CURDATE())", $Employee->companycode)));
+
+									$Advexpense = Advexpense::find($id);
+
+									if ($employee_id) {
+										$Advexpense->employee_id = $employee_id;
+									}
+									// $Advexpense->advanceno = $codenew->advanceno;
+									if ($mode == 'edit') {
+										$Advexpense->save();
+									}
+
+
+									$data = array("advanceno" => $codenew->advanceno);
+
+									break;
 								case "bisnistrip":
 										$id= $query['advexpense_id'];
 										$action = $query['action'];
@@ -606,6 +624,7 @@ Class Advexpensemodule extends Application{
 							unset($data['__KEY__']);
 							unset($data['username']);
 							$data['employee_id']=$Employee->id;
+							$data['createdby']=$Employee->id;
 							$data['RequestStatus']=0;
 							try{
 								$code = Advexpense::find('first',array('select' => "CONCAT('Expense/','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(expenseno,-4,4)) is null then 1 else max(substring(expenseno,-4,4))+1 end,4,'0')) as expenseno","conditions"=>array("substring(expenseno,9,".strlen($Employee->companycode).")=? and substring(expenseno,".(strlen($Employee->companycode)+10).",4)=YEAR(CURDATE())",$Employee->companycode)));

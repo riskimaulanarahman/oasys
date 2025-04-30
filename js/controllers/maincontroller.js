@@ -404,7 +404,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	}
 	$scope.loadMMF30= function(data,mode,filter){
 		$scope.Filter=filter;
-		console.log(data);
+		// console.log(data);
 		if (mode=='add'){
 			CrudService.Create('mmf30',data).then(function (response) {
 				if(response.status=="error"){
@@ -497,7 +497,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	}
 	$scope.loadAdvance= function(data,mode,filter){
 		$scope.Filter=filter;
-		console.log(data);
+		// console.log(data);
 		if (mode=='add'){
 			CrudService.Create('advance',data).then(function (response) {
 				console.log(response);
@@ -522,7 +522,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	}
 	$scope.loadAdvpayment= function(data,mode,filter){
 		$scope.Filter=filter;
-		console.log(data);
+		// console.log(data);
 		if (mode=='add'){
 			CrudService.Create('advpayment',data).then(function (response) {
 				console.log(response);
@@ -548,7 +548,7 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 
 	$scope.loadAdvexpense= function(data,mode,filter){
 		$scope.Filter=filter;
-		console.log(data);
+		// console.log(data);
 		if (mode=='add'){
 			CrudService.Create('advexpense',data).then(function (response) {
 				console.log(response);

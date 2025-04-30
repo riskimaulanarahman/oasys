@@ -996,11 +996,13 @@ Class DayoffModule extends Application{
 							$cYtd = count($dYtd);
 							$fullname = $Dayoff->employee->fullname;
 							$department = $Dayoff->employee->department->departmentname;
+							$bg = $Dayoff->employee->companycode;
 							$data=$Dayoff->to_array();
 							$data['mtd'] = $cMtd;
 							$data['ytd'] = $cYtd;
 							$data['fullname']=$fullname;
 							$data['department']=$department;
+							$data['bu']=$bg;
 							echo json_encode($data, JSON_NUMERIC_CHECK);
 						}else{
 							$Dayoff = new Dayoff();

@@ -50,7 +50,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 					key: "id",
 					loadMode: "raw",
 					load: function() {
-						criteria = {filter:'bydept3',dept:$scope.data.department};
+						criteria = {filter:'bybusamelocation',bu:$scope.data.company,location:$scope.data.location,dept:$scope.data.department};
 						return CrudService.FindData('emp',criteria);
 					}
 				}),
@@ -619,6 +619,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 			delete data.fullname;
 			delete data.tmsreqstatus;
 			delete data.department;
+			delete data.company;
 			CrudService.Update('spklapp',data.id,data).then(function (response) {
 				if(response.status=="error"){
 					DevExpress.ui.dialog.alert(response.message,"Error");
@@ -656,6 +657,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
 					delete data.fullname;
 					delete data.tmsreqstatus;
 					delete data.department;
+					delete data.company;
 					CrudService.Update('spklapp',data.id,data).then(function (response) {
 						if(response.status=="error"){
 							DevExpress.ui.dialog.alert(response.message,"Error");
@@ -816,7 +818,7 @@ app.register.controller('detailspklCtrl', ['$rootScope','$scope', '$http', '$int
         return {
             dataSource: $scope.allDeptEmpDataSource,
             remoteOperations: true,
-            columns: ["fullname","sapid", "department","company"],
+            columns: ["fullname","sapid","company","location","department"],
             hoverStateEnabled: true,
             scrolling: { mode: "virtual" },
             height: 250,
