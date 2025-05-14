@@ -1,5 +1,5 @@
 <?php
-Class EmployeeModule extends Application{
+class EmployeeModule extends Application{
 	public function __construct(){
 		parent::__construct();
 		$this->get = isset($this->get)?$this->get:$_GET;
@@ -12,6 +12,9 @@ Class EmployeeModule extends Application{
 			switch ($this->get['action']){
 				case 'apiemp':
 					$this->employeeManager();
+					break;
+				case 'apiempx':
+					echo "";
 					break;
 				default:
 					break;
@@ -27,17 +30,32 @@ Class EmployeeModule extends Application{
 			if($auth){
 				switch ($this->post['criteria']){
 					case 'all':
-						$Employee = Employee::all(array('conditions' => array("loginname <> '' AND isActive = 1"),'include' => array('department','company', 'designation'),"order"=>"fullname"));
-						foreach ($Employee as &$result) {
+						$employee = Employee::all(array('conditions' => array("loginname <> ''"),'include' => array('department','company', 'designation'),"order"=>"fullname"));
+						foreach ($employee as &$result) {
 							$dept=$result->department->departmentname;
 							$comp=$result->company->companycode;
-							$des=$result->designation->designationname;				
+							$des=$result->designation->designationname;
 							$result = $result->to_array();
 							$result['department']=$dept;
 							$result['designation']=$des;
 							$result['company']=$comp;
-						}					
-						echo json_encode($Employee, JSON_NUMERIC_CHECK);
+						}
+						echo json_encode($employee, JSON_NUMERIC_CHECK);
+						unset($result);
+						break;
+					case 'active':
+						$employee = Employee::all(array('conditions' => array("loginname <> '' AND isActive = 1"),'include' => array('department','company', 'designation'),"order"=>"fullname"));
+						foreach ($employee as &$result) {
+							$dept=$result->department->departmentname;
+							$comp=$result->company->companycode;
+							$des=$result->designation->designationname;
+							$result = $result->to_array();
+							$result['department']=$dept;
+							$result['designation']=$des;
+							$result['company']=$comp;
+						}
+						echo json_encode($employee, JSON_NUMERIC_CHECK);
+						unset ($result);
 						break;
 					case 'find':
 						$query=$this->post['query'];
@@ -54,12 +72,12 @@ Class EmployeeModule extends Application{
 									foreach ($Employee as &$result) {
 										$dept=$result->department->departmentname;
 										$comp=$result->company->companycode;
-										$des=$result->designation->designationname;				
+										$des=$result->designation->designationname;
 										$result = $result->to_array();
 										$result['department']=$dept;
 										$result['designation']=$des;
 										$result['company']=$comp;
-									}					
+									}
 									$data =  json_encode($Employee, JSON_NUMERIC_CHECK);
 									break;
 								case 'bydept2':
@@ -68,12 +86,12 @@ Class EmployeeModule extends Application{
 									foreach ($Employee as &$result) {
 										$dept=$result->department->departmentname;
 										$comp=$result->company->companycode;
-										$des=$result->designation->designationname;				
+										$des=$result->designation->designationname;
 										$result = $result->to_array();
 										$result['department']=$dept;
 										$result['designation']=$des;
 										$result['company']=$comp;
-									}					
+									}
 									$data =  json_encode($Employee, JSON_NUMERIC_CHECK);
 									break;
 								case 'bydept3':
@@ -82,12 +100,12 @@ Class EmployeeModule extends Application{
 									foreach ($Employee as &$result) {
 										$dept=$result->department->departmentname;
 										$comp=$result->company->companycode;
-										$des=$result->designation->designationname;				
+										$des=$result->designation->designationname;
 										$result = $result->to_array();
 										$result['department']=$dept;
 										$result['designation']=$des;
 										$result['company']=$comp;
-									}					
+									}
 									$data =  json_encode($Employee, JSON_NUMERIC_CHECK);
 									break;
 								case 'bydept4':
@@ -96,12 +114,12 @@ Class EmployeeModule extends Application{
 									foreach ($Employee as &$result) {
 										$dept=$result->department->departmentname;
 										$comp=$result->company->companycode;
-										$des=$result->designation->designationname;				
+										$des=$result->designation->designationname;
 										$result = $result->to_array();
 										$result['department']=$dept;
 										$result['designation']=$des;
 										$result['company']=$comp;
-									}					
+									}
 									$data =  json_encode($Employee, JSON_NUMERIC_CHECK);
 									break;
 								case 'bydeptsamebu':
@@ -135,17 +153,17 @@ Class EmployeeModule extends Application{
 									$data =  json_encode($Employee, JSON_NUMERIC_CHECK);
 									break;
 								case 'byreport':
-										$Employee = Employee::all(array('include' => array('department','company', 'designation'),"order"=>"fullname"));
-										foreach ($Employee as &$result) {
-											$dept=$result->department->departmentname;
-											$comp=$result->company->companycode;
-											$des=$result->designation->designationname;				
-											$result = $result->to_array();
-											$result['department']=$dept;
-											$result['designation']=$des;
-											$result['company']=$comp;
-										}					
-										echo json_encode($Employee, JSON_NUMERIC_CHECK);
+									$Employee = Employee::all(array('include' => array('department','company', 'designation'),"order"=>"fullname"));
+									foreach ($Employee as &$result) {
+										$dept=$result->department->departmentname;
+										$comp=$result->company->companycode;
+										$des=$result->designation->designationname;
+										$result = $result->to_array();
+										$result['department']=$dept;
+										$result['designation']=$des;
+										$result['company']=$comp;
+									}
+									echo json_encode($Employee, JSON_NUMERIC_CHECK);
 								break;
 								default:
 									break;
@@ -153,22 +171,22 @@ Class EmployeeModule extends Application{
 						}
 						echo $data;
 						break;
-					case 'create':			
+					case 'create':
 						$data = $this->post['data'];
 						unset($data['__KEY__']);
 						$Employee = Employee::create($data);
 						break;
-					case 'delete':				
+					case 'delete':
 						$id = $this->post['id'];
 						$Employee = Employee::find($id);
 						$Employee->delete();
 						echo json_encode($Employee);
 						break;
-					case 'update':				
+					case 'update':
 						$id = $this->post['id'];
 						$data = $this->post['data'];
 						$Employee = Employee::find($id);
-						foreach($data as $key=>$val){					
+						foreach($data as $key=>$val){
 							$val=($val=='false')?false:(($val=='true')?true:$val);
 							$Employee->$key=$val;
 						}
@@ -190,15 +208,15 @@ Class EmployeeModule extends Application{
 						$Employee = Employee::all(array('include' => array('department', 'designation')));
 						foreach ($Employee as &$result) {
 							$dept=$result->department->departmentname;
-							$des=$result->designation->designationname;				
+							$des=$result->designation->designationname;
 							$result = $result->to_array();
 							$result['department']=$dept;
 							$result['designation']=$des;
-						}					
+						}
 						echo json_encode($Employee, JSON_NUMERIC_CHECK);
-						break;					
+						break;
 				}
-			}	
+			}
 		}
 	}
 }
