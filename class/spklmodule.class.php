@@ -675,21 +675,42 @@ Class SpklModule extends Application{
 								$Spkldetail=Spkldetail::find('all',array('conditions'=>array("spkl_id=?",$doid),'include'=>array('spkl'=>array('employee'=>array('company','department','designation','grade','location')))));
 								if ($Spkl->datework !== null){
 									foreach ($Spkldetail as $row){
-										if ($row->isapproved){
+										// if ($row->isapproved){
+										// 	$time = new DateTime($Spkl->datework);
+										// 	$time->add(new DateInterval('PT8H'));
+										// 	$start = $time->format('Y-m-d H:i');
+										// 	$row->actualstartwork = $start;
+										// 	$time = new DateTime($start);
+										// 	$time->add(new DateInterval('PT' . ($row->estimatenormalhours + $row->estimateovertimehours+1). 'H'));
+										// 	$end = $time->format('Y-m-d H:i');
+										// 	$row->actualendwork = $end;
+											
+										// 	$row->actualtotalhours = $row->estimatenormalhours + $row->estimateovertimehours;
+										// 	$row->actualnormalhours = $row->estimatenormalhours;
+										// 	$row->actualovertimehours = $row->estimateovertimehours;
+											
+										// }
+										if ($row->isapproved) {
 											$time = new DateTime($Spkl->datework);
 											$time->add(new DateInterval('PT8H'));
 											$start = $time->format('Y-m-d H:i');
 											$row->actualstartwork = $start;
+										
+											// Hitung total jam dan menit
+											$totalHours = $row->estimatenormalhours + $row->estimateovertimehours + 1;
+											$hours = floor($totalHours);
+											$minutes = ($totalHours - $hours) * 60;
+										
 											$time = new DateTime($start);
-											$time->add(new DateInterval('PT' . ($row->estimatenormalhours + $row->estimateovertimehours+1). 'H'));
+											$time->add(new DateInterval('PT' . $hours . 'H' . (int)$minutes . 'M'));
 											$end = $time->format('Y-m-d H:i');
 											$row->actualendwork = $end;
-											
+										
 											$row->actualtotalhours = $row->estimatenormalhours + $row->estimateovertimehours;
 											$row->actualnormalhours = $row->estimatenormalhours;
 											$row->actualovertimehours = $row->estimateovertimehours;
-											
-										}else {
+										}
+										else {
 											$row->actualstartwork = null;
 											$row->actualendwork= null;
 											$row->actualtotalhours = 0;
