@@ -20,14 +20,15 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 			}
 
 			CrudService.checkAccess('Paymentreq',$rootScope.curUser.username).then(function (access) {
-				// $rootScope.viewDivision = access.allowview;
 				console.log(access);
 				if(access.allowview == 1) {
-					$scope.viewcompany = 1;
+					$scope.viewcompanypayment = 1;
 				} else {
-					$scope.viewcompany = 0;
+					$scope.viewcompanypayment = 0;
 				}
 			});
+			console.log('view company : '+$scope.viewcompanypayment)
+
 
 			$scope.allEmpDataSource = {
 				store: new DevExpress.data.CustomStore({
@@ -169,8 +170,8 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 						if($scope.data.paymentform == 2) {
 							$scope.formInstance.itemOption('subgroup.opscategory', 'visible', true);
 						}
-
-						if($scope.viewcompany==1) {
+						console.log('acces : '+$scope.viewcompanypayment)
+						if($scope.viewcompanypayment==1) {
 							$scope.formInstance.itemOption('maingroup.companycode', 'visible', true);
 						}
 
@@ -379,7 +380,7 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 									text: "Company Code"
 								},
 								name: 'companycode',
-								visible: ($scope.viewcompany==1) ? true:false,
+								visible: ($scope.viewcompanypayment==1) ? true:false,
 								editorType: "dxSelectBox",
 								editorOptions: {
 									readOnly: (($scope.mode == 'approve') || ($scope.mode == 'view') || ($scope.mode == 'report')) ? true : false,

@@ -18,6 +18,21 @@
 				if (($scope.mode == 'approve')) {
 					$scope.data.remarks = "";
 				}
+				$scope.formInstance = null;
+				CrudService.checkAccess('Paymentreq',$rootScope.curUser.username).then(function (access) {
+					// console.log(access);
+					// if(access.allowview == 1) {
+					// 	$scope.viewcompanyadv = 1;
+					// } else {
+					// 	$scope.viewcompanyadv = 0;
+					// }
+					$scope.viewcompanyadv = (access.allowview == 1) ? 1 : 0;
+					if ($scope.formInstance) {
+						$scope.formInstance.itemOption('groupa.companycode', 'visible', $scope.viewcompanyadv == 1);
+					}
+					if(!$scope.$$phase) $scope.$apply();
+				});
+				console.log('view company : '+$scope.viewcompanyadv)
 
 				$scope.allEmpDataSource = {
 					store: new DevExpress.data.CustomStore({
@@ -61,12 +76,30 @@
 					}),
 					sort: "id"
 				}
+
+				$scope.compDatasource = {
+					store: new DevExpress.data.CustomStore({
+						key: "companycode",
+						loadMode: "raw",
+						load: function() {
+							return CrudService.GetAll('company').then(function (response) {
+								if(response.status=="error"){
+									DevExpress.ui.notify(response.message,"error");
+								}else{
+									return response;
+								}
+							});
+						},
+					}),
+					filter:['isused','1'],
+					sort: "companycode"
+				}
 				// Payment Budget Category
 				$scope.budgetCategory = [{ id: 0, category: "Budgeted" }, { id: 1, category: "Unbudgeted" }]
 				// Approval Options
 				$scope.AppAction = ($scope.data.approvalstep == 2) ? [{ id: 1, appaction: "Ask Rework" }, { id: 2, appaction: "Verify" }] : [{ id: 1, appaction: "Ask Rework" }, { id: 2, appaction: "Approve" }, { id: 3, appaction: "Reject" }];
 				// Form Options
-				$scope.AdvanceForm = [{ id: 0, advanceform: "- Select -" }, { id: 1, advanceform: "HR Related" }, { id: 2, advanceform: "Ops Related" }];
+				$scope.AdvanceForm = [{ id: 0, advanceform: "- Select -" }, { id: 1, advanceform: "HR Related" }, { id: 3, advanceform: "HR Related - HTI HE" }, { id: 2, advanceform: "Ops Related" }];
 				// Category Options
 				$scope.OpsCategory = [
 					{
@@ -104,6 +137,11 @@
 
 						if ($scope.data.advanceform == 2) {
 							$scope.formInstance.itemOption('groupa.opscategory', 'visible', true);
+						}
+						console.log('acces : '+$scope.viewcompanyadv);
+
+						if($scope.viewcompanyadv==1) {
+							$scope.formInstance.itemOption('groupa.companycode', 'visible', true);
 						}
 					},
 					readOnly: (($scope.mode == 'view') || ($scope.mode == 'report')) ? true : false,
@@ -178,6 +216,39 @@
 									type: "required",
 									message: "Please select employee"
 								}]
+							},
+							{
+								dataField: 'companycode',
+								label: {
+									text: "Company Code"
+								},
+								name: 'companycode',
+								visible: ($scope.viewcompanyadv==1) ? true:false,
+								editorType: "dxSelectBox",
+								editorOptions: {
+									readOnly: (($scope.mode == 'approve') || ($scope.mode == 'view') || ($scope.mode == 'report')) ? true : false,
+									dataSource: $scope.compDatasource,
+									displayExpr: "companycode",
+									valueExpr: "companycode",
+
+									onValueChanged: function(e) {
+										if($scope.data.requeststatus == 0) {
+
+											criteria = {status:'companycode',company:e.value,advance_id:$scope.Requestid,employee_id:$scope.data.employee_id};
+											CrudService.FindData('advance',criteria).then(function (response){
+												console.log(response)
+												$scope.formInstance.updateData('advanceno', response.advanceno);
+												$scope.grid2Component.refresh();
+											})
+										}
+	
+									}
+								},
+								// validationRules: [{
+								// 	type: "required",
+								// 	message: "Company is required"
+								// }]
+
 							},
 
 							// Form Options
