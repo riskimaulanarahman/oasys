@@ -743,12 +743,12 @@ class Advancemodule extends Application
 											$logger->SaveData();
 										}
 
-										$bufc = Advanceapproval::find('all', array('joins' => $joins, 'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=37", $id)));
-										foreach ($bufc as $result) {
-											$result->delete();
-											$logger = new Datalogger("Advanceapproval", "delete", json_encode($result->to_array()), "delete Approval BU FC");
-											$logger->SaveData();
-										}
+										// $bufc = Advanceapproval::find('all', array('joins' => $joins, 'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=37", $id)));
+										// foreach ($bufc as $result) {
+										// 	$result->delete();
+										// 	$logger = new Datalogger("Advanceapproval", "delete", json_encode($result->to_array()), "delete Approval BU FC");
+										// 	$logger->SaveData();
+										// }
 
 										$apprMD = Advanceapproval::find('all', array('joins' => $joins, 'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=40", $id)));
 										foreach ($apprMD as $result) {
