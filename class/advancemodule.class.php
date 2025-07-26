@@ -1160,6 +1160,32 @@ class Advancemodule extends Application
 										$codenew = Advance::find('first',array('select' => "CONCAT('Advance/','".$categorytype."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(advanceno,-4,4)) is null then 1 else max(substring(advanceno,-4,4))+1 end,4,'0')) as advanceno","conditions"=>array("substring(advanceno,9,".strlen($categorytype).")=? and not(id = ?) and substring(advanceno,".(strlen($categorytype)+10).",4)=YEAR(CURDATE()) ",$categorytype,$query['advance_id'])));
 										
 										$Advance->advanceno =$codenew->advanceno;
+
+										$joins   = "LEFT JOIN tbl_approver ON (tbl_advanceapproval.approver_id = tbl_approver.id) LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id)";
+										$joinx   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";	
+
+										if($Advance->advanceform == 3) {
+											$bufc = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=37",$id)));	
+											foreach ($bufc as $result) {
+												$result->delete();
+												$logger = new Datalogger("advanceapproval","delete",json_encode($result->to_array()),"delete Approval BUFC");
+												$logger->SaveData();
+											}
+
+											$Approverbufc = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='37' and FIND_IN_SET(?, CompanyList) > 0 ",$Advance->companycode)));
+											if(count($Approverbufc)>0){
+												$Advanceapproval = new Advanceapproval();
+												$Advanceapproval->advance_id = $Advance->id;
+												$Advanceapproval->approver_id = $Approverbufc->id;
+												$Advanceapproval->save();
+												$logger = new Datalogger("Advanceapproval","add","Add initial BU FC Approval ",json_encode($Advanceapproval->to_array()));
+												$logger->SaveData();
+											}
+
+
+										}
+
+
 										$Advance->save();
 										
 										$data=array("advanceno"=>$codenew->advanceno);
