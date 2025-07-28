@@ -130,7 +130,11 @@ app.register.controller('advpaymentdetailCtrl', ['$rootScope','$scope', '$http',
 			}
 
 			$scope.AppAction = ($scope.data.approvalstep==2)?[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Verify"}]:[{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
-			$scope.AdvanceForm =[{id:0,paymentform:"- Select -"},{id:1,paymentform:"Payment Req HR"},{id:2,paymentform:"Payment Req OPR"}];
+			$scope.AdvanceForm =[
+				{id:0,paymentform:"- Select -"},
+				{id:1,paymentform:"Payment Req HR"},
+				// {id:3,paymentform:"Payment Req HR - HTI HE"},
+				{id:2,paymentform:"Payment Req OPR"}];
 			$scope.Paymentopt =[{id:1,payment:"Cash"},{id:2,payment:"Bank"}];
 			$scope.OpsCategory =[{id:1,opscategory:"General"},{id:2,opscategory:"Pajak"},{id:3,opscategory:"PSDH (Provisi Sumber Daya Hutan"},{id:4,opscategory:"SSL"}];
 

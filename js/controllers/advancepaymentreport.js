@@ -267,7 +267,7 @@
           },
           {dataField:'paymentform',caption:"Form Type",encodeHtml: false ,
           customizeText: function (e) {
-            var rDesc = ["","<span class='mb-2 mr-2 badge badge-pill badge-info'>Payment Req HR</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Payment Req OPS</span>",""];
+            var rDesc = ["","<span class='mb-2 mr-2 badge badge-pill badge-info'>Payment Req HR</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>Payment Req OPS</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>HTI-HE</span>",""];
             return rDesc[e.value];
           }},
           {dataField:'opscategory',caption:"Category OPS Related",encodeHtml: false ,
