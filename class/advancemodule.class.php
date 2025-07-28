@@ -2460,11 +2460,6 @@ class Advancemodule extends Application
 					$deptheaddate = 'Date : ' . date("d/m/Y", strtotime($data->approvaldate));
 				}
 
-				if (($data->approver->approvaltype->id == 63)) {
-					$hticoorname = $data->approver->employee->fullname;
-					$hticoordate = 'Date : ' . date("d/m/Y", strtotime($data->approvaldate));
-				}
-
 				if ($data->approver->approvaltype->id == 44) {
 					$hrdverifname = $data->approver->employee->fullname;
 					$hrdverifdate = 'Date : ' . date("d/m/Y", strtotime($data->approvaldate));
@@ -2485,11 +2480,6 @@ class Advancemodule extends Application
 					$buheaddate = 'Date : ' . date("d/m/Y", strtotime($data->approvaldate));
 				}
 
-				if ($data->approver->approvaltype->id == 41) {
-					$kffcname = $data->approver->employee->fullname;
-					$kffcdate = 'Date : ' . date("d/m/Y", strtotime($data->approvaldate));
-				}
-
 				if ($data->approver->approvaltype->id == 42) {
 					$procname = $data->approver->employee->fullname;
 					$procdate = 'Date : ' . date("d/m/Y", strtotime($data->approvaldate));
@@ -2508,6 +2498,16 @@ class Advancemodule extends Application
 				if ($data->approver->approvaltype->id == 64) {
 					$hrheadname = $data->approver->employee->fullname;
 					$hrheaddate = 'Date : ' . date("d/m/Y", strtotime($data->approvaldate));
+				}
+
+				if (($data->approver->approvaltype->id == 63)) {
+					$hticoorname = $data->approver->employee->fullname;
+					$hticoordate = 'Date : ' . date("d/m/Y", strtotime($data->approvaldate));
+				}
+
+				if ($data->approver->approvaltype->id == 41) {
+					$kffcname = $data->approver->employee->fullname;
+					$kffcdate = 'Date : ' . date("d/m/Y", strtotime($data->approvaldate));
 				}
 			}
 			$picpath = SITE_PATH . "/images/approved.png";

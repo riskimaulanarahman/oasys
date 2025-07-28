@@ -2525,7 +2525,7 @@ Class Advpaymentmodule extends Application{
 
 			if($Advpayment->paymentform == 1 || $Advpayment->paymentform == 3) {
 				$title = 'payment_hr';
-				$file= SITE_PATH."/doc/hr/paymenthr.xlsx";
+				$file= SITE_PATH."/media/advance/paymenthr.xlsx";
 			} else {
 				if($Advpayment->opscategory == 4) {
 					$title = 'payment_ops_ssl';
@@ -2593,6 +2593,11 @@ Class Advpaymentmodule extends Application{
 						$hrdheadname = $data->approver->employee->fullname;
 						$hrdheaddate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
 					}
+
+					if($data->approver->approvaltype->id==64) {
+						$hrdheadkfname = $data->approver->employee->fullname;
+						$hrdheadkfdate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
+					}
 					
 					if($data->approver->approvaltype->id==37) {
 						$bufcname = $data->approver->employee->fullname;
@@ -2627,6 +2632,16 @@ Class Advpaymentmodule extends Application{
 					if($data->approver->approvaltype->id==45) {
 						$kfsslname = $data->approver->employee->fullname;
 						$kfssldate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
+					}
+
+					if ($data->approver->approvaltype->id == 64) {
+						$hrheadname = $data->approver->employee->fullname;
+						$hrheaddate = 'Date : ' . date("d/m/Y", strtotime($data->approvaldate));
+					}
+	
+					if (($data->approver->approvaltype->id == 63)) {
+						$hticoorname = $data->approver->employee->fullname;
+						$hticoordate = 'Date : ' . date("d/m/Y", strtotime($data->approvaldate));
 					}
 				}
 				$picpath= SITE_PATH."/images/approved.png";
@@ -2676,7 +2691,7 @@ Class Advpaymentmodule extends Application{
 						$pic2->Left = $excel->Cells(30, 13)->Left ;
 					}
 				
-				} else {
+				} else if($Advpayment->paymentform == 2) {
 
 					if($Advpayment->opscategory == 4) {
 						if(!empty($deptheadname)) {
@@ -2754,6 +2769,65 @@ Class Advpaymentmodule extends Application{
 							$pic2->Left = $excel->Cells(30, 11)->Left ;
 						}
 					}
+					
+				} else if($Advpayment->paymentform == 3) {
+					if (!empty($hticoorname)) {
+						$Worksheet->Range("E28")->Value = 'HTI-HE Coordinator';
+						$Worksheet->Range("E34")->Value = $hticoorname;
+						$Worksheet->Range("E35")->Value = $hticoordate;
+						$pic1 = $Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic1->Height = 20;
+						$pic1->Top = $excel->Cells(30, 5)->Top;
+						$pic1->Left = $excel->Cells(30, 5)->Left;
+					}
+
+					if(!empty($hrdheadkfname)) {
+						$Worksheet->Range("G28")->Value = 'HR Head';
+						$Worksheet->Range("G34")->Value = $hrdheadkfname;
+						$Worksheet->Range("G35")->Value = $hrdheadkfdate;
+						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic2->Height  = 20;
+						$pic2->Top = $excel->Cells(30, 7)->Top ;
+						$pic2->Left = $excel->Cells(30, 7)->Left ;
+					}
+	
+					if(!empty($bufcname)) {
+						$Worksheet->Range("J34")->Value = $bufcname;
+						$Worksheet->Range("J35")->Value = $bufcdate;
+						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic2->Height  = 20;
+						$pic2->Top = $excel->Cells(30, 10)->Top ;
+						$pic2->Left = $excel->Cells(30, 10)->Left ;
+					}
+
+					if(!empty($buheadname)) {
+						$Worksheet->Range("M34")->Value = $buheadname;
+						$Worksheet->Range("M35")->Value = $buheaddate;
+						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic2->Height  = 20;
+						$pic2->Top = $excel->Cells(30, 13)->Top ;
+						$pic2->Left = $excel->Cells(30, 13)->Left ;
+					}
+
+					if(!empty($financename)) {
+						$Worksheet->Range("M28")->Value = 'KF FC';
+						$Worksheet->Range("M34")->Value = $financename;
+						$Worksheet->Range("M35")->Value = $financedate;
+						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic2->Height  = 20;
+						$pic2->Top = $excel->Cells(30, 13)->Top ;
+						$pic2->Left = $excel->Cells(30, 13)->Left ;
+					}
+
+					if (!empty($mdname)) {
+						$Worksheet->Range("A42")->Value = $mdname;
+						$Worksheet->Range("A43")->Value = $mddate;
+						$pic2 = $Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic2->Height = 20;
+						$pic2->Top = $excel->Cells(38, 1)->Top;
+						$pic2->Left = $excel->Cells(38, 1)->Left;
+					}
+
 					
 				}
 				
