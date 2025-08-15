@@ -326,74 +326,75 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								onValueChanged: function (e) {
 									const newValue = e.value;
 
-									// 🔍 Cek dan reset perjalanan bisnis jika ada tanggal
-									const start = $scope.formInstance.option("formData").startdate;
-									const end = $scope.formInstance.option("formData").enddate;
+									if ($scope.mode === 'edit' || $scope.mode === 'add') {
 
-									if (start && end) {
-										if (!confirm("⚠️ Perhatian: Data perjalanan bisnis akan dihapus. Lanjutkan?")) {
-											// ❌ Batalkan perubahan dan kembalikan nilai sebelumnya
-											e.component.option("value", previousEmployeeId);
-											DevExpress.ui.notify("Aksi dibatalkan. Data perjalanan tetap disimpan.", "info", 3000);
-											return;
+										// 🔍 Cek dan reset perjalanan bisnis jika ada tanggal
+										const start = $scope.formInstance.option("formData").startdate;
+										const end = $scope.formInstance.option("formData").enddate;
+
+										if (start && end) {
+											if (!confirm("⚠️ Perhatian: Data perjalanan bisnis akan dihapus. Lanjutkan?")) {
+												// ❌ Batalkan perubahan dan kembalikan nilai sebelumnya
+												e.component.option("value", previousEmployeeId);
+												DevExpress.ui.notify("Aksi dibatalkan. Data perjalanan tetap disimpan.", "info", 3000);
+												return;
+											}
+
+											const departdate = $filter("date")(start, "yyyy-MM-dd HH:mm");
+											const returndate = $filter("date")(end, "yyyy-MM-dd HH:mm");
+
+											const criteria = {
+												status: 'bisnistrip',
+												action: 'reset',
+												valstart: departdate,
+												valend: returndate,
+												advexpense_id: $scope.Requestid,
+												employee_id: newValue
+											};
+
+											CrudService.FindData('advexpense', criteria).then(response => {
+												console.log("Reset perjalanan bisnis berhasil:", response);
+												$scope.grid5Component.refresh();
+											});
+
+											$scope.formInstance.updateData('startdate', null);
+											$scope.formInstance.updateData('enddate', null);
+											$scope.formInstance.updateData('advanceno', "");
+
+											DevExpress.ui.notify("Perjalanan bisnis berhasil dihapus.", "warning", 3000);
 										}
 
-										const departdate = $filter("date")(start, "yyyy-MM-dd HH:mm");
-										const returndate = $filter("date")(end, "yyyy-MM-dd HH:mm");
+										// ✅ Simpan nilai baru sebagai nilai sebelumnya
+										previousEmployeeId = newValue;
 
-										const criteria = {
-											status: 'bisnistrip',
-											action: 'reset',
-											valstart: departdate,
-											valend: returndate,
-											advexpense_id: $scope.Requestid,
-											employee_id: newValue
+										// 🔄 Reset paymenttype
+										const paymenttypeEditor = $scope.formInstance.getEditor('paymenttype');
+										if (paymenttypeEditor) paymenttypeEditor.option('value', false);
+
+										// 🔄 Update advanceno dataSource
+										$scope.getlessadv = {
+											store: new DevExpress.data.CustomStore({
+												key: "id",
+												loadMode: "raw",
+												load: () => CrudService.GetById('listadvance', newValue).then(response => {
+													if (response.status === "error") {
+														DevExpress.ui.notify(response.message, "error");
+														return [];
+													}
+													return response;
+												})
+											}),
+											sort: "id"
 										};
 
-										CrudService.FindData('advexpense', criteria).then(response => {
-											console.log("Reset perjalanan bisnis berhasil:", response);
-											$scope.grid5Component.refresh();
-										});
-
-										$scope.formInstance.updateData('startdate', null);
-										$scope.formInstance.updateData('enddate', null);
-										$scope.formInstance.updateData('advanceno', "");
-
-										DevExpress.ui.notify("Perjalanan bisnis berhasil dihapus.", "warning", 3000);
-									}
-
-									// ✅ Simpan nilai baru sebagai nilai sebelumnya
-									previousEmployeeId = newValue;
-
-									// 🔄 Reset paymenttype
-									const paymenttypeEditor = $scope.formInstance.getEditor('paymenttype');
-									if (paymenttypeEditor) paymenttypeEditor.option('value', false);
-
-									// 🔄 Update advanceno dataSource
-									$scope.getlessadv = {
-										store: new DevExpress.data.CustomStore({
-											key: "id",
-											loadMode: "raw",
-											load: () => CrudService.GetById('listadvance', newValue).then(response => {
-												if (response.status === "error") {
-													DevExpress.ui.notify(response.message, "error");
-													return [];
-												}
-												return response;
-											})
-										}),
-										sort: "id"
-									};
-
-									// 🔍 Trigger pencarian data tambahan
-									if ($scope.mode === 'edit' || $scope.mode === 'add') {
-										const criteria = {
-											status: 'chemp',
-											employee_id: newValue,
-											advexpense_id: $scope.Requestid,
-											mode: $scope.mode
-										};
-										CrudService.FindData('advexpense', criteria);
+										// 🔍 Trigger pencarian data tambahan
+											const criteria = {
+												status: 'chemp',
+												employee_id: newValue,
+												advexpense_id: $scope.Requestid,
+												mode: $scope.mode
+											};
+											CrudService.FindData('advexpense', criteria);
 									}
 								}
 							},
