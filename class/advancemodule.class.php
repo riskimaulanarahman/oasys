@@ -2441,7 +2441,7 @@ class Advancemodule extends Application
 			if ($Advance->employee->companycode == 'NKF' || $Advance->employee->companycode == 'RND') {
 				$Worksheet->Range("A1")->Value = 'PT. ITCI Hutani Manunggal';
 			} else {
-				$Worksheet->Range("A1")->Value = $compx->companyname;
+				$Worksheet->Range("A1")->Value = $Advance->companycode;
 			}
 
 			// $Worksheet->Range("N6")->Value = date("d/m/Y",strtotime($Advance->createddate));
