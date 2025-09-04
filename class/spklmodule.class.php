@@ -2147,21 +2147,56 @@ Class SpklModule extends Application{
 						unset($data['approvalstatus']);
 						unset($data['fullname']);
 						unset($data['department']);
+						// unset($data['company']);
+						// unset($data['location']);
+						if (isset($data['company'])) {
+							$data['company'] = $data['companycode'];
+							unset($data['company']);
+						}
+						// print_r($Spkl->employee->company);
+
+						if (isset($data['location'])) {
+							$data['location'] = $Spkl->employee->company;
+							unset($data['location']);
+						}
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+						// print_r($Employee);
 						foreach($data as $key=>$val){
 							$Spkl->$key=$val;
 						}
 						$Spkl->approvalstep = ($data['tmsreqstatus']==1)?1:0;
 						$Spkl->save();
+
 						$joins   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";					
 						$Spkltmsapproval = Spkltmsapproval::find('all',array('joins'=>$joins,'conditions' => array("spkl_id=? and tbl_approver.employee_id=?",$id,$Spkl->depthead)));	
 						foreach ($Spkltmsapproval as &$result) {
 							$result		= $result->to_array();
 							$result['no']=1;
-						}			
-						if(count($Spkltmsapproval)==0){
-							$Approver = Approver::find('first',array('conditions'=>array("module='SPKL' and employee_id=? and approvaltype_id=20",$Spkl->depthead)));
-							if(count($Approver)>0){
+						}		
+						// if(count($Spkltmsapproval)==0){
+						// 	$Approver = Approver::find('first',array('conditions'=>array("module='SPKL' and employee_id=? and approvaltype_id=20",$Spkl->depthead)));
+						// 	if(count($Approver)>0){
+						// 		$Spkltmsapproval = new Spkltmsapproval();
+						// 		$Spkltmsapproval->spkl_id = $Spkl->id;
+						// 		$Spkltmsapproval->approver_id = $Approver->id;
+						// 		$Spkltmsapproval->save();
+						// 	}
+						// }
+						if (count($Spkltmsapproval) == 0) {
+							// Coba cari approver dengan approvaltype_id 20
+							$Approver = Approver::find('first', array(
+								'conditions' => array("module='SPKL' and employee_id=? and approvaltype_id=20", $Spkl->depthead)
+							));
+
+							// Jika tidak ditemukan, coba dengan approvaltype_id 21
+							if (!$Approver) {
+								$Approver = Approver::find('first', array(
+									'conditions' => array("module='SPKL' and employee_id=? and approvaltype_id=21", $Spkl->depthead)
+								));
+							}
+
+							// Jika sudah dapat approver, simpan approval
+							if ($Approver) {
 								$Spkltmsapproval = new Spkltmsapproval();
 								$Spkltmsapproval->spkl_id = $Spkl->id;
 								$Spkltmsapproval->approver_id = $Approver->id;
