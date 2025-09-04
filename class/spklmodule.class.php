@@ -2173,15 +2173,7 @@ Class SpklModule extends Application{
 							$result		= $result->to_array();
 							$result['no']=1;
 						}		
-						// if(count($Spkltmsapproval)==0){
-						// 	$Approver = Approver::find('first',array('conditions'=>array("module='SPKL' and employee_id=? and approvaltype_id=20",$Spkl->depthead)));
-						// 	if(count($Approver)>0){
-						// 		$Spkltmsapproval = new Spkltmsapproval();
-						// 		$Spkltmsapproval->spkl_id = $Spkl->id;
-						// 		$Spkltmsapproval->approver_id = $Approver->id;
-						// 		$Spkltmsapproval->save();
-						// 	}
-						// }
+						
 						if (count($Spkltmsapproval) == 0) {
 							// Coba cari approver dengan approvaltype_id 20
 							$Approver = Approver::find('first', array(
