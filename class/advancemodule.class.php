@@ -2401,7 +2401,7 @@ class Advancemodule extends Application
 
 		$superiorId = $Advance->depthead;
 		$Superior = Employee::find($superiorId);
-		$compx = Company::find('first', array('conditions' => array("companycode=?", $Advance->employee->companycode)));
+		$compx = Company::find('first', array('conditions' => array("companycode=?", $Advance->companycode)));
 		$supAdb = Addressbook::find('first', array('conditions' => array("username=?", $Superior->loginname)));
 		$usr = Addressbook::find('first', array('conditions' => array("username=?", $Advance->employee->loginname)));
 		$email = $usr->email;
@@ -2438,11 +2438,11 @@ class Advancemodule extends Application
 			$Worksheet = $Workbook->Worksheets(1);
 			$Worksheet->Activate;
 
-			if ($Advance->employee->companycode == 'NKF' || $Advance->employee->companycode == 'RND') {
-				$Worksheet->Range("A1")->Value = 'PT. ITCI Hutani Manunggal';
-			} else {
-				$Worksheet->Range("A1")->Value = $Advance->companycode;
-			}
+			// if ($Advance->employee->companycode == 'NKF' || $Advance->employee->companycode == 'RND') {
+			// 	$Worksheet->Range("A1")->Value = 'PT. ITCI Hutani Manunggal';
+			// } else {
+				$Worksheet->Range("A1")->Value = $compx->companyname;
+			// }
 
 			// $Worksheet->Range("N6")->Value = date("d/m/Y",strtotime($Advance->createddate));
 			// $Worksheet->Range("N8")->Value = date("d/m/Y",strtotime($duedate));
