@@ -167,6 +167,7 @@ Class Advpaymentmodule extends Application{
 							$fullname = $Advpayment->employee->fullname;
 							$department = $Advpayment->employee->department->departmentname;
 							$data=$Advpayment->to_array();
+							$data['paymenttype'] = $Advpayment->paymenttype == 1 ? true : false;
 							$data['fullname']=$fullname;
 							$data['paymentform']=$Advpayment->paymentform;
 							$data['department']=$department;
