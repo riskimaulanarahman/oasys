@@ -2451,7 +2451,7 @@ class Advancemodule extends Application
 			$Worksheet->Range("N7")->Value = $expecteddate;
 			$Worksheet->Range("N8")->Value = $duedate;
 
-			if ($Advance->advanceform == 1) {
+			if ($Advance->advanceform == 1 || $Advance->advanceform == 3) {
 				$Worksheet->Range("F6")->Value = $fullname;
 				$Worksheet->Range("F7")->Value = $department;
 				$Worksheet->Range("F8")->Value = $Advance->employee->sapid;
