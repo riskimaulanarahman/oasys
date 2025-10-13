@@ -1000,6 +1000,8 @@ Class SpklModule extends Application{
 							unset($data['isexceedplan']);
 							unset($data['approvalstep']);
 							unset($data['ismorethan2hours']);
+							unset($data['company']);
+							unset($data['location']);
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$join   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";
 							if (isset($data['mode'])){
@@ -1011,7 +1013,7 @@ Class SpklModule extends Application{
 							$olddata = $Spkltmsapproval->to_array();
 							foreach($data as $key=>$val){
 								$val=($val=='false')?false:(($val=='true')?true:$val);
-								$Spkltmsapproval->$key=$val;
+								$Spkltmsapproval->$key=$val; 
 							}
 							$Spkltmsapproval->save();
 							$logger = new Datalogger("Spkltmsapproval","update",json_encode($olddata),json_encode($data));
@@ -1321,6 +1323,8 @@ Class SpklModule extends Application{
 						$AllDetail = Spkldetail::find("all",array('conditions'=>array("spkl_id=?",$spkl_id)));
 						$isexceed = 0;
 						foreach($AllDetail as $data){
+							// print_r($data->actualovertimehours);
+							// print_r($data->estimateovertimehours);
 							if($data->actualovertimehours>$data->estimateovertimehours){
 								$isexceed++;
 							}
