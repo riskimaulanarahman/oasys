@@ -167,6 +167,7 @@ Class Advpaymentmodule extends Application{
 							$fullname = $Advpayment->employee->fullname;
 							$department = $Advpayment->employee->department->departmentname;
 							$data=$Advpayment->to_array();
+							$data['paymenttype'] = $Advpayment->paymenttype == 1 ? true : false;
 							$data['fullname']=$fullname;
 							$data['paymentform']=$Advpayment->paymentform;
 							$data['department']=$department;
@@ -218,7 +219,7 @@ Class Advpaymentmodule extends Application{
 
 										$Employee = Employee::find('first', array('conditions' => array("id=?",$employee_id),"include"=>array("location","department","company")));
 
-										print_r($valamount);
+										// print_r($valamount);
 
 										$joins   = "LEFT JOIN tbl_approver ON (tbl_advpaymentapproval.approver_id = tbl_approver.id) LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id)";
 										$joinx   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";	
@@ -456,6 +457,36 @@ Class Advpaymentmodule extends Application{
 											$result['no']=1;
 
 										}
+
+										if($advpayment_form != 3) {
+											$financecomit = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=41",$id)));	
+											foreach ($financecomit as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval Finance Commite");
+												$logger->SaveData();
+											}
+
+											$apprhrdhead = Advpaymentapproval::find('all', array('joins' => $joins, 'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=64", $id)));
+											foreach ($apprhrdhead as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval", "delete", json_encode($result->to_array()), "delete Approval HRD");
+												$logger->SaveData();
+											}
+
+											$apprCoor = Advpaymentapproval::find('all', array('joins' => $joins, 'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=63", $id)));
+											foreach ($apprCoor as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval", "delete", json_encode($result->to_array()), "delete Approval Coor HTI HE");
+												$logger->SaveData();
+											}
+
+											$apprMD = Advpaymentapproval::find('all', array('joins' => $joins, 'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=40", $id)));
+											foreach ($apprMD as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval", "delete", json_encode($result->to_array()), "delete Approval apprMD");
+												$logger->SaveData();
+											}
+										}
 										
 										if($advpayment_form == 1) {
 
@@ -642,6 +673,174 @@ Class Advpaymentmodule extends Application{
 												$logger = new Datalogger("Advpaymentapproval","add","Add initial BU Head Approval ",json_encode($Advpaymentapproval->to_array()));
 												$logger->SaveData();
 											}
+										} if($advpayment_form == 3) {
+
+											$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND requeststatus=3 AND advanceform=1 AND isused=0",$Advpayment->employee->id)));
+
+											if($Advance) {
+												$item['message']=200;
+												echo json_encode($item, JSON_NUMERIC_CHECK);
+											} else {
+												$Advpayment = Advpayment::find($id, array('include' => array('employee'=>array('company','department','designation'))));
+												$Advpayment->paymenttype = 0;
+												$Advpayment->advanceno = null;
+												$Advpayment->lessadvance = null;
+												$Advpayment->save();
+												$item['message']=404;
+												echo json_encode($item, JSON_NUMERIC_CHECK);
+											}
+
+											$mgrssl = Advpaymentapproval::find('all', array('joins' => $joins, 'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=62", $id)));
+											foreach ($mgrssl as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval", "delete", json_encode($result->to_array()), "delete Approval Manager SSL");
+												$logger->SaveData();
+											}
+
+											$kfssl = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=45",$id)));	
+											foreach ($kfssl as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval KF SSL");
+												$logger->SaveData();
+											}
+
+											$financecomit = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=41",$id)));	
+											foreach ($financecomit as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval Finance Commite");
+												$logger->SaveData();
+											}
+
+											$apprhrdhead = Advpaymentapproval::find('all', array('joins' => $joins, 'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=64", $id)));
+											foreach ($apprhrdhead as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval", "delete", json_encode($result->to_array()), "delete Approval HRD");
+												$logger->SaveData();
+											}
+
+											$apprCoor = Advpaymentapproval::find('all', array('joins' => $joins, 'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=63", $id)));
+											foreach ($apprCoor as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval", "delete", json_encode($result->to_array()), "delete Approval Coor HTI HE");
+												$logger->SaveData();
+											}
+
+											$apprMD = Advpaymentapproval::find('all', array('joins' => $joins, 'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=40", $id)));
+											foreach ($apprMD as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval", "delete", json_encode($result->to_array()), "delete Approval apprMD");
+												$logger->SaveData();
+											}
+
+											// $bufc = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=37",$id)));	
+											// foreach ($bufc as $result) {
+											// 	$result->delete();
+											// 	$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval BUFC");
+											// 	$logger->SaveData();
+											// }
+
+											$hrverifikator = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=44",$id)));	
+											foreach ($hrverifikator as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval HR Verifikator");
+												$logger->SaveData();
+											}
+											
+
+											$buhead = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=38",$id)));	
+											foreach ($buhead as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval BU HEAD");
+												$logger->SaveData();
+											}
+
+											$hrd = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=36",$id)));	
+											foreach ($hrd as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval HRD");
+												$logger->SaveData();
+											}
+
+											// $ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and FIND_IN_SET(?, CompanyList) > 0 ",$Advpayment->companycode)));
+											// if(count($ApproverHRV)>0){
+											// 	$Advpaymentapproval = new Advpaymentapproval();
+											// 	$Advpaymentapproval->advpayment_id = $Advpayment->id;
+											// 	$Advpaymentapproval->approver_id = $ApproverHRV->id;
+											// 	$Advpaymentapproval->save();
+											// 	$logger = new Datalogger("Advpaymentapproval","add","Add initial HR Verifikator Approval ",json_encode($Advpaymentapproval->to_array()));
+											// 	$logger->SaveData();
+											// }
+
+											$Approverbufc = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='37' and FIND_IN_SET(?, CompanyList) > 0 ",$Advpayment->companycode)));
+											if(count($Approverbufc)>0){
+												$Advpaymentapproval = new Advpaymentapproval();
+												$Advpaymentapproval->advpayment_id = $Advpayment->id;
+												$Advpaymentapproval->approver_id = $Approverbufc->id;
+												$Advpaymentapproval->save();
+												$logger = new Datalogger("Advpaymentapproval","add","Add initial BU FC Approval ",json_encode($Advpaymentapproval->to_array()));
+												$logger->SaveData();
+											}
+
+											$kffc = Approver::find('first', array('joins' => $joinx, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='41'")));
+												if (count($kffc) > 0) {
+													$Advanceapproval = new Advpaymentapproval();
+													$Advpaymentapproval->advpayment_id = $Advpayment->id;
+													$Advpaymentapproval->approver_id = $kffc->id;
+													$Advpaymentapproval->save();
+													$logger = new Datalogger("Advpaymentapproval", "add", "Add initial KF FC Approval", json_encode($Advpaymentapproval->to_array()));
+													$logger->SaveData();
+												}
+
+											$md = Approver::find('first', array('joins' => $joinx, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='40' and FIND_IN_SET(?, CompanyList) > 0 ", $Employee->companycode)));
+													if (count($md) > 0) {
+														$Advpaymentapproval = new Advpaymentapproval();
+														$Advpaymentapproval->advpayment_id = $Advpayment->id;
+														$Advpaymentapproval->approver_id = $md->id;
+														$Advpaymentapproval->save();
+														$logger = new Datalogger("Advpaymentapproval", "add", "Add initial BU HEAD Approval", json_encode($Advpaymentapproval->to_array()));
+														$logger->SaveData();
+													}
+											$hrhead = Approver::find('first', array('joins' => $joinx, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='64' and FIND_IN_SET(?, CompanyList) > 0 ", $Employee->companycode)));
+											if (count($hrhead) > 0) {
+												$Advpaymentapproval = new Advpaymentapproval();
+												$Advpaymentapproval->advpayment_id = $Advpayment->id;
+												$Advpaymentapproval->approver_id = $hrhead->id;
+												$Advpaymentapproval->save();
+												$logger = new Datalogger("Advpaymentapproval", "add", "Add initial HR Head Approval ", json_encode($Advpaymentapproval->to_array()));
+												$logger->SaveData();
+											}
+
+											$coorHti = Approver::find('first', array('joins' => $joinx, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='63' and FIND_IN_SET(?, CompanyList) > 0 ", $Employee->companycode)));
+											if (count($coorHti) > 0) {
+												$Advpaymentapproval = new Advpaymentapproval();
+												$Advpaymentapproval->advpayment_id = $Advpayment->id;
+												$Advpaymentapproval->approver_id = $coorHti->id;
+												$Advpaymentapproval->save();
+												$logger = new Datalogger("Advpaymentapproval", "add", "Add initial Coor HTI HE Approval ", json_encode($Advpaymentapproval->to_array()));
+												$logger->SaveData();
+											}
+
+											// $Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and FIND_IN_SET(?, CompanyList) > 0 ",$Advpayment->companycode)));
+											// if(count($Approver2)>0){
+											// 	$Advpaymentapproval = new Advpaymentapproval();
+											// 	$Advpaymentapproval->advpayment_id = $Advpayment->id;
+											// 	$Advpaymentapproval->approver_id = $Approver2->id;
+											// 	$Advpaymentapproval->save();
+											// 	$logger = new Datalogger("Advpaymentapproval","add","Add initial HRD Approval ",json_encode($Advpaymentapproval->to_array()));
+											// 	$logger->SaveData();
+											// }
+
+											// $ApproverBU = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and FIND_IN_SET(?, CompanyList) > 0 ",$Advpayment->companycode)));
+											
+											// if(count($ApproverBU)>0){
+											// 	$Advpaymentapproval = new Advpaymentapproval();
+											// 	$Advpaymentapproval->advpayment_id = $Advpayment->id;
+											// 	$Advpaymentapproval->approver_id = $ApproverBU->id;
+											// 	$Advpaymentapproval->save();
+											// 	$logger = new Datalogger("Advpaymentapproval","add","Add initial BU Head Approval ",json_encode($Advpaymentapproval->to_array()));
+											// 	$logger->SaveData();
+											// }
+
 										}
 
 									break;
@@ -1241,6 +1440,27 @@ Class Advpaymentmodule extends Application{
 												}
 
 											}
+										} else if($Advpayment->paymentform == 3) {
+											$bufc = Advpaymentapproval::find('all',array('joins'=>$joins,'conditions' => array("advpayment_id=? and tbl_approver.approvaltype_id=37",$id)));	
+											foreach ($bufc as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advpaymentapproval","delete",json_encode($result->to_array()),"delete Approval BUFC");
+												$logger->SaveData();
+											}
+
+											$Approverbufc = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='37' and FIND_IN_SET(?, CompanyList) > 0 ",$Advpayment->companycode)));
+											// print_r($Approverbufc);
+											
+											if(count($Approverbufc)>0){
+												$Advpaymentapproval = new Advpaymentapproval();
+												$Advpaymentapproval->advpayment_id = $Advpayment->id;
+												$Advpaymentapproval->approver_id = $Approverbufc->id;
+												$Advpaymentapproval->save();
+												$logger = new Datalogger("Advpaymentapproval","add","Add initial BU FC Approval ",json_encode($Advpaymentapproval->to_array()));
+												$logger->SaveData();
+											}
+
+
 										}
 
 										$data=array("paymentno"=>$codenew->paymentno);
@@ -1643,6 +1863,8 @@ Class Advpaymentmodule extends Application{
 								$data=array("jml"=>1);
 							}else if (($Advpayment->paymentform == 2 && $Advpayment->opscategory == 4) && $dx->approver->approvaltype_id == 38){
 								$data=array("jml"=>1);
+							} else if ($Advpayment->paymentform == 3 && $dx->approver->approvaltype_id == 40) {
+								$data = array("jml" => 1);
 							}else{
 								$join   = "LEFT JOIN tbl_approver ON (tbl_advpaymentapproval.approver_id = tbl_approver.id) ";
 								$Advpaymentapproval = Advpaymentapproval::find('all', array('joins'=>$join,'conditions' => array("advpayment_id=? and ApprovalStatus<=1 and not tbl_approver.employee_id=?",$query['advpayment_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
@@ -1973,6 +2195,30 @@ Class Advpaymentmodule extends Application{
 											}
 
 											$complete =true;
+										} else if (($Advpayment->paymentform == 3) && $Advpaymentapproval->approver->approvaltype_id == 40) {
+											$Advpayment->requeststatus = 3;
+											$emto=$email;$emname=$Advpayment->employee->fullname;
+											$this->mail->Subject = "Online Approval System -> Approval Completed";
+											$red = 'Your Payment request has been approved';
+											//delete unnecessary approver
+											$Advpaymentapproval = Advpaymentapproval::find('all', array('joins'=>$join,'conditions' => array("advpayment_id=?",$doid),'include' => array('approver'=>array('employee','approvaltype'))));
+											foreach ($Advpaymentapproval as $data) {
+												if($data->approvalstatus==0){
+													$logger = new Datalogger("Advpaymentapproval","delete",json_encode($data->to_array()),"automatic remove unnecessary approver by system");
+													$logger->SaveData();
+													$data->delete();
+												}
+											}
+
+											if($Advpayment->advanceno == null || $Advpayment->advanceno == '') {
+											} else {
+												$Advance = Advance::find('first', array('conditions'=> array("employee_id=? AND advanceno=?",$Advpayment->employee->id,$Advpayment->advanceno)));
+												$Advance->isused=1;
+												$Advance->save();
+											}
+
+											$complete =true;
+										
 										}
 										else{
 
@@ -2017,6 +2263,8 @@ Class Advpaymentmodule extends Application{
 							$form = "Payment Req HR";
 						} else if($Advpayment->paymentform == 2){
 							$form = "Payment Req OPR";
+						} else if($Advpayment->paymentform == 2){
+							$form = "Payment Req HR - HTI HE";
 						}
 
 						if($Advpayment->paymenttype == 0) {
@@ -2276,9 +2524,9 @@ Class Advpaymentmodule extends Application{
 			$excel = new COM("Excel.Application") or die ("ERROR: Unable to instantaniate COM!\r\n");
 			$excel->Visible = false;
 
-			if($Advpayment->paymentform == 1) {
+			if($Advpayment->paymentform == 1 || $Advpayment->paymentform == 3) {
 				$title = 'payment_hr';
-				$file= SITE_PATH."/doc/hr/paymenthr.xlsx";
+				$file= SITE_PATH."/media/advance/paymenthr.xlsx";
 			} else {
 				if($Advpayment->opscategory == 4) {
 					$title = 'payment_ops_ssl';
@@ -2346,6 +2594,11 @@ Class Advpaymentmodule extends Application{
 						$hrdheadname = $data->approver->employee->fullname;
 						$hrdheaddate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
 					}
+
+					if($data->approver->approvaltype->id==64) {
+						$hrdheadkfname = $data->approver->employee->fullname;
+						$hrdheadkfdate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
+					}
 					
 					if($data->approver->approvaltype->id==37) {
 						$bufcname = $data->approver->employee->fullname;
@@ -2380,6 +2633,16 @@ Class Advpaymentmodule extends Application{
 					if($data->approver->approvaltype->id==45) {
 						$kfsslname = $data->approver->employee->fullname;
 						$kfssldate = 'Date : '.date("d/m/Y",strtotime($data->approvaldate));
+					}
+
+					if ($data->approver->approvaltype->id == 64) {
+						$hrheadname = $data->approver->employee->fullname;
+						$hrheaddate = 'Date : ' . date("d/m/Y", strtotime($data->approvaldate));
+					}
+	
+					if (($data->approver->approvaltype->id == 63)) {
+						$hticoorname = $data->approver->employee->fullname;
+						$hticoordate = 'Date : ' . date("d/m/Y", strtotime($data->approvaldate));
 					}
 				}
 				$picpath= SITE_PATH."/images/approved.png";
@@ -2429,7 +2692,7 @@ Class Advpaymentmodule extends Application{
 						$pic2->Left = $excel->Cells(30, 13)->Left ;
 					}
 				
-				} else {
+				} else if($Advpayment->paymentform == 2) {
 
 					if($Advpayment->opscategory == 4) {
 						if(!empty($deptheadname)) {
@@ -2507,6 +2770,65 @@ Class Advpaymentmodule extends Application{
 							$pic2->Left = $excel->Cells(30, 11)->Left ;
 						}
 					}
+					
+				} else if($Advpayment->paymentform == 3) {
+					if (!empty($hticoorname)) {
+						$Worksheet->Range("E28")->Value = 'HTI-HE Coordinator';
+						$Worksheet->Range("E34")->Value = $hticoorname;
+						$Worksheet->Range("E35")->Value = $hticoordate;
+						$pic1 = $Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic1->Height = 20;
+						$pic1->Top = $excel->Cells(30, 5)->Top;
+						$pic1->Left = $excel->Cells(30, 5)->Left;
+					}
+
+					if(!empty($hrdheadkfname)) {
+						$Worksheet->Range("G28")->Value = 'HR Head';
+						$Worksheet->Range("G34")->Value = $hrdheadkfname;
+						$Worksheet->Range("G35")->Value = $hrdheadkfdate;
+						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic2->Height  = 20;
+						$pic2->Top = $excel->Cells(30, 7)->Top ;
+						$pic2->Left = $excel->Cells(30, 7)->Left ;
+					}
+	
+					if(!empty($bufcname)) {
+						$Worksheet->Range("J34")->Value = $bufcname;
+						$Worksheet->Range("J35")->Value = $bufcdate;
+						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic2->Height  = 20;
+						$pic2->Top = $excel->Cells(30, 10)->Top ;
+						$pic2->Left = $excel->Cells(30, 10)->Left ;
+					}
+
+					if(!empty($buheadname)) {
+						$Worksheet->Range("M34")->Value = $buheadname;
+						$Worksheet->Range("M35")->Value = $buheaddate;
+						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic2->Height  = 20;
+						$pic2->Top = $excel->Cells(30, 13)->Top ;
+						$pic2->Left = $excel->Cells(30, 13)->Left ;
+					}
+
+					if(!empty($financename)) {
+						$Worksheet->Range("M28")->Value = 'KF FC';
+						$Worksheet->Range("M34")->Value = $financename;
+						$Worksheet->Range("M35")->Value = $financedate;
+						$pic2=$Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic2->Height  = 20;
+						$pic2->Top = $excel->Cells(30, 13)->Top ;
+						$pic2->Left = $excel->Cells(30, 13)->Left ;
+					}
+
+					if (!empty($mdname)) {
+						$Worksheet->Range("A42")->Value = $mdname;
+						$Worksheet->Range("A43")->Value = $mddate;
+						$pic2 = $Worksheet->Shapes->AddPicture($picpath, False, True, 0, 0, -1, -1);
+						$pic2->Height = 20;
+						$pic2->Top = $excel->Cells(38, 1)->Top;
+						$pic2->Left = $excel->Cells(38, 1)->Left;
+					}
+
 					
 				}
 				

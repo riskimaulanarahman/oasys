@@ -149,18 +149,14 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 			var suspendValueChagned;
 			$scope.Pstart = new Date();
 			$scope.Pend = new Date();
-			
+			let previousEmployeeId = null;
+
 			$scope.detailFormOptions = { 
 				onInitialized: function(e) {
 					$scope.formInstance = e.component;
 				},
 				onContentReady:function(e){
 					$scope.formInstance = e.component;
-
-					// criteria = {status:'savelessadv',advanceno:null,advexpense_id:$scope.Requestid,employee_id:$scope.data.employee_id};
-					// CrudService.FindData('advexpense',criteria).then(function (response){
-					// 	console.log('ok');
-					// })
 				},
 				readOnly : (($scope.mode=='view')||($scope.mode=='report'))?true:false,
 				labelLocation : "top",
@@ -190,16 +186,125 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 							dataField: "employee_id",
 							editorType: "dxDropDownBox",
 							visible: true,
+							// editorOptions: {
+							// 	readOnly: (($scope.mode == 'edit') || ($scope.mode == 'add')) ? false : true,
+							// 	dataSource: $scope.allDeptEmpDataSource,
+							// 	valueExpr: 'id',
+							// 	displayExpr: 'fullname',
+							// 	searchEnabled: true,
+							// 	onInitialized: function (e) {
+							// 		previousEmployeeId = e.component.option("value");
+							// 	},
+							// 	contentTemplate: function (e) {
+							// 		return $("<div>").dxDataGrid({
+							// 			dataSource: e.component.option("dataSource"),
+							// 			columns: [
+							// 				{ dataField: "fullname", width: 100 },
+							// 				{ dataField: "company", width: 50 },
+							// 				{ dataField: "department", width: 200 }
+							// 			],
+							// 			height: 265,
+							// 			selection: { mode: "single" },
+							// 			selectedRowKeys: [e.component.option("value")],
+							// 			focusedRowEnabled: true,
+							// 			focusedRowKey: e.component.option("value"),
+							// 			searchPanel: {
+							// 				visible: true,
+							// 				width: 265,
+							// 				placeholder: "Search..."
+							// 			},
+							// 			onSelectionChanged: function (selectedItems) {
+							// 				if (selectedItems.selectedRowKeys.length) {
+							// 					e.component.option("value", selectedItems.selectedRowKeys[0]);
+							// 					e.component.close();
+							// 				}
+							// 			}
+							// 		});
+							// 	},
+							// 	onValueChanged: function (e) {
+							// 		// 🔄 Reset paymenttype
+							// 		const paymenttypeEditor = $scope.formInstance.getEditor('paymenttype');
+							// 		if (paymenttypeEditor) paymenttypeEditor.option('value', false);
+
+							// 		// 🔄 Update advanceno dataSource
+							// 		$scope.getlessadv = {
+							// 			store: new DevExpress.data.CustomStore({
+							// 				key: "id",
+							// 				loadMode: "raw",
+							// 				load: () => CrudService.GetById('listadvance', e.value).then(response => {
+							// 					if (response.status === "error") {
+							// 						DevExpress.ui.notify(response.message, "error");
+							// 						return [];
+							// 					}
+							// 					return response;
+							// 				})
+							// 			}),
+							// 			sort: "id"
+							// 		};
+
+							// 		// 🔍 Cek dan reset perjalanan bisnis jika ada tanggal
+							// 		const start = $scope.formInstance.option("formData").startdate;
+							// 		const end = $scope.formInstance.option("formData").enddate;
+
+							// 		if (start && end) {
+							// 			if (confirm("⚠️ Perhatian: Data perjalanan bisnis akan dihapus. Lanjutkan?")) {
+							// 				const departdate = $filter("date")(start, "yyyy-MM-dd HH:mm");
+							// 				const returndate = $filter("date")(end, "yyyy-MM-dd HH:mm");
+
+							// 				const criteria = {
+							// 					status: 'bisnistrip',
+							// 					action: 'reset',
+							// 					valstart: departdate,
+							// 					valend: returndate,
+							// 					advexpense_id: $scope.Requestid,
+							// 					employee_id: e.value
+							// 				};
+
+							// 				CrudService.FindData('advexpense', criteria).then(response => {
+							// 					console.log("Reset perjalanan bisnis berhasil:", response);
+							// 					$scope.grid5Component.refresh();
+							// 				});
+
+							// 				$scope.formInstance.updateData('startdate', null);
+							// 				$scope.formInstance.updateData('enddate', null);
+
+							// 				DevExpress.ui.notify("Perjalanan bisnis berhasil dihapus.", "warning", 3000);
+							// 				$scope.formInstance.updateData('advanceno', "");
+
+							// 			} else {
+							// 				DevExpress.ui.notify("Aksi dibatalkan. Data perjalanan tetap disimpan.", "info", 3000);
+							// 			}
+							// 	}
+
+							// 		// 🔍 Trigger pencarian data tambahan
+							// 		if ($scope.mode === 'edit' || $scope.mode === 'add') {
+							// 			const criteria = {
+							// 				status: 'chemp',
+							// 				employee_id: e.value,
+							// 				advexpense_id: $scope.Requestid,
+							// 				mode: $scope.mode
+							// 			};
+							// 			CrudService.FindData('advexpense', criteria);
+							// 		}
+							// 	}
+							// },
 							editorOptions: {
 								readOnly: (($scope.mode == 'edit') || ($scope.mode == 'add')) ? false : true,
 								dataSource: $scope.allDeptEmpDataSource,
 								valueExpr: 'id',
 								displayExpr: 'fullname',
 								searchEnabled: true,
+								onInitialized: function (e) {
+									previousEmployeeId = e.component.option("value");
+								},
 								contentTemplate: function (e) {
-									var $dataGrid = $("<div>").dxDataGrid({
+									return $("<div>").dxDataGrid({
 										dataSource: e.component.option("dataSource"),
-										columns: [{ dataField: "fullname", width: 100 }, { dataField: "company", width: 50 }, { dataField: "department", width: 200 }],
+										columns: [
+											{ dataField: "fullname", width: 100 },
+											{ dataField: "company", width: 50 },
+											{ dataField: "department", width: 200 }
+										],
 										height: 265,
 										selection: { mode: "single" },
 										selectedRowKeys: [e.component.option("value")],
@@ -211,58 +316,86 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 											placeholder: "Search..."
 										},
 										onSelectionChanged: function (selectedItems) {
-											var keys = selectedItems.selectedRowKeys,
-												hasSelection = keys.length;
-											if (hasSelection) {
-
-												e.component.option("value", keys[0]);
+											if (selectedItems.selectedRowKeys.length) {
+												e.component.option("value", selectedItems.selectedRowKeys[0]);
 												e.component.close();
-
 											}
 										}
 									});
-									return $dataGrid;
 								},
 								onValueChanged: function (e) {
-									// Set paymenttype to false (uncheck) when paymentform changes
-									var paymenttypeEditor = $scope.formInstance.getEditor('paymenttype');
-									paymenttypeEditor.option('value', false); // Uncheck paymenttype
+									const newValue = e.value;
 
-									console.log($scope.data.employee_id);
-									criteria = { status: 'chemp', employee_id: e.value, advexpense_id: $scope.Requestid, mode: $scope.mode };
-									if ($scope.mode == 'edit' || $scope.mode == 'add') {
+									if ($scope.mode === 'edit' || $scope.mode === 'add') {
 
-										CrudService.FindData('advexpense', criteria).then(function (response) {
-											// console.log(response)
-										})
-										// $scope.formInstance.updateData('advanceform', null);
-									}
+										// 🔍 Cek dan reset perjalanan bisnis jika ada tanggal
+										const start = $scope.formInstance.option("formData").startdate;
+										const end = $scope.formInstance.option("formData").enddate;
 
-									 // Update dataSource for advanceno
-									 $scope.getlessadv = {
-										store: new DevExpress.data.CustomStore({
-											key: "id",
-											loadMode: "raw",
-											load: function() {
-												return CrudService.GetById('listadvance', e.value).then(function (response) {
-													if(response.status=="error"){
-														DevExpress.ui.notify(response.message,"error");
-													}else{
-														console.log(response);
-														return response;
+										if (start && end) {
+											if (!confirm("⚠️ Perhatian: Data perjalanan bisnis akan dihapus. Lanjutkan?")) {
+												// ❌ Batalkan perubahan dan kembalikan nilai sebelumnya
+												e.component.option("value", previousEmployeeId);
+												DevExpress.ui.notify("Aksi dibatalkan. Data perjalanan tetap disimpan.", "info", 3000);
+												return;
+											}
+
+											const departdate = $filter("date")(start, "yyyy-MM-dd HH:mm");
+											const returndate = $filter("date")(end, "yyyy-MM-dd HH:mm");
+
+											const criteria = {
+												status: 'bisnistrip',
+												action: 'reset',
+												valstart: departdate,
+												valend: returndate,
+												advexpense_id: $scope.Requestid,
+												employee_id: newValue
+											};
+
+											CrudService.FindData('advexpense', criteria).then(response => {
+												console.log("Reset perjalanan bisnis berhasil:", response);
+												$scope.grid5Component.refresh();
+											});
+
+											$scope.formInstance.updateData('startdate', null);
+											$scope.formInstance.updateData('enddate', null);
+											$scope.formInstance.updateData('advanceno', "");
+
+											DevExpress.ui.notify("Perjalanan bisnis berhasil dihapus.", "warning", 3000);
+										}
+
+										// ✅ Simpan nilai baru sebagai nilai sebelumnya
+										previousEmployeeId = newValue;
+
+										// 🔄 Reset paymenttype
+										const paymenttypeEditor = $scope.formInstance.getEditor('paymenttype');
+										if (paymenttypeEditor) paymenttypeEditor.option('value', false);
+
+										// 🔄 Update advanceno dataSource
+										$scope.getlessadv = {
+											store: new DevExpress.data.CustomStore({
+												key: "id",
+												loadMode: "raw",
+												load: () => CrudService.GetById('listadvance', newValue).then(response => {
+													if (response.status === "error") {
+														DevExpress.ui.notify(response.message, "error");
+														return [];
 													}
-												});
-											},
-										}),
-										sort: "id"
-									};
-						
-									// Reload the advanceno dataSource
-									// var advancenoEditor = $scope.formInstance.getEditor('advanceno');
-									// advancenoEditor.option('dataSource', $scope.getlessadv);
-									// advancenoEditor.getDataSource().load();
+													return response;
+												})
+											}),
+											sort: "id"
+										};
 
-									$scope.formInstance.updateData('advanceno',  "");
+										// 🔍 Trigger pencarian data tambahan
+											const criteria = {
+												status: 'chemp',
+												employee_id: newValue,
+												advexpense_id: $scope.Requestid,
+												mode: $scope.mode
+											};
+											CrudService.FindData('advexpense', criteria);
+									}
 								}
 							},
 							validationRules: [{
@@ -276,11 +409,9 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								text:"Email",
 							},
 							name:'email',
-							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 							editorOptions: {
 								inputAttr:{ dataintro : 'email' },
 								readOnly: true
-								// disabled: true
 							}
 						},
 						{
@@ -289,11 +420,9 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								text:"Cost Center",
 							},
 							name:'costcenter',
-							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 							editorOptions: {
 								inputAttr:{ dataintro : 'costcenter' },
 								readOnly: true
-								// disabled: true
 							}
 						},
 						{
@@ -302,11 +431,9 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								text:"BU",
 							},
 							name:'bg',
-							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 							editorOptions: {
 								inputAttr:{ dataintro : 'bg' },
 								readOnly: true
-								// disabled: true
 							}
 						},
 						{
@@ -315,11 +442,9 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								text:"Location",
 							},
 							name:'location',
-							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?true:false,
 							editorOptions: {
 								inputAttr:{ dataintro : 'location' },
 								readOnly: true
-								// disabled: true
 							}
 						},
 						{
@@ -327,7 +452,6 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 							name:'paymenttype',
 							label:{text:"With Advance ?"},
 							visible: true,
-							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							dataType:"boolean",
 							editorType: "dxCheckBox",
 							editorOptions: { 
@@ -373,18 +497,10 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 									$scope.formInstance.updateData('advanceno',  "");
 
 								}
-								// if(e.value == 0) {
-								// 	$scope.formInstance.updateData('advanceno',  "");
-								// }
-
 							}
 							},
 							
 						},
-						
-						
-						// {dataField:'remarks',colSpan:2,editorType:"dxHtmlEditor",editorOptions: {height: 190,toolbar: {items: ["undo", "redo", "separator","bold", "italic", "underline"]}}},
-						
 						
 						]
 					},
@@ -456,13 +572,11 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 						items: [
 							{dataField:'startdate',
 							name: 'startdate',
-							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 							editorType: "dxDateBox",label: {text: "Start Date"},
 							editorOptions: {
 								inputAttr:{ dataintro : 'startdate' },
 								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 								displayFormat:"dd/MM/yyyy",
-								// min:Date.now(),
 								onValueChanged: function(e) {
 									if (suspendValueChagned) {
 										suspendValueChagned = false;
@@ -476,9 +590,6 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 									var returndate = $filter("date")(end, "yyyy-MM-dd HH:mm")
 
 									$scope.formInstance.getEditor("enddate").option('value', null);
-									// $scope.formInstance.updateData('enddate',  null);
-
-									
 									if(end !== null) {
 										var r = confirm("Detail Bisnis Trip will be deleted");
 										if (r == true) {
@@ -487,7 +598,6 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 												console.log(response);
 												$scope.grid5Component.refresh();
 											})
-											// $scope.formInstance.itemOption('gdatebox.enddate', 'visible', false);
 
 											e.component.option('value', start);
 											txt = "Delete Successed";
@@ -495,7 +605,6 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 											txt = "Delete Canceled";
 											suspendValueChagned = true; 
 											e.component.option('value',  oldValue);
-											// $scope.formInstance.refresh();
 											
 										}
 										alert(txt);
@@ -503,8 +612,6 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 										criteria = {status:'bisnistrip',valstart:departdate,valend:returndate,advexpense_id:$scope.Requestid,employee_id:$scope.data.employee_id};
 										CrudService.FindData('advexpense',criteria).then(function (response){
 											console.log(response);
-											// $scope.grid5Component.refresh();
-
 										})
 									}
 									$scope.grid1Component.refresh();
@@ -518,19 +625,12 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 							},
 							{dataField:'enddate',
 							name: 'enddate',
-							// disabled: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
-							// visible: false,
-							// visible:($scope.data.startdate==null)?true:false,
 							editorType: "dxDateBox",label: {text: "End Date"},
 							editorOptions: {
 								inputAttr:{ dataintro : 'enddate' },
 								readOnly: (($scope.mode=='edit')|| ($scope.mode=='add' )) ?false:true,
 								displayFormat:"dd/MM/yyyy",
-								// min:Date.now(),
-								// value: '',
 								onValueChanged: function(e) {
-									// e.preventDefault();
-									// console.log(e.value);
 									var start = new Date($scope.formInstance.option("formData").startdate);
 									var end = new Date(e.value);
 
@@ -544,10 +644,8 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 									var departdate = $filter("date")(start, "yyyy-MM-dd HH:mm")
 									var returndate = $filter("date")(end, "yyyy-MM-dd HH:mm")
 									if(end !== null) {
-										
 										criteria = {status:'bisnistrip',action:'add',valdays:days,valstart:departdate,valend:returndate,advexpense_id:$scope.Requestid,employee_id:$scope.data.employee_id};
 										CrudService.FindData('advexpense',criteria).then(function (response){
-											// console.log(response);
 											$scope.grid5Component.refresh();
 										})
 									}
@@ -558,7 +656,6 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 								type: "required",
 								message: "Please Payment Date"
 							}]},
-							
 							
 						]
 						
@@ -767,12 +864,6 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 						}]
 					},
 				],
-				// bindingOptions: {
-				// 	"items[2].items[0].editorOptions.value":"Pstart", 
-				// 	"items[2].items[0].editorOptions.max":"Pend", 
-				// 	"items[2].items[1].editorOptions.value":"Pend", 
-				// 	"items[2].items[1].editorOptions.min":"Pstart", 
-				// }			
 			};
 		}
 

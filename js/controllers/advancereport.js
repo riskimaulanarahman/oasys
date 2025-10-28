@@ -232,7 +232,7 @@
           },
           {dataField:'advanceform',caption:"Form Type",encodeHtml: false ,
 					customizeText: function (e) {
-              var rDesc = ["","<span class='mb-2 mr-2 badge badge-pill badge-info'>HR Related</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>OPS Related</span>",""];
+              var rDesc = ["","<span class='mb-2 mr-2 badge badge-pill badge-info'>HR Related</span>","<span class='mb-2 mr-2 badge badge-pill badge-danger'>OPS Related</span>","<span class='mb-2 mr-2 badge badge-pill badge-primary'>HTI-HE</span>",""];
               return rDesc[e.value];
           }},
           {

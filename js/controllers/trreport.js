@@ -300,7 +300,7 @@
         },
         pager: {
           showPageSizeSelector: false,
-          allowedPageSizes: [5, 10, 20],
+          allowedPageSizes: [10, 25, 100],
           showInfo: false,
         },
         /*selection: {
@@ -326,7 +326,7 @@
           placeholder: "Search...",
         },
         scrolling: {
-          mode: "infinite",
+          mode: "virtual",
         },
         onContentReady: function (e) {
           moveEditColumnToLeft(e.component);

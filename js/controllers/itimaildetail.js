@@ -849,7 +849,6 @@
                     {
 						itemType: "group",
                         caption: "",
-                        // caption: "Email Domain (select one, if applicable)**:",
                         name:"grdweb",
                         colSpan:2,
 						colCount:3,
@@ -863,6 +862,13 @@
                                 disabled: (($scope.mode=='edit')|| ($scope.mode=='add' ) || ($scope.data.apprstatuscode==5)) ?false:true,
                                 name:'typeofaccess',
                                 dataType:"string",
+                                validationRules: [{
+                                    type: "required",
+                                    message: "Field ini wajib diisi",
+                                    validationCallback: function(e) {
+                                        return $scope.data.formtype == 4;
+                                    }
+                                }]
                             },
                             
                         ]

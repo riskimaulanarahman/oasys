@@ -676,21 +676,42 @@ Class SpklModule extends Application{
 								$Spkldetail=Spkldetail::find('all',array('conditions'=>array("spkl_id=?",$doid),'include'=>array('spkl'=>array('employee'=>array('company','department','designation','grade','location')))));
 								if ($Spkl->datework !== null){
 									foreach ($Spkldetail as $row){
-										if ($row->isapproved){
+										// if ($row->isapproved){
+										// 	$time = new DateTime($Spkl->datework);
+										// 	$time->add(new DateInterval('PT8H'));
+										// 	$start = $time->format('Y-m-d H:i');
+										// 	$row->actualstartwork = $start;
+										// 	$time = new DateTime($start);
+										// 	$time->add(new DateInterval('PT' . ($row->estimatenormalhours + $row->estimateovertimehours+1). 'H'));
+										// 	$end = $time->format('Y-m-d H:i');
+										// 	$row->actualendwork = $end;
+											
+										// 	$row->actualtotalhours = $row->estimatenormalhours + $row->estimateovertimehours;
+										// 	$row->actualnormalhours = $row->estimatenormalhours;
+										// 	$row->actualovertimehours = $row->estimateovertimehours;
+											
+										// }
+										if ($row->isapproved) {
 											$time = new DateTime($Spkl->datework);
 											$time->add(new DateInterval('PT8H'));
 											$start = $time->format('Y-m-d H:i');
 											$row->actualstartwork = $start;
+										
+											// Hitung total jam dan menit
+											$totalHours = $row->estimatenormalhours + $row->estimateovertimehours + 1;
+											$hours = floor($totalHours);
+											$minutes = ($totalHours - $hours) * 60;
+										
 											$time = new DateTime($start);
-											$time->add(new DateInterval('PT' . ($row->estimatenormalhours + $row->estimateovertimehours+1). 'H'));
+											$time->add(new DateInterval('PT' . $hours . 'H' . (int)$minutes . 'M'));
 											$end = $time->format('Y-m-d H:i');
 											$row->actualendwork = $end;
-											
+										
 											$row->actualtotalhours = $row->estimatenormalhours + $row->estimateovertimehours;
 											$row->actualnormalhours = $row->estimatenormalhours;
 											$row->actualovertimehours = $row->estimateovertimehours;
-											
-										}else {
+										}
+										else {
 											$row->actualstartwork = null;
 											$row->actualendwork= null;
 											$row->actualtotalhours = 0;
@@ -979,6 +1000,8 @@ Class SpklModule extends Application{
 							unset($data['isexceedplan']);
 							unset($data['approvalstep']);
 							unset($data['ismorethan2hours']);
+							unset($data['company']);
+							unset($data['location']);
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$join   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";
 							if (isset($data['mode'])){
@@ -990,7 +1013,7 @@ Class SpklModule extends Application{
 							$olddata = $Spkltmsapproval->to_array();
 							foreach($data as $key=>$val){
 								$val=($val=='false')?false:(($val=='true')?true:$val);
-								$Spkltmsapproval->$key=$val;
+								$Spkltmsapproval->$key=$val; 
 							}
 							$Spkltmsapproval->save();
 							$logger = new Datalogger("Spkltmsapproval","update",json_encode($olddata),json_encode($data));
@@ -1300,6 +1323,8 @@ Class SpklModule extends Application{
 						$AllDetail = Spkldetail::find("all",array('conditions'=>array("spkl_id=?",$spkl_id)));
 						$isexceed = 0;
 						foreach($AllDetail as $data){
+							// print_r($data->actualovertimehours);
+							// print_r($data->estimateovertimehours);
 							if($data->actualovertimehours>$data->estimateovertimehours){
 								$isexceed++;
 							}
@@ -1756,7 +1781,8 @@ Class SpklModule extends Application{
 					case 'create':		
 						$data = $this->post['data'];
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$data['username']),"include"=>array("location","company","department")));
-						if($Employee->level_id>2 && $Employee->level_id !=5 ){
+						// if($Employee->level_id>2 && $Employee->level_id !=5 ){
+						if (($Employee->level_id > 2 && $Employee->level_id != 5 && $Employee->level_id != 7) || $Employee->ispic == 1) {
 							unset($data['__KEY__']);
 							unset($data['username']);
 							$data['employee_id']=$Employee->id;
@@ -2125,21 +2151,48 @@ Class SpklModule extends Application{
 						unset($data['approvalstatus']);
 						unset($data['fullname']);
 						unset($data['department']);
+						// unset($data['company']);
+						// unset($data['location']);
+						if (isset($data['company'])) {
+							$data['company'] = $data['companycode'];
+							unset($data['company']);
+						}
+						// print_r($Spkl->employee->company);
+
+						if (isset($data['location'])) {
+							$data['location'] = $Spkl->employee->company;
+							unset($data['location']);
+						}
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+						// print_r($Employee);
 						foreach($data as $key=>$val){
 							$Spkl->$key=$val;
 						}
 						$Spkl->approvalstep = ($data['tmsreqstatus']==1)?1:0;
 						$Spkl->save();
+
 						$joins   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";					
 						$Spkltmsapproval = Spkltmsapproval::find('all',array('joins'=>$joins,'conditions' => array("spkl_id=? and tbl_approver.employee_id=?",$id,$Spkl->depthead)));	
 						foreach ($Spkltmsapproval as &$result) {
 							$result		= $result->to_array();
 							$result['no']=1;
-						}			
-						if(count($Spkltmsapproval)==0){
-							$Approver = Approver::find('first',array('conditions'=>array("module='SPKL' and employee_id=? and approvaltype_id=20",$Spkl->depthead)));
-							if(count($Approver)>0){
+						}		
+						
+						if (count($Spkltmsapproval) == 0) {
+							// Coba cari approver dengan approvaltype_id 20
+							$Approver = Approver::find('first', array(
+								'conditions' => array("module='SPKL' and employee_id=? and approvaltype_id=20", $Spkl->depthead)
+							));
+
+							// Jika tidak ditemukan, coba dengan approvaltype_id 21
+							if (!$Approver) {
+								$Approver = Approver::find('first', array(
+									'conditions' => array("module='SPKL' and employee_id=? and approvaltype_id=21", $Spkl->depthead)
+								));
+							}
+
+							// Jika sudah dapat approver, simpan approval
+							if ($Approver) {
 								$Spkltmsapproval = new Spkltmsapproval();
 								$Spkltmsapproval->spkl_id = $Spkl->id;
 								$Spkltmsapproval->approver_id = $Approver->id;
