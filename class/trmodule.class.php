@@ -1070,7 +1070,7 @@ Class TrModule extends Application{
 													<td align="left" valign=bottom ><br></td>
 													<td colspan=3 align="left" valign=bottom >Level</td>
 													<td align="center" valign=bottom >:</td>
-													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=3 align="left" valign=bottom >'.$Tr->employee->level->Level.'</td>
+													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=3 align="left" valign=bottom >'.$Tr->employee->level->level.'</td>
 													<td style="border-right: 1px solid #000000" align="left" valign=bottom ><br></td>
 													</tr>
 												<tr>
