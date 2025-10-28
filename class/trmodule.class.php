@@ -1067,7 +1067,11 @@ Class TrModule extends Application{
 													<td colspan=4 align="left" valign=bottom >E-mail</td>
 													<td align="center" valign=bottom >:</td>
 													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=3 align="left" valign=bottom ><u><a href="mailto:'.$email.'">'.$email.'</a></u></td>
-													<td style="border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=9 align="center" valign=bottom ><br></td>
+													<td align="left" valign=bottom ><br></td>
+													<td colspan=3 align="left" valign=bottom >Level</td>
+													<td align="center" valign=bottom >:</td>
+													<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=3 align="left" valign=bottom >'.$Tr->employee->level->Level.'</td>
+													<td style="border-right: 1px solid #000000" align="left" valign=bottom ><br></td>
 													</tr>
 												<tr>
 													<td style="border-left: 1px solid #000000; border-right: 1px solid #000000" colspan=18 height="5" align="center" valign=bottom ></td>
