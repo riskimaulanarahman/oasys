@@ -1514,6 +1514,16 @@ Class Advpaymentmodule extends Application{
 									$logger->SaveData();
 								}
 
+								$ApproverBUFC2 = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='69' and FIND_IN_SET(?, CompanyList) > 0 ",$Employee->companycode)));
+								if(count($ApproverBUFC2)>0){
+									$Advpaymentapproval = new Advpaymentapproval();
+									$Advpaymentapproval->advpayment_id = $Advpayment->id;
+									$Advpaymentapproval->approver_id = $ApproverBUFC2->id;
+									$Advpaymentapproval->save();
+									$logger = new Datalogger("Advpaymentapproval","add","Add initial BU FC 2 Approval",json_encode($Advpaymentapproval->to_array()));
+									$logger->SaveData();
+								}
+
 								$Advpaymenthistory = new Advpaymenthistory();
 								$Advpaymenthistory->date = date("Y-m-d H:i:s");
 								$Advpaymenthistory->fullname = $Employee->fullname;

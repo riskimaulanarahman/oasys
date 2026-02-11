@@ -643,45 +643,6 @@ Class Advexpensemodule extends Application{
 								$joins   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
 								$joinx   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
 
-								// $ApproverFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=41")));
-								// if(count($ApproverFC)>0){
-								// 	$Advexpenseapproval = new Advexpenseapproval();
-								// 	$Advexpenseapproval->advexpense_id = $Advexpense->id;
-								// 	$Advexpenseapproval->approver_id = $ApproverFC->id;
-								// 	$Advexpenseapproval->save();
-								// }
-
-								// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
-												
-												
-								// 	$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=36 and tbl_employee.location_id='8'")));
-								// 	if(count($Approver2)>0){
-								// 		$Advexpenseapproval = new Advexpenseapproval();
-								// 		$Advexpenseapproval->advexpense_id = $Advexpense->id;
-								// 		$Advexpenseapproval->approver_id = $Approver2->id;
-								// 		$Advexpenseapproval->save();
-								// 	}
-										
-								// }else{
-									
-								// 	$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id=36 and tbl_employee.company_id=? and not(tbl_employee.location_id='8')",$Employee->company_id)));
-								// 	if(count($Approver2)>0){
-								// 		$Advexpenseapproval = new Advexpenseapproval();
-								// 		$Advexpenseapproval->advexpense_id = $Advexpense->id;
-								// 		$Advexpenseapproval->approver_id = $Approver2->id;
-								// 		$Advexpenseapproval->save();
-								// 	}
-								// }
-
-								// if(($Employee->companycode=="KPS" ||$Employee->companycode=="KPSI" || $Employee->companycode=="LDU") ){
-								// 	$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist = 'KPS,KPSI,LDU'")));
-								// }else if(($Employee->companycode=="AHL")){
-								// 	$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='AHL'")));
-								// }else if(($Employee->companycode=="BCL")){
-								// 	$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='BCL'")));
-								// }else {
-								// 	$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='IHM'")));
-								// }
 								$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and FIND_IN_SET(?, CompanyList) > 0 ",$Employee->companycode)));
 
 
@@ -694,11 +655,8 @@ Class Advexpensemodule extends Application{
 									$logger->SaveData();
 								}
 
-								// if($Employee->companycode == 'BCL') {
 									$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and FIND_IN_SET(?, CompanyList) > 0 ",$Employee->companycode)));
-								// }else {
-								// 	$Approver2 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and not(tbl_employee.companycode='BCL')")));
-								// }
+							
 								if(count($Approver2)>0){
 									$Advexpenseapproval = new Advexpenseapproval();
 									$Advexpenseapproval->advexpense_id = $Advexpense->id;
@@ -707,61 +665,6 @@ Class Advexpensemodule extends Application{
 									$logger = new Datalogger("Advexpenseapproval","add","Add initial HRD Approval ",json_encode($Advexpenseapproval->to_array()));
 									$logger->SaveData();
 								}
-
-								// $companyFC=(($data['companycode']=='BCL') || ($data['companycode']=='KPA'))?"KPSI":((($data['companycode']=='KPSI'))?"LDU":$Employee->companycode);
-								// $ApproverBUFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='37' and tbl_employee.companycode=? and not(tbl_employee.id=?)",$companyFC,$Employee->id)));
-								// if(count($ApproverBUFC)>0){
-								// 	$Advexpenseapproval = new Advexpenseapproval();
-								// 	$Advexpenseapproval->advexpense_id = $Advexpense->id;
-								// 	$Advexpenseapproval->approver_id = $ApproverBUFC->id;
-								// 	$Advexpenseapproval->save();
-								// 	$logger = new Datalogger("Advexpenseapproval","add","Add initial BU FC Approval",json_encode($Advexpenseapproval->to_array()));
-								// 	$logger->SaveData();
-								// }
-
-								// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220")){
-								// 	$ApproverBU = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38' and tbl_employee.location_id='8'")));
-								// 	if(count($ApproverBU)>0){
-								// 		$Advexpenseapproval = new Advexpenseapproval();
-								// 		$Advexpenseapproval->advexpense_id =$Advexpense->id;
-								// 		$Advexpenseapproval->approver_id = $ApproverBU->id;
-								// 		$Advexpenseapproval->save();
-								// 		$logger = new Datalogger("Advexpenseapproval","add","Add initial BU Approval",json_encode($Advexpenseapproval->to_array()));
-								// 		$logger->SaveData();
-								// 	}
-									
-								// 	$ApproverBUFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='37' and tbl_employee.location_id='8'")));
-								// 	if(count($ApproverBUFC)>0){
-								// 		$Advexpenseapproval = new Advexpenseapproval();
-								// 		$Advexpenseapproval->advexpense_id =$Advexpense->id;
-								// 		$Advexpenseapproval->approver_id = $ApproverBUFC->id;
-								// 		$Advexpenseapproval->save();
-								// 		$logger = new Datalogger("Advexpenseapproval","add","Add initial BUFC Approval",json_encode($Advexpenseapproval->to_array()));
-								// 		$logger->SaveData();
-								// 	}
-
-								// }else{
-								// 	$ApproverBU = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='38'  and tbl_employee.company_id=? and not(tbl_employee.location_id='8')",$Employee->company_id)));
-								// 	if(count($ApproverBU)>0){
-								// 		$Advexpenseapproval = new Advexpenseapproval();
-								// 		$Advexpenseapproval->advexpense_id = $Advexpense->id;
-								// 		$Advexpenseapproval->approver_id = $ApproverBU->id;
-								// 		$Advexpenseapproval->save();
-								// 		$logger = new Datalogger("Advexpenseapproval","add","Add initial BU Approval",json_encode($Advexpenseapproval->to_array()));
-								// 		$logger->SaveData();
-								// 	}
-
-								// 	$ApproverBUFC = Approver::find('first',array('joins'=>$joins,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='37'  and tbl_employee.company_id=? and not(tbl_employee.location_id='8')",$Employee->company_id)));
-								// 	if(count($ApproverBUFC)>0){
-								// 		$Advexpenseapproval = new Advexpenseapproval();
-								// 		$Advexpenseapproval->advexpense_id = $Advexpense->id;
-								// 		$Advexpenseapproval->approver_id = $ApproverBUFC->id;
-								// 		$Advexpenseapproval->save();
-								// 		$logger = new Datalogger("Advexpenseapproval","add","Add initial BUFC Approval",json_encode($Advexpenseapproval->to_array()));
-								// 		$logger->SaveData();
-								// 	}
-
-								// }
 
 								$Advexpensehistory = new Advexpensehistory();
 								$Advexpensehistory->date = date("Y-m-d H:i:s");
