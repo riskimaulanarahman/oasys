@@ -895,7 +895,7 @@ Class SpklModule extends Application{
 							if($dx->approver->isfinal==1){
 								$data=array("jml"=>1);
 							}else{
-								if($Spkl->isexceedplan && $dx->approver->approvaltype_id=='20'){
+								if($Spkl->isexceedplan==1 && $dx->approver->approvaltype_id=='20'){
 									$join   = "LEFT JOIN tbl_approver ON (tbl_spklotapproval.approver_id = tbl_approver.id) ";
 									$Spkltmsapproval = Spkltmsapproval::find('all', array('joins'=>$join,'conditions' => array("spkl_id=? and ApprovalStatus<=1 and not tbl_approver.employee_id=?",$query['spkl_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
 									foreach ($Spkltmsapproval as &$result) {
@@ -1047,7 +1047,7 @@ Class SpklModule extends Application{
 										break;
 									case '2':
 										//if ($Spkltmsapproval->approver->isfinal == 1){
-										if (($Spkltmsapproval->approver->isfinal == 1) || ($Spkltmsapproval->approver->approvaltype_id==21) || ($Spkltmsapproval->approver->approvaltype_id==20 && $Spkl->isexceedplan==false)){
+										if (($Spkltmsapproval->approver->isfinal == 1) || ($Spkltmsapproval->approver->approvaltype_id==21) || ($Spkltmsapproval->approver->approvaltype_id==20 && $Spkl->isexceedplan==0)){
 											$Spkl->approvalstep =0;
 											$Spkl->tmsreqstatus = 3;
 											$emto=$email;$emname=$Spkl->employee->fullname;
@@ -1326,7 +1326,7 @@ Class SpklModule extends Application{
 							// print_r($data->actualovertimehours);
 							// print_r($data->estimateovertimehours);
 							if($data->actualovertimehours>$data->estimateovertimehours){
-								$isexceed++;
+								//$isexceed++;
 							}
 						}
 						$isMoreThan2hours = 1;
@@ -1473,7 +1473,7 @@ Class SpklModule extends Application{
 								$logger = new Datalogger("Spklapproval","delete",json_encode($result->to_array()),"delete BUHead for SPKL <= 2hours");
 							}
 						}
-						$Spkl->isexceedplan=0;//($isexceed>0);
+						//$Spkl->isexceedplan=0;//($isexceed>0);
 						$Spkl->ismorethan2hours=($isMoreThan2hours>0);
 						$Spkl->save();
 						
@@ -1564,7 +1564,7 @@ Class SpklModule extends Application{
 						$isexceed = 0;
 						foreach($AllDetail as $data){
 							if($data->actualovertimehours>$data->estimateovertimehours){
-								$isexceed++;
+								//$isexceed++;
 							}
 						}
 						$isMoreThan2hours = 1;
@@ -1713,7 +1713,7 @@ Class SpklModule extends Application{
 								$logger = new Datalogger("Spklapproval","delete",json_encode($result->to_array()),"delete BUHead for SPKL <= 2hours");
 							}
 						}
-						$Spkl->isexceedplan=0;//($isexceed>0);
+						//$Spkl->isexceedplan=0;//($isexceed>0);
 						$Spkl->ismorethan2hours=($isMoreThan2hours>0);
 						$Spkl->save();
 						break;
@@ -1785,6 +1785,7 @@ Class SpklModule extends Application{
 						if (($Employee->level_id > 2 && $Employee->level_id != 5 && $Employee->level_id != 7) || $Employee->ispic == 1) {
 							unset($data['__KEY__']);
 							unset($data['username']);
+							unset($data['isexceedplan']);
 							$data['employee_id']=$Employee->id;
 							$data['RequestStatus']=0;
 							try{
@@ -1898,6 +1899,7 @@ Class SpklModule extends Application{
 						unset($data['department']);
 						unset($data['company']);
 						unset($data['location']);
+						unset($data['isexceedplan']);
 						//unset($data['employee']);
 						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 						foreach($data as $key=>$val){
