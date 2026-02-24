@@ -2153,6 +2153,7 @@ Class SpklModule extends Application{
 						unset($data['approvalstatus']);
 						unset($data['fullname']);
 						unset($data['department']);
+						unset($data['isexceedplan']);
 						// unset($data['company']);
 						// unset($data['location']);
 						if (isset($data['company'])) {
