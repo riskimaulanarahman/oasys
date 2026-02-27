@@ -1326,7 +1326,7 @@ Class SpklModule extends Application{
 							// print_r($data->actualovertimehours);
 							// print_r($data->estimateovertimehours);
 							if($data->actualovertimehours>$data->estimateovertimehours){
-								//$isexceed++;
+								$isexceed++;
 							}
 						}
 						$isMoreThan2hours = 1;
@@ -1473,7 +1473,7 @@ Class SpklModule extends Application{
 								$logger = new Datalogger("Spklapproval","delete",json_encode($result->to_array()),"delete BUHead for SPKL <= 2hours");
 							}
 						}
-						//$Spkl->isexceedplan=0;//($isexceed>0);
+						$Spkl->isexceedplan=($isexceed>0);
 						$Spkl->ismorethan2hours=($isMoreThan2hours>0);
 						$Spkl->save();
 						
@@ -1564,7 +1564,7 @@ Class SpklModule extends Application{
 						$isexceed = 0;
 						foreach($AllDetail as $data){
 							if($data->actualovertimehours>$data->estimateovertimehours){
-								//$isexceed++;
+								$isexceed++;
 							}
 						}
 						$isMoreThan2hours = 1;
@@ -1713,7 +1713,7 @@ Class SpklModule extends Application{
 								$logger = new Datalogger("Spklapproval","delete",json_encode($result->to_array()),"delete BUHead for SPKL <= 2hours");
 							}
 						}
-						//$Spkl->isexceedplan=0;//($isexceed>0);
+						$Spkl->isexceedplan=($isexceed>0);
 						$Spkl->ismorethan2hours=($isMoreThan2hours>0);
 						$Spkl->save();
 						break;
