@@ -702,7 +702,7 @@ Class TrModule extends Application{
 							$dx = Trapproval::find('first', array('joins'=>$join,'conditions' => array("tr_id=? and tbl_approver.employee_id = ? and approvalstatus='0'",$query['tr_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
 							$Tr = Tr::find($query['tr_id']);
 							$approval_type = Approver::find('first', array(
-								'conditions' => array("approver_id=? and module='TR'", $dx->approver_id )
+								'conditions' => array("id=? and module='TR'", $dx->approver_id )
 							));
 							if($dx->approver->isfinal==1){
 								$data=array("jml"=>1);
