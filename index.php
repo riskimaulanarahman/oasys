@@ -758,10 +758,10 @@ if (preg_match('/MSIE\s(?P<v>\d+)/i', @$_SERVER['HTTP_USER_AGENT'], $B) || preg_
 								</ul>
                             </li>
                             
-                            <li ng-class="{'mm-active': isActive('/itimail') || isActive('/itsharefolder') || isActive('/itimailapproval') || isActive('/itsharefolderapproval'))}">
+                            <li ng-class="{'mm-active': (isActive('/itimail') || isActive('/itsharefolder') || isActive('/itimailapproval') || isActive('/itsharefolderapproval'))}">
                             <!-- <li ng-class=""> -->
 								<a href="#"><i class='metismenu-icon pe-7s-science icon-gradient bg-premium-dark'></i>IT Approval<i class="metismenu-state-icon fas pe-7s-angle-down caret-left"></i></a>
-								<ul ng-class="{'mm-show': isActive('/itimail') || isActive('/itsharefolder') || isActive('/itimailapproval') || isActive('/itsharefolderapproval') )}">
+								<ul ng-class="{'mm-show': (isActive('/itimail') || isActive('/itsharefolder') || isActive('/itimailapproval') || isActive('/itsharefolderapproval') )}">
                                     <li class="">
                                         <a href="#" aria-expanded="false">
                                             <i class="metismenu-icon"></i><i class='fa fa-calendar-alt'></i> My Request
