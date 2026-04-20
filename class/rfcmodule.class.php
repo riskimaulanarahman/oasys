@@ -848,7 +848,7 @@ Class RfcModule extends Application{
 										if($col == 1){
 											$pdfContent .= "<tr>";
 										}
-										$pdfContent .= '<td align="center" style="padding:5pt 5.4pt 0in 5.4pt;">
+										$pdfContent .= '<td align="center" style="padding:5pt 5.4pt 0in 5.4pt; width:120pt; word-wrap:break-word; word-break:break-word;">
 										<img src="images/approved.png" style="height:25pt" alt="Approved from System">
 										<br><small><i>'. date("d/m/Y",strtotime($data->approvaldate)).'</i>
 										<br><u>'.$data->approver->employee->fullname.'</u></small>
