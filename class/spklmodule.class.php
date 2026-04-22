@@ -75,6 +75,12 @@ Class SpklModule extends Application{
 				case 'apispkltms':
 					$this->SPKLTms();
 					break;
+				case 'apitmsfile':
+					$this->spklAttachment();
+					break;
+				case 'uploadtmsfile':
+					$this->uploadSpklFile();
+					break;
 				case 'apitestxl2pdf':
 					$this->testExcel();
 					break;
@@ -82,6 +88,127 @@ Class SpklModule extends Application{
 					break;
 			}
 		}
+	}
+	function spklAttachment(){
+		if (count($this->post)==0){
+			http_response_code(405);
+    		echo json_encode(array("message" => "Method not Allowed"));
+		}else{
+			$auth = $this->jwt->checkAuth();
+			if($auth){
+				switch ($this->post['criteria']){
+					case 'byid':
+						$id = $this->post['id'];
+						if ($id!=""){
+							$Spklattachment = Spklattachment::find('all', array('conditions' => array("spkl_id=?",$id)));
+							foreach ($Spklattachment as &$result) {
+								$result		= $result->to_array();
+							}
+							echo json_encode($Spklattachment, JSON_NUMERIC_CHECK);
+						}else{
+							$Spklattachment = new Spklattachment();
+							echo json_encode($Spklattachment);
+						}
+						break;
+					case 'find':
+						$query=$this->post['query'];
+						if(isset($query['status'])){
+							$Spklattachment = Spklattachment::find('all', array('conditions' => array("spkl_id=?",$query['spkl_id'])));
+							$data=array("jml"=>count($Spklattachment));
+						}else{
+							$data=array();
+						}
+						echo json_encode($data, JSON_NUMERIC_CHECK);
+						break;
+					case 'create':			
+						$data = $this->post['data'];
+						if($this->currentUser->username=="admin"){
+							$Rfc = Rfc::find($data['spkl_id']);
+							$data['employee_id']= $Rfc->employee_id;
+						}else{
+							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+							$data['employee_id']=$Employee->id;
+						}
+						
+						unset($data['__KEY__']);
+						
+						$Spklattachment = Spklattachment::create($data);
+						$logger = new Datalogger("Spklattachment","create",null,json_encode($data));
+						$logger->SaveData();
+						echo json_encode($data);
+						break;
+					case 'delete':				
+						$id = $this->post['id'];
+						$Spklattachment = Spklattachment::find($id);
+						$data=$Spklattachment->to_array();
+						$Spklattachment->delete();
+						$logger = new Datalogger("Spklattachment","delete",json_encode($data),null);
+						$logger->SaveData();
+						echo json_encode($Spklattachment);
+						break;
+					case 'update':				
+						$id = $this->post['id'];
+						$data = $this->post['data'];
+						$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
+						$data['employee_id']=$Employee->id;
+						$Spklattachment = Spklattachment::find($id);
+						$olddata = $Spklattachment->to_array();
+						foreach($data as $key=>$val){					
+							$val=($val=='No')?false:(($val=='Yes')?true:$val);
+							$Spklattachment->$key=$val;
+						}
+						$Spklattachment->save();
+						$logger = new Datalogger("Spklattachment","update",json_encode($olddata),json_encode($data));
+						$logger->SaveData();
+						echo json_encode($Spklattachment);
+						
+						break;
+					default:
+						$Spklattachment = Spklattachment::all();
+						foreach ($Spklattachment as &$result) {
+							$result = $result->to_array();
+						}
+						echo json_encode($Spklattachment, JSON_NUMERIC_CHECK);
+						break;
+				}
+			}
+		}
+		
+	}
+	public function uploadSpklFile(){
+		$id= $this->get['id'];
+		if(!isset($_FILES['myFile'])) {
+			http_response_code(400);
+			echo "There is no file to upload";
+			exit;
+		}
+		$max_image_size = 6242880;
+		if(!is_uploaded_file($_FILES['myFile']['tmp_name'])) {
+			http_response_code(400);
+			echo "Unable to upload File";
+			exit;
+		}
+		if($_FILES['myFile']['size'] > $max_image_size) {
+			http_response_code(413);
+			echo "File Size too Large, Maximum 6MB";
+			exit;
+		}
+		// var_dump($_FILES['myFile']['type']);
+		$ext = pathinfo($_FILES['myFile']['name'], PATHINFO_EXTENSION);
+		// echo $ext;
+		if((strpos($_FILES['myFile']['type'], "octet-stream") === false || $ext !== 'msg') && (strpos($_FILES['myFile']['type'], "image") === false) && (strpos($_FILES['myFile']['type'], "pdf") === false) && (strpos($_FILES['myFile']['type'], "officedocument") === false)  && (strpos($_FILES['myFile']['type'], "msword") === false) && (strpos($_FILES['myFile']['type'], "excel") === false)){
+			http_response_code(415);
+			echo "Only Accept Image File, pdf or Office Document (Excel & Word & Outlook) ";
+			exit;
+		}
+		$path_to_file = "upload\\spkl\\".$id."_".time()."_".$_FILES['myFile']['name'];
+		$path_to_file = str_replace("%","_",$path_to_file);
+		$path_to_file = str_replace(" ","_",$path_to_file);
+		echo $path_to_file;
+        move_uploaded_file($_FILES['myFile']['tmp_name'], $path_to_file);
+
+		$this->processcopy($path_to_file);
+		
 	}
 	function testExcel(){
 		$spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load('doc/template/template.xlsx');

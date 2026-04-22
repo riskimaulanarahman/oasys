@@ -90,7 +90,7 @@ app.register.controller('spkltmsCtrl', ['$rootScope','$scope', '$http', '$interv
 						container.text(options.rowIndex +1);
 					}
                 },
-				{dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200},
+				{dataField:'createddate',caption:"Creation Date",dataType:"date", format:"dd/MM/yyyy",width: 200, sortOrder: "desc"},
 				{dataField:'datework',caption:"Date Work",dataType:"date", format:"dd/MM/yyyy",width: 200},
 				{dataField:'tmsreqstatus',caption:"Status",encodeHtml: false ,width: 300,
 					customizeText: function (e) {

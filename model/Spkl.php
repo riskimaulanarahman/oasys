@@ -6,6 +6,7 @@ class Spkl extends ActiveRecord\Model
 		array('employee')
 	);
 	static $has_many = array(
-		array('spkldetail')
+		array('spkldetail'),
+		array('spklattachment')
 	);
 }

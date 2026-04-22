@@ -358,6 +358,48 @@ app.register.controller('detailspkltmsCtrl', ['$rootScope','$scope', '$http', '$
 			});
 		}
     });
+	var myStores = new DevExpress.data.CustomStore({
+		load: function() {			
+            $scope.isLoaded =true;
+			return CrudService.GetById('tmsfile',$scope.Requestid);         		
+		},
+		byKey: function(key) {
+            CrudService.GetById('tmsfile',encodeURIComponent(key)).then(function (response) {
+				return response;
+			});
+		},
+		insert: function(values) {
+			values.upload_date = $filter("date")(values.upload_date, "yyyy-MM-dd HH:mm")
+			values.spkl_id=$scope.Requestid;
+			values.file_loc =$scope.path;
+            CrudService.Create('tmsfile',values).then(function (response) {
+				if(response.status=="error"){
+					DevExpress.ui.dialog.alert(response.message,"Error");
+				}
+				$scope.gridsComponent.refresh();
+			});
+		},
+		update: function(key, values) {
+			if ($scope.path!=""){
+				values.upload_date = $filter("date")(values.upload_date, "yyyy-MM-dd HH:mm");
+				values.file_loc =$scope.path;
+			}
+            CrudService.Update('tmsfile',key.id,values).then(function (response) {
+				if(response.status=="error"){
+					DevExpress.ui.dialog.alert(response.message,"Error");
+				}
+				$scope.gridsComponent.refresh();
+			});
+		},
+		remove: function(key) {
+			CrudService.Delete('tmsfile',key.id).then(function (response) {
+				if(response.status=="error"){
+					DevExpress.ui.dialog.alert(response.message,"Error");
+				}
+				$scope.gridsComponent.refresh();
+			});
+		}
+    });
 	var myStore3 = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;
@@ -379,13 +421,17 @@ app.register.controller('detailspkltmsCtrl', ['$rootScope','$scope', '$http', '$
 	var myData2 = new DevExpress.data.DataSource({
 		store: myStore2
     });
+	var myDatas = new DevExpress.data.DataSource({
+		store: myStores
+    });
 	var myData3 = new DevExpress.data.DataSource({
 		store: myStore3
     });
 	$scope.tabs = [
 		{ id:1, TabName : "Detail SPKL", title: 'Detail SPKL / Employee List', template: "tab1"   },
-		{ id:2, TabName : "Approver List", title: 'Approver List', template: "tab2"   },
-		{ id:3, TabName : "History Tracking", title: 'History Tracking', template: "tab3"   },
+		{ id:2, TabName : "SupportDoc", title: 'Supporting Document', template: "tab2"   },
+		{ id:3, TabName : "Approver List", title: 'Approver List', template: "tab3"   },
+		{ id:4, TabName : "History Tracking", title: 'History Tracking', template: "tab4"   },
 	];
 	$scope.showHistory = true;
 	$scope.appText = ["Yes","No"];
@@ -515,6 +561,154 @@ app.register.controller('detailspkltmsCtrl', ['$rootScope','$scope', '$http', '$
                 }
             });
         },
+    };
+	$scope.gridsOptions = {
+		dataSource: myDatas,
+		allowColumnResizing: true,
+		columnResizingMode : "widget",
+        columnMinWidth: 50,
+        columnAutoWidth: true,
+		columns: [
+					{dataField:'file_descr',width:250,caption:"File Description",encodeHtml: false,dataType: "string",editorOptions: {disabled:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?false:true):false}},
+					
+					{
+							dataField: "file_loc",
+							caption:"FileLocation",
+							width: 100,
+							allowFiltering: false,
+							allowSorting: false,
+							formItem: { visible: false},
+							cellTemplate: function (container, options) {
+								if (options.value!=""){
+									$("<div />").dxButton({
+										icon: 'download',
+										stylingMode: "contained",
+										type: "success",
+										target : '_blank',
+										width: 50,
+										height:25,
+										onClick: function (e) {
+											window.open(options.value, '_blank');
+										}
+									}).appendTo(container);
+								};
+							}
+						},{dataField:'FileLoc',caption:"Select File Attachment",visible:false},
+						{dataField:'upload_date',width:150,caption: "Upload Date",dataType:"date", format: 'dd/MM/yyyy HH:mm:ss',editorType: "dxDateBox",editorOptions: {displayFormat:"dd/MM/yyyy HH:mm:ss",disabled: true}},
+			
+			
+		],editing: {
+            useIcons:true,
+            mode: "popup",
+			allowUpdating:( ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowAdding:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+            //allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
+            //allowAdding: ($rootScope.isAdmin)?true:false, // Enables insertion
+            form:{colCount: 2,
+            },
+			popup: {
+					title: "Edit Attachment",
+					showTitle: true,
+					position: {
+						my: "center",
+						at: "center",
+						of: window
+					},
+					toolbarItems: [
+					  {
+						toolbar: 'bottom',
+						location: 'after',
+						widget: 'dxButton',
+						options: {
+							onClick: function(e) {	
+								if($scope.path==""){
+									DevExpress.ui.dialog.alert("Please select file attachment and process your upload before saving the data","Error");
+									e.cancel = true;
+								}else{
+									if($scope.adaFile){
+										DevExpress.ui.dialog.alert("Please finish your upload before saving the data","Error");
+										e.cancel = true;
+									} else{
+										$scope.gridsComponent.saveEditData();
+									}
+								}
+								
+							},
+							text: 'Save'
+						}
+					  },
+					  {
+						toolbar: 'bottom',
+						location: 'after',
+						widget: 'dxButton',
+						options: {
+							onClick: function(e) {
+								$scope.gridsComponent.cancelEditData();
+							},text: 'Cancel'
+						}
+					  }
+					]
+				}
+        },
+		onInitialized:function (e){
+			$scope.gridsComponent = e.component;
+		},
+		onInitNewRow: function (e) {
+				e.data.upload_date = $filter("date")(d, 'yyyy-MM-dd HH:mm:ss');
+			},
+		onEditorPreparing: function (e) {
+			$scope.path = "";
+			if (e.dataField == "upload_date" ) {
+				e.editorName = "dxDateBox";
+				e.editorOptions.displayFormat= "dd/MM/yyyy  HH:mm:ss";
+			} 				
+			if (e.dataField == "FileLoc") {
+				e.editorName = "dxFileUploader";
+				e.editorOptions.uploadMode = "useButtons";
+				e.editorOptions.name = "myFile";
+				e.editorOptions.accept = "image/*,application/pdf,application/vnd.ms-outlook,application/msword,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+				e.editorOptions.uploadUrl= "api.php?action=uploadtmsfile&id="+$scope.Requestid;
+				e.editorOptions.onUploaded= function (e) {						
+					$scope.path = e.request.response;
+					$scope.adaFile =false;
+				}
+				e.editorOptions.onUploadError= function(e) {
+					$scope.path ="";
+					DevExpress.ui.notify(e.request.response,"error");
+				}
+				e.editorOptions.onValueChanged= function(e){					
+					$scope.adaFile = (e.value.length==0)?false:true;
+				}
+			}  
+			if (e.dataField == "file_descr") {
+				e.editorName = "dxHtmlEditor";
+				e.editorOptions.height = 250;
+				e.colSpan = 2;
+				e.editorOptions.toolbar = {	items: ["bold", "italic", "underline"]	};
+			}    				
+		},
+		onEditorPrepared: function (e) {
+			if (e.dataField == "file_descr") {
+				var index = e.row.rowIndex;
+				var rm = (typeof(e.value)=="undefined")?"":e.value;
+				$scope.gridsComponent.cellValue(index, "file_descr", rm.trim()+" ");
+			}                 
+		 },
+		onToolbarPreparing: function(e) {	
+			e.toolbarOptions.items.unshift(
+			{						
+				location: "after",
+				widget: "dxButton",
+				options: {
+					hint: "Refresh Data",
+					icon: "refresh",
+					onClick: function() {
+						$scope.gridsComponent.refresh();
+					}
+				}
+			});
+		},
     };
 	$scope.AppType = [{id:0,apptype:"Verification"},{id:1,apptype:"HOD Approval"},{id:2,apptype:"Final Approval"}];
 
