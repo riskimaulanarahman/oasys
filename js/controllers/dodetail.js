@@ -47,7 +47,7 @@
                         loadMode: "raw",
                         load: function() {
                             criteria = {
-                                filter:'bydeptsamebu',
+                                filter:'bydeptgroupdo',
                                 dept:$scope.data.department,
                                 bu:$scope.data.bu,
                             };
