@@ -470,7 +470,7 @@ Class Advexpensemodule extends Application{
 											// }else {
 											// 	$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='IHM'")));
 											// }
-											$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='70' and FIND_IN_SET(?, CompanyList) > 0 ",$Employee->companycode)));
+											$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='ExpenseClaim' and tbl_approver.isactive='1' and approvaltype_id='70' and FIND_IN_SET(?, CompanyList) > 0 ",$Employee->companycode)));
 											
 											
 
@@ -643,7 +643,7 @@ Class Advexpensemodule extends Application{
 								$joins   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
 								$joinx   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
 
-								$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='70' and FIND_IN_SET(?, CompanyList) > 0 ",$Employee->companycode)));
+								$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='ExpenseClaim' and tbl_approver.isactive='1' and approvaltype_id='70' and FIND_IN_SET(?, CompanyList) > 0 ",$Employee->companycode)));
 
 
 								if(count($ApproverHRV)>0){
