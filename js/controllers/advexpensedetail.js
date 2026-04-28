@@ -55,7 +55,7 @@ app.register.controller('advexpensedetailCtrl', ['$rootScope','$scope', '$http',
 					key: "id",
 					loadMode: "raw",
 					load: function() {
-						criteria = {module:'Advance',mode:$scope.mode};
+						criteria = {module:'ExpenseClaim',mode:$scope.mode};
 						return CrudService.FindData('appr',criteria);
 					},
 				}),
