@@ -446,7 +446,7 @@ Class Advexpensemodule extends Application{
 											// $companyHRV=( ($Employee->companycode=='KPA') || ($Employee->companycode=='AHL') )?"KPSI":$Employee->companycode;
 											// if (($Employee->company->sapcode=='RND') || ($Employee->company->sapcode=='NKF')){
 											// if((substr(strtolower($Employee->location->sapcode),0,3)=="020") || (substr(strtolower($Employee->location->sapcode),0,4)=="0220") || ($Employee->department->sapcode=="13000090") || ($Employee->department->sapcode=="13000121") || ($Employee->company->sapcode=="NKF") || ($Employee->company->sapcode=="RND")){
-											$hrverifikator = Advexpenseapproval::find('all',array('joins'=>$joins,'conditions' => array("advexpense_id=? and tbl_approver.approvaltype_id=44",$id)));	
+											$hrverifikator = Advexpenseapproval::find('all',array('joins'=>$joins,'conditions' => array("advexpense_id=? and tbl_approver.approvaltype_id=70",$id)));	
 											foreach ($hrverifikator as $result) {
 												$result->delete();
 												$logger = new Datalogger("Advexpenseapproval","delete",json_encode($result->to_array()),"delete Approval HR Verifikator");
@@ -470,7 +470,7 @@ Class Advexpensemodule extends Application{
 											// }else {
 											// 	$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and companylist='IHM'")));
 											// }
-											$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and FIND_IN_SET(?, CompanyList) > 0 ",$Employee->companycode)));
+											$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='70' and FIND_IN_SET(?, CompanyList) > 0 ",$Employee->companycode)));
 											
 											
 
@@ -576,7 +576,7 @@ Class Advexpensemodule extends Application{
 												$logger->SaveData();
 											}
 
-											$hrv = Advexpenseapproval::find('all',array('joins'=>$joins,'conditions' => array("advexpense_id=? and tbl_approver.approvaltype_id=44",$id)));	
+											$hrv = Advexpenseapproval::find('all',array('joins'=>$joins,'conditions' => array("advexpense_id=? and tbl_approver.approvaltype_id=70",$id)));	
 											foreach ($hrv as $result) {
 												$result->delete();
 												$logger = new Datalogger("Advexpenseapproval","delete",json_encode($result->to_array()),"delete Approval HR Verifikator");
@@ -643,7 +643,7 @@ Class Advexpensemodule extends Application{
 								$joins   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
 								$joinx   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";
 
-								$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='44' and FIND_IN_SET(?, CompanyList) > 0 ",$Employee->companycode)));
+								$ApproverHRV = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='70' and FIND_IN_SET(?, CompanyList) > 0 ",$Employee->companycode)));
 
 
 								if(count($ApproverHRV)>0){
