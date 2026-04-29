@@ -188,6 +188,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 								})
 							}
 						}},
+					{dataField:'rfqno',label:{text:"RFQ No"},validationRules: [{type: "required", message: "RFQ No is required" }],editorOptions:{readOnly: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,}},
 					{
 						dataField:'paymentterm',
 						editorType: "dxSelectBox",
@@ -228,13 +229,19 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 								if (e.value=='SK'){
 									$scope.formInstance.itemOption('group1.skno', 'visible', true);
 									$scope.formInstance.itemOption('group1.skno', 'visibleIndex', 9);
-									$scope.formInstance.itemOption('group1.rate', 'visible', false);
-									$scope.formInstance.updateData('rate',  "");
+									// hide procurement group for SK and clear procurement fields
+									try{ 
+										$scope.formInstance.itemOption('group1.procurementGroup', 'visible', false); 
+										$scope.formInstance.updateData('procurement_rate', "");
+										$scope.formInstance.updateData('procurement_contractor_id', "");
+									}catch(err){}
 								}else{
 									$scope.formInstance.itemOption('group1.skno', 'visible', false);
 									$scope.formInstance.updateData('skno',  "");
-									$scope.formInstance.itemOption('group1.rate', 'visible', true);
-									$scope.formInstance.itemOption('group1.rate', 'visibleIndex', 9);
+									// show procurement group for Non SK
+									try{ 
+										$scope.formInstance.itemOption('group1.procurementGroup', 'visible', true); 
+									}catch(err){}
 								}
 								
 							}
@@ -276,6 +283,59 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 								return $dataGrid;
 							}
 						}},
+					/* Procurement recommendation group: visible only when ratetype == 'Non SK' */
+					{
+						itemType: "group",
+						caption: "Procurement recommendation",
+						name: "procurementGroup",
+						colCount: 2,
+						visible: ($scope.data.ratetype=='Non SK')?true:false,
+						items: [
+							{dataField:'procurement_rate',label:{text:"Procurement Rate"},validationRules: [{ type: "required", message: "please input Procurement Rate" }],editorOptions:{readOnly: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,}},
+							{
+								dataField:'procurement_contractor_id',
+								label:{text:"Procurement Contractor"},
+								editorType: "dxDropDownBox",
+								editorOptions: { 
+									readOnly: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
+									dataSource:$scope.contractorDatasource,  
+									valueExpr: 'id',
+									displayExpr: 'contractorname',
+									showClearButton:true,
+									searchEnabled: true,
+									contentTemplate: function(e){
+										var $dataGrid = $("<div>").dxDataGrid({
+											dataSource: e.component.option("dataSource"),
+											columns: [{dataField:"contractorname",caption:"Contractor"}],
+											height: 265,
+											selection: { mode: "single" },
+											selectedRowKeys: [e.component.option("value")],
+											focusedRowEnabled: true,
+											focusedRowKey: e.component.option("value"),
+											searchPanel: {
+												visible: true,
+												width: 265,
+												placeholder: "Search..."
+											},
+											onSelectionChanged: function(selectedItems){
+												var keys = selectedItems.selectedRowKeys,
+													hasSelection = keys.length;
+													if(hasSelection){
+														e.component.option("value", hasSelection ? keys[0] : null); 
+														e.component.close();
+													}
+											}
+										});
+										return $dataGrid;
+									}
+								},
+								validationRules: [{
+									type: "required",
+									message: "Please select procurement contractor"
+								}]
+							}
+						]
+					},
 					{dataField:'rate',label:{text:"Rate"},visible:($scope.data.ratetype=='SK')?false:true,validationRules: [{ type: "required", message: "please input Rate" }],editorOptions:{readOnly: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,}},
 					{dataField:'contractor_id',label:{text:"Contractor Recommend 1"},editorType: "dxDropDownBox",editorOptions: { 
 							readOnly: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
@@ -689,6 +749,45 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 	var myData = new DevExpress.data.DataSource({
 		store: myStore
     });
+	var myStore6 = new DevExpress.data.CustomStore({
+		load: function() {			
+            $scope.isLoaded =true;
+			return CrudService.GetById('rfcprocremarks',$scope.Requestid);         		
+		},
+		byKey: function(key) {
+            CrudService.GetById('rfcprocremarks',encodeURIComponent(key)).then(function (response) {
+				return response;
+			});
+		},
+		insert: function(values) {
+			values.rfc_id=$scope.Requestid;
+            CrudService.Create('rfcprocremarks',values).then(function (response) {
+				if(response.status=="error"){
+					DevExpress.ui.dialog.alert(response.message,"Error");
+				}
+				$scope.grid1Component.refresh();
+			});
+		},
+		update: function(key, values) {
+            CrudService.Update('rfcprocremarks',key.id,values).then(function (response) {
+				if(response.status=="error"){
+					DevExpress.ui.dialog.alert(response.message,"Error");
+				}
+				$scope.grid1Component.refresh();
+			});
+		},
+		remove: function(key) {
+			CrudService.Delete('rfcprocremarks',key.id).then(function (response) {
+				if(response.status=="error"){
+					 DevExpress.ui.notify(response.message,"error");
+				}
+				$scope.grid1Component.refresh();
+			});
+		}
+    });
+	var myData6 = new DevExpress.data.DataSource({
+		store: myStore6
+    });
 	var myStore5 = new DevExpress.data.CustomStore({
 		load: function() {			
             $scope.isLoaded =true;
@@ -840,6 +939,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 		{ id:1, TabName : "Scope of Work", title: 'Scope of Work', template: "tab1"   },
 		{ id:5, TabName : "Other Term", title: 'Other Term & Condition', template: "tab5"   },
 		{ id:2, TabName : "SupportDoc", title: 'Supporting Document', template: "tab2"   },
+		{ id:6, TabName : "Procurement Remarks", title: 'Procurement Remarks', template: "tab6"   },
 		{ id:3, TabName : "Approver List", title: 'Approver List', template: "tab3"   },
 		{ id:4, TabName : "History Tracking", title: 'History Tracking', template: "tab4"   },
 	];
@@ -854,6 +954,47 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
         columnAutoWidth: true,
 		columns: [
 			{dataField:'description',width:600,wordWrapEnabled:true,caption:'Description of Work',encodeHtml: false,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}}
+			
+		],editing: {
+            useIcons:true,
+            mode: "cell",
+			allowUpdating:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowAdding:(($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+			allowDeleting:(($scope.mode=='approve') || ($scope.mode=='view')||($scope.mode=='report'))?(($rootScope.isAdmin)?true:false):true,
+            //allowUpdating: ($rootScope.isAdmin)?true:false, // Enables editing
+            //allowAdding: ($rootScope.isAdmin)?true:false, // Enables insertion
+            form:{colCount: 1,
+            },
+        },
+		onInitialized:function (e){
+			$scope.grid1Component = e.component;
+		},
+		onEditorPreparing: function (e) {  
+			$scope.grid1Component = e.component;
+		},
+		onToolbarPreparing: function(e) {   
+            e.toolbarOptions.items.unshift({						
+                location: "after",
+                widget: "dxButton",
+                options: {
+                    hint: "Refresh Data",
+                    icon: "refresh",
+                    onClick: function() {
+                        $scope.grid1Component.refresh();
+                    }
+                }
+            });
+        },
+    };
+	$scope.grid6Options = {
+		dataSource: myData6,
+		allowColumnResizing: true,
+		columnResizingMode : "widget",
+        columnMinWidth: 50,
+        columnAutoWidth: true,
+		columns: [
+			{dataField:'description',width:600,wordWrapEnabled:true,caption:'Description',encodeHtml: false,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}},
+			{dataField:'remarks',width:600,wordWrapEnabled:true,caption:'Remarks',encodeHtml: false,dataType: "string",editorOptions: {disabled:(($scope.mode=='approve') ||($scope.mode=='view'))?true:false}}
 			
 		],editing: {
             useIcons:true,

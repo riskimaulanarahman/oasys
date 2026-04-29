@@ -53,6 +53,9 @@ Class RfcModule extends Application{
 				case 'apirfcdetail':
 					$this->rfcDetail();
 					break;
+				case 'apirfcprocremarks':
+					$this->RfcProcremarks();
+					break;
 				case 'apirfcterm':
 					$this->rfcTerm();
 					break;
@@ -1029,6 +1032,80 @@ Class RfcModule extends Application{
 							$result = $result->to_array();
 						}
 						echo json_encode($Rfcdetail, JSON_NUMERIC_CHECK);
+						break;
+				}
+			}
+		}
+	}
+	function rfcProcremarks(){
+		if (count($this->post)==0){
+			http_response_code(405);
+    		echo json_encode(array("message" => "Method not Allowed"));
+		}else{
+			$auth = $this->jwt->checkAuth();
+			if($auth){
+				switch ($this->post['criteria']){
+					case 'byid':
+						$id = $this->post['id'];
+						if ($id!=""){
+							$Rfcprocremarks = Rfcprocremarks::find('all', array('conditions' => array("rfc_id=?",$id)));
+							foreach ($Rfcprocremarks as &$result) {
+								$result		= $result->to_array();
+							}
+							echo json_encode($Rfcprocremarks, JSON_NUMERIC_CHECK);
+						}else{
+							$Rfcprocremarks = new Rfcprocremarks();
+							echo json_encode($Rfcprocremarks);
+						}
+						break;
+					case 'find':
+						$query=$this->post['query'];
+						if(isset($query['status'])){
+							$Rfcprocremarks = Rfcprocremarks::find('all', array('conditions' => array("rfc_id=?",$query['rfc_id'])));
+							$data=array("jml"=>count($Rfcprocremarks));
+						}else{
+							$data=array();
+						}
+						echo json_encode($data, JSON_NUMERIC_CHECK);
+						break;
+					case 'create':			
+						$data = $this->post['data'];
+						unset($data['__KEY__']);
+						$Rfcprocremarks = Rfcprocremarks::create($data);
+						$logger = new Datalogger("Rfcprocremarks","create",null,json_encode($data));
+						$logger->SaveData();
+						break;
+					case 'delete':				
+						$id = $this->post['id'];
+						$Rfcprocremarks = Rfcprocremarks::find($id);
+						$data=$Rfcprocremarks->to_array();
+						$Rfcprocremarks->delete();
+						$logger = new Datalogger("Rfcprocremarks","delete",json_encode($data),null);
+						$logger->SaveData();
+						echo json_encode($Rfcprocremarks);
+						break;
+					case 'update':				
+						$id = $this->post['id'];
+						$data = $this->post['data'];
+						
+						$Rfcprocremarks = Rfcprocremarks::find($id);
+						$olddata = $Rfcprocremarks->to_array();
+						foreach($data as $key=>$val){					
+							$val=($val=='No')?false:(($val=='Yes')?true:$val);
+							$Rfcprocremarks->$key=$val;
+						}
+						$Rfcprocremarks->save();
+						$logger = new Datalogger("Rfcprocremarks","update",json_encode($olddata),json_encode($data));
+						$logger->SaveData();
+						echo json_encode($Rfcprocremarks);
+						
+						break;
+					default:
+						$Rfcprocremarks = Rfcprocremarks::all();
+						foreach ($Rfcprocremarks as &$result) {
+							$result = $result->to_array();
+						}
+						echo json_encode($Rfcprocremarks, JSON_NUMERIC_CHECK);
 						break;
 				}
 			}
