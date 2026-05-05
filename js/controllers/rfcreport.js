@@ -139,7 +139,6 @@ app.register.controller('rfcreportCtrl', ['$rootScope','$scope', '$http', '$inte
 						return rDesc[e.value];
 					}},
 				{dataField:'rfcno',caption:"RFC No",fixed: true, fixedPosition: "left"},
-				// request by fc
 				{dataField:'oldcontractno',caption:"Contract No",fixed: true, fixedPosition: "left"},
 				{dataField:'activity_id',caption:"Activity",
 					lookup: {
