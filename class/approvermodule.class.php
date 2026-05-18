@@ -54,6 +54,9 @@ Class ApproverModule extends Application{
 									$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 									$Approver = Approver::find('all', array('conditions' => array("module=? ",$query['module']),'include' => array('employee','approvaltype')));
 							}
+							if ($query['module'] == 'ExpenseClaim') {
+								$Approver = Approver::find('all', array('conditions' => array("module='Advance' or module='ExpenseClaim'"),'include' => array('employee','approvaltype')));
+							}
 							foreach ($Approver as &$result) {
 								$dept=$result->employee->department->departmentname;
 								$des=$result->employee->designation->designationname;
