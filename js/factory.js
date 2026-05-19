@@ -63,16 +63,17 @@ app.factory('AuthenticationService', function ($http, $localStorage,$window,$roo
 		var base64 = base64Url.replace('-', '+').replace('_', '/');
 		return JSON.parse($window.atob(base64));
 	}
-	function Logout(callback) {		
+	function Logout(callback) {
 		$http.post(API+'logout').then(function onSuccess(response) {
 			delete $localStorage.currentUser;
+			delete $localStorage.userPermissions;
 			$rootScope.$broadcast("loginChanged", false);
 			$http.defaults.headers.common.Authorization = '';
 			var respon = {message:response.message,status:'success'}
 			callback(respon);
 		}).catch(function onError(error) {
 			var respon = {message:error.data.message,status:'error'}
-			callback(respon); 		
+			callback(respon);
 		})
 	}
 });
@@ -83,14 +84,18 @@ app.run(function ($rootScope, $http, $location, $localStorage,AuthenticationServ
 			$rootScope.isLogin = true;
 			$rootScope.isAdmin = $localStorage.currentUser.isAdmin;
 			$http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.currentUser.token;
-			//console.log( $localStorage.currentUser.token);
+			if ($localStorage.userPermissions) {
+				angular.extend($rootScope, $localStorage.userPermissions);
+			}
 		}else{
 			delete $localStorage.currentUser;
+			delete $localStorage.userPermissions;
 			$http.defaults.headers.common.Authorization = '';
 			$rootScope.isLogin = false;
 			$rootScope.isAdmin = false;
 		}
 	}else{
+		delete $localStorage.userPermissions;
 		$http.defaults.headers.common.Authorization = '';
 		$rootScope.isLogin = false;
 		$rootScope.isAdmin = false;

@@ -1,4 +1,4 @@
-app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$ocLazyLoad', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$ocLazyLoad) {
+app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$location','CrudService','AuthenticationService','$ocLazyLoad','$q','$localStorage', function($rootScope,$scope, $http, $interval,$location,CrudService,AuthenticationService,$ocLazyLoad,$q,$localStorage) {
 	$rootScope.curUser = {};
 	
 	$scope.viewCompany =false;
@@ -9,86 +9,67 @@ app.controller('mainCtrl', ['$rootScope','$scope', '$http', '$interval','$locati
 	$scope.viewContract=false;
 	if($rootScope.isLogin){
 		CrudService.getCurrentUser()
-			.then(function (user) {			
+			.then(function (user) {
 				$rootScope.isAdmin = user.isadmin;
 				$rootScope.curUser = user;
-				CrudService.checkAccess('Contract',$rootScope.curUser.username).then(function (access) {
-					$rootScope.viewContract = access.allowview;
+				$q.all({
+					Contract:     CrudService.checkAccess('Contract', user.username),
+					Company:      CrudService.checkAccess('Company', user.username),
+					Department:   CrudService.checkAccess('Department', user.username),
+					Division:     CrudService.checkAccess('Division', user.username),
+					Designation:  CrudService.checkAccess('Designation', user.username),
+					Employee:     CrudService.checkAccess('Employee', user.username),
+					Internalhiring: CrudService.checkAccess('Internalhiring', user.username),
+					Dayoff:       CrudService.checkAccess('Dayoff', user.username),
+					Approver:     CrudService.checkAccess('Approver', user.username),
+					Holiday:      CrudService.checkAccess('Holiday', user.username),
+					RFCActivity:  CrudService.checkAccess('RFCActivity', user.username),
+					RFCContractor: CrudService.checkAccess('RFCContractor', user.username),
+					SKRate:       CrudService.checkAccess('SKRate', user.username),
+					RFC:          CrudService.checkAccess('RFC', user.username),
+					ApprovedWPHC: CrudService.checkAccess('ApprovedWPHC', user.username),
+					TR:           CrudService.checkAccess('TR', user.username),
+					SPKL:         CrudService.checkAccess('SPKL', user.username),
+					MMF:          CrudService.checkAccess('MMF', user.username),
+					MMF30:        CrudService.checkAccess('MMF30', user.username),
+					IT:           CrudService.checkAccess('IT', user.username),
+					Advance:      CrudService.checkAccess('Advance', user.username),
+				}).then(function (results) {
+					var perms = {
+						viewContract:             results.Contract.allowview,
+						viewCompany:              results.Company.allowview,
+						viewDepartment:           results.Department.allowview,
+						viewDivision:             results.Division.allowview,
+						viewDesignation:          results.Designation.allowview,
+						viewEmployee:             results.Employee.allowview,
+						viewInternalhiringmaster: results.Internalhiring.allowview,
+						viewInternalhiringreport: results.Internalhiring.allowview,
+						viewDayoff:               results.Dayoff.allowview,
+						viewApprover:             results.Approver.allowview,
+						viewHoliday:              results.Holiday.allowview,
+						viewRFCActivity:          results.RFCActivity.allowview,
+						viewRFCContractor:        results.RFCContractor.allowview,
+						viewSKRate:               results.SKRate.allowview,
+						viewRFC:                  results.RFC.allowview,
+						viewDayoffdetail:         results.ApprovedWPHC.allowview,
+						viewTR:                   results.TR.allowview,
+						viewSPKL:                 results.SPKL.allowview,
+						viewMMF:                  results.MMF.allowview,
+						viewMMF30:                results.MMF30.allowview,
+						viewITEIE:                results.IT.allowview,
+						viewITIMAIL:              results.IT.allowview,
+						viewITSHAREF:             results.IT.allowview,
+						viewAdvance:              results.Advance.allowview,
+						viewAdvPayment:           results.Advance.allowview,
+						viewAdvExpense:           results.Advance.allowview,
+					};
+					angular.extend($rootScope, perms);
+					$localStorage.userPermissions = perms;
+					if(!$rootScope.startRefresh) {
+						$rootScope.startRefresh = setInterval($scope.refreshUsers, 1000);
+					}
 				});
-				CrudService.checkAccess('Company',$rootScope.curUser.username).then(function (access) {
-					$rootScope.viewCompany = access.allowview;
-				});
-				CrudService.checkAccess('Department',$rootScope.curUser.username).then(function (access) {
-					$rootScope.viewDepartment = access.allowview;
-				});
-				CrudService.checkAccess('Division',$rootScope.curUser.username).then(function (access) {
-					$rootScope.viewDivision = access.allowview;
-				});
-				CrudService.checkAccess('Designation',$rootScope.curUser.username).then(function (access) {
-					$rootScope.viewDesignation = access.allowview;
-				});
-				CrudService.checkAccess('Employee',$rootScope.curUser.username).then(function (access) {
-					$rootScope.viewEmployee = access.allowview;
-				});
-				CrudService.checkAccess('Internalhiring',$rootScope.curUser.username).then(function (access) {
-					$rootScope.viewInternalhiringmaster = access.allowview;
-					$rootScope.viewInternalhiringreport = access.allowview;
-				});
-				CrudService.checkAccess('Dayoff',$rootScope.curUser.username).then(function (access) {
-					$rootScope.viewDayoff = access.allowview;
-				});
-				CrudService.checkAccess('Approver',$rootScope.curUser.username).then(function (access) {
-					$rootScope.viewApprover = access.allowview;
-				});
-				CrudService.checkAccess('Holiday',$rootScope.curUser.username).then(function (access) {
-					$rootScope.viewHoliday = access.allowview;
-				});
-				CrudService.checkAccess('RFCActivity',$rootScope.curUser.username).then(function (access) {
-					$rootScope.viewRFCActivity = access.allowview;
-				});
-				CrudService.checkAccess('RFCContractor',$rootScope.curUser.username).then(function (access) {
-					$rootScope.viewRFCContractor = access.allowview;
-				});
-				CrudService.checkAccess('SKRate',$rootScope.curUser.username).then(function (access) {
-					$rootScope.viewSKRate = access.allowview;
-				});
-				CrudService.checkAccess('RFC',$rootScope.curUser.username).then(function (access) {
-					$rootScope.viewRFC = access.allowview;
-				});
-				CrudService.checkAccess('ApprovedWPHC',$rootScope.curUser.username).then(function (access) {
-					$rootScope.viewDayoffdetail = access.allowview;
-				});
-				CrudService.checkAccess('TR',$rootScope.curUser.username).then(function (access) {
-					$rootScope.viewTR = access.allowview;
-				});
-				CrudService.checkAccess('SPKL',$rootScope.curUser.username).then(function (access) {
-					$rootScope.viewSPKL = access.allowview;
-				});
-				CrudService.checkAccess('MMF',$rootScope.curUser.username).then(function (access) {
-					$rootScope.viewMMF = access.allowview;
-				});
-				CrudService.checkAccess('MMF30',$rootScope.curUser.username).then(function (access) {
-					$rootScope.viewMMF30 = access.allowview;
-				});
-				CrudService.checkAccess('IT',$rootScope.curUser.username).then(function (access) {
-					$rootScope.viewITEIE = access.allowview;
-					$rootScope.viewITIMAIL = access.allowview;
-					$rootScope.viewITSHAREF = access.allowview;
-				});
-				CrudService.checkAccess('Advance',$rootScope.curUser.username).then(function (access) {
-					$rootScope.viewAdvance = access.allowview;
-					$rootScope.viewAdvPayment = access.allowview;
-					$rootScope.viewAdvExpense = access.allowview;
-				});
-				// CrudService.checkAccess('AdvPayment',$rootScope.curUser.username).then(function (access) {
-				// });
-				// CrudService.checkAccess('AdvExpense',$rootScope.curUser.username).then(function (access) {
-				// });
-				if(!$rootScope.startRefresh) {
-					$rootScope.startRefresh = setInterval($scope.refreshUsers, 1000);
-				}
 			});
-		
 	}
 	$scope.refreshData=function(){
 		$rootScope.$broadcast("dataRefreshing", true);
