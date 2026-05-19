@@ -1467,11 +1467,13 @@ Class RfcModule extends Application{
 										}
 									}
 									$Rfcnew = Rfc::find('first',array('select' => "CONCAT('RFC/KF','".$company."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(rfcno,-4,4)) is null then 1 else max(substring(rfcno,-4,4))+1 end,4,'0')) as RfcNo","conditions"=>array("substring(rfcno,7,".strlen($company).")=? and not(id = ?) and substring(rfcno,".(strlen($company)+8).",4)=YEAR(CURDATE()) ",$company,$query['rfc_id'])));
+									$Rfqnew = Rfc::find('first',array('select' => "CONCAT('RFQ/KF','".$company."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(rfqno,-4,4)) is null then 1 else max(substring(rfqno,-4,4))+1 end,4,'0')) as RfqNo","conditions"=>array("substring(rfqno,7,".strlen($company).")=? and not(id = ?) and substring(rfqno,".(strlen($company)+8).",4)=YEAR(CURDATE()) ",$company,$query['rfc_id'])));
 									$Rfc =Rfc::find($id);
 									$Rfc->companycode =$company;
 									$Rfc->rfcno =$Rfcnew->rfcno;
+									$Rfc->rfqno =$Rfqnew->rfqno;
 									$Rfc->save();
-									$data=array("rfcno"=>$Rfcnew->rfcno);
+									$data=array("rfcno"=>$Rfcnew->rfcno,"rfqno"=>$Rfqnew->rfqno);
 									break;
 								case 'chrate':
 									$ratetype = $query['ratetype'];
@@ -1707,7 +1709,9 @@ Class RfcModule extends Application{
 						$data['RequestStatus']=0;
 						try{
 							$Rfcnew = Rfc::find('first',array('select' => "CONCAT('RFC/KF','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(rfcno,-4,4)) is null then 1 else max(substring(rfcno,-4,4))+1 end,4,'0')) as RfcNo","conditions"=>array("substring(rfcno,7,".strlen($Employee->companycode).")=? and substring(rfcno,".(strlen($Employee->companycode)+8).",4)=YEAR(CURDATE())",$Employee->companycode)));
+							$Rfqnew = Rfc::find('first',array('select' => "CONCAT('RFQ/KF','".$Employee->companycode."','/',YEAR(CURDATE()),'/',LPAD(MONTH(CURDATE()), 2, '0'),'/',LPAD(CASE when max(substring(rfqno,-4,4)) is null then 1 else max(substring(rfqno,-4,4))+1 end,4,'0')) as RfqNo","conditions"=>array("substring(rfqno,7,".strlen($Employee->companycode).")=? and substring(rfqno,".(strlen($Employee->companycode)+8).",4)=YEAR(CURDATE())",$Employee->companycode)));
 							$data['rfcno']=$Rfcnew->rfcno;
+							$data['rfqno']=$Rfqnew->rfqno;
 							$data['companycode']=$Employee->companycode;
 							$Rfc = Rfc::create($data);
 							$data=$Rfc->to_array();

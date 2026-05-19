@@ -139,6 +139,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 								criteria = {status:'last',companycode:e.value,rfc_id:$scope.Requestid};
 								CrudService.FindData('rfc',criteria).then(function (response){
 									$scope.formInstance.updateData('rfcno',  response.rfcno);
+									$scope.formInstance.updateData('rfqno',  response.rfqno);
 									$scope.grid3Component.refresh();
 								})
 							}
