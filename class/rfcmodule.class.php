@@ -1495,11 +1495,18 @@ Class RfcModule extends Application{
 											$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete KFFC Approval for non SK RFC");
 											$logger->SaveData();
 										}
-										$dx = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id=12",$id)));	
+										$dx = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id=12",$id)));
 										foreach ($dx as $result) {
 											//delete CPU for non SK
 											$result->delete();
 											$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete CPU Approval for non SK RFC");
+											$logger->SaveData();
+										}
+										$dx = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id=70",$id)));
+										foreach ($dx as $result) {
+											//delete CPU 1 for non SK
+											$result->delete();
+											$logger = new Datalogger("Rfcapproval","delete",json_encode($result->to_array()),"delete CPU 1 Approval for non SK RFC");
 											$logger->SaveData();
 										}
 										if(($Rfc->companycode=='IHM') || ($Rfc->companycode=='AHL') ){
@@ -1565,7 +1572,23 @@ Class RfcModule extends Application{
 												$logger->SaveData();
 											}
 										}
-										$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='8'",$id)));	
+										$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='70'",$id)));
+										foreach ($Rfcapproval as &$result) {
+											$result		= $result->to_array();
+											$result['no']=1;
+										}
+										if(count($Rfcapproval)==0){
+											$ApproverCPU1 = Approver::find('first',array('joins'=>$joinx,'conditions'=>array("module='RFC' and tbl_approver.isactive='1' and approvaltype_id='70' ")));
+											if(count($ApproverCPU1)>0){
+												$Rfcapproval = new Rfcapproval();
+												$Rfcapproval->rfc_id = $id;
+												$Rfcapproval->approver_id = $ApproverCPU1->id;
+												$Rfcapproval->save();
+												$logger = new Datalogger("Rfcapproval","add","Add CPU 1 Approval because of change SK Rate",json_encode($Rfcapproval->to_array()));
+												$logger->SaveData();
+											}
+										}
+										$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joins,'conditions' => array("rfc_id=? and tbl_approver.approvaltype_id='8'",$id)));
 										foreach ($Rfcapproval as &$result) {
 											$result		= $result->to_array();
 											$result['no']=1;

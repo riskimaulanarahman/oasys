@@ -149,7 +149,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 							}]
 						
 					},
-					{dataField:'rfcno',label:{text:"RFC No"},validationRules: [{type: "required", message: "RFC No is required" }],editorOptions:{readOnly: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,}},
+					{dataField:'rfcno',label:{text:"RFC No"},validationRules: [{type: "required", message: "RFC No is required" }],editorOptions:{readOnly: true}},
 					{dataField:'activity_id',label:{text:"Activity"},editorType: "dxDropDownBox",validationRules: [{type: "required", message: "Please select Activity" }],editorOptions: { 
 							dataSource:$scope.activityDatasource,  
 							valueExpr: 'id',
@@ -189,7 +189,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 								})
 							}
 						}},
-					{dataField:'rfqno',label:{text:"RFQ No"},validationRules: [{type: "required", message: "RFQ No is required" }],editorOptions:{readOnly: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,}},
+					{dataField:'rfqno',label:{text:"RFQ No"},validationRules: [{type: "required", message: "RFQ No is required" }],editorOptions:{readOnly: true}},
 					{
 						dataField:'paymentterm',
 						editorType: "dxSelectBox",
