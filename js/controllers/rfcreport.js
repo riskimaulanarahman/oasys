@@ -160,6 +160,7 @@ app.register.controller('rfcreportCtrl', ['$rootScope','$scope', '$http', '$inte
 						displayExpr: "contractorname" 
 					}},
 				{dataField:'companycode',caption:"BU"},
+				{dataField:'oldcontractno',caption:"Contract No",fixed: true, fixedPosition: "left"},
 				{dataField:'ratetype',caption:"Rate Type"},
 				{
 							dataField: "approveddoc",
