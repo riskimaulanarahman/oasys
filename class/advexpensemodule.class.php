@@ -1107,7 +1107,7 @@ Class Advexpensemodule extends Application{
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$join = "LEFT JOIN vwadvexpensereport v on tbl_advexpense.id=v.id LEFT JOIN tbl_employee ON (tbl_advexpense.employee_id = tbl_employee.id) ";
 							$sel = 'tbl_advexpense.*,v.personholding ';
-							$Advexpense = Advexpense::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
+							//$Advexpense = Advexpense::find('all',array('joins'=>$join,'select'=>$sel,'include' => array('employee')));
 							
 							// if($Employee->location->sapcode=='0200' || $this->currentUser->isadmin){
 								$Advexpense = Advexpense::find('all',array('joins'=>$join,'select'=>$sel,'conditions' => array('tbl_advexpense.CreatedDate between ? and ?',$query['startDate'],$query['endDate'] ),'include' => array('employee'=>array('company','department'))));

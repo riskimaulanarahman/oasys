@@ -235,8 +235,10 @@ Class Login extends Application{
 		if ($auth){
 			$jwt = $this->jwt->renewToken();
 			$user = Userlog::find('first', array('conditions' => array("user_id=? and LoginIP=? and isActive='1'",$this->currentUser->id,$this->ip )));
-			$user->lastaccess =date("Y-m-d H:i:s");
-			$user->save();
+			if ($user){
+				$user->lastaccess =date("Y-m-d H:i:s");
+				$user->save();
+			}
 			echo json_encode(array("message" => "Successful login.","jwt" => $jwt));
 		}
 	}
