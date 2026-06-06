@@ -101,8 +101,8 @@ Class RfcModule extends Application{
 			$result['rfc']['Employee']['Company']=$comp;
 			$result['rfc']['Employee']['Department']=$dept;
 		}
-		$joins   = "LEFT JOIN tbl_rfccontractor ON (tbl_rfc.contractor_id = tbl_rfccontractor.id) LEFT JOIN tbl_rfccontractor as c ON (tbl_rfc.contractor_id2 = c.id) LEFT JOIN tbl_rfcactivity ON (tbl_rfc.activity_id = tbl_rfcactivity.id) ";
-		$sel = 'tbl_rfc.*, tbl_rfccontractor.contractorname AS contractorname,c.contractorname as contractorname2, tbl_rfcactivity.activitydescr as activitydescr ';
+		$joins   = "LEFT JOIN tbl_rfccontractor ON (tbl_rfc.contractor_id = tbl_rfccontractor.id) LEFT JOIN tbl_rfccontractor as c ON (tbl_rfc.contractor_id2 = c.id) LEFT JOIN tbl_rfccontractor as pc ON (tbl_rfc.procurement_contractor_id = pc.id) LEFT JOIN tbl_rfcactivity ON (tbl_rfc.activity_id = tbl_rfcactivity.id) ";
+		$sel = 'tbl_rfc.*, tbl_rfccontractor.contractorname AS contractorname,c.contractorname as contractorname2,pc.contractorname as proc_contractorname, tbl_rfcactivity.activitydescr as activitydescr ';
 		$RfcJ = Rfc::find($id,array('joins'=>$joins,'select'=>$sel,'include'=>array('employee'=>array('company','department','designation','grade','location'))));
 		$Rfcterm=Rfcterm::find('all',array('conditions'=>array("rfc_id=?",$id)));
 		$compx = Company::find('first',array('conditions'=>array("companycode=?",$RfcJ->companycode)));
@@ -118,8 +118,11 @@ Class RfcModule extends Application{
 		$neworam = ($RfcJ->rfctype=="0")?"NEW CONTRACT":(($RfcJ->rfctype=="1")?"CONTRACT AMANDMENTS":"REPLACEMENT CONTRACT");
 		$pdfContent .="<h4 style='width:100%;text-align:center'><u>REQUEST FOR ".$neworam."</u></h4>";
 		$pdfContent .="<h4 style='width:100%;text-align:center'><u>RFC NO: ".$RfcJ->rfcno."</u></h4></p>";
-		
-		
+		if ($RfcJ->ratetype != 'SK' && $RfcJ->rfqno) {
+			$pdfContent .= "<p style='text-align:center;'><b>RFQ No : ".$RfcJ->rfqno."</b></p>";
+		}
+
+
 		$pdfContent .= "<br><br><table border=0 cellspacing=0 cellpadding=3>
 						<tr><td>To </td><td>: Legal Department</td></tr>
 						<tr><td>From </td><td>: ".$RfcJ->employee->fullname."</td></tr>
@@ -171,10 +174,24 @@ Class RfcModule extends Application{
 		$pdfContent .= '<tr><td></td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.$RfcJ->contractorname.'</td></tr>';
 		$pdfContent .= '<tr><td></td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.$RfcJ->contractorname2.'</td></tr>';
 		$pdfContent .= '<tr><td style="padding:0in 5.4pt 0in 5.4pt;">Remarks</td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.wordwrap(strip_tags($RfcJ->remarks), 60, "<br>").'</td></tr>';
-		
 		$pdfContent .= "</table>";
-		$joinx   = "LEFT JOIN tbl_approver ON (tbl_rfcapproval.approver_id = tbl_approver.id) ";					
-		$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joinx,'conditions' => array("rfc_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
+
+		if ($RfcJ->ratetype != 'SK') {
+			$Rfcprocremarks = Rfcprocremarks::find('all',array('conditions'=>array("rfc_id=?",$id)));
+			$procInput = '';
+			foreach ($Rfcprocremarks as $pr) {
+				$procInput .= htmlspecialchars($pr->description).': '.strip_tags($pr->remarks).'<br>';
+			}
+			$pdfContent .= "<br><table border=1 cellspacing=0 cellpadding=3 style='background-color:#FFFF99;width:100%;'>
+				<tr><td colspan=2><b><u>Procurement Recommendation (Final Negotiation):</u></b></td></tr>
+				<tr><td style='width:250px;'>Rate</td><td style='border-bottom:solid windowtext 1.0pt;'> : ".htmlspecialchars($RfcJ->procurement_rate)."</td></tr>
+				<tr><td style='width:250px;'>Contractors Recommended</td><td style='border-bottom:solid windowtext 1.0pt;'> : ".$RfcJ->proc_contractorname."</td></tr>
+				<tr><td style='width:250px;'>Procurement Input</td><td style='border-bottom:solid windowtext 1.0pt;'> : ".$procInput."</td></tr>
+			</table>";
+		}
+
+		$joinx   = "LEFT JOIN tbl_approver ON (tbl_rfcapproval.approver_id = tbl_approver.id) ";
+		$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joinx,'conditions' => array("rfc_id=?",$id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));
 		$pdfContent .= "<br><br><table border=0 cellspacing=4 cellpadding=3>";
 		$no=5;
 		foreach ($Rfcapproval as $data){
@@ -263,6 +280,289 @@ Class RfcModule extends Application{
 			echo $formatter->getHtmlMessage();
 		}
 	}
+	function generateRFQPDF($id){
+		$joins = "LEFT JOIN tbl_rfccontractor ON (tbl_rfc.contractor_id = tbl_rfccontractor.id) LEFT JOIN tbl_rfccontractor as c ON (tbl_rfc.contractor_id2 = c.id) LEFT JOIN tbl_rfcactivity ON (tbl_rfc.activity_id = tbl_rfcactivity.id) ";
+		$sel   = 'tbl_rfc.*, tbl_rfccontractor.contractorname AS contractorname, c.contractorname AS contractorname2, tbl_rfcactivity.activitydescr AS activitydescr';
+		$RfcJ     = Rfc::find($id, array('joins'=>$joins,'select'=>$sel,'include'=>array('employee'=>array('company'))));
+		$Rfcdetail = Rfcdetail::find('all', array('conditions'=>array("rfc_id=?",$id)));
+		$Rfcterm   = Rfcterm::find('all',   array('conditions'=>array("rfc_id=?",$id)));
+		$compx     = Company::find('first', array('conditions'=>array("companycode=?",$RfcJ->companycode)));
+
+		$isNonSK   = ($RfcJ->ratetype != 'SK');
+		$rfcTypeMap = array("0"=>"NEW CONTRACT","1"=>"CONTRACT AMENDMENTS","2"=>"REPLACEMENT CONTRACT");
+		$neworam    = isset($rfcTypeMap[$RfcJ->rfctype]) ? $rfcTypeMap[$RfcJ->rfctype] : "NEW CONTRACT";
+
+		$rate = str_replace(array("<",">"), array("&lt;","&gt;"), $RfcJ->rate);
+
+		// ── HEADER ────────────────────────────────────────────────────────────────
+		$pdfContent  = '<page backtop="10mm" backbottom="10mm" backleft="15mm" backright="15mm">';
+		$pdfContent .= '<table width="100%" border="0" cellspacing="0" cellpadding="2">
+			<tr>
+				<td width="70%" align="center">
+					<b><font size="13">'.$compx->companyname.'</font></b><br>
+					<b>REQUEST FOR '.$neworam.'</b><br>
+					<b>RFQ NO : '.$RfcJ->rfqno.'</b>
+				</td>
+				<td width="30%" valign="top" align="right">
+					<table border="1" cellspacing="0" cellpadding="3" style="font-size:9pt;">
+						<tr><td width="20px" align="center">'.($isNonSK?'':'&#10003;').'</td><td> Standard</td></tr>
+						<tr><td width="20px" align="center">'.($isNonSK?'&#10003;':'').'</td><td> Non Standard</td></tr>
+					</table>
+				</td>
+			</tr>
+		</table>';
+
+		// ── TO / FROM ─────────────────────────────────────────────────────────────
+		$pdfContent .= '<br>
+		<table width="100%" border="0" cellspacing="0" cellpadding="2" style="font-size:10pt;">
+			<tr>
+				<td width="12%">To</td>
+				<td width="2%">:</td>
+				<td style="border-bottom:1px solid black;">Procurement Department</td>
+			</tr>
+			<tr>
+				<td>From</td>
+				<td>:</td>
+				<td style="border-bottom:1px solid black;">'.$RfcJ->employee->fullname.'</td>
+			</tr>
+		</table>
+		<br><font size="10">We request a quotation for the following work, which will subsequently be processed as a Request for Contract (RFC)</font><br><br>';
+
+		// ── BODY FIELDS ───────────────────────────────────────────────────────────
+		$pdfContent .= '<table width="100%" border="0" cellspacing="0" cellpadding="3" style="font-size:10pt;">';
+
+		$pdfContent .= '<tr>
+			<td width="22%" valign="top">Kind of Contract</td>
+			<td width="2%" valign="top">:</td>
+			<td style="border-bottom:1px solid black;">'.$RfcJ->activitydescr.'</td>
+		</tr>
+		<tr>
+			<td valign="top">Period</td>
+			<td valign="top">:</td>
+			<td style="border-bottom:1px solid black;">'.date("d/m/Y",strtotime($RfcJ->periodstart)).' - '.date("d/m/Y",strtotime($RfcJ->periodend)).'</td>
+		</tr>
+		<tr>
+			<td valign="top">Payment Term</td>
+			<td valign="top">:</td>
+			<td style="border-bottom:1px solid black;">'.$RfcJ->paymentterm.'</td>
+		</tr>';
+
+		if ($RfcJ->rfctype == "2") {
+			$pdfContent .= '<tr>
+				<td valign="top">Replacement</td>
+				<td valign="top">:</td>
+				<td style="border-bottom:1px solid black;">'.htmlspecialchars($RfcJ->replacement).'</td>
+			</tr>';
+		}
+		if ($RfcJ->rfctype == "1") {
+			$pdfContent .= '<tr>
+				<td valign="top">Old Contract No</td>
+				<td valign="top">:</td>
+				<td style="border-bottom:1px solid black;">'.htmlspecialchars($RfcJ->oldcontractno).'</td>
+			</tr>';
+		}
+
+		// Scope of Work
+		$pdfContent .= '<tr>
+			<td valign="top">Scope of Work</td>
+			<td valign="top">:</td>
+			<td><b><u>Description Of Work</u></b></td>
+		</tr>';
+		$no = 1;
+		foreach ($Rfcdetail as $detail) {
+			$pdfContent .= '<tr><td></td><td></td>
+				<td style="border-bottom:1px solid black; padding-bottom:4pt;">'.$no.'.&nbsp;'.wordwrap(htmlspecialchars($detail->description),80,"<br>").'</td>
+			</tr>';
+			$no++;
+		}
+		if ($no == 1) {
+			$pdfContent .= '<tr><td></td><td></td><td style="border-bottom:1px solid black;">&nbsp;</td></tr>';
+		}
+
+		// Rate / Price
+		$pdfContent .= '<tr>
+			<td valign="top">Rate / Price</td>
+			<td valign="top">:</td>
+			<td style="border-bottom:1px solid black;">'.wordwrap($rate,80,"<br>").$RfcJ->skno.'</td>
+		</tr>';
+
+		// Other Terms / Conditions
+		$pdfContent .= '<tr>
+			<td valign="top">Other Terms /<br>Conditions</td>
+			<td valign="top">:</td>
+			<td></td>
+		</tr>';
+		$letters = range('a','z');
+		$idx = 0;
+		foreach ($Rfcterm as $term) {
+			$pdfContent .= '<tr><td></td><td></td>
+				<td style="border-bottom:1px solid black; padding-bottom:4pt;">'.$letters[$idx].'.&nbsp;'.wordwrap(htmlspecialchars($term->term),80,"<br>").'</td>
+			</tr>';
+			$idx++;
+		}
+		// show at least 6 blank lines for terms
+		for ($i=$idx; $i<6; $i++) {
+			$pdfContent .= '<tr><td></td><td></td><td style="border-bottom:1px solid black; padding:4pt 0;">&nbsp;</td></tr>';
+		}
+
+		// Contractors Recommended
+		$pdfContent .= '<tr>
+			<td valign="top">Contractors<br>Recommended</td>
+			<td valign="top">:</td>
+			<td style="border-bottom:1px solid black;">'.htmlspecialchars($RfcJ->contractorname).'</td>
+		</tr>
+		<tr>
+			<td></td><td></td>
+			<td style="border-bottom:1px solid black;">'.htmlspecialchars($RfcJ->contractorname2).'</td>
+		</tr>';
+
+		$pdfContent .= '</table><br>';
+
+		// ── CONTRACT COMMITTEE ────────────────────────────────────────────────────
+		$pdfContent .= '<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr><td align="center"><b><font size="10">Contract Committee</font></b></td></tr>
+		</table>';
+
+		$joinx     = "LEFT JOIN tbl_approver ON (tbl_rfcapproval.approver_id = tbl_approver.id) ";
+		$allApprList = Rfcapproval::find('all', array(
+			'joins'   => $joinx,
+			'conditions' => array("rfc_id=?", $id),
+			'order'   => "tbl_approver.sequence",
+			'include' => array('approver'=>array('employee','approvaltype'))
+		));
+
+		// Build approval map: approvaltype_id => record
+		$approvalMap = array();
+		foreach ($allApprList as $appr) {
+			$approvalMap[$appr->approver->approvaltype_id] = $appr;
+		}
+
+		// Fixed 8 roles matching the template, in order
+		$committeeRoles = array(
+			array('label'=>'Dep Head',        'ids'=>array(6)),
+			array('label'=>'CAD',             'ids'=>array(7,8)),
+			array('label'=>'HRD',             'ids'=>array(9,15,55)),
+			array('label'=>'BU FC',           'ids'=>array(10,68)),
+			array('label'=>'BU Head',         'ids'=>array(11)),
+			array('label'=>'CPU',             'ids'=>array(70,12)),
+			array('label'=>'FC KF',           'ids'=>array(13)),
+			array('label'=>'MD of '.htmlspecialchars($compx->companyname), 'ids'=>array(14)),
+		);
+
+		// Originator row
+		$pdfContent .= '<table width="100%" border="0" cellspacing="0" cellpadding="2">
+			<tr><td style="font-size:9pt; padding-bottom:2pt;">Originator :</td></tr>
+		</table>';
+
+		// First row: positions 1-4
+		$pdfContent .= '<table width="100%" border="0" cellspacing="2" cellpadding="0"><tr>';
+		for ($i = 0; $i < 4; $i++) {
+			$role  = $committeeRoles[$i];
+			$appr  = null;
+			foreach ($role['ids'] as $tid) {
+				if (isset($approvalMap[$tid])) { $appr = $approvalMap[$tid]; break; }
+			}
+			$approved = ($appr !== null && $appr->approvalstatus == 2);
+			$pdfContent .= '<td width="25%" align="center" style="border:1px solid black; height:70pt; vertical-align:top; padding:2pt;">
+				<font size="8"><b>'.($i+1).')</b></font><br>';
+			if ($approved) {
+				$pdfContent .= '<img src="images/approved.png" style="height:22pt" alt="Approved"><br>
+					<font size="7"><i>'.date("d/m/Y",strtotime($appr->approvaldate)).'</i><br>
+					<u>'.$appr->approver->employee->fullname.'</u></font><br>';
+			} else {
+				$pdfContent .= '<br><br>';
+			}
+			$pdfContent .= '<font size="8">'.$role['label'].'</font></td>';
+		}
+		$pdfContent .= '</tr></table>';
+
+		// Second row: positions 5-8
+		$pdfContent .= '<table width="100%" border="0" cellspacing="2" cellpadding="0"><tr>';
+		for ($i = 4; $i < 8; $i++) {
+			$role  = $committeeRoles[$i];
+			$appr  = null;
+			foreach ($role['ids'] as $tid) {
+				if (isset($approvalMap[$tid])) { $appr = $approvalMap[$tid]; break; }
+			}
+			$approved = ($appr !== null && $appr->approvalstatus == 2);
+			$pdfContent .= '<td width="25%" align="center" style="border:1px solid black; height:70pt; vertical-align:top; padding:2pt;">
+				<font size="8"><b>'.($i+1).')</b></font><br>';
+			if ($approved) {
+				$pdfContent .= '<img src="images/approved.png" style="height:22pt" alt="Approved"><br>
+					<font size="7"><i>'.date("d/m/Y",strtotime($appr->approvaldate)).'</i><br>
+					<u>'.$appr->approver->employee->fullname.'</u></font><br>';
+			} else {
+				$pdfContent .= '<br><br>';
+			}
+			$pdfContent .= '<font size="8">'.$role['label'].'</font></td>';
+		}
+		$pdfContent .= '</tr></table><br>';
+
+		// ── PLEASE ATTACH ─────────────────────────────────────────────────────────
+		$pdfContent .= '<font size="9"><b>Please Attach :</b><br>
+		<table border="0" cellspacing="0" cellpadding="1" style="font-size:9pt;">
+			<tr><td width="20pt" align="right">1</td><td>Copy of Decision Letter.</td></tr>
+			<tr><td align="right">2</td><td>Updated company profile for the existing contractor / Company Profile for New Contractor</td></tr>
+			<tr><td align="right">3</td><td>For Non Standard should attached with unit spesification, e.g.; manufacturing year, size, capacity</td></tr>';
+		if ($RfcJ->rfctype != "0") {
+			$pdfContent .= '<tr><td align="right">4</td><td>To be attached with previous contract</td></tr>';
+		}
+		$pdfContent .= '</table></font>';
+
+		// ── SAP/PIMS SYSTEM ───────────────────────────────────────────────────────
+		$pdfContent .= '<br><font size="9"><b>SAP/PIMS System :</b><br>
+		<table border="0" cellspacing="0" cellpadding="1" style="font-size:9pt;">
+			<tr><td width="20pt" align="right">1</td><td>Acacia Harvesting Related Activity - Work Order to be created in PIMS</td></tr>
+		</table></font>';
+
+		// ── APPROVAL NOTES ────────────────────────────────────────────────────────
+		$pdfContent .= '<br><font size="9"><b>Approval :</b><br>
+		<table border="0" cellspacing="0" cellpadding="1" style="font-size:9pt;">
+			<tr>
+				<td width="160pt">1&nbsp;&nbsp;STANDARD CONTRACT</td>
+				<td>:&nbsp;Approval Until BU Head</td>
+			</tr>
+			<tr>
+				<td>2&nbsp;&nbsp;NON STANDARD CONTRACT</td>
+				<td>:&nbsp;Approval Until MD of '.htmlspecialchars($compx->companyname).' incl CPU &amp; FC KF</td>
+			</tr>
+		</table></font>';
+
+		// ── FOOTER ────────────────────────────────────────────────────────────────
+		$pdfContent .= '<br><font size="9">
+			<b>RFC must be submitted and approved prior to work commencement.</b><br>
+			Approved RFC need to be submitted to legal to issue contract at least 15 working days prior to work commencement.
+		</font>';
+
+		$pdfContent .= '</page>';
+
+		// ── GENERATE PDF ──────────────────────────────────────────────────────────
+		try {
+			$html2pdf = new Html2Pdf('P','A4','fr');
+			$html2pdf->writeHTML($pdfContent);
+			ob_clean();
+			$rfqno_safe = str_replace("/","",$RfcJ->rfqno);
+			$fileName = 'doc'.DS.'rfc'.DS.'pdf'.DS.$rfqno_safe.'_'.date("YmdHis").'.pdf';
+			$filePath = SITE_PATH.DS.$fileName;
+			$html2pdf->output($filePath,'F');
+			// Attach BEFORE processcopy — processcopy deletes local file after copy to remote
+			$this->mail->addAttachment($filePath);
+			$this->processcopy($fileName);
+			return true;
+		} catch (Html2PdfException $e) {
+			$html2pdf->clean();
+			$err = new Errorlog();
+			$err->errortype  = "RFQPDFGenerator";
+			$err->errordate  = date("Y-m-d H:i:s");
+			$formatter = new ExceptionFormatter($e);
+			$err->errormessage = $formatter->getHtmlMessage();
+			$err->user = $this->currentUser->username;
+			$err->ip   = $this->ip;
+			$err->save();
+			return false;
+		}
+	}
+
 	public function uploadRfcFile(){
 		$id= $this->get['id'];
 		if(!isset($_FILES['myFile'])) {
@@ -434,26 +734,32 @@ Class RfcModule extends Application{
 						}
 						break;
 					case 'find':
-						$query=$this->post['query'];		
+						$query=$this->post['query'];
 						if(isset($query['status'])){
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$join   = "LEFT JOIN tbl_approver ON (tbl_rfcapproval.approver_id = tbl_approver.id) ";
 							$dx = Rfcapproval::find('first', array('joins'=>$join,'conditions' => array("rfc_id=? and  tbl_approver.employee_id = ?",$query['rfc_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
+							if ($dx === null) {
+								$data = array("jml"=>0,"approvaltypeid"=>0);
+								echo json_encode($data, JSON_NUMERIC_CHECK);
+								break;
+							}
 							$Rfc = Rfc::find($query['rfc_id']);
+							$approvaltypeid = $dx->approver->approvaltype_id;
 							if($dx->approver->isfinal==1){
-								$data=array("jml"=>1);
+								$data=array("jml"=>1,"approvaltypeid"=>$approvaltypeid);
 							}else if(($Rfc->ratetype=='SK') && ($dx->approver->approvaltype_id=='11')){
-								$data=array("jml"=>1);
+								$data=array("jml"=>1,"approvaltypeid"=>$approvaltypeid);
 							}else{
 								$join   = "LEFT JOIN tbl_approver ON (tbl_rfcapproval.approver_id = tbl_approver.id) ";
 								$Rfcapproval = Rfcapproval::find('all', array('joins'=>$join,'conditions' => array("rfc_id=? and ApprovalStatus<=1 and not tbl_approver.employee_id=?",$query['rfc_id'],$Employee->id),'include' => array('approver'=>array('employee'))));
 								foreach ($Rfcapproval as &$result) {
-									$fullname	= $result->approver->employee->fullname;		
+									$fullname	= $result->approver->employee->fullname;
 									$result		= $result->to_array();
 									$result['fullname']=$fullname;
 								}
-								$data=array("jml"=>count($Rfcapproval));
-							}						
+								$data=array("jml"=>count($Rfcapproval),"approvaltypeid"=>$approvaltypeid);
+							}
 						} else if(isset($query['pending'])){			
 							/*			
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
@@ -624,7 +930,21 @@ Class RfcModule extends Application{
 								$logger = new Datalogger("Rfcapproval","update",json_encode($olddata),json_encode($data));
 								$logger->SaveData();
 							}
-							
+
+							// CPU (12) or CPU1 (70) approver saves final procurement fields to tbl_rfc
+							if ($Rfcapproval !== null && in_array($Rfcapproval->approver->approvaltype_id, array('12','70'))) {
+								$RfcProc = Rfc::find($doid);
+								if (isset($data['procurement_rate']) && $data['procurement_rate'] !== '') {
+									$RfcProc->procurement_rate = $data['procurement_rate'];
+								}
+								if (isset($data['procurement_contractor_id']) && $data['procurement_contractor_id'] !== '') {
+									$RfcProc->procurement_contractor_id = $data['procurement_contractor_id'];
+								}
+								$RfcProc->save();
+								$logger = new Datalogger("Rfc","update",null,"CPU approver updated procurement_rate and procurement_contractor_id");
+								$logger->SaveData();
+							}
+
 							if (isset($mode) && ($mode=='approve')){
 								$Rfc = Rfc::find($doid);
 								$joinx   = "LEFT JOIN tbl_approver ON (tbl_rfcapproval.approver_id = tbl_approver.id) ";					
@@ -652,13 +972,15 @@ Class RfcModule extends Application{
 									$result['rfc']['Employee']['Department']=$dept;
 								}
 								$complete = false;
+								// Simpan sebelum switch — $Rfcapproval bisa di-reassign ke collection di dalam case '2'
+								$savedApprovalTypeId = $Rfcapproval->approver->approvaltype_id;
 								$Rfchistory = new Rfchistory();
 								$Rfchistory->date = date("Y-m-d H:i:s");
 								$Rfchistory->fullname = $Employee->fullname;
 								$Rfchistory->approvaltype = $Rfcapproval->approver->approvaltype->approvaltype;
 								$Rfchistory->remarks = $data['remarks'];
 								$Rfchistory->rfc_id = $doid;
-								
+
 								switch ($data['approvalstatus']){
 									case '1':
 										$Rfc->requeststatus = 2;
@@ -704,6 +1026,10 @@ Class RfcModule extends Application{
 											$this->mail->Subject = "Online Approval System -> New RFC Submission";
 											$red = 'New RFC request awaiting for your approval:';
 										}
+										// BU Head approve Non-SK RFC: generate dan lampirkan Form RFQ
+										if (($Rfc->ratetype != 'SK') && ($savedApprovalTypeId == '11')) {
+											$this->generateRFQPDF($doid);
+										}
 										$Rfchistory->actiontype = 4;							
 										break;
 									case '3':
@@ -722,8 +1048,8 @@ Class RfcModule extends Application{
 								echo "email to :".$emto." ->".$emname;
 								$this->mail->addAddress($emto, $emname);
 								$rfctype=array("New","Addendum","Replacement");
-								$joins   = "LEFT JOIN tbl_rfccontractor ON (tbl_rfc.contractor_id = tbl_rfccontractor.id) LEFT JOIN tbl_rfccontractor as c ON (tbl_rfc.contractor_id2 = c.id) LEFT JOIN tbl_rfcactivity ON (tbl_rfc.activity_id = tbl_rfcactivity.id) ";
-								$sel = 'tbl_rfc.*, tbl_rfccontractor.contractorname AS contractorname,c.contractorname as contractorname2, tbl_rfcactivity.activitydescr as activitydescr ';
+								$joins   = "LEFT JOIN tbl_rfccontractor ON (tbl_rfc.contractor_id = tbl_rfccontractor.id) LEFT JOIN tbl_rfccontractor as c ON (tbl_rfc.contractor_id2 = c.id) LEFT JOIN tbl_rfccontractor as pc ON (tbl_rfc.procurement_contractor_id = pc.id) LEFT JOIN tbl_rfcactivity ON (tbl_rfc.activity_id = tbl_rfcactivity.id) ";
+								$sel = 'tbl_rfc.*, tbl_rfccontractor.contractorname AS contractorname,c.contractorname as contractorname2,pc.contractorname as proc_contractorname, tbl_rfcactivity.activitydescr as activitydescr ';
 								$RfcJ = Rfc::find($doid,array('joins'=>$joins,'select'=>$sel,'include'=>array('employee'=>array('company','department','designation','grade','location'))));
 								$Rfcterm=Rfcterm::find('all',array('conditions'=>array("rfc_id=?",$doid)));
 								$this->mailbody .='</o:shapelayout></xml><![endif]--></head><body lang=EN-US link="#0563C1" vlink="#954F72"><div class=WordSection1><p class=MsoNormal><span style="color:#1F497D"">Dear '.$emname.',</span></p>
@@ -790,8 +1116,11 @@ Class RfcModule extends Application{
 									$neworam = ($RfcJ->rfctype=="0")?"NEW CONTRACT":(($RfcJ->rfctype=="1")?"CONTRACT AMANDMENTS":"REPLACEMENT CONTRACT");
 									$pdfContent .="<h4 style='width:100%;text-align:center'><u>REQUEST FOR ".$neworam."</u></h4>";
 									$pdfContent .="<h4 style='width:100%;text-align:center'><u>RFC NO: ".$RfcJ->rfcno."</u></h4></p>";
-									
-									
+									if ($RfcJ->ratetype != 'SK' && $RfcJ->rfqno) {
+										$pdfContent .= "<p style='text-align:center;'><b>RFQ No : ".$RfcJ->rfqno."</b></p>";
+									}
+
+
 									$pdfContent .= "<br><br><table border=0 cellspacing=0 cellpadding=3>
 													<tr><td>To </td><td>: Legal Department</td></tr>
 													<tr><td>From </td><td>: ".$RfcJ->employee->fullname."</td></tr>
@@ -840,10 +1169,24 @@ Class RfcModule extends Application{
 									$pdfContent .= '<tr><td></td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.$RfcJ->contractorname.'</td></tr>';
 									$pdfContent .= '<tr><td></td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.$RfcJ->contractorname2.'</td></tr>';
 									$pdfContent .= '<tr><td style="padding:0in 5.4pt 0in 5.4pt;">Remarks</td><td style="padding:0in 5.4pt 0in 5.4pt;border-bottom:solid windowtext 1.0pt;">'.wordwrap(strip_tags($RfcJ->remarks), 60, "<br>").'</td></tr>';
-		
 									$pdfContent .= "</table>";
-									$joinx   = "LEFT JOIN tbl_approver ON (tbl_rfcapproval.approver_id = tbl_approver.id) ";					
-									$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joinx,'conditions' => array("rfc_id=?",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));							
+
+									if ($RfcJ->ratetype != 'SK') {
+										$Rfcprocremarks = Rfcprocremarks::find('all',array('conditions'=>array("rfc_id=?",$doid)));
+										$procInput = '';
+										foreach ($Rfcprocremarks as $pr) {
+											$procInput .= htmlspecialchars($pr->description).': '.strip_tags($pr->remarks).'<br>';
+										}
+										$pdfContent .= "<br><table border=1 cellspacing=0 cellpadding=3 style='background-color:#FFFF99;width:100%;'>
+											<tr><td colspan=2><b><u>Procurement Recommendation (Final Negotiation):</u></b></td></tr>
+											<tr><td style='width:250px;'>Rate</td><td style='border-bottom:solid windowtext 1.0pt;'> : ".htmlspecialchars($RfcJ->procurement_rate)."</td></tr>
+											<tr><td style='width:250px;'>Contractors Recommended</td><td style='border-bottom:solid windowtext 1.0pt;'> : ".$RfcJ->proc_contractorname."</td></tr>
+											<tr><td style='width:250px;'>Procurement Input</td><td style='border-bottom:solid windowtext 1.0pt;'> : ".$procInput."</td></tr>
+										</table>";
+									}
+
+									$joinx   = "LEFT JOIN tbl_approver ON (tbl_rfcapproval.approver_id = tbl_approver.id) ";
+									$Rfcapproval = Rfcapproval::find('all',array('joins'=>$joinx,'conditions' => array("rfc_id=?",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee','approvaltype'))));
 									$pdfContent .= "<br><br><table border=0 cellspacing=4 cellpadding=3>";
 									$no=5;
 									foreach ($Rfcapproval as $data){

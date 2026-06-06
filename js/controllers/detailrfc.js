@@ -110,6 +110,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 		$scope.AppAction = [{id:1,appaction:"Ask Rework"},{id:2,appaction:"Approve"},{id:3,appaction:"Reject"}];
 		$scope.reqStatus = 0;
 		$scope.gridSelectedRowKeys =[];
+		$scope.isCpuApprover = false;
 		
 		$scope.formItems  =[{	
 					itemType: "group",
@@ -292,13 +293,13 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 						colCount: 2,
 						visible: ($scope.data.ratetype=='Non SK')?true:false,
 						items: [
-							{dataField:'procurement_rate',label:{text:"Procurement Rate"},validationRules: [{ type: "required", message: "please input Procurement Rate" }],editorOptions:{readOnly: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,}},
+							{dataField:'procurement_rate',label:{text:"Procurement Rate"},validationRules: [{ type: "required", message: "please input Procurement Rate" }],editorOptions:{readOnly: (($scope.mode=='view')||($scope.mode=='report')||(($scope.mode=='approve')&&!$scope.isCpuApprover))?true:false,}},
 							{
 								dataField:'procurement_contractor_id',
 								label:{text:"Procurement Contractor"},
 								editorType: "dxDropDownBox",
-								editorOptions: { 
-									readOnly: (($scope.mode=='approve')|| ($scope.mode=='view')||($scope.mode=='report'))?true:false,
+								editorOptions: {
+									readOnly: (($scope.mode=='view')||($scope.mode=='report')||(($scope.mode=='approve')&&!$scope.isCpuApprover))?true:false,
 									dataSource:$scope.contractorDatasource,  
 									valueExpr: 'id',
 									displayExpr: 'contractorname',
@@ -691,14 +692,50 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 						}
 					}]
 				},];
-		$scope.detailFormOptions = { 
+		$scope.detailFormOptions = {
 			onContentReady: function(e){
 				$scope.formInstance = e.component;
-				
+
 				if ($scope.data.rfctype!==2){
 					$scope.formInstance.itemOption('group1.capexammount', 'visible', false);
 				}
-				
+
+				// Unlock procurement fields if the current approver is CPU (12) or CPU1 (70)
+				if ($scope.mode === 'approve' && $scope.data.ratetype === 'Non SK') {
+					var criteria = {status:'approver', rfc_id: $scope.Requestid};
+					CrudService.FindData('rfcapp', criteria).then(function(response) {
+						if (response.approvaltypeid == 12 || response.approvaltypeid == 70) {
+							$scope.isCpuApprover = true;
+							$scope.formInstance.itemOption('group1.procurementGroup.procurement_rate', 'editorOptions', {readOnly: false});
+							$scope.formInstance.itemOption('group1.procurementGroup.procurement_contractor_id', 'editorOptions', {
+								readOnly: false,
+								dataSource: $scope.contractorDatasource,
+								valueExpr: 'id',
+								displayExpr: 'contractorname',
+								showClearButton: true,
+								searchEnabled: true,
+								contentTemplate: function(e){
+									var $dataGrid = $("<div>").dxDataGrid({
+										dataSource: e.component.option("dataSource"),
+										columns: [{dataField:"contractorname",caption:"Contractor"}],
+										height: 265,
+										selection: { mode: "single" },
+										selectedRowKeys: [e.component.option("value")],
+										focusedRowEnabled: true,
+										focusedRowKey: e.component.option("value"),
+										searchPanel: {visible: true, width: 265, placeholder: "Search..."},
+										onSelectionChanged: function(selectedItems){
+											var keys = selectedItems.selectedRowKeys, hasSelection = keys.length;
+											if(hasSelection){ e.component.option("value", hasSelection ? keys[0] : null); e.component.close(); }
+										}
+									});
+									return $dataGrid;
+								}
+							});
+						}
+					});
+				}
+
 			},
 			readOnly : (($scope.mode=='view')||($scope.mode=='report'))?true:false,
 			labelLocation : "top",

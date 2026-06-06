@@ -11,6 +11,7 @@
 | 55              | HR Services   | Tidak       | Activity `ishrrelated = 1` |
 | 14              | MD            | Tidak       | Rate Type = Non-SK |
 | 13              | KF FC         | Tidak       | Rate Type = Non-SK |
+| 70              | CPU 1         | Tidak       | Rate Type = Non-SK (Procurement monitoring, input hasil bidding) |
 | 12              | CPU           | Tidak       | Rate Type = Non-SK |
 | 8               | CAD KF        | Ya          | Semua company; dihapus untuk IHM/AHL saat SK |
 | 7               | CAD BU        | Ya          | Per CompanyList |
