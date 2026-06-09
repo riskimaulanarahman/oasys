@@ -240,11 +240,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 								}else{
 									$scope.formInstance.itemOption('group1.skno', 'visible', false);
 									$scope.formInstance.updateData('skno',  "");
-									// show procurement group for Non SK
-									try{ 
-										$scope.formInstance.itemOption('group1.procurementGroup', 'visible', true); 
-									}catch(err){}
-								}
+									}
 								
 							}
 						}},
@@ -291,7 +287,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 						caption: "Procurement recommendation",
 						name: "procurementGroup",
 						colCount: 2,
-						visible: ($scope.data.ratetype=='Non SK')?true:false,
+						visible: false,
 						items: [
 							{dataField:'procurement_rate',label:{text:"Procurement Rate"},validationRules: [{ type: "required", message: "please input Procurement Rate" }],editorOptions:{readOnly: (($scope.mode=='view')||($scope.mode=='report')||(($scope.mode=='approve')&&!$scope.isCpuApprover))?true:false,}},
 							{
@@ -706,6 +702,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 					CrudService.FindData('rfcapp', criteria).then(function(response) {
 						if (response.approvaltypeid == 12 || response.approvaltypeid == 70) {
 							$scope.isCpuApprover = true;
+							$scope.formInstance.itemOption('group1.procurementGroup', 'visible', true);
 							$scope.formInstance.itemOption('group1.procurementGroup.procurement_rate', 'editorOptions', {readOnly: false});
 							$scope.formInstance.itemOption('group1.procurementGroup.procurement_contractor_id', 'editorOptions', {
 								readOnly: false,
