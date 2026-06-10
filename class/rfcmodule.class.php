@@ -893,6 +893,7 @@ Class RfcModule extends Application{
 							unset($data['createddate']);
 							unset($data['companycode']);
 							unset($data['rfcno']);
+							unset($data['rfqno']);
 							unset($data['activity_id']);
 							unset($data['rfctype']);
 							unset($data['isprojectcapex']);
@@ -924,6 +925,11 @@ Class RfcModule extends Application{
 								$Rfcapproval = Rfcapproval::find($this->post['id'],array('include' => array('approver'=>array('employee','approvaltype'))));
 							}
 							
+							$procurement_rate = isset($data['procurement_rate']) ? $data['procurement_rate'] : null;
+							$procurement_contractor_id = isset($data['procurement_contractor_id']) ? $data['procurement_contractor_id'] : null;
+							unset($data['procurement_rate']);
+							unset($data['procurement_contractor_id']);
+
 							foreach ($Rfcapprovalx as $approval){
 								$olddata = $approval->to_array();
 								foreach($data as $key=>$val){
@@ -938,11 +944,11 @@ Class RfcModule extends Application{
 							// CPU (12) or CPU1 (70) approver saves final procurement fields to tbl_rfc
 							if ($Rfcapproval !== null && in_array($Rfcapproval->approver->approvaltype_id, array('12','70'))) {
 								$RfcProc = Rfc::find($doid);
-								if (isset($data['procurement_rate']) && $data['procurement_rate'] !== '') {
-									$RfcProc->procurement_rate = $data['procurement_rate'];
+								if ($procurement_rate !== null && $procurement_rate !== '') {
+									$RfcProc->procurement_rate = $procurement_rate;
 								}
-								if (isset($data['procurement_contractor_id']) && $data['procurement_contractor_id'] !== '') {
-									$RfcProc->procurement_contractor_id = $data['procurement_contractor_id'];
+								if ($procurement_contractor_id !== null && $procurement_contractor_id !== '') {
+									$RfcProc->procurement_contractor_id = $procurement_contractor_id;
 								}
 								$RfcProc->save();
 								$logger = new Datalogger("Rfc","update",null,"CPU approver updated procurement_rate and procurement_contractor_id");
@@ -952,9 +958,13 @@ Class RfcModule extends Application{
 							if (isset($mode) && ($mode=='approve')){
 								$Rfc = Rfc::find($doid);
 								$joinx   = "LEFT JOIN tbl_approver ON (tbl_rfcapproval.approver_id = tbl_approver.id) ";					
-								$nRfcapproval = Rfcapproval::find('first',array('joins'=>$joinx,'conditions' => array("rfc_id=? and ApprovalStatus=0",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
-								$username = $nRfcapproval->approver->employee->loginname;
-								$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
+								$nRfcapproval = Rfcapproval::find('first',array('joins'=>$joinx,'conditions' => array("rfc_id=? and ApprovalStatus=0",$doid),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));
+								$username = null;
+								$adb = null;
+								if ($nRfcapproval !== null) {
+									$username = $nRfcapproval->approver->employee->loginname;
+									$adb = Addressbook::find('first',array('conditions'=>array("username=?",$username)));
+								}
 								$Rfcdetail=Rfcdetail::find('all',array('conditions'=>array("rfc_id=?",$doid),'include'=>array('rfc'=>array('employee'=>array('company','department','designation','grade','location')))));
 								
 								foreach ($Rfcdetail as &$result) {
