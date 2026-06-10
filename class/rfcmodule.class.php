@@ -785,28 +785,19 @@ Class RfcModule extends Application{
 							}
 							$data=$Rfc;
 							*/
-							$_dbg = [];
-							$_dbg_t0 = microtime(true);
-
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?", $this->currentUser->username )));
 							$emp_id = $Employee->id;
-							$_dbg['step1_employee_ms'] = round((microtime(true)-$_dbg_t0)*1000);
-							$_dbg['emp_id'] = $emp_id;
 
 							$joinx = "LEFT JOIN tbl_rfcapproval ON (tbl_rfc.id = tbl_rfcapproval.rfc_id)
 								LEFT JOIN tbl_approver ON (tbl_rfcapproval.approver_id = tbl_approver.id)";
 
-							$_dbg_t1 = microtime(true);
 							$Rfc = Rfc::find('all', array(
 								'select'=>"tbl_rfc.*,tbl_approver.employee_id as empappr,tbl_rfcapproval.approvalstatus as apprstatus, (select case when appr.employee_id='".$emp_id."' then 1 else 0 end as pending from  tbl_rfcapproval a left join tbl_approver appr ON (a.approver_id = appr.id) where a.approvalstatus=0 and a.rfc_id=tbl_rfc.id order by appr.sequence limit 0,1 ) as pendingonme",
 								'conditions' => array("tbl_rfc.RequestStatus > 0"),
 								'joins' => $joinx,
 								'order' => "tbl_approver.sequence"
 							));
-							$_dbg['step2_first_find_ms'] = round((microtime(true)-$_dbg_t1)*1000);
-							$_dbg['step2_rows'] = count($Rfc);
 
-							$_dbg_t2 = microtime(true);
 							$request = [];
 							foreach ($Rfc as $result) {
 								if ($result->pendingonme == 1) {
@@ -823,10 +814,7 @@ Class RfcModule extends Application{
 									}
 								}
 							}
-							$_dbg['step3_foreach_ms'] = round((microtime(true)-$_dbg_t2)*1000);
-							$_dbg['step3_request_ids'] = $request;
 
-							$_dbg_t3 = microtime(true);
 							$data = array();
 							if (!empty($request)) {
 								$Rfc = Rfc::find('all', array(
@@ -841,11 +829,6 @@ Class RfcModule extends Application{
 									$data[] = $result;
 								}
 							}
-							$_dbg['step4_second_find_ms'] = round((microtime(true)-$_dbg_t3)*1000);
-							$_dbg['step4_data_count'] = count($data);
-							$_dbg['total_ms'] = round((microtime(true)-$_dbg_t0)*1000);
-
-							die(json_encode(['debug' => $_dbg], JSON_PRETTY_PRINT));
 						} else if(isset($query['mypending'])){						
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
 							$emp_id = $Employee->id;
