@@ -1486,9 +1486,8 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 	}
 	$scope.onFormSubmit = function(e) {
 		e.preventDefault();
-		criteria = {status:'approver',rfc_id:$scope.Requestid};
-		CrudService.FindData('rfcapp',criteria).then(function (response){
-			if(response.jml>0){
+		CrudService.GetById('rfcapp',$scope.Requestid).then(function (response){
+			if(response.length>0){
 				criteria = {status:'approver',rfc_id:$scope.Requestid};
 				CrudService.FindData('rfcdetail',criteria).then(function (response){
 					if(response.jml>0){
