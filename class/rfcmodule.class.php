@@ -798,18 +798,19 @@ Class RfcModule extends Application{
 								'order' => "tbl_approver.sequence"
 							));
 
+							$request = [];
 							foreach ($Rfc as $result) {
 								if ($result->pendingonme == 1) {
 									if (!in_array($result->id, $request))
 									{
-										$request[] = $result->id; 
+										$request[] = $result->id;
 									}
 								}
 
 								if (($result->requeststatus == 3 || $result->requeststatus == 4) && ($result->apprstatus!=0 && $result->apprstatus!="" ) && $result->empappr == $emp_id) {
 									if (!in_array($result->id, $request))
 									{
-										$request[] = $result->id; 
+										$request[] = $result->id;
 									}
 								}
 							}
@@ -831,9 +832,10 @@ Class RfcModule extends Application{
 							$emp_id = $Employee->id;
 							$Rfc = Rfc::find('all', array('conditions' => array("RequestStatus =1"),'include' => array('employee')));
 							$jml=0;
+							$request = [];
 							foreach ($Rfc as $result) {
-								$joinx   = "LEFT JOIN tbl_approver ON (tbl_rfcapproval.approver_id = tbl_approver.id) ";					
-								$Rfcapproval = Rfcapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and rfc_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));							
+								$joinx   = "LEFT JOIN tbl_approver ON (tbl_rfcapproval.approver_id = tbl_approver.id) ";
+								$Rfcapproval = Rfcapproval::find('first',array('joins'=>$joinx,'conditions' => array("ApprovalStatus=0 and rfc_id=?",$result->id),'order'=>"tbl_approver.sequence",'include' => array('approver'=>array('employee'))));
 								if($Rfcapproval->approver->employee_id==$emp_id){
 									$request[]=$result->id;
 								}

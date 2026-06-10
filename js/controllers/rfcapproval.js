@@ -35,12 +35,16 @@ app.register.controller('rfcapprovalCtrl', ['$rootScope','$scope', '$http', '$in
 		$scope.dataGrid.refresh();
     });
 	var myData = new DevExpress.data.DataSource({
-		store: myStore
+		store: myStore,
+		paginate: false
     });
+	var _editColumnMoved = false;
 	function moveEditColumnToLeft(dataGrid) {
-		dataGrid.columnOption("command:edit", { 
+		if (_editColumnMoved) { return; }
+		_editColumnMoved = true;
+		dataGrid.columnOption("command:edit", {
 			visibleIndex: -1,
-			width: 80 
+			width: 80
 		});
     }
 	CrudService.GetAll('rfcactivity').then(function (resp) {
@@ -137,8 +141,6 @@ app.register.controller('rfcapprovalCtrl', ['$rootScope','$scope', '$http', '$in
 			//"editing.allowAdding": "allowAdd" ,
 			//"editing.allowDeleting": "allowDel" ,
 			"columns[5].lookup.dataSource":"activityDatasource",
-			"columns[13].lookup.dataSource":"contractorDatasource",
-			"columns[14].lookup.dataSource":"contractorDatasource",
             //"columns[3].lookup.dataSource":"divDatasource"
         },
         columnChooser: {
@@ -182,7 +184,7 @@ app.register.controller('rfcapprovalCtrl', ['$rootScope','$scope', '$http', '$in
             placeholder: "Search..."
         },
         scrolling: {
-            mode: "infinite"
+            mode: "standard"
         },
         onContentReady: function(e){
             moveEditColumnToLeft(e.component);

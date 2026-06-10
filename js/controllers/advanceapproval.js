@@ -35,12 +35,16 @@ app.register.controller('advanceapprovalCtrl', ['$rootScope','$scope', '$http', 
 		$scope.dataGrid.refresh();
     });
 	var myData = new DevExpress.data.DataSource({
-		store: myStore
+		store: myStore,
+		paginate: false
     });
+	var _editColumnMoved = false;
 	function moveEditColumnToLeft(dataGrid) {
-		dataGrid.columnOption("command:edit", { 
+		if (_editColumnMoved) { return; }
+		_editColumnMoved = true;
+		dataGrid.columnOption("command:edit", {
 			visibleIndex: -1,
-			width: 80 
+			width: 80
 		});
     }
     $scope.dataGridOptions = {
@@ -170,7 +174,7 @@ app.register.controller('advanceapprovalCtrl', ['$rootScope','$scope', '$http', 
             placeholder: "Search..."
         },
         scrolling: {
-            mode: "infinite"
+            mode: "standard"
         },
         onContentReady: function(e){
             moveEditColumnToLeft(e.component);
