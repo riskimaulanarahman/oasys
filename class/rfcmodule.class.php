@@ -814,18 +814,19 @@ Class RfcModule extends Application{
 									}
 								}
 							}
-							$Rfc = Rfc::find('all', array(
-								'conditions' => array("id in (?)", $request),
-								'order' => "tbl_rfc.requeststatus",
-								'include' => array('employee')
-							));
 							$data = array();
-							foreach ($Rfc as $result) {
-								$fullname = $result->employee->fullname;
-								$result = $result->to_array();
-								$result['fullname'] = $fullname;
-								$data[] = $result;
-								
+							if (!empty($request)) {
+								$Rfc = Rfc::find('all', array(
+									'conditions' => array("id in (?)", $request),
+									'order' => "tbl_rfc.requeststatus",
+									'include' => array('employee')
+								));
+								foreach ($Rfc as $result) {
+									$fullname = $result->employee->fullname;
+									$result = $result->to_array();
+									$result['fullname'] = $fullname;
+									$data[] = $result;
+								}
 							}
 						} else if(isset($query['mypending'])){						
 							$Employee = Employee::find('first', array('conditions' => array("loginName=?",$this->currentUser->username)));
@@ -840,9 +841,9 @@ Class RfcModule extends Application{
 									$request[]=$result->id;
 								}
 							}
-							$Rfc = Rfc::find('all', array('conditions' => array("id in (?)",$request),'include' => array('employee')));
+							$Rfc = empty($request) ? [] : Rfc::find('all', array('conditions' => array("id in (?)",$request),'include' => array('employee')));
 							foreach ($Rfc as &$result) {
-								$fullname	= $result->employee->fullname;		
+								$fullname	= $result->employee->fullname;
 								$result		= $result->to_array();
 								$result['fullname']=$fullname;
 							}
