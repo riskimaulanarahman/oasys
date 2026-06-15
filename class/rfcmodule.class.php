@@ -71,8 +71,14 @@ Class RfcModule extends Application{
 				case 'apirfchist':
 					$this->rfcHistory();
 					break;
-				case 'apirfcpdf':				
+				case 'apirfcpdf':
 					 $this->generatePDF();
+					break;
+				case 'apirfcpdf_rfq':
+					$auth2 = $this->jwt->checkAuth();
+					if ($auth2) {
+						$this->generateRFQPDF($this->get['id'], true);
+					}
 					break;
 				default:
 					break;
@@ -280,7 +286,7 @@ Class RfcModule extends Application{
 			echo $formatter->getHtmlMessage();
 		}
 	}
-	function generateRFQPDF($id){
+	function generateRFQPDF($id, $preview = false){
 		$joins = "LEFT JOIN tbl_rfccontractor ON (tbl_rfc.contractor_id = tbl_rfccontractor.id) LEFT JOIN tbl_rfccontractor as c ON (tbl_rfc.contractor_id2 = c.id) LEFT JOIN tbl_rfcactivity ON (tbl_rfc.activity_id = tbl_rfcactivity.id) ";
 		$sel   = 'tbl_rfc.*, tbl_rfccontractor.contractorname AS contractorname, c.contractorname AS contractorname2, tbl_rfcactivity.activitydescr AS activitydescr';
 		$RfcJ     = Rfc::find($id, array('joins'=>$joins,'select'=>$sel,'include'=>array('employee'=>array('company'))));
@@ -545,6 +551,10 @@ Class RfcModule extends Application{
 			$html2pdf = new Html2Pdf('P','A4','fr');
 			$html2pdf->writeHTML($pdfContent);
 			ob_clean();
+			if ($preview) {
+				$html2pdf->output('rfq_preview.pdf', 'I');
+				return true;
+			}
 			$rfqno_safe = str_replace("/","",$RfcJ->rfqno);
 			$fileName = 'doc'.DS.'rfc'.DS.'pdf'.DS.$rfqno_safe.'_'.date("YmdHis").'.pdf';
 			$filePath = SITE_PATH.DS.$fileName;
