@@ -308,7 +308,7 @@ Class RfcModule extends Application{
 			<tr>
 				<td rowspan="3" style="width:35mm;">&nbsp;</td>
 				<td align="center"><b><font size="13">'.$compx->companyname.'</font></b></td>
-				<td rowspan="3" style="width:35mm; vertical-align:top;">
+				<td rowspan="3" align="right" style="vertical-align:top;">
 					<table border="1" cellspacing="0" cellpadding="3" style="font-size:9pt;">
 						<tr><td style="width:14pt; text-align:center;">'.$stdCheck.'</td><td> Standard</td></tr>
 						<tr><td style="width:14pt; text-align:center;">'.$nonStdCheck.'</td><td> Non Standard</td></tr>
@@ -462,7 +462,7 @@ Class RfcModule extends Application{
 		</table>';
 
 		// First row: positions 1-4
-		$pdfContent .= '<table width="100%" border="0" cellspacing="2" cellpadding="0" style="table-layout:fixed;"><tr>';
+		$pdfContent .= '<table width="100%" border="0" cellspacing="0" cellpadding="0" style="table-layout:fixed;"><tr>';
 		for ($i = 0; $i < 4; $i++) {
 			$role  = $committeeRoles[$i];
 			$appr  = null;
@@ -470,7 +470,7 @@ Class RfcModule extends Application{
 				if (isset($approvalMap[$tid])) { $appr = $approvalMap[$tid]; break; }
 			}
 			$approved = ($appr !== null && $appr->approvalstatus == 2);
-			$pdfContent .= '<td style="width:45mm; border:1px solid black; height:60pt; vertical-align:top; padding:2pt; text-align:center;">
+			$pdfContent .= '<td style="width:44mm; border:1px solid black; height:60pt; vertical-align:top; padding:2pt; text-align:center;">
 				<font size="8"><b>'.($i+1).')</b></font><br>';
 			if ($approved) {
 				$pdfContent .= '<img src="images/approved.png" style="height:22pt" alt="Approved"><br>
@@ -484,7 +484,7 @@ Class RfcModule extends Application{
 		$pdfContent .= '</tr></table>';
 
 		// Second row: positions 5-8
-		$pdfContent .= '<table width="100%" border="0" cellspacing="2" cellpadding="0" style="table-layout:fixed;"><tr>';
+		$pdfContent .= '<table width="100%" border="0" cellspacing="0" cellpadding="0" style="table-layout:fixed;"><tr>';
 		for ($i = 4; $i < 8; $i++) {
 			$role  = $committeeRoles[$i];
 			$appr  = null;
@@ -492,7 +492,7 @@ Class RfcModule extends Application{
 				if (isset($approvalMap[$tid])) { $appr = $approvalMap[$tid]; break; }
 			}
 			$approved = ($appr !== null && $appr->approvalstatus == 2);
-			$pdfContent .= '<td style="width:45mm; border:1px solid black; height:60pt; vertical-align:top; padding:2pt; text-align:center;">
+			$pdfContent .= '<td style="width:44mm; border:1px solid black; height:60pt; vertical-align:top; padding:2pt; text-align:center;">
 				<font size="8"><b>'.($i+1).')</b></font><br>';
 			if ($approved) {
 				$pdfContent .= '<img src="images/approved.png" style="height:22pt" alt="Approved"><br>
