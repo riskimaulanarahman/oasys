@@ -407,8 +407,8 @@ Class RfcModule extends Application{
 			</tr>';
 			$idx++;
 		}
-		// show at least 4 blank lines for terms
-		for ($i=$idx; $i<4; $i++) {
+		// show at least 3 blank lines for terms
+		for ($i=$idx; $i<3; $i++) {
 			$pdfContent .= '<tr><td></td><td></td><td style="border-bottom:1px solid black; padding:4pt 0;">&nbsp;</td></tr>';
 		}
 
