@@ -306,9 +306,8 @@ Class RfcModule extends Application{
 		$nonStdCheck = $isNonSK ? 'X' : '&nbsp;';
 		$pdfContent .= '<table width="100%" border="0" cellspacing="0" cellpadding="3">
 			<tr>
-				<td rowspan="3" style="width:35mm;">&nbsp;</td>
 				<td align="center"><b><font size="13">'.$compx->companyname.'</font></b></td>
-				<td rowspan="3" align="right" style="vertical-align:top;">
+				<td width="20%" rowspan="3" align="right" style="vertical-align:top;">
 					<table border="1" cellspacing="0" cellpadding="3" style="font-size:9pt;">
 						<tr><td style="width:14pt; text-align:center;">'.$stdCheck.'</td><td> Standard</td></tr>
 						<tr><td style="width:14pt; text-align:center;">'.$nonStdCheck.'</td><td> Non Standard</td></tr>
@@ -461,49 +460,31 @@ Class RfcModule extends Application{
 			<tr><td style="font-size:9pt; padding-bottom:2pt;">Originator : <b>'.$RfcJ->employee->fullname.'</b></td></tr>
 		</table>';
 
-		// First row: positions 1-4
-		$pdfContent .= '<table width="100%" border="0" cellspacing="0" cellpadding="0" style="table-layout:fixed;"><tr>';
-		for ($i = 0; $i < 4; $i++) {
-			$role  = $committeeRoles[$i];
-			$appr  = null;
+		// Committee list table
+		$pdfContent .= '<table width="100%" border="1" cellspacing="0" cellpadding="2" style="font-size:8pt; table-layout:fixed;">
+			<tr>
+				<td style="width:10mm;" align="center"><b>No</b></td>
+				<td style="width:55mm;" align="center"><b>Nama</b></td>
+				<td style="width:40mm;" align="center"><b>Jabatan</b></td>
+				<td style="width:30mm;" align="center"><b>Tanggal</b></td>
+				<td style="width:45mm;" align="center"><b>TTD / Approved</b></td>
+			</tr>';
+		foreach ($committeeRoles as $i => $role) {
+			$appr = null;
 			foreach ($role['ids'] as $tid) {
 				if (isset($approvalMap[$tid])) { $appr = $approvalMap[$tid]; break; }
 			}
 			$approved = ($appr !== null && $appr->approvalstatus == 2);
-			$pdfContent .= '<td style="width:44mm; border:1px solid black; height:60pt; vertical-align:top; padding:2pt; text-align:center;">
-				<font size="8"><b>'.($i+1).')</b></font><br>';
-			if ($approved) {
-				$pdfContent .= '<img src="images/approved.png" style="height:22pt" alt="Approved"><br>
-					<font size="7"><i>'.date("d/m/Y",strtotime($appr->approvaldate)).'</i><br>
-					<u>'.$appr->approver->employee->fullname.'</u></font><br>';
-			} else {
-				$pdfContent .= '<br><br>';
-			}
-			$pdfContent .= '<font size="8">'.$role['label'].'</font></td>';
+			$heightStyle = $approved ? '' : 'height:18pt;';
+			$pdfContent .= '<tr>
+				<td align="center">'.($i+1).'</td>
+				<td>'.($approved ? '<u>'.$appr->approver->employee->fullname.'</u>' : '&nbsp;').'</td>
+				<td>'.$role['label'].'</td>
+				<td align="center">'.($approved ? date("d/m/Y",strtotime($appr->approvaldate)) : '&nbsp;').'</td>
+				<td align="center" style="'.$heightStyle.'">'.($approved ? '<img src="images/approved.png" style="height:14pt" alt="Approved">' : '&nbsp;').'</td>
+			</tr>';
 		}
-		$pdfContent .= '</tr></table>';
-
-		// Second row: positions 5-8
-		$pdfContent .= '<table width="100%" border="0" cellspacing="0" cellpadding="0" style="table-layout:fixed;"><tr>';
-		for ($i = 4; $i < 8; $i++) {
-			$role  = $committeeRoles[$i];
-			$appr  = null;
-			foreach ($role['ids'] as $tid) {
-				if (isset($approvalMap[$tid])) { $appr = $approvalMap[$tid]; break; }
-			}
-			$approved = ($appr !== null && $appr->approvalstatus == 2);
-			$pdfContent .= '<td style="width:44mm; border:1px solid black; height:60pt; vertical-align:top; padding:2pt; text-align:center;">
-				<font size="8"><b>'.($i+1).')</b></font><br>';
-			if ($approved) {
-				$pdfContent .= '<img src="images/approved.png" style="height:22pt" alt="Approved"><br>
-					<font size="7"><i>'.date("d/m/Y",strtotime($appr->approvaldate)).'</i><br>
-					<u>'.$appr->approver->employee->fullname.'</u></font><br>';
-			} else {
-				$pdfContent .= '<br><br>';
-			}
-			$pdfContent .= '<font size="8">'.$role['label'].'</font></td>';
-		}
-		$pdfContent .= '</tr></table>';
+		$pdfContent .= '</table>';
 
 		// ── PLEASE ATTACH ─────────────────────────────────────────────────────────
 		$pdfContent .= '<font size="9"><b>Please Attach :</b><br>
@@ -517,7 +498,7 @@ Class RfcModule extends Application{
 		$pdfContent .= '</table></font>';
 
 		// ── SAP/PIMS SYSTEM ───────────────────────────────────────────────────────
-		$pdfContent .= '<br><font size="9"><b>SAP/PIMS System :</b><br>
+		$pdfContent .= '<font size="9"><b>SAP/PIMS System :</b><br>
 		<table border="0" cellspacing="0" cellpadding="1" style="font-size:9pt;">
 			<tr><td width="20pt" align="right">1</td><td>Acacia Harvesting Related Activity - Work Order to be created in PIMS</td></tr>
 		</table></font>';
@@ -536,7 +517,7 @@ Class RfcModule extends Application{
 		</table></font>';
 
 		// ── FOOTER ────────────────────────────────────────────────────────────────
-		$pdfContent .= '<br><font size="9">
+		$pdfContent .= '<font size="9">
 			<b>RFC must be submitted and approved prior to work commencement.</b><br>
 			Approved RFC need to be submitted to legal to issue contract at least 15 working days prior to work commencement.
 		</font>';
