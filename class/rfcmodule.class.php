@@ -296,21 +296,25 @@ Class RfcModule extends Application{
 
 		// ── HEADER ────────────────────────────────────────────────────────────────
 		$pdfContent  = '<page backtop="10mm" backbottom="10mm" backleft="15mm" backright="15mm">';
-		$pdfContent .= '<table width="100%" border="0" cellspacing="0" cellpadding="2">
+		$stdCheck    = $isNonSK ? '&nbsp;' : 'X';
+		$nonStdCheck = $isNonSK ? 'X' : '&nbsp;';
+		$pdfContent .= '<table width="100%" border="0" cellspacing="0" cellpadding="4">
 			<tr>
-				<td width="70%" align="center">
+				<td width="20%">&nbsp;</td>
+				<td width="60%" style="text-align:center; vertical-align:middle;">
 					<b><font size="13">'.$compx->companyname.'</font></b><br>
 					<b>REQUEST FOR '.$neworam.'</b><br>
 					<b>RFQ NO : '.$RfcJ->rfqno.'</b>
 				</td>
-				<td width="30%" valign="top" align="right">
+				<td width="20%" style="vertical-align:top;">
 					<table border="1" cellspacing="0" cellpadding="3" style="font-size:9pt;">
-						<tr><td width="20px" align="center">'.($isNonSK?'':'&#10003;').'</td><td> Standard</td></tr>
-						<tr><td width="20px" align="center">'.($isNonSK?'&#10003;':'').'</td><td> Non Standard</td></tr>
+						<tr><td width="14pt" style="text-align:center;">'.$stdCheck.'</td><td> Standard</td></tr>
+						<tr><td width="14pt" style="text-align:center;">'.$nonStdCheck.'</td><td> Non Standard</td></tr>
 					</table>
 				</td>
 			</tr>
-		</table>';
+		</table>
+		<hr style="border-top:1px solid black; margin:4pt 0;"/>';
 
 		// ── TO / FROM ─────────────────────────────────────────────────────────────
 		$pdfContent .= '<br>
@@ -451,11 +455,11 @@ Class RfcModule extends Application{
 
 		// Originator row
 		$pdfContent .= '<table width="100%" border="0" cellspacing="0" cellpadding="2">
-			<tr><td style="font-size:9pt; padding-bottom:2pt;">Originator :</td></tr>
+			<tr><td style="font-size:9pt; padding-bottom:2pt;">Originator : <b>'.$RfcJ->employee->fullname.'</b></td></tr>
 		</table>';
 
 		// First row: positions 1-4
-		$pdfContent .= '<table width="100%" border="0" cellspacing="2" cellpadding="0"><tr>';
+		$pdfContent .= '<table width="100%" border="0" cellspacing="2" cellpadding="0" style="table-layout:fixed;"><tr>';
 		for ($i = 0; $i < 4; $i++) {
 			$role  = $committeeRoles[$i];
 			$appr  = null;
@@ -477,7 +481,7 @@ Class RfcModule extends Application{
 		$pdfContent .= '</tr></table>';
 
 		// Second row: positions 5-8
-		$pdfContent .= '<table width="100%" border="0" cellspacing="2" cellpadding="0"><tr>';
+		$pdfContent .= '<table width="100%" border="0" cellspacing="2" cellpadding="0" style="table-layout:fixed;"><tr>';
 		for ($i = 4; $i < 8; $i++) {
 			$role  = $committeeRoles[$i];
 			$appr  = null;
