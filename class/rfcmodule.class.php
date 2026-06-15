@@ -304,27 +304,24 @@ Class RfcModule extends Application{
 		$pdfContent  = '<page backtop="10mm" backbottom="10mm" backleft="15mm" backright="15mm">';
 		$stdCheck    = $isNonSK ? '&nbsp;' : 'X';
 		$nonStdCheck = $isNonSK ? 'X' : '&nbsp;';
-		$pdfContent .= '<table width="100%" border="0" cellspacing="0" cellpadding="4">
+		$pdfContent .= '<table width="100%" border="0" cellspacing="0" cellpadding="3">
 			<tr>
-				<td width="20%">&nbsp;</td>
-				<td width="60%" style="text-align:center; vertical-align:middle;">
-					<b><font size="13">'.$compx->companyname.'</font></b><br>
-					<b>REQUEST FOR '.$neworam.'</b><br>
-					<b>RFQ NO : '.$RfcJ->rfqno.'</b>
-				</td>
-				<td width="20%" style="vertical-align:top;">
+				<td rowspan="3" style="width:35mm;">&nbsp;</td>
+				<td align="center"><b><font size="13">'.$compx->companyname.'</font></b></td>
+				<td rowspan="3" style="width:35mm; vertical-align:top;">
 					<table border="1" cellspacing="0" cellpadding="3" style="font-size:9pt;">
-						<tr><td width="14pt" style="text-align:center;">'.$stdCheck.'</td><td> Standard</td></tr>
-						<tr><td width="14pt" style="text-align:center;">'.$nonStdCheck.'</td><td> Non Standard</td></tr>
+						<tr><td style="width:14pt; text-align:center;">'.$stdCheck.'</td><td> Standard</td></tr>
+						<tr><td style="width:14pt; text-align:center;">'.$nonStdCheck.'</td><td> Non Standard</td></tr>
 					</table>
 				</td>
 			</tr>
+			<tr><td align="center"><b>REQUEST FOR '.$neworam.'</b></td></tr>
+			<tr><td align="center"><b>RFQ NO : '.$RfcJ->rfqno.'</b></td></tr>
 		</table>
 		<hr style="border-top:1px solid black; margin:4pt 0;"/>';
 
 		// ── TO / FROM ─────────────────────────────────────────────────────────────
-		$pdfContent .= '<br>
-		<table width="100%" border="0" cellspacing="0" cellpadding="2" style="font-size:10pt;">
+		$pdfContent .= '<table width="100%" border="0" cellspacing="0" cellpadding="2" style="font-size:10pt;">
 			<tr>
 				<td width="12%">To</td>
 				<td width="2%">:</td>
@@ -339,7 +336,7 @@ Class RfcModule extends Application{
 		<br><font size="10">We request a quotation for the following work, which will subsequently be processed as a Request for Contract (RFC)</font><br><br>';
 
 		// ── BODY FIELDS ───────────────────────────────────────────────────────────
-		$pdfContent .= '<table width="100%" border="0" cellspacing="0" cellpadding="3" style="font-size:10pt;">';
+		$pdfContent .= '<table width="100%" border="0" cellspacing="0" cellpadding="2" style="font-size:10pt;">';
 
 		$pdfContent .= '<tr>
 			<td width="22%" valign="top">Kind of Contract</td>
@@ -410,8 +407,8 @@ Class RfcModule extends Application{
 			</tr>';
 			$idx++;
 		}
-		// show at least 6 blank lines for terms
-		for ($i=$idx; $i<6; $i++) {
+		// show at least 4 blank lines for terms
+		for ($i=$idx; $i<4; $i++) {
 			$pdfContent .= '<tr><td></td><td></td><td style="border-bottom:1px solid black; padding:4pt 0;">&nbsp;</td></tr>';
 		}
 
@@ -426,7 +423,7 @@ Class RfcModule extends Application{
 			<td style="border-bottom:1px solid black;">'.htmlspecialchars($RfcJ->contractorname2).'</td>
 		</tr>';
 
-		$pdfContent .= '</table><br>';
+		$pdfContent .= '</table>';
 
 		// ── CONTRACT COMMITTEE ────────────────────────────────────────────────────
 		$pdfContent .= '<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -473,7 +470,7 @@ Class RfcModule extends Application{
 				if (isset($approvalMap[$tid])) { $appr = $approvalMap[$tid]; break; }
 			}
 			$approved = ($appr !== null && $appr->approvalstatus == 2);
-			$pdfContent .= '<td width="25%" align="center" style="border:1px solid black; height:70pt; vertical-align:top; padding:2pt;">
+			$pdfContent .= '<td style="width:45mm; border:1px solid black; height:60pt; vertical-align:top; padding:2pt; text-align:center;">
 				<font size="8"><b>'.($i+1).')</b></font><br>';
 			if ($approved) {
 				$pdfContent .= '<img src="images/approved.png" style="height:22pt" alt="Approved"><br>
@@ -495,7 +492,7 @@ Class RfcModule extends Application{
 				if (isset($approvalMap[$tid])) { $appr = $approvalMap[$tid]; break; }
 			}
 			$approved = ($appr !== null && $appr->approvalstatus == 2);
-			$pdfContent .= '<td width="25%" align="center" style="border:1px solid black; height:70pt; vertical-align:top; padding:2pt;">
+			$pdfContent .= '<td style="width:45mm; border:1px solid black; height:60pt; vertical-align:top; padding:2pt; text-align:center;">
 				<font size="8"><b>'.($i+1).')</b></font><br>';
 			if ($approved) {
 				$pdfContent .= '<img src="images/approved.png" style="height:22pt" alt="Approved"><br>
@@ -506,7 +503,7 @@ Class RfcModule extends Application{
 			}
 			$pdfContent .= '<font size="8">'.$role['label'].'</font></td>';
 		}
-		$pdfContent .= '</tr></table><br>';
+		$pdfContent .= '</tr></table>';
 
 		// ── PLEASE ATTACH ─────────────────────────────────────────────────────────
 		$pdfContent .= '<font size="9"><b>Please Attach :</b><br>
