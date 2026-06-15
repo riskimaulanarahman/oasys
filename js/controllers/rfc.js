@@ -192,6 +192,29 @@
 						fixedPosition: 'left',
 					},
 					{
+						dataField: 'rfqdoc',
+						caption: 'RFQ Doc',
+						width: 100,
+						allowFiltering: false,
+						allowSorting: false,
+						formItem: { visible: false },
+						cellTemplate: function (container, options) {
+							if (options.value != '' && options.value) {
+								$('<div />')
+									.dxButton({
+										icon: 'download',
+										stylingMode: 'contained',
+										type: 'default',
+										width: 50,
+										onClick: function (e) {
+											window.open(options.value, '_blank');
+										},
+									})
+									.appendTo(container);
+							}
+						},
+					},
+					{
 						dataField: 'activity_id',
 						caption: 'Activity',
 						lookup: {

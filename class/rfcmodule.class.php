@@ -547,6 +547,9 @@ Class RfcModule extends Application{
 			$html2pdf->output($filePath,'F');
 			// Attach BEFORE processcopy — processcopy deletes local file after copy to remote
 			$this->mail->addAttachment($filePath);
+			$rfcToSave = Rfc::find($id);
+			$rfcToSave->rfqdoc = str_replace("\\","/",$fileName);
+			$rfcToSave->save();
 			$this->processcopy($fileName);
 			return true;
 		} catch (Html2PdfException $e) {

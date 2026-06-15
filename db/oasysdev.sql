@@ -2116,6 +2116,7 @@ CREATE TABLE IF NOT EXISTS `tbl_rfc` (
   `Remarks` text DEFAULT NULL,
   `Replacement` varchar(200) DEFAULT NULL,
   `ApprovedDoc` varchar(150) DEFAULT NULL,
+  `RFQDoc` varchar(150) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `RFCNo` (`RFCNo`),
   UNIQUE KEY `RFQNo` (`RFQNo`),
