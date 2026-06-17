@@ -306,8 +306,9 @@ Class RfcModule extends Application{
 		$nonStdCheck = $isNonSK ? 'X' : '&nbsp;';
 		$pdfContent .= '<table width="100%" border="0" cellspacing="0" cellpadding="3">
 			<tr>
+				<td rowspan="3" style="width:35mm;">&nbsp;</td>
 				<td align="center"><b><font size="13">'.$compx->companyname.'</font></b></td>
-				<td width="20%" rowspan="3" align="right" style="vertical-align:top;">
+				<td rowspan="3" align="right" style="width:35mm; vertical-align:top;">
 					<table border="1" cellspacing="0" cellpadding="3" style="font-size:9pt;">
 						<tr><td style="width:14pt; text-align:center;">'.$stdCheck.'</td><td> Standard</td></tr>
 						<tr><td style="width:14pt; text-align:center;">'.$nonStdCheck.'</td><td> Non Standard</td></tr>
