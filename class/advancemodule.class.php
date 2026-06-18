@@ -561,6 +561,13 @@ class Advancemodule extends Application
 											$logger->SaveData();
 										}
 
+										$bufc2 = Advanceapproval::find('all', array('joins' => $joins, 'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=69", $id)));
+										foreach ($bufc2 as $result) {
+											$result->delete();
+											$logger = new Datalogger("Advanceapproval", "delete", json_encode($result->to_array()), "delete Approval BU FC 2");
+											$logger->SaveData();
+										}
+
 										$apprMD = Advanceapproval::find('all', array('joins' => $joins, 'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=40", $id)));
 										foreach ($apprMD as $result) {
 											$result->delete();
@@ -665,6 +672,18 @@ class Advancemodule extends Application
 													$logger->SaveData();
 												}
 
+												if (in_array($Employee->companycode, ['KPA', 'AHL', 'KPSI'])) {
+													$apprbufc2 = Approver::find('first', array('joins' => $joinx, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='69' and FIND_IN_SET(?, CompanyList) > 0 ", $Employee->companycode)));
+													if (count($apprbufc2) > 0) {
+														$Advanceapproval = new Advanceapproval();
+														$Advanceapproval->advance_id = $Advance->id;
+														$Advanceapproval->approver_id = $apprbufc2->id;
+														$Advanceapproval->save();
+														$logger = new Datalogger("Advanceapproval", "add", "Add initial BU FC 2 Approval", json_encode($Advanceapproval->to_array()));
+														$logger->SaveData();
+													}
+												}
+
 										$Approver2 = Approver::find('first', array('joins' => $joinx, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and FIND_IN_SET(?, CompanyList) > 0 ", $Employee->companycode)));
 										if (count($Approver2) > 0) {
 											$Advanceapproval = new Advanceapproval();
@@ -696,6 +715,13 @@ class Advancemodule extends Application
 										foreach ($bufc as $result) {
 											$result->delete();
 											$logger = new Datalogger("Advanceapproval", "delete", json_encode($result->to_array()), "delete Approval BU FC");
+											$logger->SaveData();
+										}
+
+										$bufc2 = Advanceapproval::find('all', array('joins' => $joins, 'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=69", $id)));
+										foreach ($bufc2 as $result) {
+											$result->delete();
+											$logger = new Datalogger("Advanceapproval", "delete", json_encode($result->to_array()), "delete Approval BU FC 2");
 											$logger->SaveData();
 										}
 
@@ -742,6 +768,18 @@ class Advancemodule extends Application
 													$Advanceapproval->save();
 													$logger = new Datalogger("Advanceapproval", "add", "Add initial BU FC Approval", json_encode($Advanceapproval->to_array()));
 													$logger->SaveData();
+												}
+
+												if (in_array($Employee->companycode, ['KPA', 'AHL', 'KPSI'])) {
+													$bufc2 = Approver::find('first', array('joins' => $joinx, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='69' and FIND_IN_SET(?, CompanyList) > 0 ", $Employee->companycode)));
+													if (count($bufc2) > 0) {
+														$Advanceapproval = new Advanceapproval();
+														$Advanceapproval->advance_id = $Advance->id;
+														$Advanceapproval->approver_id = $bufc2->id;
+														$Advanceapproval->save();
+														$logger = new Datalogger("Advanceapproval", "add", "Add initial BU FC 2 Approval", json_encode($Advanceapproval->to_array()));
+														$logger->SaveData();
+													}
 												}
 
 									} else if ($Advance->advanceform == 3) {
@@ -1175,10 +1213,17 @@ class Advancemodule extends Application
 										$joinx   = "LEFT JOIN tbl_employee ON (tbl_approver.employee_id = tbl_employee.id) ";	
 
 										// if($Advance->advanceform == 3) {
-											$bufc = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=37",$id)));	
+											$bufc = Advanceapproval::find('all',array('joins'=>$joins,'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=37",$id)));
 											foreach ($bufc as $result) {
 												$result->delete();
 												$logger = new Datalogger("advanceapproval","delete",json_encode($result->to_array()),"delete Approval BUFC");
+												$logger->SaveData();
+											}
+
+											$bufc2 = Advanceapproval::find('all', array('joins' => $joins, 'conditions' => array("advance_id=? and tbl_approver.approvaltype_id=69", $id)));
+											foreach ($bufc2 as $result) {
+												$result->delete();
+												$logger = new Datalogger("Advanceapproval", "delete", json_encode($result->to_array()), "delete Approval BU FC 2");
 												$logger->SaveData();
 											}
 
@@ -1190,6 +1235,18 @@ class Advancemodule extends Application
 												$Advanceapproval->save();
 												$logger = new Datalogger("Advanceapproval","add","Add initial BU FC Approval ",json_encode($Advanceapproval->to_array()));
 												$logger->SaveData();
+											}
+
+											if (in_array($Advance->companycode, ['KPA', 'AHL', 'KPSI'])) {
+												$Approverbufc2 = Approver::find('first', array('joins' => $joinx, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='69' and FIND_IN_SET(?, CompanyList) > 0 ", $Advance->companycode)));
+												if (count($Approverbufc2) > 0) {
+													$Advanceapproval = new Advanceapproval();
+													$Advanceapproval->advance_id = $Advance->id;
+													$Advanceapproval->approver_id = $Approverbufc2->id;
+													$Advanceapproval->save();
+													$logger = new Datalogger("Advanceapproval", "add", "Add initial BU FC 2 Approval", json_encode($Advanceapproval->to_array()));
+													$logger->SaveData();
+												}
 											}
 
 
@@ -1261,14 +1318,16 @@ class Advancemodule extends Application
 									$logger->SaveData();
 								}
 
-								$ApproverBUFC2 = Approver::find('first', array('joins' => $joins, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='69' and FIND_IN_SET(?, CompanyList) > 0 ", $Employee->companycode)));
-								if (count($ApproverBUFC2) > 0) {
-									$Advanceapproval = new Advanceapproval();
-									$Advanceapproval->advance_id = $Advance->id;
-									$Advanceapproval->approver_id = $ApproverBUFC2->id;
-									$Advanceapproval->save();
-									$logger = new Datalogger("Advanceapproval", "add", "Add initial BU FC 2 Approval", json_encode($Advanceapproval->to_array()));
-									$logger->SaveData();
+								if (in_array($Employee->companycode, ['KPA', 'AHL', 'KPSI'])) {
+									$ApproverBUFC2 = Approver::find('first', array('joins' => $joins, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='69' and FIND_IN_SET(?, CompanyList) > 0 ", $Employee->companycode)));
+									if (count($ApproverBUFC2) > 0) {
+										$Advanceapproval = new Advanceapproval();
+										$Advanceapproval->advance_id = $Advance->id;
+										$Advanceapproval->approver_id = $ApproverBUFC2->id;
+										$Advanceapproval->save();
+										$logger = new Datalogger("Advanceapproval", "add", "Add initial BU FC 2 Approval", json_encode($Advanceapproval->to_array()));
+										$logger->SaveData();
+									}
 								}
 
 							}
@@ -1620,16 +1679,16 @@ class Advancemodule extends Application
 							$all = $tdetailamount >= 0;
 							$mid = $tdetailamount >= 5000000 && $tdetailamount < 10000000;
 
-							if ($dx->approver->isfinal == 1) {
+							if ($dx->approver->isfinal == 1 && !($dx->approver->approvaltype_id == 37 && in_array($AdvEmp->companycode, ['KPA', 'AHL', 'KPSI']))) {
 								$data = array("jml" => 1);
-							} else if ($dx->approver->isfinal == 0) {
+							} else if ($dx->approver->isfinal == 0 || ($dx->approver->isfinal == 1 && $dx->approver->approvaltype_id == 37 && in_array($AdvEmp->companycode, ['KPA', 'AHL', 'KPSI']))) {
 								if ($is_budgeted !== null) {
 									if ($is_budgeted == 0) { // budgeted
-										if (($low) && $Advance->advanceform == 1 && $dx->approver->approvaltype_id == 37) {
+										if (($low) && $Advance->advanceform == 1 && $dx->approver->approvaltype_id == 37 && !in_array($AdvEmp->companycode, ['KPA', 'AHL', 'KPSI'])) {
 											$data = array("jml" => 1);
 										} else if (($mid) && $Advance->advanceform == 1 && $dx->approver->approvaltype_id == 41) {
 											$data = array("jml" => 1);
-										} else if (($low) && $Advance->advanceform == 2 && $dx->approver->approvaltype_id == 37) {
+										} else if (($low) && $Advance->advanceform == 2 && $dx->approver->approvaltype_id == 37 && !in_array($AdvEmp->companycode, ['KPA', 'AHL', 'KPSI'])) {
 											$data = array("jml" => 1);
 										} else if (($mid) && $Advance->advanceform == 2 && $dx->approver->approvaltype_id == 41) {
 											$data = array("jml" => 1);
@@ -1651,13 +1710,13 @@ class Advancemodule extends Application
 										// print_r($dx->approver->approvaltype_id);
 										// print_r($all);
 									} else if ($is_budgeted == 1) { // unbudgeted
-										if (($low) && $Advance->advanceform == 1 && $dx->approver->approvaltype_id == 37) {
+										if (($low) && $Advance->advanceform == 1 && $dx->approver->approvaltype_id == 37 && !in_array($AdvEmp->companycode, ['KPA', 'AHL', 'KPSI'])) {
 											$data = array("jml" => 1);
 										}
 										// else if (($mid) && $Advance->advanceform == 1 && $dx->approver->approvaltype_id == 38) {
 										// 	$data = array("jml" => 1);
-										// } 
-										else if (($low) && $Advance->advanceform == 2 && $dx->approver->approvaltype_id == 37) {
+										// }
+										else if (($low) && $Advance->advanceform == 2 && $dx->approver->approvaltype_id == 37 && !in_array($AdvEmp->companycode, ['KPA', 'AHL', 'KPSI'])) {
 											$data = array("jml" => 1);
 										}
 
@@ -1923,7 +1982,7 @@ class Advancemodule extends Application
 
 										if ($form_type == 1) {
 											if ($is_budgeted == 0) {
-												if (($low) && $approvaltype_id == 37) {
+												if (($low) && $approvaltype_id == 37 && !in_array($AdvEmp->companycode, ['KPA', 'AHL', 'KPSI'])) {
 													$Advance->requeststatus = 3;
 													if ($Advance->createdby == $Advance->employee_id) {
 														$emto = $email;
@@ -1972,7 +2031,7 @@ class Advancemodule extends Application
 													$red = 'New Advance request awaiting for your approval:';
 												}
 											} else if ($is_budgeted == 1) {
-												if (($low) && $approvaltype_id == 37) {
+												if (($low) && $approvaltype_id == 37 && !in_array($AdvEmp->companycode, ['KPA', 'AHL', 'KPSI'])) {
 													$Advance->requeststatus = 3;
 													if ($Advance->createdby == $Advance->employee_id) {
 														$emto = $email;
@@ -2024,7 +2083,7 @@ class Advancemodule extends Application
 
 										} else if ($form_type == 2) {
 											if ($is_budgeted == 0) {
-												if (($low) && $approvaltype_id == 37) {
+												if (($low) && $approvaltype_id == 37 && !in_array($AdvEmp->companycode, ['KPA', 'AHL', 'KPSI'])) {
 													$Advance->requeststatus = 3;
 													if ($Advance->createdby == $Advance->employee_id) {
 														$emto = $email;
@@ -2073,7 +2132,7 @@ class Advancemodule extends Application
 													$red = 'New Advance request awaiting for your approval:';
 												}
 											} else if ($is_budgeted == 1) {
-												if (($low) && $approvaltype_id == 37) {
+												if (($low) && $approvaltype_id == 37 && !in_array($AdvEmp->companycode, ['KPA', 'AHL', 'KPSI'])) {
 													$Advance->requeststatus = 3;
 													if ($Advance->createdby == $Advance->employee_id) {
 														$emto = $email;
