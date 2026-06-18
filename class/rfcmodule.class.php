@@ -538,12 +538,12 @@ Class RfcModule extends Application{
 			$fileName = 'doc'.DS.'rfc'.DS.'pdf'.DS.$rfqno_safe.'_'.date("YmdHis").'.pdf';
 			$filePath = SITE_PATH.DS.$fileName;
 			$html2pdf->output($filePath,'F');
-			// Attach BEFORE processcopy — processcopy deletes local file after copy to remote
+			// Attach here; processcopy must run AFTER mail->send() or it deletes the file first
 			$this->mail->addAttachment($filePath);
 			$rfcToSave = Rfc::find($id);
 			$rfcToSave->rfqdoc = str_replace("\\","/",$fileName);
 			$rfcToSave->save();
-			$this->processcopy($fileName);
+			$this->rfqFileName = $fileName;
 			return true;
 		} catch (Html2PdfException $e) {
 			$html2pdf->clean();
@@ -1298,7 +1298,10 @@ Class RfcModule extends Application{
 									echo "Mailer Error: " . $this->mail->ErrorInfo;
 								} else {
 									$this->processcopy($this->filename);
-									
+									if (!empty($this->rfqFileName)) {
+										$this->processcopy($this->rfqFileName);
+										$this->rfqFileName = null;
+									}
 									echo "Message sent!";
 								}
 							}
