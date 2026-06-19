@@ -1379,11 +1379,24 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 		},
 	}
 	$scope.updateRFC = function(e){
-		//console.log($scope.formInstance.option("formData").approvalstatus);
-		if($scope.formInstance.option("formData").approvalstatus==""){
+		var data = $scope.formInstance.option("formData");
+
+		// 1. Validate procurement fields first (CPU approver on Non-SK RFC)
+		if ($scope.isCpuApprover && data.ratetype === 'Non SK') {
+			if (data.procurement_rate === null || data.procurement_rate === undefined || data.procurement_rate.toString().trim() === '') {
+				DevExpress.ui.dialog.alert("Please input Procurement Rate","Error");
+				return;
+			}
+			if (!data.procurement_contractor_id || data.procurement_contractor_id === '') {
+				DevExpress.ui.dialog.alert("Please select Procurement Contractor","Error");
+				return;
+			}
+		}
+
+		// 2. Validate approval action
+		if (data.approvalstatus === "") {
 			DevExpress.ui.dialog.alert("Please select approval action","Error");
-		}else if($scope.formInstance.option("formData").approvalstatus==3){
-			var data = $scope.formInstance.option("formData");
+		} else if (data.approvalstatus == 3) {
 			var date = new Date();
 			var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
 			data.approvaldate = d;
@@ -1403,32 +1416,19 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 						displayTime: 2000,
 						height: 80,
 						position: {
-						   my: 'top center', 
-						   at: 'center center', 
-						   of: window, 
-						   offset: '0 0' 
+						   my: 'top center',
+						   at: 'center center',
+						   of: window,
+						   offset: '0 0'
 					   }
 					});
 					$location.path( "/rfcapproval" );
 				}
-				
 			});
-		}else{
+		} else {
 			criteria = {status:'approver',rfc_id:$scope.Requestid};
 			CrudService.FindData('rfcapp',criteria).then(function (response){
 				if(response.jml>0){
-					var data = $scope.formInstance.option("formData");
-					// Validate procurement fields for CPU approver (12/70) on Approve action, only for Non-SK RFC
-					if ((response.approvaltypeid == 12 || response.approvaltypeid == 70) && data.approvalstatus == 2 && data.ratetype === 'Non SK') {
-						if (data.procurement_rate === null || data.procurement_rate === undefined || data.procurement_rate.toString().trim() === '') {
-							DevExpress.ui.dialog.alert("Please input Procurement Rate","Error");
-							return;
-						}
-						if (!data.procurement_contractor_id || data.procurement_contractor_id === '') {
-							DevExpress.ui.dialog.alert("Please select Procurement Contractor","Error");
-							return;
-						}
-					}
 					var date = new Date();
 					var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
 					data.approvaldate = d;
@@ -1448,22 +1448,20 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 								displayTime: 2000,
 								height: 80,
 								position: {
-								   my: 'top center', 
-								   at: 'center center', 
-								   of: window, 
-								   offset: '0 0' 
+								   my: 'top center',
+								   at: 'center center',
+								   of: window,
+								   offset: '0 0'
 							   }
 							});
 							$location.path( "/rfcapproval" );
 						}
-						
 					});
 				}else{
 					DevExpress.ui.dialog.alert("Please add person to do next approval/verification in Approver List tab","Error");
 				}
 			});
 		}
-		
 	}
 	$scope.saveDraft = function(e){
 		var data = $scope.formInstance.option("formData");
