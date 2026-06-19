@@ -886,6 +886,7 @@ Class RfcModule extends Application{
 							unset($data['superior']);
 							unset($data['depthead']);
 							unset($data['approveddoc']);
+							unset($data['rfqdoc']);
 							unset($data['createddate']);
 							unset($data['companycode']);
 							unset($data['rfcno']);
