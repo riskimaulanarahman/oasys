@@ -672,7 +672,7 @@ class Advancemodule extends Application
 													$logger->SaveData();
 												}
 
-												if (in_array($Employee->companycode, ['KPA', 'AHL', 'KPSI'])) {
+										
 													$apprbufc2 = Approver::find('first', array('joins' => $joinx, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='69' and FIND_IN_SET(?, CompanyList) > 0 ", $Employee->companycode)));
 													if (count($apprbufc2) > 0) {
 														$Advanceapproval = new Advanceapproval();
@@ -682,7 +682,7 @@ class Advancemodule extends Application
 														$logger = new Datalogger("Advanceapproval", "add", "Add initial BU FC 2 Approval", json_encode($Advanceapproval->to_array()));
 														$logger->SaveData();
 													}
-												}
+												
 
 										$Approver2 = Approver::find('first', array('joins' => $joinx, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='36' and FIND_IN_SET(?, CompanyList) > 0 ", $Employee->companycode)));
 										if (count($Approver2) > 0) {
@@ -770,7 +770,7 @@ class Advancemodule extends Application
 													$logger->SaveData();
 												}
 
-												if (in_array($Employee->companycode, ['KPA', 'AHL', 'KPSI'])) {
+											
 													$bufc2 = Approver::find('first', array('joins' => $joinx, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='69' and FIND_IN_SET(?, CompanyList) > 0 ", $Employee->companycode)));
 													if (count($bufc2) > 0) {
 														$Advanceapproval = new Advanceapproval();
@@ -780,7 +780,7 @@ class Advancemodule extends Application
 														$logger = new Datalogger("Advanceapproval", "add", "Add initial BU FC 2 Approval", json_encode($Advanceapproval->to_array()));
 														$logger->SaveData();
 													}
-												}
+												
 
 									} else if ($Advance->advanceform == 3) {
 
@@ -1318,7 +1318,7 @@ class Advancemodule extends Application
 									$logger->SaveData();
 								}
 
-								if (in_array($Employee->companycode, ['KPA', 'AHL', 'KPSI'])) {
+							
 									$ApproverBUFC2 = Approver::find('first', array('joins' => $joins, 'conditions' => array("module='Advance' and tbl_approver.isactive='1' and approvaltype_id='69' and FIND_IN_SET(?, CompanyList) > 0 ", $Employee->companycode)));
 									if (count($ApproverBUFC2) > 0) {
 										$Advanceapproval = new Advanceapproval();
@@ -1328,7 +1328,7 @@ class Advancemodule extends Application
 										$logger = new Datalogger("Advanceapproval", "add", "Add initial BU FC 2 Approval", json_encode($Advanceapproval->to_array()));
 										$logger->SaveData();
 									}
-								}
+								
 
 							}
 							$Advancehistory = new Advancehistory();

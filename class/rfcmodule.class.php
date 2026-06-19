@@ -453,7 +453,7 @@ Class RfcModule extends Application{
 			array('label'=>'BU Head',         'ids'=>array(11)),
 			array('label'=>'CPU',             'ids'=>array(70,12)),
 			array('label'=>'FC KF',           'ids'=>array(13)),
-			array('label'=>'MD of '.htmlspecialchars($compx->companyname), 'ids'=>array(14)),
+			array('label'=>'MD ', 			  'ids'=>array(14)),
 		);
 
 		// Originator row
@@ -466,9 +466,9 @@ Class RfcModule extends Application{
 			<tr>
 				<td style="width:10mm;" align="center"><b>No</b></td>
 				<td style="width:55mm;" align="center"><b>Nama</b></td>
-				<td style="width:40mm;" align="center"><b>Jabatan</b></td>
+				<td style="width:30mm;" align="center"><b>Jabatan</b></td>
 				<td style="width:30mm;" align="center"><b>Tanggal</b></td>
-				<td style="width:45mm;" align="center"><b>TTD / Approved</b></td>
+				<td style="width:30mm;" align="center"><b>TTD / Approved</b></td>
 			</tr>';
 		foreach ($committeeRoles as $i => $role) {
 			$appr = null;
@@ -513,7 +513,7 @@ Class RfcModule extends Application{
 			</tr>
 			<tr>
 				<td>2&nbsp;&nbsp;NON STANDARD CONTRACT</td>
-				<td>:&nbsp;Approval Until MD of '.htmlspecialchars($compx->companyname).' incl CPU &amp; FC KF</td>
+				<td>:&nbsp;Approval Until MD incl CPU &amp; FC KF</td>
 			</tr>
 		</table></font>';
 
