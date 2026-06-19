@@ -1001,6 +1001,13 @@ Class RfcModule extends Application{
 										$Rfchistory->actiontype = 3;
 										break;
 									case '2':
+										// Backend validation: CPU approver (12/70) harus isi procurement sebelum approve
+										if (in_array($savedApprovalTypeId, array('12','70')) && $Rfc->ratetype != 'SK') {
+											if (empty(trim((string)$procurement_rate)) || empty($procurement_contractor_id)) {
+												echo json_encode(array('status'=>'error','message'=>'Procurement Rate dan Contractor wajib diisi sebelum melakukan approve.'));
+												return;
+											}
+										}
 										if ($Rfcapproval->approver->isfinal == 1){
 											$Rfc->requeststatus = 3;
 											$emto=$email;$emname=$emp['fullname'];

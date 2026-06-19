@@ -1419,22 +1419,21 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 				
 			});
 		}else{
-			var procGroupVisible = $scope.formInstance.itemOption('group1.procurementGroup', 'visible');
-			if (procGroupVisible) {
-				var procData = $scope.formInstance.option("formData");
-				if (!procData.procurement_rate || procData.procurement_rate.toString().trim() === '') {
-					DevExpress.ui.dialog.alert("Please input Procurement Rate", "Error");
-					return;
-				}
-				if (!procData.procurement_contractor_id || procData.procurement_contractor_id === '') {
-					DevExpress.ui.dialog.alert("Please select Procurement Contractor", "Error");
-					return;
-				}
-			}
 			criteria = {status:'approver',rfc_id:$scope.Requestid};
 			CrudService.FindData('rfcapp',criteria).then(function (response){
 				if(response.jml>0){
 					var data = $scope.formInstance.option("formData");
+					// Validate procurement fields for CPU approver (12/70) on Approve action
+					if ((response.approvaltypeid == 12 || response.approvaltypeid == 70) && data.approvalstatus == 2) {
+						if (!data.procurement_rate || data.procurement_rate.toString().trim() === '') {
+							DevExpress.ui.dialog.alert("Please input Procurement Rate","Error");
+							return;
+						}
+						if (!data.procurement_contractor_id || data.procurement_contractor_id === '') {
+							DevExpress.ui.dialog.alert("Please select Procurement Contractor","Error");
+							return;
+						}
+					}
 					var date = new Date();
 					var d= $filter("date")(date, "yyyy-MM-dd HH:mm")
 					data.approvaldate = d;
