@@ -1419,6 +1419,17 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 				
 			});
 		}else{
+			if ($scope.isCpuApprover) {
+				var procData = $scope.formInstance.option("formData");
+				if (!procData.procurement_rate || procData.procurement_rate.toString().trim() === '') {
+					DevExpress.ui.dialog.alert("Please input Procurement Rate", "Error");
+					return;
+				}
+				if (!procData.procurement_contractor_id || procData.procurement_contractor_id === '') {
+					DevExpress.ui.dialog.alert("Please select Procurement Contractor", "Error");
+					return;
+				}
+			}
 			criteria = {status:'approver',rfc_id:$scope.Requestid};
 			CrudService.FindData('rfcapp',criteria).then(function (response){
 				if(response.jml>0){
