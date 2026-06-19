@@ -139,9 +139,11 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 								console.log(e);
 								criteria = {status:'last',companycode:e.value,rfc_id:$scope.Requestid};
 								CrudService.FindData('rfc',criteria).then(function (response){
-									$scope.formInstance.updateData('rfcno',  response.rfcno);
-									$scope.formInstance.updateData('rfqno',  response.rfqno);
-									$scope.grid3Component.refresh();
+									if ($scope.formInstance) {
+										$scope.formInstance.updateData('rfcno',  response.rfcno);
+										$scope.formInstance.updateData('rfqno',  response.rfqno);
+									}
+									if ($scope.grid3Component) { $scope.grid3Component.refresh(); }
 								})
 							}
 						},validationRules: [{
@@ -185,8 +187,10 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 								console.log(e);
 								criteria = {status:'chactivity',activity:e.value,rfc_id:$scope.Requestid};
 								CrudService.FindData('rfc',criteria).then(function (response){
-									$scope.formInstance.updateData('isprojectcapex',  response.iscapex);
-									$scope.grid3Component.refresh();
+									if ($scope.formInstance) {
+										$scope.formInstance.updateData('isprojectcapex',  response.iscapex);
+									}
+									if ($scope.grid3Component) { $scope.grid3Component.refresh(); }
 								})
 							}
 						}},
@@ -700,6 +704,7 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 				if ($scope.mode === 'approve' && $scope.data.ratetype === 'Non SK') {
 					var criteria = {status:'approver', rfc_id: $scope.Requestid};
 					CrudService.FindData('rfcapp', criteria).then(function(response) {
+						if ($scope.$$destroyed) return;
 						if (response.approvaltypeid == 12 || response.approvaltypeid == 70) {
 							$scope.isCpuApprover = true;
 							$scope.formInstance.itemOption('group1.procurementGroup', 'visible', true);
@@ -746,14 +751,12 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 	});
 
 	var myStore = new DevExpress.data.CustomStore({
-		load: function() {			
+		load: function() {
             $scope.isLoaded =true;
-			return CrudService.GetById('rfcdetail',$scope.Requestid);         		
+			return CrudService.GetById('rfcdetail',$scope.Requestid);
 		},
 		byKey: function(key) {
-            CrudService.GetById('rfcdetail',encodeURIComponent(key)).then(function (response) {
-				return response;
-			});
+            return CrudService.GetById('rfcdetail',encodeURIComponent(key));
 		},
 		insert: function(values) {
 			values.rfc_id=$scope.Requestid;
@@ -785,14 +788,12 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 		store: myStore
     });
 	var myStore6 = new DevExpress.data.CustomStore({
-		load: function() {			
+		load: function() {
             $scope.isLoaded =true;
-			return CrudService.GetById('rfcprocremarks',$scope.Requestid);         		
+			return CrudService.GetById('rfcprocremarks',$scope.Requestid);
 		},
 		byKey: function(key) {
-            CrudService.GetById('rfcprocremarks',encodeURIComponent(key)).then(function (response) {
-				return response;
-			});
+            return CrudService.GetById('rfcprocremarks',encodeURIComponent(key));
 		},
 		insert: function(values) {
 			values.rfc_id=$scope.Requestid;
@@ -824,14 +825,12 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 		store: myStore6
     });
 	var myStore5 = new DevExpress.data.CustomStore({
-		load: function() {			
+		load: function() {
             $scope.isLoaded =true;
-			return CrudService.GetById('rfcterm',$scope.Requestid);         		
+			return CrudService.GetById('rfcterm',$scope.Requestid);
 		},
 		byKey: function(key) {
-            CrudService.GetById('rfcterm',encodeURIComponent(key)).then(function (response) {
-				return response;
-			});
+            return CrudService.GetById('rfcterm',encodeURIComponent(key));
 		},
 		insert: function(values) {
 			values.rfc_id=$scope.Requestid;
@@ -864,14 +863,12 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
     });
 	
 	var myStore2 = new DevExpress.data.CustomStore({
-		load: function() {			
+		load: function() {
             $scope.isLoaded =true;
-			return CrudService.GetById('rfcfile',$scope.Requestid);         		
+			return CrudService.GetById('rfcfile',$scope.Requestid);
 		},
 		byKey: function(key) {
-            CrudService.GetById('rfcfile',encodeURIComponent(key)).then(function (response) {
-				return response;
-			});
+            return CrudService.GetById('rfcfile',encodeURIComponent(key));
 		},
 		insert: function(values) {
 			values.upload_date = $filter("date")(values.upload_date, "yyyy-MM-dd HH:mm")
@@ -909,14 +906,12 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 		store: myStore2
     });
 	var myStore3 = new DevExpress.data.CustomStore({
-		load: function() {			
+		load: function() {
             $scope.isLoaded =true;
-			return CrudService.GetById('rfcapp',$scope.Requestid);         		
+			return CrudService.GetById('rfcapp',$scope.Requestid);
 		},
 		byKey: function(key) {
-            CrudService.GetById('rfcapp',encodeURIComponent(key)).then(function (response) {
-				return response;
-			});
+            return CrudService.GetById('rfcapp',encodeURIComponent(key));
 		},
 		insert: function(values) {
 			values.approvaldate = $filter("date")(values.approvaldate, "yyyy-MM-dd HH:mm")
@@ -1423,9 +1418,9 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 			CrudService.FindData('rfcapp',criteria).then(function (response){
 				if(response.jml>0){
 					var data = $scope.formInstance.option("formData");
-					// Validate procurement fields for CPU approver (12/70) on Approve action
-					if ((response.approvaltypeid == 12 || response.approvaltypeid == 70) && data.approvalstatus == 2) {
-						if (!data.procurement_rate || data.procurement_rate.toString().trim() === '') {
+					// Validate procurement fields for CPU approver (12/70) on Approve action, only for Non-SK RFC
+					if ((response.approvaltypeid == 12 || response.approvaltypeid == 70) && data.approvalstatus == 2 && data.ratetype === 'Non SK') {
+						if (data.procurement_rate === null || data.procurement_rate === undefined || data.procurement_rate.toString().trim() === '') {
 							DevExpress.ui.dialog.alert("Please input Procurement Rate","Error");
 							return;
 						}
@@ -1497,8 +1492,8 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 	}
 	$scope.onFormSubmit = function(e) {
 		e.preventDefault();
-		CrudService.GetById('rfcapp',$scope.Requestid).then(function (response){
-			if(response.length>0){
+		CrudService.FindData('rfcapp',{status:'approver',rfc_id:$scope.Requestid}).then(function (response){
+			if(response.jml>0){
 				criteria = {status:'approver',rfc_id:$scope.Requestid};
 				CrudService.FindData('rfcdetail',criteria).then(function (response){
 					if(response.jml>0){
