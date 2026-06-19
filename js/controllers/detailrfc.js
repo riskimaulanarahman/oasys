@@ -1419,7 +1419,8 @@ app.register.controller('detailrfcCtrl', ['$rootScope','$scope', '$http', '$inte
 				
 			});
 		}else{
-			if ($scope.isCpuApprover) {
+			var procGroupVisible = $scope.formInstance.itemOption('group1.procurementGroup', 'visible');
+			if (procGroupVisible) {
 				var procData = $scope.formInstance.option("formData");
 				if (!procData.procurement_rate || procData.procurement_rate.toString().trim() === '') {
 					DevExpress.ui.dialog.alert("Please input Procurement Rate", "Error");
